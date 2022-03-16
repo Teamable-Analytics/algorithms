@@ -3,11 +3,11 @@ import time
 
 from schema import Schema, SchemaError
 
-from .consts import FRIEND, DEFAULT, ENEMY
-from .utility import get_requirement_utility, get_social_utility, get_diversity_utility, get_preference_utility
 from student import Student
 from team import Team
 from teamset import PriorityTeamSet
+from .consts import FRIEND, DEFAULT, ENEMY
+from .utility import get_requirement_utility, get_social_utility, get_diversity_utility, get_preference_utility
 
 
 class AlgorithmException(Exception):
@@ -356,6 +356,21 @@ class PriorityAlgorithm(WeightAlgorithm):
         self.options.diversity_weight = 1
         self.options.requirement_weight = 1
         self.options.preference_weight = 1
+
+
+class SocialAlgorithm(Algorithm):
+    def generate(self, students: [Student], teams: [Team], team_generation_option) -> [Team]:
+        """
+
+        :param students:
+        :param teams: Initial teams to start with
+        :param team_generation_option:
+        :return:
+        """
+        # TODO: accounting for locked/pre-set teams is a whole fiesta
+        # TODO: account for when they num_friends is high enough to allow someone to technically be a part of multiple cliques
+
+        pass
 
 
 def _generate_with_choose(algorithm, students, teams, team_generation_option) -> [Team]:
