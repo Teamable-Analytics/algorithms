@@ -1,5 +1,15 @@
+from itertools import combinations
+
 from algorithm.consts import DEFAULT
 from student import Student
+
+"""
+Raw -> (from_id, to_id): relationship    (directed)
+Levelled -> (from_id, to_id): if_exists  (undirected, depends on current graph level)
+Subgraph -> member_id: [other_ids...]    (undirected, depends on current graph level)
+
+All separate graph representations
+"""
 
 
 class SocialGraphException(Exception):
@@ -8,34 +18,39 @@ class SocialGraphException(Exception):
 
 class SocialGraph:
     _social_graph = {}
-    degree = float('-inf')
 
-    def __init__(self, students: [Student]):
-        self._social_graph = self._create_social_graph(students)
-        self.degree = float('-inf')
+    def __init__(self, students: [Student], level: float):
+        self.level = level
+        self.students = students
+        self._raw_social_graph = self._create_social_graph(students)
+        self._social_graph = self.level_graph(level)
+
+    def level_graph(self, level: float) -> dict:
+        levelled_social_graph = {}
+        for student, other in combinations(self.students, 2):
+            total_relationship = self._raw_social_graph[(student.id, other.id)] + \
+                                 self._raw_social_graph[(other.id, student.id)]
+            if total_relationship <= level:  # being at this level or better means having a lighter or the same weight
+                levelled_social_graph[(student.id, other.id)] = levelled_social_graph[(other.id, student.id)] = True
+        return levelled_social_graph
 
     def _create_social_graph(self, students: [Student]):
         social_graph = {}
-        max_degree = 0
         for student in students:
-            student_node_degree = 0
             for other in students:
                 if student.id == other.id:  # self-edges are not allowed
                     continue
-                social_graph[(student.id, other.id)] = student.relationships[other.id] if other.id in student.relationships else DEFAULT
-                student_node_degree += 1
-            max_degree = max(max_degree, student_node_degree)
+                social_graph[(student.id, other.id)] = DEFAULT
+                if other.id in student.relationships:
+                    # update to real relationship value if one exists
+                    social_graph[(student.id, other.id)] = student.relationships[other.id]
         return social_graph
 
-    def add_or_update_edge(self, from_id: int, to_id: int, value: float):
-        self._social_graph[(from_id, to_id)] = value
-
-    def edge_exists(self, from_id: int, to_id: int) -> bool:
-        if (from_id, to_id) not in self._social_graph.keys():
-            return False
-        return self._social_graph[(from_id, to_id)]
-
-    def get_edge(self, from_id: int, to_id: int) -> float:
-        if (from_id, to_id) not in self._social_graph.keys():
-            raise SocialGraphException(f'No edge exists {from_id} -> {to_id}')
-        return self._social_graph[(from_id, to_id)]
+    def subgraph(self, member_ids: [int]):
+        subgraph = {member_id: [] for member_id in member_ids}
+        for (from_id, to_id), edge_exists in self._social_graph.items():
+            if from_id not in member_ids or to_id not in member_ids:
+                continue
+            if edge_exists:
+                subgraph[from_id].append(to_id)
+        return subgraph
