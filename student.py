@@ -64,7 +64,7 @@ class Student:
         try:
             Schema(int).validate(self.id)
             Schema(Or({int: [int, float]}, {})).validate(self.skills)
-            Schema(Or({int: int}, {})).validate(self.relationships)
+            Schema(Or({int: Or(int, float)}, {})).validate(self.relationships)
             Schema(Or({int: int}, {})).validate(self.preferences)
             for counter, _ in enumerate(self.preferences.keys(), start=1):
                 if not self.preferences.get(counter, None):
