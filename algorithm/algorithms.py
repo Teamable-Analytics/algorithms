@@ -7,6 +7,8 @@ from student import Student
 from team import Team
 from teamset import PriorityTeamSet
 from .consts import FRIEND, DEFAULT, ENEMY
+from .social_algorithm.clique_finder import CliqueFinder
+from .social_algorithm.social_graph import SocialGraph
 from .utility import get_requirement_utility, get_social_utility, get_diversity_utility, get_preference_utility
 
 
@@ -369,8 +371,34 @@ class SocialAlgorithm(Algorithm):
         """
         # TODO: accounting for locked/pre-set teams is a whole fiesta
         # TODO: account for when they num_friends is high enough to allow someone to technically be a part of multiple cliques
+        social_graph = SocialGraph(students, FRIEND * 2)
+        clique_student_lists = self.find_clique_teams(students, team_generation_option, social_graph)
+        for student_list in clique_student_lists:
+            empty_team = self.next_empty_team(teams)
+            for student in student_list:
+                empty_team.add_student(student)
+                student.add_team(empty_team)
 
-        pass
+        while self.has_empty_teams(teams):
+            k = team_generation_option.min_team_size - 1
+
+    def find_clique_teams(self, students: [Student], team_generation_option, social_graph: SocialGraph) -> [[Student]]:
+        clique_finder = CliqueFinder(students, social_graph)
+        clique_ids = clique_finder.get_cliques(team_generation_option.min_team_size)
+        cliques = []
+        for clique in clique_ids:
+            clique_students = [student for student in students if student.id in clique]
+            cliques.append(clique_students)
+        return cliques
+
+    def next_empty_team(self, teams: [Team]) -> Team:
+        for team in teams:
+            if team.size == 0:
+                return team
+
+    def has_empty_teams(self, teams: [Team]) -> bool:
+        next_empty_team = self.next_empty_team(teams)
+        return bool(next_empty_team)
 
 
 def _generate_with_choose(algorithm, students, teams, team_generation_option) -> [Team]:

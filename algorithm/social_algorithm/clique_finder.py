@@ -26,10 +26,9 @@ e.g. {1: [2, 3], 2: [1, 3], 3: [1, 2]} means student 1 has 'level' or stronger c
 
 
 class CliqueFinder:
-    def __init__(self, students: [Student], level: float):
-        self._level = level
+    def __init__(self, students: [Student], social_graph: SocialGraph):
         self._students = students
-        self.social_graph = SocialGraph(students, level)
+        self.social_graph = social_graph
 
     def is_clique(self, subgraph: dict) -> bool:
         # essentially check if this graph is complete
