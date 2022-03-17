@@ -43,7 +43,18 @@ class CliqueFinder:
         cliques = self.find_cliques_of_size(size)
         return self.clean_cliques(cliques)
 
+    def find_cliques_lte_size(self, size: int) -> [[int]]:
+        all_cliques = []
+        k = size
+        while k > 0:
+            all_cliques += self.find_cliques_of_size(k)
+            k -= 1
+        return all_cliques
+
     def find_cliques_of_size(self, size: int) -> [[int]]:
+        if size == 1:
+            return [[student.id] for student in self._students]
+
         # TODO: better algorithm? This one is O(n-choose-k)
         cliques = []  # [[int]]
         for members in combinations(self._students, size):
@@ -56,6 +67,13 @@ class CliqueFinder:
     def clean_cliques(self, cliques: [[int]]) -> [[int]]:
         """Clean means no conflicts. A student in one clique cannot be in another, but the normal algorithm doesn't
         enforce this restriction """
+
+        """
+        cliques = [
+            [1, 2, 3]
+            [3, 4, 5]
+        ]
+        """
         already_members = []
         cleaned_cliques = []
         for clique in cliques:

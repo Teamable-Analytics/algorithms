@@ -372,19 +372,84 @@ class SocialAlgorithm(Algorithm):
         # TODO: accounting for locked/pre-set teams is a whole fiesta
         # TODO: account for when they num_friends is high enough to allow someone to technically be a part of multiple cliques
         social_graph = SocialGraph(students, FRIEND * 2)
-        clique_student_lists = self.find_clique_teams(students, team_generation_option, social_graph)
-        for student_list in clique_student_lists:
-            empty_team = self.next_empty_team(teams)
-            for student in student_list:
-                empty_team.add_student(student)
-                student.add_team(empty_team)
 
+        # Step 1: Makes teams out of cliques of the correct team size
+        clique_student_lists = self.find_clique_teams(
+            self.get_remaining_students(students),
+            team_generation_option.max_teams_size,
+            social_graph
+        )
+        for student_list in clique_student_lists:
+            empty_team = self.next_empty_team(teams)  # TODO: what if more cliques than team slots
+            if empty_team is None:
+                break
+            self.save_students_to_team(empty_team, student_list)
+
+        # Step 2: fill extra team slots with fragments (largest fragments first)
         while self.has_empty_teams(teams):
             k = team_generation_option.min_team_size - 1
+            clique_student_lists = self.find_clique_teams(self.get_remaining_students(students), k, social_graph)
+            if not clique_student_lists:  # if no cliques of size k are found
+                continue
+            empty_team = self.next_empty_team(teams)
+            self.save_students_to_team(empty_team, clique_student_lists[0])
+            k -= 1
 
-    def find_clique_teams(self, students: [Student], team_generation_option, social_graph: SocialGraph) -> [[Student]]:
+        # Step 3: fill fragments
+        while self.get_remaining_students(students):
+            largest_fragment_team = self.get_largest_fragment_team(teams, team_generation_option)
+            if largest_fragment_team is None:
+                break
+            while largest_fragment_team.size < team_generation_option.min_team_size:
+                k = team_generation_option.min_team_size - largest_fragment_team.size
+                all_cliques = self.find_lte_cliques(self.get_remaining_students(students), k, social_graph)
+                # TODO: rank cliques properly
+                best_clique = all_cliques[0]  # TODO: should be fine mathematically but verify
+                self.save_students_to_team(largest_fragment_team, best_clique)
+
+        # Step 4: place last students
+        for student in self.get_remaining_students(students):
+            single_clique = [student]
+            for team in self.get_available_teams(teams, team_generation_option):
+                # TODO: find best team for single_clique
+                self.save_students_to_team(team, single_clique)
+
+        return teams
+
+    def get_largest_fragment_team(self, teams: [Team], team_generation_option) -> Team:
+        largest_size = 0
+        largest_fragment = None
+        for team in teams:
+            if team.size >= team_generation_option.min_team_size:
+                continue
+            if team.size > largest_size:
+                largest_fragment = team
+                largest_size = team.size
+        return largest_fragment  # TODO: what if this returns None
+
+    def save_students_to_team(self, team: Team, student_list: [Student]):
+        for student in student_list:
+            team.add_student(student)
+            student.add_team(team)
+
+    def find_clique_teams(self, students: [Student], size: int, social_graph: SocialGraph) -> [[Student]]:
         clique_finder = CliqueFinder(students, social_graph)
-        clique_ids = clique_finder.get_cliques(team_generation_option.min_team_size)
+        clique_ids = clique_finder.get_cliques(size)
+        return self.clique_ids_to_student_list(students, clique_ids)
+
+    def find_lte_cliques(self, students: [Student], size: int, social_graph: SocialGraph) -> [[Student]]:
+        """
+        Multi-memberships are allowed, all cliques of sizes [k...1] are included
+        :param students:
+        :param size:
+        :param social_graph:
+        :return:
+        """
+        clique_finder = CliqueFinder(students, social_graph)
+        clique_ids = clique_finder.find_cliques_lte_size(size)
+        return self.clique_ids_to_student_list(students, clique_ids)
+
+    def clique_ids_to_student_list(self, students: [Student], clique_ids: [int]) -> [[Student]]:
         cliques = []
         for clique in clique_ids:
             clique_students = [student for student in students if student.id in clique]

@@ -1,5 +1,5 @@
 from schema import Schema, SchemaError, Or
-from .student import Student
+from student import Student
 from algorithm.consts import REQUIREMENT_TYPES
 
 

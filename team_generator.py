@@ -1,9 +1,9 @@
 from schema import Schema, And, SchemaError
 from algorithm.algorithms import Algorithm
 from algorithm.consts import REQUIREMENT_TYPES
-from .student import Student
-from .team import Team
-from .validation import validate_unique_fields
+from student import Student
+from team import Team
+from validation import validate_unique_fields
 
 
 class TeamGenerationException(Exception):
