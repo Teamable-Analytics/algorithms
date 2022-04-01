@@ -1,5 +1,6 @@
 import random
 import time
+from typing import List
 
 from schema import Schema, SchemaError
 
@@ -204,6 +205,20 @@ class Algorithm:
     def student_permitted_in_team(self, student: Student, team: Team) -> bool:
         """Can be overridden in Algorithms to support custom rules for whether a student can be added to a team"""
         return True
+
+    def save_students_to_team(self, team: Team, student_list: [Student]):
+        for student in student_list:
+            team.add_student(student)
+            student.add_team(team)
+
+    def next_empty_team(self, teams: [Team]) -> Team:
+        for team in teams:
+            if team.size == 0:
+                return team
+
+    def has_empty_teams(self, teams: [Team]) -> bool:
+        next_empty_team = self.next_empty_team(teams)
+        return bool(next_empty_team)
 
 
 class WeightAlgorithm(Algorithm):
@@ -455,15 +470,6 @@ class SocialAlgorithm(Algorithm):
             clique_students = [student for student in students if student.id in clique]
             cliques.append(clique_students)
         return cliques
-
-    def next_empty_team(self, teams: [Team]) -> Team:
-        for team in teams:
-            if team.size == 0:
-                return team
-
-    def has_empty_teams(self, teams: [Team]) -> bool:
-        next_empty_team = self.next_empty_team(teams)
-        return bool(next_empty_team)
 
 
 def _generate_with_choose(algorithm, students, teams, team_generation_option) -> [Team]:
