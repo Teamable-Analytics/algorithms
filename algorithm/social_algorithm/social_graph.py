@@ -1,5 +1,7 @@
 from itertools import combinations
 
+from typing import Tuple, List
+
 from algorithm.consts import DEFAULT
 from student import Student
 
@@ -10,6 +12,10 @@ Subgraph -> member_id: [other_ids...]    (undirected, depends on current graph l
 
 All separate graph representations
 """
+
+
+class EdgelessException(Exception):
+    pass
 
 
 class SocialGraphException(Exception):
@@ -34,6 +40,14 @@ class SocialGraph:
                 levelled_social_graph[(student.id, other.id)] = levelled_social_graph[(other.id, student.id)] = True
         return levelled_social_graph
 
+    def has_edge(self, from_id: int, to_id: int) -> bool:
+        if (from_id, to_id) not in self._social_graph:
+            return False
+        return self._social_graph[(from_id, to_id)]
+
+    def edges(self) -> List[Tuple[int, int]]:
+        return [(from_id, to_id) for (from_id, to_id), exists in self._social_graph.items() if exists]
+
     def _create_social_graph(self, students: [Student]):
         social_graph = {}
         for student in students:
@@ -47,10 +61,18 @@ class SocialGraph:
         return social_graph
 
     def subgraph(self, member_ids: [int]):
+        """
+        Raises an error if any non-level edges are discovered
+        :param member_ids:
+        :return:
+        """
         subgraph = {member_id: [] for member_id in member_ids}
-        for (from_id, to_id), edge_exists in self._social_graph.items():
-            if from_id not in member_ids or to_id not in member_ids:
-                continue
-            if edge_exists:
-                subgraph[from_id].append(to_id)
+        for (a, b) in combinations(self.students, 2):
+            from_id, to_id = a.id, b.id
+            try:
+                edge = self._social_graph[(from_id, to_id)]
+            except KeyError as e:
+                raise EdgelessException(f'No edges? | {e}')
+
+            subgraph[from_id].append(to_id)
         return subgraph
