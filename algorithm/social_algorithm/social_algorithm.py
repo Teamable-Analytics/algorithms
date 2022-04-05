@@ -33,7 +33,7 @@ class SocialAlgorithm(Algorithm):
             clique_student_lists = self.find_clique_teams(students, k)
             if clique_student_lists:  # if cliques of size k are found
                 empty_team = self.next_empty_team(teams)
-                self.save_students_to_team(empty_team, clique_student_lists[0])  # TODO: not 0
+                self.add_best_clique_to_team(empty_team, clique_student_lists)
             k -= 1
 
         # Step 3: fill fragments
@@ -52,20 +52,12 @@ class SocialAlgorithm(Algorithm):
             if largest_fragment_team is None:
                 break
 
-            while largest_fragment_team.size < team_generation_option.min_team_size:
+            while largest_fragment_team.size < team_generation_option.min_team_size:  # TODO: favour min or max team size here?
                 k = team_generation_option.max_teams_size - largest_fragment_team.size
                 all_cliques = self.find_lte_cliques(students, k)
-                best_clique, best_clique_score = None, float('-inf')
-                for clique in all_cliques:
-                    score = self.team_suitability_score(largest_fragment_team, clique)
-                    if score > best_clique_score:
-                        best_clique = clique
-                        best_clique_score = score
-                # TODO: rank cliques properly
-                # best_clique = all_cliques[0]  # TODO: should be fine mathematically but verify
-                self.save_students_to_team(largest_fragment_team, best_clique)
+                self.add_best_clique_to_team(largest_fragment_team, all_cliques)
 
-        # Step 4: place last students
+        # Step 4: place last students in the team best for them
         for student in self.get_remaining_students(students):
             single_clique = [student]
             best_team, best_team_score = None, float('-inf')
@@ -81,7 +73,7 @@ class SocialAlgorithm(Algorithm):
 
     def team_suitability_score(self, team: Team, student_list: List[Student]) -> float:
         if not student_list:
-            return None  # cannot be empty TODO: do properly
+            return float('-inf')  # cannot be empty TODO: do properly
 
         overall_utility = 0
         for student in student_list:
@@ -125,6 +117,26 @@ class SocialAlgorithm(Algorithm):
     def clean_clique_list(self, cliques: List[List[Student]]) -> List[List[Student]]:
         cleaned_cliques = [clique for clique in cliques if self._clique_is_valid(clique)]
         return cleaned_cliques
+
+    def add_best_clique_to_team(self, team: Team, clique_student_lists: List[List[Student]]) -> bool:
+        if not clique_student_lists:
+            return False
+
+        best_clique = self.best_clique_for_team(team, clique_student_lists)
+        if not best_clique:
+            return False
+
+        self.save_students_to_team(team, best_clique)
+        return True
+
+    def best_clique_for_team(self, team: Team, clique_student_lists: List[List[Student]]) -> List[Student]:
+        best_clique, best_clique_score = None, float('-inf')
+        for clique in clique_student_lists:
+            score = self.team_suitability_score(team, clique)
+            if score > best_clique_score:
+                best_clique = clique
+                best_clique_score = score
+        return best_clique
 
     def _clique_is_valid(self, clique: List[Student]) -> bool:
         """
