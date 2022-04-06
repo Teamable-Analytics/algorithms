@@ -1,6 +1,6 @@
 from typing import List
 
-from algorithm.algorithms import Algorithm
+from algorithm.algorithms import Algorithm, _generate_with_choose
 from algorithm.consts import FRIEND
 from algorithm.social_algorithm.clique_finder import CliqueFinder
 from algorithm.social_algorithm.social_graph import SocialGraph
@@ -27,12 +27,13 @@ class SocialAlgorithm(Algorithm):
             if empty_team is None:
                 break
             self.save_students_to_team(empty_team, student_list)
+            empty_team.lock()
 
         self.increment_stage()
 
         # Step 2: fill extra team slots with fragments (largest fragments first)
         k = team_generation_option.min_team_size  # TODO: team of min size + random person? suboptimal
-        while self.has_empty_teams() and k > 0:
+        while self.has_empty_teams() and k > 1:
             clique_student_lists = self.find_clique_teams(students, k)
 
             if not clique_student_lists:
@@ -42,6 +43,8 @@ class SocialAlgorithm(Algorithm):
             if clique_student_lists:  # if cliques of size k are found
                 empty_team = self.next_empty_team()
                 self.add_best_clique_to_team(empty_team, clique_student_lists)
+                if empty_team.size == team_generation_option.min_team_size:
+                    empty_team.lock()
 
         self.increment_stage()
 
