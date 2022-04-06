@@ -231,3 +231,6 @@ class Team:
     def is_locked(self):
         """Whether or not team is locked"""
         return self._locked
+
+    def lock(self):
+        self._locked = True
