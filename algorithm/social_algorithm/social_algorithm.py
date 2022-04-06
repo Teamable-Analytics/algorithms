@@ -2,39 +2,48 @@ from typing import List
 
 from algorithm.algorithms import Algorithm
 from algorithm.consts import FRIEND
-from clique_finder import CliqueFinder
-from social_graph import SocialGraph
+from algorithm.social_algorithm.clique_finder import CliqueFinder
+from algorithm.social_algorithm.social_graph import SocialGraph
 from algorithm.utility import get_social_utility
 from student import Student
 from team import Team
 
 
 class SocialAlgorithm(Algorithm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, algorithm_options, logger, *args, **kwargs):
+        super().__init__(algorithm_options, logger)
         self.clique_finder = None
 
     def generate(self, students: [Student], teams: [Team], team_generation_option) -> [Team]:
         # TODO: accounting for locked/pre-set teams is a whole fiesta
+        self.teams = teams
         social_graph = SocialGraph(students, FRIEND * 2)
         self.clique_finder = CliqueFinder(students, social_graph)
 
         # Step 1: Makes teams out of cliques of the correct team size
-        clique_student_lists = self.find_clique_teams(students, team_generation_option.max_teams_size)
+        clique_student_lists = self.find_clique_teams(students, team_generation_option.max_teams_size, clean=True)
         for student_list in clique_student_lists:
-            empty_team = self.next_empty_team(teams)  # TODO: what if more cliques than team slots
+            empty_team = self.next_empty_team()  # TODO: what if more cliques than team slots
             if empty_team is None:
                 break
             self.save_students_to_team(empty_team, student_list)
 
+        self.increment_stage()
+
         # Step 2: fill extra team slots with fragments (largest fragments first)
         k = team_generation_option.min_team_size  # TODO: team of min size + random person? suboptimal
-        while self.has_empty_teams(teams) and k > 0:
+        while self.has_empty_teams() and k > 0:
             clique_student_lists = self.find_clique_teams(students, k)
+
+            if not clique_student_lists:
+                k -= 1
+                continue
+
             if clique_student_lists:  # if cliques of size k are found
-                empty_team = self.next_empty_team(teams)
+                empty_team = self.next_empty_team()
                 self.add_best_clique_to_team(empty_team, clique_student_lists)
-            k -= 1
+
+        self.increment_stage()
 
         # Step 3: fill fragments
         # TODO: change so that we actually loop through biggest cliques remaining and add them to teams?
@@ -52,10 +61,17 @@ class SocialAlgorithm(Algorithm):
             if largest_fragment_team is None:
                 break
 
-            while largest_fragment_team.size < team_generation_option.min_team_size:  # TODO: favour min or max team size here?
+            while largest_fragment_team.size < team_generation_option.min_team_size:
+                # TODO: favour min or max team size here?
                 k = team_generation_option.max_teams_size - largest_fragment_team.size
                 all_cliques = self.find_lte_cliques(students, k)
+                non_single_cliques = [clique for clique in all_cliques if len(clique) == 1]
+                if len(non_single_cliques) < len(all_cliques):
+                    # don't consider cliques of 1 unless there are only cliques of 1 returned
+                    all_cliques = non_single_cliques
                 self.add_best_clique_to_team(largest_fragment_team, all_cliques)
+
+        self.increment_stage()
 
         # Step 4: place last students in the team best for them
         for student in self.get_remaining_students(students):
@@ -91,18 +107,14 @@ class SocialAlgorithm(Algorithm):
                 largest_size = team.size
         return largest_fragment  # TODO: what if this returns None
 
-    def is_all_single_cliques(self, cliques: List[List[Student]]) -> bool:
-        for clique in cliques:
-            if len(clique) > 1:
-                return False
-        return True
-
-    def find_clique_teams(self, students: [Student], size: int) -> List[List[Student]]:
+    def find_clique_teams(self, students: [Student], size: int, clean: bool = False) -> List[List[Student]]:
         clique_ids = self.clique_finder.get_cliques(size)
         if clique_ids is None:
             return []
         clique_student_list = self._clique_ids_to_student_list(students, clique_ids)
-        return self.clean_clique_list(clique_student_list)
+        if clean:
+            clique_student_list = self.clean_clique_list(clique_student_list)
+        return self.valid_clique_list(clique_student_list)
 
     def find_lte_cliques(self, students: [Student], size: int) -> List[List[Student]]:
         """
@@ -112,10 +124,20 @@ class SocialAlgorithm(Algorithm):
         if clique_ids is None:
             return []
         clique_student_list = self._clique_ids_to_student_list(students, clique_ids)
-        return self.clean_clique_list(clique_student_list)
+        return self.valid_clique_list(clique_student_list)
+
+    def valid_clique_list(self, cliques: List[List[Student]]) -> List[List[Student]]:
+        valid_cliques = [clique for clique in cliques if self._clique_is_valid(clique)]
+        return valid_cliques
 
     def clean_clique_list(self, cliques: List[List[Student]]) -> List[List[Student]]:
-        cleaned_cliques = [clique for clique in cliques if self._clique_is_valid(clique)]
+        seen_students = []
+        cleaned_cliques = []
+        for clique in cliques:
+            if any([student in seen_students for student in clique]):
+                continue
+            cleaned_cliques.append(clique)
+            seen_students += clique
         return cleaned_cliques
 
     def add_best_clique_to_team(self, team: Team, clique_student_lists: List[List[Student]]) -> bool:
