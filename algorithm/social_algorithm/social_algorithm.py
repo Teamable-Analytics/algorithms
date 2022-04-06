@@ -77,18 +77,28 @@ class SocialAlgorithm(Algorithm):
         self.increment_stage()
 
         # Step 4: place last students in the team best for them
-        for student in self.get_remaining_students(students):
-            single_clique = [student]
-            best_team, best_team_score = None, float('-inf')
-            for team in self.get_available_teams(teams, team_generation_option):
-                # TODO: find best team for single_clique
-                curr_score = self.team_suitability_score(team, single_clique)
-                if curr_score > best_team_score:
-                    best_team = team
-                    best_team_score = curr_score
-            self.save_students_to_team(best_team, single_clique)
+        if self.get_remaining_students(students):
+            _generate_with_choose(self, students, self.teams, team_generation_option)
 
         return teams
+
+    def choose(self, teams, students):
+        smallest_team = teams[0]
+        for team in teams:
+            if team.size < smallest_team.size:
+                smallest_team = team
+
+        best_student_small, score_small = None, float('-inf')
+        for student in self.get_remaining_students(students):
+            curr_score_small = self.team_suitability_score(smallest_team, [student])
+            if curr_score_small > score_small:
+                score_small = curr_score_small
+                best_student_small = student
+
+        if not best_student_small:
+            return None, None
+
+        return smallest_team, best_student_small
 
     def team_suitability_score(self, team: Team, student_list: List[Student]) -> float:
         if not student_list:
