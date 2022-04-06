@@ -1,4 +1,4 @@
-from algorithm.consts import DEFAULT, FRIEND, ENEMY, LOW_WEIGHT, HIGH_WEIGHT
+from team_formation.app.team_generator.algorithm.consts import DEFAULT, FRIEND, ENEMY, LOW_WEIGHT, HIGH_WEIGHT
 
 
 class SocialNetwork:

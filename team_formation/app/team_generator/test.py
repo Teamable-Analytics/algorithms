@@ -5,3 +5,4 @@ if __name__ == '__main__':
     logger = Logger(real=True)
     teams = mock_generation(logger, DATA_FILE_PATH)
     logger.print_teams(teams, with_friends=True)
+    a = 1

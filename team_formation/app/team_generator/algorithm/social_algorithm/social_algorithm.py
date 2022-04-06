@@ -1,12 +1,12 @@
 from typing import List
 
-from algorithm.algorithms import Algorithm, _generate_with_choose
-from algorithm.consts import FRIEND
-from algorithm.social_algorithm.clique_finder import CliqueFinder
-from algorithm.social_algorithm.social_graph import SocialGraph
-from algorithm.utility import get_social_utility
-from student import Student
-from team import Team
+from team_formation.app.team_generator.algorithm.algorithms import Algorithm, _generate_with_choose
+from team_formation.app.team_generator.algorithm.consts import FRIEND
+from team_formation.app.team_generator.algorithm.social_algorithm.clique_finder import CliqueFinder
+from team_formation.app.team_generator.algorithm.social_algorithm.social_graph import SocialGraph
+from team_formation.app.team_generator.algorithm.utility import get_social_utility
+from team_formation.app.team_generator.student import Student
+from team_formation.app.team_generator.team import Team
 
 
 class SocialAlgorithm(Algorithm):
@@ -83,6 +83,9 @@ class SocialAlgorithm(Algorithm):
         return teams
 
     def choose(self, teams, students):
+        if not teams or not students:
+            return None, None
+
         smallest_team = teams[0]
         for team in teams:
             if team.size < smallest_team.size:

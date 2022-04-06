@@ -3,9 +3,9 @@ import time
 
 from schema import Schema, SchemaError
 
-from student import Student
-from team import Team
-from teamset import PriorityTeamSet
+from team_formation.app.team_generator.student import Student
+from team_formation.app.team_generator.team import Team
+from team_formation.app.team_generator.teamset import PriorityTeamSet
 from .consts import FRIEND, DEFAULT, ENEMY
 from .utility import get_requirement_utility, get_social_utility, get_diversity_utility, get_preference_utility
 
@@ -387,6 +387,5 @@ def _generate_with_choose(algorithm, students, teams, team_generation_option) ->
         team, student = algorithm.choose(available_teams, remaining_students)
         if not team or not student:
             break
-        team.add_student(student)
-        student.add_team(team)
+        algorithm.save_students_to_team(team, [student])
     return teams

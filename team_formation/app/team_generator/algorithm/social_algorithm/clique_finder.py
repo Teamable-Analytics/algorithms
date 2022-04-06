@@ -10,8 +10,8 @@ when we reduce the social graph, edges are boolean values
 from itertools import combinations
 from typing import List, Set, Tuple
 
-from algorithm.social_algorithm.social_graph import SocialGraph
-from student import Student
+from team_formation.app.team_generator.algorithm.social_algorithm.social_graph import SocialGraph
+from team_formation.app.team_generator.student import Student
 
 """
 levelled subgraph structure:

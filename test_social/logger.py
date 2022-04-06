@@ -1,9 +1,9 @@
 from typing import List
 
-from algorithm.algorithms import Algorithm
-from algorithm.consts import FRIEND
-from student import Student
-from team import Team
+from team_formation.app.team_generator.algorithm.algorithms import Algorithm
+from team_formation.app.team_generator.algorithm.consts import FRIEND
+from team_formation.app.team_generator.student import Student
+from team_formation.app.team_generator.team import Team
 from test_social.algorithm_state import AlgorithmState
 from test_social.mock_team_generation import KEY_FILE_PATH, load_json_data
 

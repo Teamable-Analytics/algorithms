@@ -1,12 +1,11 @@
 import math
 from typing import List, Dict
 
-from algorithm.algorithms import AlgorithmOptions
-from algorithm.consts import FRIEND, ENEMY, DEFAULT
-from algorithm.social_algorithm.social_algorithm import SocialAlgorithm
-from student import Student
-from team import Team
-from team_generator import TeamGenerationOption, TeamGenerator
+from team_formation.app.team_generator.algorithm import AlgorithmOptions
+from team_formation.app.team_generator.algorithm.consts import FRIEND, ENEMY, DEFAULT
+from team_formation.app.team_generator.algorithm.social_algorithm.social_algorithm import SocialAlgorithm
+from team_formation.app.team_generator.student import Student
+from team_formation.app.team_generator.team_generator import TeamGenerationOption, TeamGenerator
 
 DATA_FILE_PATH = "test_social/mock_data/gen_group_set-20220331_141058.json"
 KEY_FILE_PATH = "test_social/mock_data/student_key-20220331_141058.json"

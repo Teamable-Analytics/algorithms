@@ -1,8 +1,8 @@
 from itertools import combinations
 from typing import Tuple, List, Dict
 
-from algorithm.consts import DEFAULT
-from student import Student
+from team_formation.app.team_generator.algorithm.consts import DEFAULT
+from team_formation.app.team_generator.student import Student
 
 
 class EdgelessException(Exception):

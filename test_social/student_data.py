@@ -1,5 +1,5 @@
-from algorithm.consts import DEFAULT, FRIEND
-from student import Student
+from team_formation.app.team_generator.algorithm.consts import DEFAULT, FRIEND
+from team_formation.app.team_generator.student import Student
 
 CUSTOM_STUDENTS_1 = [
     Student(1, relationships={

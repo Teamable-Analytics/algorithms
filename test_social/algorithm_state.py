@@ -1,7 +1,7 @@
 import copy
 from typing import List
 
-from team import Team
+from team_formation.app.team_generator.team import Team
 
 
 class AlgorithmState:
