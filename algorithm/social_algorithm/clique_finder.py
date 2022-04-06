@@ -8,6 +8,7 @@ for a bidirectional graph, both values would just be the same in either directio
 when we reduce the social graph, edges are boolean values
 """
 from itertools import combinations
+from typing import List, Set, Tuple
 
 from algorithm.social_algorithm.social_graph import SocialGraph
 from student import Student
@@ -27,13 +28,10 @@ e.g. {1: [2, 3], 2: [1, 3], 3: [1, 2]} means student 1 has 'level' or stronger c
 
 class CliqueFinder:
     """
-    Change approach to find all cliques of sizes [1...k] at once and store them in a hash table
+    Find all cliques of sizes [1...k] at once and store them in a hash table.
+    When find_cliques(k) is called, calculate cliques of sizes [1...k] and save the results as you go
     """
-    cliques = {
-        # size: [[Student]]
-    }
-
-    def __init__(self, students: [Student], social_graph: SocialGraph):
+    def __init__(self, students: List[Student], social_graph: SocialGraph):
         self._students = students
         self.social_graph = social_graph
         self.cliques = {
@@ -41,25 +39,16 @@ class CliqueFinder:
             1: [{student.id} for student in self._students]
         }
 
-    def is_clique(self, subgraph: dict) -> bool:
-        # essentially check if this graph is complete
-        member_ids = list(subgraph.keys())
-        for member_id in member_ids:
-            connected = [i for i in member_ids if i != member_id]
-            if not connected == subgraph[member_id]:
-                return False
-        return True
-
-    def get_cliques(self, size: int) -> [[int]]:
+    def get_cliques(self, size: int) -> List[Set[int]]:
         if size in self.cliques:
-            return self.cliques[size]
+            return self.cliques[size]  # return saved cliques if already computed
 
-        for k, cliques in self.find_cliques_of_size(size):
+        for k, cliques in self.find_cliques():
             self.cliques[k] = cliques
             if k == size:
                 return cliques
 
-    def find_cliques_lte_size(self, size: int) -> [[int]]:
+    def find_cliques_lte_size(self, size: int) -> List[Set[int]]:
         all_cliques = []
         k = size
         while k > 0:
@@ -67,13 +56,13 @@ class CliqueFinder:
             k -= 1
         return all_cliques
 
-    def find_cliques_of_size(self, size: int) -> [[int]]:
+    def find_cliques(self) -> Tuple[int, List[Set[int]]]:
         # Adapted from https://iq.opengenus.org/algorithm-to-find-cliques-of-a-given-size-k/
         k = 2
         cliques = [{from_id, to_id} for from_id, to_id in self.social_graph.edges() if from_id != to_id]
         while cliques:
             # result
-            yield k, cliques
+            yield k, cliques  # https://realpython.com/introduction-to-python-generators/
             # merge k-cliques into (k+1)-cliques
             cliques_1 = set()
             for u, v in combinations(cliques, 2):
