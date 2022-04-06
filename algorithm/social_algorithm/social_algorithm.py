@@ -60,13 +60,13 @@ class SocialAlgorithm(Algorithm):
         Last clique of 3 is now forced to be broken up among the last three team slots
         """
         while self.get_remaining_students(students):
-            largest_fragment_team = self.get_largest_fragment_team(teams, team_generation_option)
+            largest_fragment_team = self.get_largest_fragment_team(team_generation_option)
             if largest_fragment_team is None:
                 break
 
             while largest_fragment_team.size < team_generation_option.min_team_size:
                 # TODO: favour min or max team size here?
-                k = team_generation_option.max_teams_size - largest_fragment_team.size
+                k = team_generation_option.min_team_size - largest_fragment_team.size
                 all_cliques = self.find_lte_cliques(students, k)
                 non_single_cliques = [clique for clique in all_cliques if len(clique) == 1]
                 if len(non_single_cliques) < len(all_cliques):
@@ -99,10 +99,10 @@ class SocialAlgorithm(Algorithm):
             overall_utility += get_social_utility(team, student)
         return overall_utility / len(student_list)  # TODO: replace with scoring function
 
-    def get_largest_fragment_team(self, teams: [Team], team_generation_option) -> Team:
+    def get_largest_fragment_team(self, team_generation_option) -> Team:
         largest_size = 0
         largest_fragment = None
-        for team in teams:
+        for team in self.teams:
             if team.size >= team_generation_option.min_team_size:
                 continue
             if team.size > largest_size:
