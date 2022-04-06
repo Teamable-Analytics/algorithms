@@ -1,8 +1,9 @@
 import math
 from typing import List, Dict
 
-from algorithm.algorithms import SocialAlgorithm, AlgorithmOptions
+from algorithm.algorithms import AlgorithmOptions
 from algorithm.consts import FRIEND, ENEMY, DEFAULT
+from algorithm.social_algorithm.social_algorithm import SocialAlgorithm
 from student import Student
 from team import Team
 from team_generator import TeamGenerationOption, TeamGenerator
@@ -98,10 +99,10 @@ def load_json_data(file_path: str):
         return data
 
 
-def mock_generation(data_file_path: str = None):
+def mock_generation(logger, data_file_path: str = None):
     fake_data = MockData(data_file_path, 56)
     social_algorithm_options = AlgorithmOptions()
-    social_algorithm = SocialAlgorithm(social_algorithm_options)  # needs algo options
+    social_algorithm = SocialAlgorithm(social_algorithm_options, logger)  # needs algo options
     # team_generation_options = TeamGenerationOption(
     #     min_team_size=2,
     #     max_team_size=3,
