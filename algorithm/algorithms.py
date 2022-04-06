@@ -1,6 +1,5 @@
 import random
 import time
-from typing import List
 
 from schema import Schema, SchemaError
 
@@ -8,8 +7,6 @@ from student import Student
 from team import Team
 from teamset import PriorityTeamSet
 from .consts import FRIEND, DEFAULT, ENEMY
-from .social_algorithm.clique_finder import CliqueFinder
-from .social_algorithm.social_graph import SocialGraph
 from .utility import get_requirement_utility, get_social_utility, get_diversity_utility, get_preference_utility
 
 
@@ -154,18 +151,21 @@ class Algorithm:
         algorithm options
     """
 
-    def __init__(self, options: AlgorithmOptions):
+    def __init__(self, options: AlgorithmOptions, logger=None):
         """
         Parameters
         ----------
         options: AlgorithmOptions
             algorithm options
+        logger: Logger
         """
         try:
             self.options = Schema(AlgorithmOptions).validate(options)
         except SchemaError as error:
             raise AlgorithmException(f'Error while initializing class: \n{error}')
         self.teams = []
+        self.logger = logger
+        self.stage = 1
 
     def generate(self, students, teams, team_generation_option) -> [Team]:
         raise NotImplementedError()
@@ -210,15 +210,20 @@ class Algorithm:
         for student in student_list:
             team.add_student(student)
             student.add_team(team)
+        if self.logger:
+            self.logger.save_algorithm_state(self.teams, self)
 
-    def next_empty_team(self, teams: [Team]) -> Team:
-        for team in teams:
+    def next_empty_team(self) -> Team:
+        for team in self.teams:
             if team.size == 0:
                 return team
 
-    def has_empty_teams(self, teams: [Team]) -> bool:
-        next_empty_team = self.next_empty_team(teams)
+    def has_empty_teams(self) -> bool:
+        next_empty_team = self.next_empty_team()
         return bool(next_empty_team)
+
+    def increment_stage(self):
+        self.stage += 1
 
 
 class WeightAlgorithm(Algorithm):
