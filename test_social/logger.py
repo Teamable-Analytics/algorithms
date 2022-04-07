@@ -19,7 +19,7 @@ class Logger:
     def print_teams(self, teams: List[Team], with_friends: bool = False):
         print(f'Number of teams: {len(teams)}')
         for team in teams:
-            print(f'Team: {team.id}')
+            print(f'Team: {team.name} ({team.id})')
             for student in team.students:
                 info = student.id
                 if self.real:

@@ -103,8 +103,8 @@ class MockData:
         return student_dict
 
 
-def mock_generation(logger, data_file_path: str = None):
-    fake_data = MockData(56, data_file_path)
+def mock_generation(logger, num_teams: int, data_file_path: str = None):
+    fake_data = MockData(num_teams, data_file_path)
     social_algorithm_options = AlgorithmOptions()
     social_algorithm = SocialAlgorithm(social_algorithm_options, logger)  # needs algo options
     team_generation_options = fake_data.get_team_generation_option()
