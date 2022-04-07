@@ -80,6 +80,8 @@ class SocialAlgorithm(Algorithm):
         if self.get_remaining_students(students):
             _generate_with_choose(self, students, self.teams, team_generation_option)
 
+        # TODO: what happens if people are still without teams now? Largely due to the locking enforced by this alg
+
         return teams
 
     def choose(self, teams, students):
