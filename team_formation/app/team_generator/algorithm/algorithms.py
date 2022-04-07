@@ -3,11 +3,12 @@ import time
 
 from schema import Schema, SchemaError
 
+from team_formation.app.team_generator.algorithm.consts import FRIEND, DEFAULT, ENEMY
+from team_formation.app.team_generator.algorithm.utility import get_requirement_utility, get_social_utility, \
+    get_diversity_utility, get_preference_utility
 from team_formation.app.team_generator.student import Student
 from team_formation.app.team_generator.team import Team
 from team_formation.app.team_generator.teamset import PriorityTeamSet
-from .consts import FRIEND, DEFAULT, ENEMY
-from .utility import get_requirement_utility, get_social_utility, get_diversity_utility, get_preference_utility
 
 
 class AlgorithmException(Exception):
