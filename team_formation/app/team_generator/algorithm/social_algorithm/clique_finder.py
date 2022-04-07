@@ -28,6 +28,9 @@ class CliqueFinder:
             if k == size:
                 return cliques
 
+        self.cliques[size] = []
+        return []
+
     def find_cliques_lte_size(self, size: int) -> List[Set[int]]:
         all_cliques = []
         k = size
