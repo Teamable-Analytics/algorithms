@@ -36,8 +36,6 @@ class Logger:
         print(self.format_clique(clique))
 
     def format_cliques(self, cliques: List[List[Student]]):
-        if self.real:
-            return [*map(Logger.print_clique, cliques)]
         return [self.format_clique(clique) for clique in cliques]
 
     def print_cliques(self, cliques: List[List[Student]]):
@@ -50,10 +48,10 @@ def get_student_from_key(student_anon: Student, with_friends: bool = False):
     if not with_friends:
         return student_name
 
-    friends = [get_real_student_name(student_key, other_id)
-               for other_id, relationship
-               in student_anon.relationships.items()
-               if relationship == FRIEND]
+    friends = [
+        get_real_student_name(student_key, other_id) for other_id, relationship
+        in student_anon.relationships.items() if relationship == FRIEND
+    ]
     return f'{student_name} => Friends ({", ".join(friends)})'
 
 
