@@ -1,11 +1,10 @@
 from typing import List
 
 from team_formation.app.team_generator.algorithm.algorithms import Algorithm
-from team_formation.app.team_generator.algorithm.consts import FRIEND
 from team_formation.app.team_generator.student import Student
 from team_formation.app.team_generator.team import Team
 from test_social.algorithm_state import AlgorithmState
-from test_social.mock_team_generation import KEY_FILE_PATH, load_json_data
+from test_social.encoder import Encoder
 
 
 class Logger:
@@ -24,12 +23,12 @@ class Logger:
             for student in team.students:
                 info = student.id
                 if self.real:
-                    info = get_student_from_key(student, with_friends)
+                    info = Encoder.get_student_from_key(student, with_friends)
                 print(f'\tStudent - {info}')
 
     def format_clique(self, clique: List[Student]):
         if self.real:
-            return [*map(get_student_from_key, clique)]
+            return [*map(Encoder.get_student_from_key, clique)]
         return [student.id for student in clique]
 
     def print_clique(self, clique: List[Student]):
@@ -40,23 +39,3 @@ class Logger:
 
     def print_cliques(self, cliques: List[List[Student]]):
         print(self.format_cliques(cliques))
-
-
-def get_student_from_key(student_anon: Student, with_friends: bool = False):
-    student_key = load_json_data(KEY_FILE_PATH)
-    student_name = get_real_student_name(student_key, student_anon.id)
-    if not with_friends:
-        return student_name
-
-    friends = [
-        get_real_student_name(student_key, other_id) for other_id, relationship
-        in student_anon.relationships.items() if relationship == FRIEND
-    ]
-    return f'{student_name} => Friends ({", ".join(friends)})'
-
-
-def get_real_student_name(student_key: dict, student_anon_id: int) -> str:
-    for real_id, student_info in student_key.items():
-        if student_info['anon_student_id'] == student_anon_id:
-            return student_info['real_name']
-    return f'Unknown Student ({student_anon_id})'

@@ -1,14 +1,12 @@
 import math
 from typing import List, Dict
 
-from team_formation.app.team_generator.algorithm import AlgorithmOptions
+from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions
 from team_formation.app.team_generator.algorithm.consts import FRIEND, ENEMY, DEFAULT
 from team_formation.app.team_generator.algorithm.social_algorithm.social_algorithm import SocialAlgorithm
 from team_formation.app.team_generator.student import Student
 from team_formation.app.team_generator.team_generator import TeamGenerationOption, TeamGenerator
-
-DATA_FILE_PATH = "test_social/mock_data/gen_group_set-20220331_141058.json"
-KEY_FILE_PATH = "test_social/mock_data/student_key-20220331_141058.json"
+from test_social.encoder import Encoder, load_json_data
 
 
 class MockData:
@@ -17,38 +15,45 @@ class MockData:
     the one outputted from `group_data_retrieval <COURSE_ID> <GEN_GROUP_SET_ID>`
     """
     _fake_data_dict = {}
+    _students = {}
     STUDENT_ROLE = 'Student'
     RELATIONSHIP_ATTRIBUTE_TYPE = 'Include Friends/Exclude Enemies'
     PROJECT_PREF_ATTRIBUTE_TYPE = 'Project Preference'
 
-    def __init__(self, file_path: str, total_teams: int):
-        self._fake_data_dict = load_json_data(file_path)
-        self.students = self.create_students()
+    def __init__(self, total_teams: int, file_path: str = None, students: List[Student] = None, team_options: [] = None):
+        if not students and not file_path:
+            raise Exception('One of "students" or "file_path" must be defined.')
+
+        if file_path:
+            self._fake_data_dict = load_json_data(file_path)
+
+        self.students = students if students else self.create_students()
         self.total_teams = total_teams
+        self.team_options = team_options if team_options else []
+
+    def get_students(self) -> List[Student]:
+        return self.students
 
     @property
     def num_students(self) -> int:
-        return len(self.students.values())
+        return len(self.students)
 
-    def get_team_generation_option(self):
+    def get_team_generation_option(self) -> TeamGenerationOption:
         team_generation_options = TeamGenerationOption(
             min_team_size=math.floor(self.num_students * 1.0 / self.total_teams),
             max_team_size=math.ceil(self.num_students * 1.0 / self.total_teams),
             total_teams=self.total_teams,
-            team_options=[]
+            team_options=self.team_options
         )
         return team_generation_options
 
-    def get_students(self) -> List[Student]:
-        return [*self.students.values()]
-
-    def create_students(self):
-        student_dict = self.create_student_objects()
+    def create_students(self) -> List[Student]:
+        self._students = self.create_student_objects()
         for student_id, student_responses in self._fake_data_dict['student_responses'].items():
             student_id = int(student_id)
             if not self.is_student(student_id):
                 continue
-            student = student_dict[student_id]
+            student = self._students[student_id]
             for attribute_id, response in student_responses.items():
                 attribute_id = int(attribute_id)
                 attribute_type = self.attribute_type(attribute_id)
@@ -58,13 +63,16 @@ class MockData:
                     self.save_relationships(student, attribute_id, response)
                     continue  # don't save relationships as a skill
                 student.skills.update({attribute_id: response})
-        return student_dict
+        return [*self._students.values()]
 
     def attribute_type(self, attribute_id: int) -> str:
         attribute_type = self._fake_data_dict['attribute_info'][f'{attribute_id}']['attr_type']
         return attribute_type
 
-    def get_relationship_value(self, attribute_id: int):
+    def get_relationship_value(self, attribute_id: int) -> float:
+        # TODO: remove, this is specific and depends on the data itself.
+        #  we should change this so that the data stores if the attribute is a friend or enemy and this method just
+        #  retrieves that and converts that into the corresponding float value
         if attribute_id == 74:
             return FRIEND
         if attribute_id == 75:
@@ -79,7 +87,11 @@ class MockData:
             student.relationships.update({other_id: relationship_value})
 
     def is_student(self, student_id: int) -> bool:
-        return self._fake_data_dict['student_info'][f'{student_id}']['role'] == MockData.STUDENT_ROLE
+        student_data = self._fake_data_dict['student_info'][f'{student_id}']
+        student_name = Encoder.get_real_student_name(Encoder.get_student_key(), student_id)
+        if student_name is None:
+            return False
+        return student_data['role'] == MockData.STUDENT_ROLE
 
     def create_student_objects(self) -> Dict[int, Student]:
         student_dict = {}
@@ -91,24 +103,10 @@ class MockData:
         return student_dict
 
 
-def load_json_data(file_path: str):
-    import json
-    with open(file_path) as json_data:
-        data = json.load(json_data)
-        return data
-
-
 def mock_generation(logger, data_file_path: str = None):
-    fake_data = MockData(data_file_path, 56)
+    fake_data = MockData(56, data_file_path)
     social_algorithm_options = AlgorithmOptions()
     social_algorithm = SocialAlgorithm(social_algorithm_options, logger)  # needs algo options
-    # team_generation_options = TeamGenerationOption(
-    #     min_team_size=2,
-    #     max_team_size=3,
-    #     total_teams=2,
-    #     team_options=[]
-    # )
-    # students = fake_custom_students()
     team_generation_options = fake_data.get_team_generation_option()
     students = fake_data.get_students()
     team_generator = TeamGenerator(students, social_algorithm, [], team_generation_options)
