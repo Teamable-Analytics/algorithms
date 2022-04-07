@@ -1,29 +1,8 @@
-"""
-Graph Representation:
-dict with tuple keys
-i.e. social_graph[(0, 1)] = FRIEND means that student 0 indicated friendship toward student 1
-
-for a bidirectional graph, both values would just be the same in either direction so it wouldn't matter which we started with
-
-when we reduce the social graph, edges are boolean values
-"""
 from itertools import combinations
 from typing import List, Set, Tuple
 
 from team_formation.app.team_generator.algorithm.social_algorithm.social_graph import SocialGraph
 from team_formation.app.team_generator.student import Student
-
-"""
-levelled subgraph structure:
-keys: int
-values: [int]
-
-i.e. the graph will implicitly be defined be a 'level' (like FF, FN, NN, etc) and student b's id is contained in 
-     student a's list if a has a connection of 'level' or stronger to student b
-     
-e.g. {1: [2, 3], 2: [1, 3], 3: [1, 2]} means student 1 has 'level' or stronger connection to students 2 and 3
-     these are undirected, so if student 2 is in student 1's list, the inverse must be true
-"""
 
 
 class CliqueFinder:
@@ -31,6 +10,7 @@ class CliqueFinder:
     Find all cliques of sizes [1...k] at once and store them in a hash table.
     When find_cliques(k) is called, calculate cliques of sizes [1...k] and save the results as you go
     """
+
     def __init__(self, students: List[Student], social_graph: SocialGraph):
         self._students = students
         self.social_graph = social_graph
