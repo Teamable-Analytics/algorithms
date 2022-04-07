@@ -1,5 +1,5 @@
-from algorithm.consts import LOW_WEIGHT, HIGH_WEIGHT
-from .social_network import SocialNetwork
+from team_formation.app.team_generator.algorithm.consts import LOW_WEIGHT, HIGH_WEIGHT
+from team_formation.app.team_generator.algorithm.utility.social_network import SocialNetwork
 
 
 def get_social_utility(team, student):

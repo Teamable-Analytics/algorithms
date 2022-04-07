@@ -3,11 +3,12 @@ import time
 
 from schema import Schema, SchemaError
 
-from .consts import FRIEND, DEFAULT, ENEMY
-from .utility import get_requirement_utility, get_social_utility, get_diversity_utility, get_preference_utility
-from student import Student
-from team import Team
-from teamset import PriorityTeamSet
+from team_formation.app.team_generator.algorithm.consts import FRIEND, DEFAULT, ENEMY
+from team_formation.app.team_generator.algorithm.utility import get_requirement_utility, get_social_utility, \
+    get_diversity_utility, get_preference_utility
+from team_formation.app.team_generator.student import Student
+from team_formation.app.team_generator.team import Team
+from team_formation.app.team_generator.teamset import PriorityTeamSet
 
 
 class AlgorithmException(Exception):
@@ -151,18 +152,21 @@ class Algorithm:
         algorithm options
     """
 
-    def __init__(self, options: AlgorithmOptions):
+    def __init__(self, options: AlgorithmOptions, logger=None):
         """
         Parameters
         ----------
         options: AlgorithmOptions
             algorithm options
+        logger: Logger
         """
         try:
             self.options = Schema(AlgorithmOptions).validate(options)
         except SchemaError as error:
             raise AlgorithmException(f'Error while initializing class: \n{error}')
         self.teams = []
+        self.logger = logger
+        self.stage = 1
 
     def generate(self, students, teams, team_generation_option) -> [Team]:
         raise NotImplementedError()
@@ -202,6 +206,25 @@ class Algorithm:
     def student_permitted_in_team(self, student: Student, team: Team) -> bool:
         """Can be overridden in Algorithms to support custom rules for whether a student can be added to a team"""
         return True
+
+    def save_students_to_team(self, team: Team, student_list: [Student]):
+        for student in student_list:
+            team.add_student(student)
+            student.add_team(team)
+        if self.logger:
+            self.logger.save_algorithm_state(self.teams, self)
+
+    def next_empty_team(self) -> Team:
+        for team in self.teams:
+            if team.size == 0:
+                return team
+
+    def has_empty_teams(self) -> bool:
+        next_empty_team = self.next_empty_team()
+        return bool(next_empty_team)
+
+    def increment_stage(self):
+        self.stage += 1
 
 
 class WeightAlgorithm(Algorithm):
@@ -365,6 +388,5 @@ def _generate_with_choose(algorithm, students, teams, team_generation_option) ->
         team, student = algorithm.choose(available_teams, remaining_students)
         if not team or not student:
             break
-        team.add_student(student)
-        student.add_team(team)
+        algorithm.save_students_to_team(team, [student])
     return teams

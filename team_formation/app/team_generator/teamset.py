@@ -1,7 +1,7 @@
 import copy
 import random
 
-from .team import Team
+from team_formation.app.team_generator.team import Team
 
 
 class PriorityTeamSet:

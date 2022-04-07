@@ -1,6 +1,6 @@
 from schema import Schema, SchemaError, Or
-from .student import Student
-from algorithm.consts import REQUIREMENT_TYPES
+from team_formation.app.team_generator.student import Student
+from team_formation.app.team_generator.algorithm.consts import REQUIREMENT_TYPES
 
 
 class TeamException(Exception):
@@ -231,3 +231,6 @@ class Team:
     def is_locked(self):
         """Whether or not team is locked"""
         return self._locked
+
+    def lock(self):
+        self._locked = True
