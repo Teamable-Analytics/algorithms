@@ -19,6 +19,8 @@ class SocialAlgorithm(Algorithm):
         self.teams = teams
         social_graph = SocialGraph(students, FRIEND * 2)
         self.clique_finder = CliqueFinder(students, social_graph)
+        # find all cliques of all sizes, so that they are cached for later
+        self.clique_finder.find_cliques_lte_size(team_generation_option.max_teams_size)
 
         # Step 1: Makes teams out of cliques of the correct team size
         clique_student_lists = self.find_clique_teams(students, team_generation_option.max_teams_size, clean=True)
