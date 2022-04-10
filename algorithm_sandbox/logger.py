@@ -25,6 +25,7 @@ class Logger:
         print(f'Number of teams: {len(teams)}')
         print(f'\tOverall Friend Satisfaction Score: {team_set_satisfaction_score(teams, friend=True)}')
         print(f'\tOverall Enemy Satisfaction Score: {team_set_satisfaction_score(teams, friend=False)}')
+        print(f'\tDuration: {self.end_time - self.start_time}')
         for team in teams:
             friend_score = team_satisfaction_score(team, friend=True)
             enemy_score = team_satisfaction_score(team, friend=False)
