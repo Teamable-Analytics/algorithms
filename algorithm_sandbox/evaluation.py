@@ -21,7 +21,7 @@ def team_satisfaction(team: Team, friend: bool = True) -> Tuple[float, int, int]
         relationship_ids = [s_id for s_id, relationship in student.relationships.items()
                             if relationship == relationship_filter
                             and s_id != student.id
-                            and s_id == UNREGISTERED_STUDENT_ID]
+                            and s_id != UNREGISTERED_STUDENT_ID]
 
         possible_pref_count += len(relationship_ids)
         satisfied_pref_count += len([s for s in relationship_ids if s in team_member_ids])
