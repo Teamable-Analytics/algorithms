@@ -44,7 +44,7 @@ class Logger:
             for other_id, relationship
             in student.relationships.items()
             if relationship == FRIEND and other_id != UNREGISTERED_STUDENT_ID and
-               (other_id in team_member_ids if team else True)
+               (other_id not in team_member_ids if team else True)
         ]
 
         enemies = [
