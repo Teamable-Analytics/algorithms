@@ -96,8 +96,7 @@ class SocialAlgorithm(Algorithm):
 
         best_student, score = None, float('-inf')
         for student in students:
-            # curr_score = team_suitability_score(smallest_team, [student])
-            curr_score = self._get_utility(smallest_team, [student)
+            curr_score = self._get_utility(smallest_team, student)
             if curr_score > score:
                 score = curr_score
                 best_student = student
