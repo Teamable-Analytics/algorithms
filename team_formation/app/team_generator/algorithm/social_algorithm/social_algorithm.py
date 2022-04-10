@@ -51,36 +51,19 @@ class SocialAlgorithm(Algorithm):
         self.increment_stage()
 
         # Step 3: fill fragments
-        # TODO: change so that we actually loop through biggest cliques remaining and add them to teams?
-        """
-        CASE:
-        Total teams = 5
-        Team size = 4
-        2 cliques of 4 are found and saved
-        4 cliques of 3 are found, only 3 of these are saved due to slots
-
-        Last clique of 3 is now forced to be broken up among the last three team slots
-        """
+        # Note: cliques are already in order of size descending when calling .find_lte_cliques()
         while self.get_remaining_students(students):
-            largest_fragment_team = self.get_largest_fragment_team(team_generation_option)
-            if largest_fragment_team is None:
-                break
-
-            while largest_fragment_team.size < team_generation_option.min_team_size:
-                # TODO: favour min or max team size here?
-                k = team_generation_option.min_team_size - largest_fragment_team.size
-                all_cliques = self.find_lte_cliques(students, k)
-                non_single_cliques = [clique for clique in all_cliques if len(clique) == 1]
-                if len(non_single_cliques) < len(all_cliques):
-                    # don't consider cliques of 1 unless there are only cliques of 1 returned
-                    all_cliques = non_single_cliques
-                self.add_best_clique_to_team(largest_fragment_team, all_cliques)
+            cliques = self.find_lte_cliques(students, team_generation_option.min_team_size)
+            if not cliques:
+                break  # TODO: should be impossible though
+            largest_clique = cliques[0]
+            self.add_clique_to_best_team(largest_clique, team_generation_option)
 
         self.increment_stage()
 
-        # Step 4: place last students in the team best for them
-        if self.get_remaining_students(students):
-            _generate_with_choose(self, students, self.teams, team_generation_option)
+        # # Step 4: place last students in the team best for them
+        # if self.get_remaining_students(students):
+        #     _generate_with_choose(self, students, self.teams, team_generation_option)
 
         # TODO: what happens if people are still without teams now? Largely due to the locking enforced by this alg
 
@@ -179,6 +162,23 @@ class SocialAlgorithm(Algorithm):
                 best_clique = clique
                 best_clique_score = score
         return best_clique
+
+    def add_clique_to_best_team(self, clique: List[Student], team_generation_option) -> bool:
+        best_team = self.best_team_for_clique(clique, team_generation_option)
+        if not best_team:
+            return False
+
+        self.save_students_to_team(best_team, clique)
+        return True
+
+    def best_team_for_clique(self, clique: List[Student], team_generation_option) -> Team:
+        best_team, best_team_score = None, float('-inf')
+        for team in self.get_available_teams(self.teams, team_generation_option):
+            score = self.team_suitability_score(team, clique)
+            if score > best_team_score:
+                best_team = team
+                best_team_score = score
+        return best_team
 
     def _clique_is_valid(self, clique: List[Student]) -> bool:
         """
