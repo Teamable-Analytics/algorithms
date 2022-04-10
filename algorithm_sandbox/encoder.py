@@ -30,7 +30,13 @@ class Encoder:
         return student_key
 
 
-def load_json_data(file_path: str):
+def load_json_data(file_path: str) -> Dict:
+    """
+    A helper method to convert .json file paths into python dictionaries
+    """
+    if not file_path.endswith('.json'):
+        raise Exception('File path does not end with .json, so it cannot be loaded as such.')
+
     import json
     with open(file_path) as json_data:
         data = json.load(json_data)
