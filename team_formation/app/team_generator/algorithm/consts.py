@@ -6,6 +6,9 @@ HIGH_WEIGHT = 10
 LOW_WEIGHT = 1
 
 
+UNREGISTERED_STUDENT_ID = -1
+
+
 class REQUIREMENT_TYPES:
     EXACTLY = 'exactly'
     LESS_THAN = 'less than'

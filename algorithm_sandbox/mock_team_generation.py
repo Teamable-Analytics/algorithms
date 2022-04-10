@@ -6,7 +6,7 @@ from team_formation.app.team_generator.algorithm.consts import FRIEND, ENEMY, DE
 from team_formation.app.team_generator.algorithm.social_algorithm.social_algorithm import SocialAlgorithm
 from team_formation.app.team_generator.student import Student
 from team_formation.app.team_generator.team_generator import TeamGenerationOption, TeamGenerator
-from test_social.encoder import Encoder, load_json_data
+from algorithm_sandbox.encoder import Encoder, load_json_data
 
 
 class MockData:
@@ -88,7 +88,7 @@ class MockData:
 
     def is_student(self, student_id: int) -> bool:
         student_data = self._fake_data_dict['student_info'][f'{student_id}']
-        student_name = Encoder.get_real_student_name(Encoder.get_student_key(), student_id)
+        student_name = Encoder.get_student_name_by_id(Encoder.get_student_key(), student_id)
         if student_name is None:
             return False
         return student_data['role'] == MockData.STUDENT_ROLE

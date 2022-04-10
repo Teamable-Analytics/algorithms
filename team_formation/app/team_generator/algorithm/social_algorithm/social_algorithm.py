@@ -51,16 +51,6 @@ class SocialAlgorithm(Algorithm):
         self.increment_stage()
 
         # Step 3: fill fragments
-        # TODO: change so that we actually loop through biggest cliques remaining and add them to teams?
-        """
-        CASE:
-        Total teams = 5
-        Team size = 4
-        2 cliques of 4 are found and saved
-        4 cliques of 3 are found, only 3 of these are saved due to slots
-
-        Last clique of 3 is now forced to be broken up among the last three team slots
-        """
         while self.get_remaining_students(students):
             largest_fragment_team = self.get_largest_fragment_team(team_generation_option)
             if largest_fragment_team is None:
