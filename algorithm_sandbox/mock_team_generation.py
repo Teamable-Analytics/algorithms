@@ -70,7 +70,7 @@ class MockData:
         return attribute_type
 
     def get_relationship_value(self, attribute_id: int) -> float:
-        # TODO: remove, this is specific and depends on the data itself.
+        # TODO: update, this is specific and depends on the data itself.
         #  we should change this so that the data stores if the attribute is a friend or enemy and this method just
         #  retrieves that and converts that into the corresponding float value
         if attribute_id == 74:
