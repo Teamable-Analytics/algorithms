@@ -43,16 +43,18 @@ class Logger:
             Encoder.get_student_name_by_id(student_key, other_id)
             for other_id, relationship
             in student.relationships.items()
-            if relationship == FRIEND and other_id != UNREGISTERED_STUDENT_ID and
-               (other_id not in team_member_ids if team else True)
+            if relationship == FRIEND
+            and other_id != UNREGISTERED_STUDENT_ID
+            and (other_id not in team_member_ids if team else True)
         ]
 
         enemies = [
             Encoder.get_student_name_by_id(student_key, other_id)
             for other_id, relationship
             in student.relationships.items()
-            if relationship == ENEMY and other_id != UNREGISTERED_STUDENT_ID and
-               (other_id in team_member_ids if team else True)
+            if relationship == ENEMY
+            and other_id != UNREGISTERED_STUDENT_ID
+            and (other_id in team_member_ids if team else True)
         ]
 
         output = f'{student_name}'
