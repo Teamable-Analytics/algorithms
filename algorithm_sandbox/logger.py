@@ -4,8 +4,8 @@ from typing import List
 from team_formation.app.team_generator.algorithm.algorithms import Algorithm
 from team_formation.app.team_generator.student import Student
 from team_formation.app.team_generator.team import Team
-from test_social.algorithm_state import AlgorithmState
-from test_social.encoder import Encoder
+from algorithm_sandbox.algorithm_state import AlgorithmState
+from algorithm_sandbox.encoder import Encoder
 
 
 class Logger:

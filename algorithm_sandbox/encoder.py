@@ -1,8 +1,8 @@
 from team_formation.app.team_generator.algorithm.consts import FRIEND
 from team_formation.app.team_generator.student import Student
 
-DATA_FILE_PATH = "test_social/mock_data/gen_group_set-20220331_141058.json"
-KEY_FILE_PATH = "test_social/mock_data/student_key-20220331_141058.json"
+DATA_FILE_PATH = "algorithm_sandbox/mock_data/gen_group_set-20220331_141058.json"
+KEY_FILE_PATH = "algorithm_sandbox/mock_data/student_key-20220331_141058.json"
 
 
 class Encoder:
