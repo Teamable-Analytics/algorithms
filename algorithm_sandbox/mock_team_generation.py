@@ -88,7 +88,7 @@ class MockData:
 
     def is_student(self, student_id: int) -> bool:
         student_data = self._fake_data_dict['student_info'][f'{student_id}']
-        student_name = Encoder.get_real_student_name(Encoder.get_student_key(), student_id)
+        student_name = Encoder.get_student_name_by_id(Encoder.get_student_key(), student_id)
         if student_name is None:
             return False
         return student_data['role'] == MockData.STUDENT_ROLE
