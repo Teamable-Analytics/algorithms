@@ -8,7 +8,7 @@ from algorithm_sandbox.mock_team_generation import mock_generation
 
 if __name__ == '__main__':
     logger = Logger(real=True)
-    teams = mock_generation(logger, 55, DATA_FILE_PATH)
+    teams = mock_generation(SocialAlgorithm, logger, 55, DATA_FILE_PATH)
     logger.end()
     logger.print_teams(teams, with_relationships=True, only_unmet=True)
 
