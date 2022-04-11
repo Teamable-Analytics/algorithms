@@ -103,7 +103,7 @@ class MockData:
         return student_dict
 
 
-def mock_generation(logger, num_teams: int, data_file_path: str = None):
+def mock_generation(alg, logger, num_teams: int, data_file_path: str = None, initial_teams: [] = None):
     fake_data = MockData(num_teams, data_file_path)
     social_algorithm_options = AlgorithmOptions(
         max_project_preferences=3,
@@ -111,10 +111,11 @@ def mock_generation(logger, num_teams: int, data_file_path: str = None):
         whitelist_behaviour=AlgorithmOptions.BEHAVIOUR_OPTIONS['ENFORCE']
     )
     # TODO: needs completing
-    social_algorithm = SocialAlgorithm(social_algorithm_options, logger)  # needs algo options
+    social_algorithm = alg(social_algorithm_options, logger)  # needs algo options
     team_generation_options = fake_data.get_team_generation_option()
     students = fake_data.get_students()
-    team_generator = TeamGenerator(students, social_algorithm, [], team_generation_options)
+    initial_teams = initial_teams if initial_teams else []
+    team_generator = TeamGenerator(students, social_algorithm, initial_teams, team_generation_options)
 
     return team_generator.generate()
 
