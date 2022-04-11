@@ -70,7 +70,7 @@ class MockData:
         return attribute_type
 
     def get_relationship_value(self, attribute_id: int) -> float:
-        # TODO: remove, this is specific and depends on the data itself.
+        # TODO: update, this is specific and depends on the data itself.
         #  we should change this so that the data stores if the attribute is a friend or enemy and this method just
         #  retrieves that and converts that into the corresponding float value
         if attribute_id == 74:
@@ -103,13 +103,19 @@ class MockData:
         return student_dict
 
 
-def mock_generation(logger, num_teams: int, data_file_path: str = None):
+def mock_generation(alg, logger, num_teams: int, data_file_path: str = None, initial_teams: [] = None):
     fake_data = MockData(num_teams, data_file_path)
-    social_algorithm_options = AlgorithmOptions()
-    social_algorithm = SocialAlgorithm(social_algorithm_options, logger)  # needs algo options
+    social_algorithm_options = AlgorithmOptions(
+        max_project_preferences=3,
+        blacklist_behaviour=AlgorithmOptions.BEHAVIOUR_OPTIONS['ENFORCE'],
+        whitelist_behaviour=AlgorithmOptions.BEHAVIOUR_OPTIONS['ENFORCE']
+    )
+    # TODO: needs completing
+    social_algorithm = alg(social_algorithm_options, logger)  # needs algo options
     team_generation_options = fake_data.get_team_generation_option()
     students = fake_data.get_students()
-    team_generator = TeamGenerator(students, social_algorithm, [], team_generation_options)
+    initial_teams = initial_teams if initial_teams else []
+    team_generator = TeamGenerator(students, social_algorithm, initial_teams, team_generation_options)
 
     return team_generator.generate()
 

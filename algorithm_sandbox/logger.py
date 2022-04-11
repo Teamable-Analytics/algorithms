@@ -25,6 +25,7 @@ class Logger:
         print(f'Number of teams: {len(teams)}')
         print(f'\tOverall Friend Satisfaction Score: {team_set_satisfaction_score(teams, friend=True)}')
         print(f'\tOverall Enemy Satisfaction Score: {team_set_satisfaction_score(teams, friend=False)}')
+        print(f'\tDuration: {self.end_time - self.start_time}')
         for team in teams:
             friend_score = team_satisfaction_score(team, friend=True)
             enemy_score = team_satisfaction_score(team, friend=False)
@@ -43,16 +44,18 @@ class Logger:
             Encoder.get_student_name_by_id(student_key, other_id)
             for other_id, relationship
             in student.relationships.items()
-            if relationship == FRIEND and other_id != UNREGISTERED_STUDENT_ID and
-               (other_id not in team_member_ids if team else True)
+            if relationship == FRIEND
+            and other_id != UNREGISTERED_STUDENT_ID
+            and (other_id not in team_member_ids if team else True)
         ]
 
         enemies = [
             Encoder.get_student_name_by_id(student_key, other_id)
             for other_id, relationship
             in student.relationships.items()
-            if relationship == ENEMY and other_id != UNREGISTERED_STUDENT_ID and
-               (other_id in team_member_ids if team else True)
+            if relationship == ENEMY
+            and other_id != UNREGISTERED_STUDENT_ID
+            and (other_id in team_member_ids if team else True)
         ]
 
         output = f'{student_name}'
