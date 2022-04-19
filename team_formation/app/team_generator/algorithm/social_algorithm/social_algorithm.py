@@ -16,8 +16,10 @@ class SocialAlgorithm(Algorithm):
         self.clique_finder = None
 
     def generate(self, students: [Student], teams: [Team], team_generation_option) -> [Team]:
-        # TODO: accounting for locked/pre-set teams is a whole fiesta
+        # TODO: should work with preset teams, but check this behaviour
         self.teams = teams
+        # TODO: this level should be more inclusive if we are regenerating, it's unlikely people give even their friends
+        #  a perfect peer evaluation
         social_graph = SocialGraph(students, FRIEND * 2)
         self.clique_finder = CliqueFinder(students, social_graph)
         # find all cliques of all sizes, so that they are cached for later
