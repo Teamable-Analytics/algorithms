@@ -16,6 +16,10 @@ class Logger:
         self.algorithm_states: List[AlgorithmState] = []
         self.start_time = time.time()
         self.end_time = None
+        self.students = None
+
+    def save_students(self, students: List[Student]):
+        self.students = students
 
     def save_algorithm_state(self, teams: List[Team], algorithm: Algorithm):
         non_empty_teams = [team for team in teams if team.size > 0]
