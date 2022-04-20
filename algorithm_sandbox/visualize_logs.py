@@ -4,7 +4,7 @@ class VisualizeLogs:
   def __init__(self, logger: Logger):
     self.logger = logger
     self.state_index = 0
-    self.algorithm_states = [*range(0, 100)]
+    self.algorithm_states = self.logger.algorithm_states
     self.current_algorithm_states = self.algorithm_states[self.state_index]
 
   def next(self):

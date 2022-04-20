@@ -2,6 +2,11 @@ from dash import Dash, html, dcc, callback_context
 from dash.dependencies import Input, Output
 import visdcc
 
+from visualize_logs import VisualizeLogs
+from node import Node
+from edge import Edge
+from graph import Graph
+
 def vis(graph, logs):
     
     app = Dash(__name__)
@@ -173,3 +178,36 @@ def vis(graph, logs):
     app.run_server(dev_tools_ui=True,
           dev_tools_hot_reload =True, threaded=True)
     
+if __name__ == '__main__':
+    
+    logs = VisualizeLogs()
+    graph = Graph()
+    
+    node_a = Node(123)
+    node_b = Node(456)
+    node_c = Node(789)
+    node_d = Node(101)
+    node_e = Node(121)
+    # add the nodes to the digraph instance
+    graph.add_node(node_a)
+    graph.add_node(node_b)
+    graph.add_node(node_c)
+    graph.add_node(node_d)
+    graph.add_node(node_e)
+
+    # Next create the edges 
+    edge_ab = Edge(123, 456, 1)
+    edge_ac = Edge(123, 789, 1)
+    edge_bd = Edge(456, 101, 1)
+    edge_cd = Edge(789, 101, -1)
+    edge_ce = Edge(789, 121, -1)
+    edge_de = Edge(101, 121, -1)    
+    # then we add the directed edges
+    graph.add_edge(edge_ab)
+    graph.add_edge(edge_ac)
+    graph.add_edge(edge_bd)
+    graph.add_edge(edge_cd)
+    graph.add_edge(edge_ce)
+    graph.add_edge(edge_de)
+    
+    vis(graph, logs)
