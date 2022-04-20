@@ -109,6 +109,7 @@ def mock_generation(logger, num_teams: int, data_file_path: str = None):
     social_algorithm = SocialAlgorithm(social_algorithm_options, logger)  # needs algo options
     team_generation_options = fake_data.get_team_generation_option()
     students = fake_data.get_students()
+    logger.save_students(students)
     team_generator = TeamGenerator(students, social_algorithm, [], team_generation_options)
 
     return team_generator.generate()
