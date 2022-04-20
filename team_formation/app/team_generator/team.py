@@ -73,6 +73,7 @@ class Team:
         self.students = students or []
         self.requirements = requirements or []
         self._locked = locked
+        self.is_clique = False
         self.validate()
 
     def validate(self):
@@ -231,6 +232,9 @@ class Team:
     def is_locked(self):
         """Whether or not team is locked"""
         return self._locked
+
+    def set_clique(self):
+        self.is_clique = True
 
     def lock(self):
         self._locked = True
