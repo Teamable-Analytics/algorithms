@@ -62,7 +62,7 @@ class MockData:
                 if attribute_type == self.RELATIONSHIP_ATTRIBUTE_TYPE:
                     self.save_relationships(student, attribute_id, response)
                     continue  # don't save relationships as a skill
-                student.skills.update({attribute_id: response})
+                student.skills.update({attribute_id: response or []})
         return [*self._students.values()]
 
     def attribute_type(self, attribute_id: int) -> str:
@@ -103,14 +103,14 @@ class MockData:
         return student_dict
 
 
-def mock_generation(logger, num_teams: int, data_file_path: str = None):
+def mock_generation(alg, alg_options, logger, num_teams: int, data_file_path: str = None):
     fake_data = MockData(num_teams, data_file_path)
-    social_algorithm_options = AlgorithmOptions()
-    social_algorithm = SocialAlgorithm(social_algorithm_options, logger)  # needs algo options
+    algorithm_options = alg_options
+    algorithm = alg(algorithm_options, logger)  # needs algo options
     team_generation_options = fake_data.get_team_generation_option()
     students = fake_data.get_students()
     logger.save_students(students)
-    team_generator = TeamGenerator(students, social_algorithm, [], team_generation_options)
+    team_generator = TeamGenerator(students, algorithm, [], team_generation_options)
 
     return team_generator.generate()
 

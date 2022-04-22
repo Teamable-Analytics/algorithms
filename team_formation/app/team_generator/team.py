@@ -1,3 +1,5 @@
+import copy
+from typing import List
 from schema import Schema, SchemaError, Or
 from team_formation.app.team_generator.student import Student
 from team_formation.app.team_generator.algorithm.consts import REQUIREMENT_TYPES
@@ -38,7 +40,7 @@ class Team:
         whether or not the team can be modified
     """
 
-    students = []
+    students: List[Student] = []
 
     def __init__(self, id: str, project_id: int, name: str, students: list = None, requirements: list = None, locked: bool = False):
         """
@@ -209,6 +211,7 @@ class Team:
         """
         if self.is_locked:
             return False
+        student.team = None
         self.students.remove(student)
         return True
 
@@ -221,6 +224,20 @@ class Team:
             list of Student objects
         """
         return [student for student in self.students]
+
+    def clone(self) -> 'Team':
+        students = [copy.deepcopy(student) for student in self.students]
+        new_team = Team(
+            id=self.id,
+            project_id=self.project_id,
+            name=self.name,
+            students=students,
+            requirements=self.requirements,
+            locked=self._locked
+        )
+        for student in new_team.students:
+            student.team = new_team
+        return new_team
 
     @property
     def size(self):
