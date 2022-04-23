@@ -1,5 +1,5 @@
 import random
-import time
+from typing import List, Tuple
 
 from schema import Schema, SchemaError
 
@@ -8,7 +8,6 @@ from team_formation.app.team_generator.algorithm.utility import get_requirement_
     get_diversity_utility, get_preference_utility
 from team_formation.app.team_generator.student import Student
 from team_formation.app.team_generator.team import Team
-from team_formation.app.team_generator.teamset import PriorityTeamSet
 
 
 class AlgorithmException(Exception):
@@ -51,8 +50,9 @@ class AlgorithmOptions:
 
     def __init__(self, requirement_weight: int = None, social_weight: int = None, diversity_weight: int = None,
                  preference_weight: int = None, max_project_preferences: int = None, blacklist_behaviour: str = None,
-                 whitelist_behaviour: str = None, diversify_options: [dict] = None, concentrate_options: [dict] = None,
-                 priorities: [dict] = None):
+                 whitelist_behaviour: str = None, diversify_options: List[dict] = None,
+                 concentrate_options: List[dict] = None,
+                 priorities: List[dict] = None):
         self.diversity_weight = diversity_weight
         self.preference_weight = preference_weight
         self.requirement_weight = requirement_weight
@@ -66,8 +66,8 @@ class AlgorithmOptions:
         self.diversify_options = diversify_options or []
         self.concentrate_options = concentrate_options or []
 
-        # TODO: sort priorities by 'order' and remove 'order' from object
         self.priorities = priorities or []
+        self.priorities = sorted(self.priorities, key=lambda priority: priority['order'])
         self.validate()
 
     def validate(self):
@@ -92,22 +92,14 @@ class AlgorithmOptions:
             raise AlgorithmException('Invalid format for concentrate/diversify options', se)
 
         # Validate Priorities
-        priorities_schema = Schema([{'order': int, 'type': str, 'id': int, 'max_of': int, 'min_of': int, 'value': int}])
-
-        def conf_inner(d):
-            if d['max_of'] != -1 and d['min_of'] != -1:
-                raise AlgorithmException('Only one of "max_of, min_of" in each "priority option" can be set.')
-            if d['value'] == -1 and (d['max_of'] != -1 or d['min_of'] != -1):
-                raise AlgorithmException('One or more of "max_of", "min_of" is given while "value" is not.')
+        priorities_schema = Schema([{'order': int, 'constraint': str, 'skill_id': int, 'limit_option': str, 'limit': int, 'value': int}])
 
         try:
             priorities_schema.validate(self.priorities)
-            for priority in self.priorities:
-                conf_inner(priority)
         except SchemaError as se:
             raise AlgorithmException('Invalid format for "priorities"', se)
 
-    def get_adjusted_relationships(self) -> (dict, bool):
+    def get_adjusted_relationships(self) -> Tuple[dict, bool]:
         """
         Computes the adjusted relationships based on the whitelist and blacklist behaviours.
 
@@ -168,20 +160,20 @@ class Algorithm:
         self.logger = logger
         self.stage = 1
 
-    def generate(self, students, teams, team_generation_option) -> [Team]:
+    def generate(self, students, teams, team_generation_option) -> List[Team]:
         raise NotImplementedError()
 
-    def get_remaining_students(self, all_students: [Student]) -> [Student]:
+    def get_remaining_students(self, all_students: List[Student]) -> List[Student]:
         return [student for student in all_students if not student.is_added()]
 
-    def get_available_teams(self, all_teams: [Team], team_generation_option, student: Student = None) -> [Team]:
+    def get_available_teams(self, all_teams: List[Team], team_generation_option, student: Student = None) -> List[Team]:
         """
         Returns a list of teams available to be joined by a student. If a specific Student is provided, only returns
         teams that that specific student is able to join.
 
         Parameters
         ----------
-        all_teams: [Team]
+        all_teams: List[Team]
             algorithm options
         team_generation_option: TeamGenerationOption
             team generation option
@@ -190,7 +182,7 @@ class Algorithm:
 
         Returns
         -------
-        [Team]
+        List[Team]
             The available teams
         """
         available_teams = []
@@ -207,12 +199,10 @@ class Algorithm:
         """Can be overridden in Algorithms to support custom rules for whether a student can be added to a team"""
         return True
 
-    def save_students_to_team(self, team: Team, student_list: [Student]):
+    def save_students_to_team(self, team: Team, student_list: List[Student]):
         for student in student_list:
             team.add_student(student)
             student.add_team(team)
-        if self.logger:
-            self.logger.save_algorithm_state(self.teams, self)
 
     def next_empty_team(self) -> Team:
         for team in self.teams:
@@ -238,7 +228,7 @@ class WeightAlgorithm(Algorithm):
         choose the smallest team and the student that has the highest utility for that team
     """
 
-    def generate(self, students, teams, team_generation_option) -> [Team]:
+    def generate(self, students, teams, team_generation_option) -> List[Team]:
         return _generate_with_choose(self, students, teams, team_generation_option)
 
     def choose(self, teams, students):
@@ -314,7 +304,7 @@ class RandomAlgorithm(Algorithm):
         choose a random team and a random student
     """
 
-    def generate(self, students, teams, team_generation_option) -> [Team]:
+    def generate(self, students, teams, team_generation_option) -> List[Team]:
         return _generate_with_choose(self, students, teams, team_generation_option)
 
     def choose(self, teams, students):
@@ -340,48 +330,7 @@ class RandomAlgorithm(Algorithm):
         return smallest_team, random_student
 
 
-class PriorityAlgorithm(WeightAlgorithm):
-    NUM_KEPT_TEAM_SETS = 3
-    MAX_TIME = 30  # seconds
-
-    def __init__(self, options: AlgorithmOptions):
-        super(PriorityAlgorithm, self).__init__(options)
-        self.set_default_weights()  # TODO: remove once weights are entered in the UI instead
-
-    def generate(self, students, teams, team_generation_option) -> [Team]:
-        start_time = time.time()
-        team_sets = [self.generate_initial_teams(students, teams, team_generation_option)]
-
-        while (time.time() - start_time) < self.MAX_TIME:
-            new_team_sets = []
-            for team_set in team_sets:
-                new_team_sets = new_team_sets + self.mutate(team_set)
-
-            team_sets = team_sets + new_team_sets
-            team_sets.sort(reverse=True)
-            team_sets = team_sets[:self.NUM_KEPT_TEAM_SETS]
-
-        return team_sets[0].teams
-
-    def generate_initial_teams(self, students, teams, team_generation_option) -> PriorityTeamSet:
-        initial_teams = super(PriorityAlgorithm, self).generate(students, teams, team_generation_option)
-        priorities = self.options.priorities
-        return PriorityTeamSet(teams=initial_teams, priorities=priorities)
-
-    def mutate(self, teamset: PriorityTeamSet) -> [PriorityTeamSet]:
-        # TODO: complete mutation technique implementation. Decide number of teams to create by mutation and hor.
-        cloned_teamset = teamset.clone()
-        return [cloned_teamset]
-
-    def set_default_weights(self):
-        # TODO: let the user enter these in the UI
-        self.options.social_weight = 1
-        self.options.diversity_weight = 1
-        self.options.requirement_weight = 1
-        self.options.preference_weight = 1
-
-
-def _generate_with_choose(algorithm, students, teams, team_generation_option) -> [Team]:
+def _generate_with_choose(algorithm, students, teams, team_generation_option) -> List[Team]:
     while True:
         available_teams = algorithm.get_available_teams(teams, team_generation_option)
         remaining_students = algorithm.get_remaining_students(students)
