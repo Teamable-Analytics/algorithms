@@ -77,17 +77,14 @@ class PriorityAlgorithm(WeightAlgorithm):
             for team_set in team_sets:
                 new_team_sets += self.mutate(team_set)
             team_sets = new_team_sets + team_sets
-            # TODO: explicitly sort them (but is this faster than pri queue approach?)
             team_sets = sorted(team_sets, key=lambda ts: ts.calculate_score(self.priorities, self.student_dict), reverse=True)
-            # TODO: then slice to MAX_KEEP
-            # team_sets = nlargest(self.MAX_KEEP, team_sets)
             team_sets = team_sets[:self.MAX_KEEP]
-            # print(f'Iteration: {iteration} | {[team_set.score for team_set in team_sets]}')
+            print(f'Iteration: {iteration} | {[team_set.score for team_set in team_sets]}')
             iteration += 1
 
-        print(iteration)
+        print(f'Total iterations: {iteration}')
+        print(f'Scores: {[team_set.score for team_set in team_sets]}')
         return self.save_team_compositions_to_teams(team_sets[0])
-        # return heappop(team_sets).teams  # TODO: grab index 0
 
     def save_team_compositions_to_teams(self, priority_team_set: PriorityTeamSet) -> List[Team]:
         teams: List[Team] = []
