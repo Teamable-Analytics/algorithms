@@ -1,9 +1,11 @@
 import time
 from heapq import heappop, nlargest
+from typing import Dict
 
 from team_formation.app.team_generator.algorithm.algorithms import *
 from team_formation.app.team_generator.algorithm.priority_algorithm.priority import Priority
-from team_formation.app.team_generator.algorithm.priority_algorithm.priority_teamset import PriorityTeamSet
+from team_formation.app.team_generator.algorithm.priority_algorithm.priority_teamset import PriorityTeamSet, \
+    PriorityTeam
 from team_formation.app.team_generator.team_generator import TeamGenerationOption
 
 
@@ -15,11 +17,22 @@ class PriorityAlgorithm(WeightAlgorithm):
     MAX_ITERATE: int = 1500  # times
     MAX_TIME: int = 30  # seconds
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.student_dict: Dict[int, Student] = {}
+        self.priorities: List[Priority] = []
+
     def set_default_weights(self):
         self.options.diversity_weight = 1
         self.options.preference_weight = 1
         self.options.requirement_weight = 1
         self.options.social_weight = 1
+
+    def create_student_dict(self, students: List[Student]) -> Dict[int, Student]:
+        student_dict = {}
+        for student in students:
+            student_dict[student.id] = student
+        return student_dict
 
     def create_priority_objects(self) -> List[Priority]:
         priorities = []
@@ -38,15 +51,23 @@ class PriorityAlgorithm(WeightAlgorithm):
     def generate_initial_teams(self, students: List[Student], teams: List[Team],
                                team_generation_option: TeamGenerationOption) -> PriorityTeamSet:
         self.set_default_weights()
-        priorities = self.create_priority_objects()
         initial_teams = super().generate(students, teams, team_generation_option)
-        return PriorityTeamSet(teams=initial_teams, priorities=priorities)
+        priority_teams: List[PriorityTeam] = []
+        for team in initial_teams:
+            priority_team = PriorityTeam(
+                team=team,
+                student_ids=[student.id for student in team.students]
+            )
+            priority_teams.append(priority_team)
+        return PriorityTeamSet(priority_teams=priority_teams)
 
     def generate(self, students: List[Student], teams: List[Team],
                  team_generation_option: TeamGenerationOption) -> List[Team]:
         """
         Generate teams using a priority algorithm.
         """
+        self.student_dict = self.create_student_dict(students)
+        self.priorities = self.create_priority_objects()
         start_time = time.time()
         iteration = 0
         team_sets = [self.generate_initial_teams(students, teams, team_generation_option)]
@@ -56,23 +77,38 @@ class PriorityAlgorithm(WeightAlgorithm):
             for team_set in team_sets:
                 new_team_sets += self.mutate(team_set)
             team_sets = new_team_sets + team_sets
-            team_sets = nlargest(self.MAX_KEEP, team_sets)
-            print([team_set.score for team_set in team_sets])
+            # TODO: explicitly sort them (but is this faster than pri queue approach?)
+            team_sets = sorted(team_sets, key=lambda ts: ts.calculate_score(self.priorities, self.student_dict), reverse=True)
+            # TODO: then slice to MAX_KEEP
+            # team_sets = nlargest(self.MAX_KEEP, team_sets)
+            team_sets = team_sets[:self.MAX_KEEP]
+            # print(f'Iteration: {iteration} | {[team_set.score for team_set in team_sets]}')
             iteration += 1
 
-        return heappop(team_sets).teams
+        print(iteration)
+        return self.save_team_compositions_to_teams(team_sets[0])
+        # return heappop(team_sets).teams  # TODO: grab index 0
+
+    def save_team_compositions_to_teams(self, priority_team_set: PriorityTeamSet) -> List[Team]:
+        teams: List[Team] = []
+        for priority_team in priority_team_set.priority_teams:
+            students = [self.student_dict[student_id] for student_id in priority_team.student_ids]
+            self.save_students_to_team(priority_team.team, students)
+            teams.append(priority_team.team)
+        return teams
 
     def mutate_team_random(self, team_set: PriorityTeamSet) -> PriorityTeamSet:
         """
         Note, both teams must not be empty
         Actually modifies the team_set passed
         """
-        available_teams = [team for team in team_set.teams if not team.is_locked]
+        available_priority_teams = [priority_team for priority_team in team_set.priority_teams
+                           if not priority_team.team.is_locked]
         try:
-            team1, team2 = random.sample(available_teams, 2)
-            student_team1 = random.choice(team1.students)
-            student_team2 = random.choice(team2.students)
-            self.swap_student_between_teams(student_team1, student_team2)
+            team1, team2 = random.sample(available_priority_teams, 2)
+            student_1_id: int = random.choice(team1.student_ids)
+            student_2_id: int = random.choice(team2.student_ids)
+            self.swap_student_between_teams(team1, student_1_id, team2, student_2_id)
         except ValueError:
             return team_set
         return team_set
@@ -84,13 +120,10 @@ class PriorityAlgorithm(WeightAlgorithm):
         cloned_team_sets = [team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)]
         return [self.mutate_team_random(cloned_team_set) for cloned_team_set in cloned_team_sets]
 
-    def swap_student_between_teams(self, student_1: Student, student_2: Student):
-        student_1_team = student_1.team
-        student_2_team = student_2.team
-        student_1.team.remove_student(student_1)
-        student_2.team.remove_student(student_2)
+    def swap_student_between_teams(self, team1: PriorityTeam, student_1_id: int, team2: PriorityTeam, student_2_id: int):
+        team1.student_ids.remove(student_1_id)
+        team1.student_ids.append(student_2_id)
 
-        student_1_team.add_student(student_2)
-        student_2.add_team(student_1_team)
-        student_2_team.add_student(student_1)
-        student_1.add_team(student_2_team)
+        team2.student_ids.remove(student_2_id)
+        team2.student_ids.append(student_1_id)
+
