@@ -1,9 +1,9 @@
 import time
-from typing import List
+from typing import List, Dict, Tuple
 
 from algorithm_sandbox.algorithm_state import AlgorithmState
 from algorithm_sandbox.encoder import Encoder
-from algorithm_sandbox.evaluation import team_satisfaction_score, team_set_satisfaction_score
+from algorithm_sandbox.evaluation import TeamEvaluation
 from team_formation.app.team_generator.algorithm.algorithms import Algorithm
 from team_formation.app.team_generator.algorithm.consts import ENEMY, UNREGISTERED_STUDENT_ID, FRIEND
 from team_formation.app.team_generator.student import Student
@@ -25,13 +25,31 @@ class Logger:
         non_empty_teams = [team for team in teams if team.size > 0]
         self.algorithm_states.append(AlgorithmState(non_empty_teams, algorithm.stage))
 
+    def print_metrics_bar(self, evaluation_metrics: Tuple[int, int, int, int]):
+        satisfied, reach, missed, possible = evaluation_metrics
+        bar_length = 50
+
+        def standardize(value) -> int:
+            return round((float(value) / possible) * bar_length)
+        symbol_frequencies = {
+            '▓': standardize(satisfied),
+            '▒‍': standardize(missed),
+            '░': standardize(reach)
+        }
+        print_symbols(symbol_frequencies)
+
     def print_teams(self, teams: List[Team], with_relationships: bool = False, only_unmet: bool = False):
+        team_evaluation = TeamEvaluation(teams)
         print(f'Number of teams: {len(teams)}')
-        print(f'\tOverall Friend Satisfaction Score: {team_set_satisfaction_score(teams, friend=True)}')
-        print(f'\tOverall Enemy Satisfaction Score: {team_set_satisfaction_score(teams, friend=False)}')
+        print('\t(F)\t', end='')
+        self.print_metrics_bar(team_evaluation.team_set_satisfaction_metrics(True))
+        print('\t(E)\t', end='')
+        self.print_metrics_bar(team_evaluation.team_set_satisfaction_metrics(False))
+        print(f'\tOverall Friend Satisfaction Score: {team_evaluation.team_set_satisfaction_score(friend=True)}')
+        print(f'\tOverall Enemy Satisfaction Score: {team_evaluation.team_set_satisfaction_score(friend=False)}')
         for team in teams:
-            friend_score = team_satisfaction_score(team, friend=True)
-            enemy_score = team_satisfaction_score(team, friend=False)
+            friend_score = team_evaluation.team_satisfaction_score(team, friend=True)
+            enemy_score = team_evaluation.team_satisfaction_score(team, friend=False)
             print(f'Team: {team.name} ({team.id})\t| Friend Score: {friend_score}\t| Enemy Score: {enemy_score}')
             for student in team.students:
                 print(f'\t{self.format_student(student, with_relationships, team if only_unmet else None)}')
@@ -85,3 +103,9 @@ class Logger:
 
     def end(self):
         self.end_time = time.time()
+
+
+def print_symbols(symbol_frequencies: Dict[str, int]):
+    for text, frequency in symbol_frequencies.items():
+        print(text * frequency, end='')
+    print()  # for the newline

@@ -29,6 +29,7 @@ class SocialAlgorithm(Algorithm):
             if empty_team is None:
                 break
             self.save_students_to_team(empty_team, student_list)
+            empty_team.set_clique()
             empty_team.lock()
 
         self.increment_stage()
@@ -46,6 +47,7 @@ class SocialAlgorithm(Algorithm):
                 empty_team = self.next_empty_team()
                 self.add_best_clique_to_team(empty_team, clique_student_lists)
                 if empty_team.size == team_generation_option.min_team_size:
+                    empty_team.set_clique()
                     empty_team.lock()
 
         self.increment_stage()
