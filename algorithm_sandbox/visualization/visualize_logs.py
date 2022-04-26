@@ -61,6 +61,22 @@ class VisualizeLogs:
         if self.student_currently_in_team(student.id):
             return 'grey'
         return 'rgb(97,195,238)'
+    
+    def draw_student_edge(self, src_student_node_id: int, dest_student_node_id: int, relationship: float):
+        # if (relationship == edge_display) | (edge_display == FRIEND + ENEMY):
+        return self.edges.append({
+            'id': f'{src_student_node_id}_{dest_student_node_id}',
+            'from': src_student_node_id,
+            'to': dest_student_node_id,
+            'color': {'color': self.get_edge_colour(relationship)},  # TODO: investigate later
+            })
+    
+    def get_edge_colour(self, relationship: float) -> str:
+        if relationship == FRIEND:
+            return 'green'
+        if relationship == ENEMY:
+            return 'red'
+        raise ValueError(f'{relationship} is not a valid relationship value.')
 
     def draw_relationship_edge(self, src_student_node_id: int, dest_student_node_id: int, relationship: float):
         if src_student_node_id not in self._nodes_cache:
@@ -68,17 +84,11 @@ class VisualizeLogs:
 
         if dest_student_node_id not in self._nodes_cache:
             self.draw_student_node(self.get_student_by_id(dest_student_node_id))
-
-        self.edges.append({
-            'id': f'{src_student_node_id}_{dest_student_node_id}',
-            'from': src_student_node_id,
-            'to': dest_student_node_id,
-            'color': {'color': self.get_edge_colour(relationship)},  # TODO: investigate later
-        })
-
-    def get_edge_colour(self, relationship: float) -> str:
-        if relationship == FRIEND:
-            return 'green'
-        if relationship == ENEMY:
-            return 'red'
-        raise ValueError(f'{relationship} is not a valid relationship value.')
+            
+        self.draw_student_edge(src_student_node_id, dest_student_node_id, relationship)
+        
+    def reset(self):
+        self.nodes = []
+        self.edges = []
+        self._nodes_cache = []
+        
