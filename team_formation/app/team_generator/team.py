@@ -216,6 +216,11 @@ class Team:
         self.students.remove(student)
         return True
 
+    def empty(self):
+        for student in self.students:
+            student.team = None
+        self.students = []
+
     def get_students(self):
         """Returns a duplicate array of the same student objects
 
@@ -255,3 +260,6 @@ class Team:
 
     def lock(self):
         self._locked = True
+
+    def unlock(self):
+        self._locked = False

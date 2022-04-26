@@ -1,10 +1,11 @@
 from typing import List
 
+from algorithm_sandbox.evaluation import TeamEvaluation
 from team_formation.app.team_generator.algorithm.algorithms import Algorithm, _generate_with_choose
 from team_formation.app.team_generator.algorithm.consts import FRIEND
 from team_formation.app.team_generator.algorithm.social_algorithm.clique_finder import CliqueFinder
 from team_formation.app.team_generator.algorithm.social_algorithm.social_graph import SocialGraph
-from team_formation.app.team_generator.algorithm.utility import get_social_utility
+from team_formation.app.team_generator.algorithm.utility import get_social_utility, get_preference_utility
 from team_formation.app.team_generator.student import Student
 from team_formation.app.team_generator.team import Team
 
@@ -17,6 +18,7 @@ class SocialAlgorithm(Algorithm):
     def generate(self, students: [Student], teams: [Team], team_generation_option) -> [Team]:
         # TODO: accounting for locked/pre-set teams is a whole fiesta
         self.teams = teams
+        initially_locked_teams = [team for team in self.teams if team.is_locked]
         social_graph = SocialGraph(students, FRIEND * 2)
         self.clique_finder = CliqueFinder(students, social_graph)
         # find all cliques of all sizes, so that they are cached for later
@@ -74,7 +76,32 @@ class SocialAlgorithm(Algorithm):
         if self.get_remaining_students(students):
             _generate_with_choose(self, students, self.teams, team_generation_option)
 
-        # TODO: what happens if people are still without teams now? Largely due to the locking enforced by this alg
+        self.increment_stage()
+
+        # (Pseudo) Step 5: Keep team compositions intact, but reassign teams so they better fit with project preferences
+        # if team_generation_option.team_options:
+        if True:
+            # if a project set was attached and students could have preferences for projects (which correlate to teams)
+            # Step 5.1: Sort teams by best social scores first so those teams get their preferred projects
+            team_evaluation = TeamEvaluation(self.teams)
+            self.teams = sorted(self.teams, key=lambda team: team_evaluation.team_satisfaction(team))
+            # Step 5.2: Save team compositions
+            team_compositions: List[List[Student]] = [team.students for team in self.teams]
+            # Step 5.3: Empty all teams
+            for team in self.teams:
+                if team not in initially_locked_teams:
+                    team.empty()
+                    team.unlock()
+            # Step 5.4: Assign team compositions to Teams, according to project preferences
+            for team_composition in team_compositions:
+                # Note: By construction, organized teams are favoured in assigning preferred projects
+                best_team, best_score = None, float('-inf')
+                for team in self.get_available_teams(self.teams, team_generation_option):
+                    curr_score = self.team_suitability_score(team, team_composition, use_project_preference=True)
+                    if curr_score >= best_score:
+                        best_team = team
+                        best_score = curr_score
+                self.save_students_to_team(best_team, team_composition)
 
         return teams
 
@@ -99,13 +126,18 @@ class SocialAlgorithm(Algorithm):
 
         return smallest_team, best_student_small
 
-    def team_suitability_score(self, team: Team, student_list: List[Student]) -> float:
+    def team_suitability_score(self, team: Team, student_list: List[Student],
+                               use_project_preference: bool = False) -> float:
         if not student_list:
             return float('-inf')  # cannot be empty TODO: do properly
 
         overall_utility = 0
         for student in student_list:
+            if use_project_preference:
+                overall_utility += get_preference_utility(team, student, self.options.max_project_preferences)
+                continue
             overall_utility += get_social_utility(team, student)
+
         return overall_utility / len(student_list)  # TODO: replace with scoring function
 
     def get_largest_fragment_team(self, team_generation_option) -> Team:
