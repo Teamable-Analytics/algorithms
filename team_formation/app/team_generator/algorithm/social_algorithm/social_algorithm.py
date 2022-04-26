@@ -79,7 +79,6 @@ class SocialAlgorithm(Algorithm):
         self.increment_stage()
 
         # (Pseudo) Step 5: Keep team compositions intact, but reassign teams so they better fit with project preferences
-        # if team_generation_option.team_options:
         if team_generation_option.team_options:
             # if a project set was attached and students could have preferences for projects (which correlate to teams)
             # Step 5.1: Sort teams by best social scores first so those teams get their preferred projects
