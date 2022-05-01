@@ -11,7 +11,7 @@ def visualize_teams_network(visualize_logs: VisualizeLogs):
     app.layout = html.Div([
         visdcc.Network(id='net',
                        options=dict(
-                           height='500px',
+                           height='650px',
                            width='100%',
                            edges={'arrows': {'to': {'enabled': True}}},
                            physics={'forceAtlast2Based': 

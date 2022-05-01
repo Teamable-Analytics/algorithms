@@ -63,7 +63,6 @@ class VisualizeLogs:
         return 'rgb(97,195,238)'
     
     def draw_student_edge(self, src_student_node_id: int, dest_student_node_id: int, relationship: float):
-        # if (relationship == edge_display) | (edge_display == FRIEND + ENEMY):
         return self.edges.append({
             'id': f'{src_student_node_id}_{dest_student_node_id}',
             'from': src_student_node_id,
@@ -91,4 +90,5 @@ class VisualizeLogs:
         self.nodes = []
         self.edges = []
         self._nodes_cache = []
+        
         
