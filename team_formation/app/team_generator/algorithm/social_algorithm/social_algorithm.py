@@ -18,9 +18,9 @@ class SocialAlgorithm(WeightAlgorithm):
 
     def set_default_weights(self):
         self.options.diversity_weight = 1
-        self.options.preference_weight = 1
+        self.options.preference_weight = 0  # we assign projects at the end with this algorithm
         self.options.requirement_weight = 1
-        self.options.social_weight = 2
+        self.options.social_weight = 1
 
     def generate(self, students: List[Student], teams: List[Team], team_generation_option) -> List[Team]:
         # TODO: accounting for locked/pre-set teams is a whole fiesta
