@@ -40,5 +40,3 @@ class PriorityTeamSet:
         )
         self.score = score
         return self.score
-
-    # def get_teams(self, student_dict: Dict[int, Student]) -> List[Team]:

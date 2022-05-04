@@ -94,22 +94,6 @@ class Student:
         self.team = team
         return True
 
-    def remove_team(self):
-        """Remove team
-
-        Parameters
-        ----------
-        team: Team
-            team object
-
-        Returns
-        -------
-        bool
-            students team was removed
-        """
-        self.team = None
-        return True
-
     def get_skill(self, vector_id):
         """Get a skill that matches specified vector id
 

@@ -1,5 +1,4 @@
 import time
-from heapq import heappop, nlargest
 from typing import Dict
 
 from team_formation.app.team_generator.algorithm.algorithms import *
@@ -77,7 +76,8 @@ class PriorityAlgorithm(WeightAlgorithm):
             for team_set in team_sets:
                 new_team_sets += self.mutate(team_set)
             team_sets = new_team_sets + team_sets
-            team_sets = sorted(team_sets, key=lambda ts: ts.calculate_score(self.priorities, self.student_dict), reverse=True)
+            team_sets = sorted(team_sets, key=lambda ts: ts.calculate_score(self.priorities, self.student_dict),
+                               reverse=True)
             team_sets = team_sets[:self.MAX_KEEP]
             print(f'Iteration: {iteration} | {[team_set.score for team_set in team_sets]}')
             iteration += 1
@@ -100,7 +100,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         Actually modifies the team_set passed
         """
         available_priority_teams = [priority_team for priority_team in team_set.priority_teams
-                           if not priority_team.team.is_locked]
+                                    if not priority_team.team.is_locked]
         try:
             team1, team2 = random.sample(available_priority_teams, 2)
             student_1_id: int = random.choice(team1.student_ids)
@@ -117,10 +117,10 @@ class PriorityAlgorithm(WeightAlgorithm):
         cloned_team_sets = [team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)]
         return [self.mutate_team_random(cloned_team_set) for cloned_team_set in cloned_team_sets]
 
-    def swap_student_between_teams(self, team1: PriorityTeam, student_1_id: int, team2: PriorityTeam, student_2_id: int):
+    def swap_student_between_teams(self, team1: PriorityTeam, student_1_id: int, team2: PriorityTeam,
+                                   student_2_id: int):
         team1.student_ids.remove(student_1_id)
         team1.student_ids.append(student_2_id)
 
         team2.student_ids.remove(student_2_id)
         team2.student_ids.append(student_1_id)
-

@@ -197,25 +197,6 @@ class Team:
         self.students.append(student)
         return True
 
-    def remove_student(self, student):
-        """Remove student from team
-
-        Parameters
-        ----------
-        student: Student
-            Student object
-
-        Return
-        ------
-        bool
-            whether or not the student was remove successfully
-        """
-        if self.is_locked:
-            return False
-        student.team = None
-        self.students.remove(student)
-        return True
-
     def empty(self):
         for student in self.students:
             student.team = None
@@ -230,20 +211,6 @@ class Team:
             list of Student objects
         """
         return [student for student in self.students]
-
-    def clone(self) -> 'Team':
-        students = [copy.deepcopy(student) for student in self.students]
-        new_team = Team(
-            id=self.id,
-            project_id=self.project_id,
-            name=self.name,
-            students=students,
-            requirements=self.requirements,
-            locked=self._locked
-        )
-        for student in new_team.students:
-            student.team = new_team
-        return new_team
 
     @property
     def size(self):
