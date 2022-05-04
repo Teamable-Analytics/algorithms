@@ -120,7 +120,6 @@ class TeamEvaluation:
         return satisfaction_score
 
     def team_set_satisfaction_metrics(self, friend: bool = True) -> Tuple[int, int, int, int]:
-        # TODO: delete (?)
         number_possible, number_satisfied, num_reach = 0, 0, 0
         for team in self.teams:
             _, team_possible, team_satisfied, reach = self.team_satisfaction(team, friend)
