@@ -1,3 +1,6 @@
+from typing import List
+
+from team_formation.app.team_generator.student import Student
 from team_formation.app.team_generator.team import Team
 
 
@@ -38,9 +41,9 @@ class Priority:
             raise ValueError('Limit must be greater than 0')
         raise NotImplementedError()
 
-    def satisfied_by(self, team: Team) -> bool:
+    def satisfied_by(self, students: List[Student]) -> bool:
         count = 0
-        for student in team.students:
+        for student in students:
             if self.skill_id in student.skills:
                 count += self.value in student.skills[self.skill_id]
         return self.student_count_meets_limit(count)
