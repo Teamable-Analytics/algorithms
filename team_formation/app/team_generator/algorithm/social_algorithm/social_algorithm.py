@@ -15,7 +15,7 @@ class SocialAlgorithm(Algorithm):
         super().__init__(algorithm_options, logger)
         self.clique_finder = None
 
-    def generate(self, students: [Student], teams: [Team], team_generation_option) -> [Team]:
+    def generate(self, students: List[Student], teams: List[Team], team_generation_option) -> List[Team]:
         # TODO: accounting for locked/pre-set teams is a whole fiesta
         self.teams = teams
         initially_locked_teams = [team for team in self.teams if team.is_locked]
@@ -150,7 +150,7 @@ class SocialAlgorithm(Algorithm):
                 largest_size = team.size
         return largest_fragment  # TODO: what if this returns None
 
-    def find_clique_teams(self, students: [Student], size: int, clean: bool = False) -> List[List[Student]]:
+    def find_clique_teams(self, students: List[Student], size: int, clean: bool = False) -> List[List[Student]]:
         clique_ids = self.clique_finder.get_cliques(size)
         if clique_ids is None:
             return []
@@ -159,7 +159,7 @@ class SocialAlgorithm(Algorithm):
             clique_student_list = self.clean_clique_list(clique_student_list)
         return self.valid_clique_list(clique_student_list)
 
-    def find_lte_cliques(self, students: [Student], size: int) -> List[List[Student]]:
+    def find_lte_cliques(self, students: List[Student], size: int) -> List[List[Student]]:
         """
         Multi-memberships are allowed, all cliques of sizes [k...1] are included
         """
@@ -212,7 +212,7 @@ class SocialAlgorithm(Algorithm):
                 return False
         return True
 
-    def _clique_ids_to_student_list(self, students: [Student], clique_ids: [int]) -> List[List[Student]]:
+    def _clique_ids_to_student_list(self, students: List[Student], clique_ids: [int]) -> List[List[Student]]:
         cliques = []
         for clique in clique_ids:
             clique_students = [student for student in students if student.id in clique]
