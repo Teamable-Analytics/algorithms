@@ -131,11 +131,9 @@ class SocialAlgorithm(Algorithm):
             return float('-inf')  # cannot be empty TODO: do properly
 
         overall_utility = 0
-        for student in student_list:
-            if use_project_preference:
+        if use_project_preference:
+            for student in student_list:
                 overall_utility += get_preference_utility(team, student, self.options.max_project_preferences)
-                continue
-            overall_utility += get_social_utility(team, student)
 
         overall_utility += get_social_utility(team, student_list)
         return overall_utility / len(student_list)  # TODO: replace with scoring function
