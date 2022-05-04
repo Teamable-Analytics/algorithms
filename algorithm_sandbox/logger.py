@@ -3,7 +3,7 @@ from typing import List, Dict, Tuple
 
 from algorithm_sandbox.algorithm_state import AlgorithmState
 from algorithm_sandbox.encoder import Encoder
-from algorithm_sandbox.evaluation import TeamEvaluation
+from team_formation.app.team_generator.algorithm.evaluation import TeamEvaluation
 from team_formation.app.team_generator.algorithm.algorithms import Algorithm
 from team_formation.app.team_generator.algorithm.consts import ENEMY, UNREGISTERED_STUDENT_ID, FRIEND
 from team_formation.app.team_generator.student import Student

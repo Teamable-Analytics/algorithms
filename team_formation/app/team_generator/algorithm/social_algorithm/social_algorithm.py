@@ -1,8 +1,8 @@
 from typing import List
 
-from algorithm_sandbox.evaluation import TeamEvaluation
 from team_formation.app.team_generator.algorithm.algorithms import _generate_with_choose, WeightAlgorithm
 from team_formation.app.team_generator.algorithm.consts import FRIEND
+from team_formation.app.team_generator.algorithm.evaluation import TeamEvaluation
 from team_formation.app.team_generator.algorithm.social_algorithm.clique_finder import CliqueFinder
 from team_formation.app.team_generator.algorithm.social_algorithm.social_graph import SocialGraph
 from team_formation.app.team_generator.algorithm.utility import get_social_utility, get_preference_utility
