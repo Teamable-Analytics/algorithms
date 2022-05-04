@@ -281,7 +281,7 @@ class WeightAlgorithm(Algorithm):
             return 0
 
         requirement_utility = get_requirement_utility(team, student) * self.options.requirement_weight
-        social_utility = get_social_utility(team, student) * self.options.social_weight
+        social_utility = get_social_utility(team, [student]) * self.options.social_weight
         diversity_utility = get_diversity_utility(
             team, student,
             self.options.diversify_options,

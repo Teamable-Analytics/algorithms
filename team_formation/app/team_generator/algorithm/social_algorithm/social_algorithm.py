@@ -137,6 +137,7 @@ class SocialAlgorithm(Algorithm):
                 continue
             overall_utility += get_social_utility(team, student)
 
+        overall_utility += get_social_utility(team, student_list)
         return overall_utility / len(student_list)  # TODO: replace with scoring function
 
     def get_largest_fragment_team(self, team_generation_option) -> Team:
