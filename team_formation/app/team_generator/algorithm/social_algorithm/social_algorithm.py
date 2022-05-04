@@ -212,7 +212,7 @@ class SocialAlgorithm(Algorithm):
                 return False
         return True
 
-    def _clique_ids_to_student_list(self, students: [Student], clique_ids: [int]) -> [[Student]]:
+    def _clique_ids_to_student_list(self, students: [Student], clique_ids: [int]) -> List[List[Student]]:
         cliques = []
         for clique in clique_ids:
             clique_students = [student for student in students if student.id in clique]
