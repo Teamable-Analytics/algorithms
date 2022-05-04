@@ -103,6 +103,9 @@ class SocialAlgorithm(WeightAlgorithm):
                 # Note: By construction, organized teams are favoured in assigning preferred projects
                 best_team, best_score = None, float('-inf')
                 for team in self.get_available_teams(self.teams, team_generation_option):
+                    if team.students:
+                        # if the team has students, it has already been filled
+                        continue
                     curr_score = self.team_suitability_score(team, team_composition, use_project_preference=True)
                     if curr_score >= best_score:
                         best_team = team
