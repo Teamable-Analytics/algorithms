@@ -1,10 +1,13 @@
+from typing import List
+
 from team_formation.app.team_generator.algorithm.consts import LOW_WEIGHT, HIGH_WEIGHT
 from team_formation.app.team_generator.algorithm.utility.social_network import SocialNetwork
+from team_formation.app.team_generator.student import Student
 
 
-def get_social_utility(team, student):
+def get_social_utility(team, students: List[Student]):
     diameter_old = SocialNetwork(team.students).get_diameter()
-    diameter_new = SocialNetwork(team.students + [student]).get_diameter()
+    diameter_new = SocialNetwork(team.students + students).get_diameter()
 
     norm_value = _normalize_social_utility(diameter_old - diameter_new)
     scaled_value = _scale_social_utility(norm_value)

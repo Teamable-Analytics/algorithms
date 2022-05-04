@@ -1,7 +1,7 @@
 from typing import List
 
 from algorithm_sandbox.evaluation import TeamEvaluation
-from team_formation.app.team_generator.algorithm.algorithms import Algorithm, _generate_with_choose
+from team_formation.app.team_generator.algorithm.algorithms import _generate_with_choose, WeightAlgorithm
 from team_formation.app.team_generator.algorithm.consts import FRIEND
 from team_formation.app.team_generator.algorithm.social_algorithm.clique_finder import CliqueFinder
 from team_formation.app.team_generator.algorithm.social_algorithm.social_graph import SocialGraph
@@ -10,12 +10,19 @@ from team_formation.app.team_generator.student import Student
 from team_formation.app.team_generator.team import Team
 
 
-class SocialAlgorithm(Algorithm):
+class SocialAlgorithm(WeightAlgorithm):
     def __init__(self, algorithm_options, logger, *args, **kwargs):
         super().__init__(algorithm_options, logger)
         self.clique_finder = None
+        self.set_default_weights()
 
-    def generate(self, students: [Student], teams: [Team], team_generation_option) -> [Team]:
+    def set_default_weights(self):
+        self.options.diversity_weight = 1
+        self.options.preference_weight = 1
+        self.options.requirement_weight = 1
+        self.options.social_weight = 2
+
+    def generate(self, students: List[Student], teams: List[Team], team_generation_option) -> List[Team]:
         # TODO: accounting for locked/pre-set teams is a whole fiesta
         self.teams = teams
         initially_locked_teams = [team for team in self.teams if team.is_locked]
@@ -104,39 +111,17 @@ class SocialAlgorithm(Algorithm):
 
         return teams
 
-    def choose(self, teams, students):
-        if not teams or not students:
-            return None, None
-
-        smallest_team = teams[0]
-        for team in teams:
-            if team.size < smallest_team.size:
-                smallest_team = team
-
-        best_student_small, score_small = None, float('-inf')
-        for student in self.get_remaining_students(students):
-            curr_score_small = self.team_suitability_score(smallest_team, [student])
-            if curr_score_small > score_small:
-                score_small = curr_score_small
-                best_student_small = student
-
-        if not best_student_small:
-            return None, None
-
-        return smallest_team, best_student_small
-
     def team_suitability_score(self, team: Team, student_list: List[Student],
                                use_project_preference: bool = False) -> float:
         if not student_list:
             return float('-inf')  # cannot be empty TODO: do properly
 
         overall_utility = 0
-        for student in student_list:
-            if use_project_preference:
+        if use_project_preference:
+            for student in student_list:
                 overall_utility += get_preference_utility(team, student, self.options.max_project_preferences)
-                continue
-            overall_utility += get_social_utility(team, student)
 
+        overall_utility += get_social_utility(team, student_list)
         return overall_utility / len(student_list)  # TODO: replace with scoring function
 
     def get_largest_fragment_team(self, team_generation_option) -> Team:
@@ -150,7 +135,7 @@ class SocialAlgorithm(Algorithm):
                 largest_size = team.size
         return largest_fragment  # TODO: what if this returns None
 
-    def find_clique_teams(self, students: [Student], size: int, clean: bool = False) -> List[List[Student]]:
+    def find_clique_teams(self, students: List[Student], size: int, clean: bool = False) -> List[List[Student]]:
         clique_ids = self.clique_finder.get_cliques(size)
         if clique_ids is None:
             return []
@@ -159,7 +144,7 @@ class SocialAlgorithm(Algorithm):
             clique_student_list = self.clean_clique_list(clique_student_list)
         return self.valid_clique_list(clique_student_list)
 
-    def find_lte_cliques(self, students: [Student], size: int) -> List[List[Student]]:
+    def find_lte_cliques(self, students: List[Student], size: int) -> List[List[Student]]:
         """
         Multi-memberships are allowed, all cliques of sizes [k...1] are included
         """
@@ -212,7 +197,7 @@ class SocialAlgorithm(Algorithm):
                 return False
         return True
 
-    def _clique_ids_to_student_list(self, students: [Student], clique_ids: [int]) -> List[List[Student]]:
+    def _clique_ids_to_student_list(self, students: List[Student], clique_ids: [int]) -> List[List[Student]]:
         cliques = []
         for clique in clique_ids:
             clique_students = [student for student in students if student.id in clique]
