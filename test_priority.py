@@ -18,7 +18,7 @@ if __name__ == '__main__':
                 'value': 3,  # some timeslot
             },
             {
-                'order': 1,
+                'order': 2,
                 'constraint': Priority.TYPE_DIVERSIFY,
                 'skill_id': 81,  # gender
                 'limit_option': Priority.MIN_OF,
