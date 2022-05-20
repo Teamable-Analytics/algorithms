@@ -20,6 +20,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         super().__init__(*args, **kwargs)
         self.student_dict: Dict[int, Student] = {}
         self.priorities: List[Priority] = []
+        self.students: List[Student] = []
 
     def set_default_weights(self):
         self.options.diversity_weight = 1
@@ -65,6 +66,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         """
         Generate teams using a priority algorithm.
         """
+        self.students = students
         self.student_dict = self.create_student_dict(students)
         self.priorities = self.create_priority_objects()
         start_time = time.time()
@@ -88,11 +90,18 @@ class PriorityAlgorithm(WeightAlgorithm):
 
     def save_team_compositions_to_teams(self, priority_team_set: PriorityTeamSet) -> List[Team]:
         teams: List[Team] = []
+        self.empty_all_teams([priority_team.team for priority_team in priority_team_set.priority_teams])
         for priority_team in priority_team_set.priority_teams:
             students = [self.student_dict[student_id] for student_id in priority_team.student_ids]
             self.save_students_to_team(priority_team.team, students)
             teams.append(priority_team.team)
         return teams
+
+    def empty_all_teams(self, teams: List[Team]):
+        for team in teams:
+            team.empty()
+        for student in self.students:
+            student.team = None
 
     def mutate_team_random(self, team_set: PriorityTeamSet) -> PriorityTeamSet:
         """
