@@ -201,8 +201,10 @@ class Algorithm:
 
     def save_students_to_team(self, team: Team, student_list: List[Student]):
         for student in student_list:
-            team.add_student(student)
-            student.add_team(team)
+            team_added_student = team.add_student(student)
+            student_added_team = student.add_team(team)
+            if not team_added_student or not student_added_team:
+                raise AlgorithmException('Cannot add student to team or team cannot add student.')
 
     def next_empty_team(self) -> Team:
         for team in self.teams:
