@@ -147,7 +147,7 @@ class TeamGenerator:
 
         try:
             self.students = Schema([Student]).validate(students)
-            self.algorithm = Schema(Algorithm).validate(algorithm)
+            self.algorithm: Algorithm = Schema(Algorithm).validate(algorithm)
             self.options = Schema(TeamGenerationOption).validate(options)
             self.teams = self.create_teams(Schema([Team]).validate(initial_teams))
         except SchemaError as error:

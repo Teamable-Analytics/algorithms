@@ -9,25 +9,28 @@ class Encoder:
 
     @staticmethod
     def get_student_name(student_anon: Student) -> str:
-        student_key = load_json_data(KEY_FILE_PATH)
-        student_name = Encoder.get_student_name_by_id(student_key, student_anon.id)
-        return student_name
+        return f'Student ({student_anon.id})'
+        # student_key = load_json_data(KEY_FILE_PATH)
+        # student_name = Encoder.get_student_name_by_id(student_key, student_anon.id)
+        # return student_name
 
     @staticmethod
     def get_student_name_by_id(student_key: dict, student_anon_id: int) -> str:
-        for real_id, student_info in student_key.items():
-            if student_info['anon_student_id'] == student_anon_id:
-                student_name = student_info['real_name']
-                return student_name if student_name else f'No Name ({real_id})'
-        return f'Unknown Student ({student_anon_id})'
+        return f'Student ({student_anon_id})'
+        # for real_id, student_info in student_key.items():
+        #     if student_info['anon_student_id'] == student_anon_id:
+        #         student_name = student_info['real_name']
+        #         return student_name if student_name else f'No Name ({real_id})'
+        # return f'Unknown Student ({student_anon_id})'
 
     @staticmethod
     def get_student_key():
-        if Encoder.STUDENT_KEY_CACHE:
-            return Encoder.STUDENT_KEY_CACHE
-        student_key = load_json_data(KEY_FILE_PATH)
-        Encoder.STUDENT_KEY_CACHE = student_key
-        return student_key
+        return {}
+        # if Encoder.STUDENT_KEY_CACHE:
+        #     return Encoder.STUDENT_KEY_CACHE
+        # student_key = load_json_data(KEY_FILE_PATH)
+        # Encoder.STUDENT_KEY_CACHE = student_key
+        # return student_key
 
 
 def load_json_data(file_path: str):
