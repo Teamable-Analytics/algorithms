@@ -1,8 +1,10 @@
 import copy
-import matplotlib.pyplot as plt
 from algorithm_sandbox.logger import Logger
+from algorithm_sandbox.metrics.friend_metrics import get_friend_metrics
 from algorithm_sandbox.mock_team_generation import mock_generation
 from algorithm_sandbox.student_data import fake_students
+from algorithm_sandbox.visualization.visualize_friend_metrics import visualize_friend_metrics
+from algorithm_sandbox.visualization.visualize_time import visualize_time
 from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions, WeightAlgorithm
 from team_formation.app.team_generator.algorithm.priority_algorithm.priority import Priority
 from team_formation.app.team_generator.algorithm.priority_algorithm.priority_algorithm import PriorityAlgorithm
@@ -17,6 +19,7 @@ if __name__ == '__main__':
     y_social = []
     y_priority = []
     y_weight = []
+    friend_metrics = []
 
     for i in range(1, 10):
         num_teams = _num_teams * i
@@ -33,6 +36,8 @@ if __name__ == '__main__':
         logger.end()
         logger.print_teams(teams)
         y_social.append(logger.get_time())
+
+        friend_metrics.append(get_friend_metrics(teams))
 
         logger = Logger(real=True)
         teams = mock_generation(
@@ -77,9 +82,5 @@ if __name__ == '__main__':
         logger.end()
         y_priority.append(logger.get_time())
 
-    plt.plot(x, y_social)
-    plt.plot(x, y_priority)
-    plt.plot(x, y_weight)
-    plt.xlabel("Number of students")
-    plt.ylabel("Execution time (s)")
-    plt.show()
+    # visualize_time(x, y_social, y_priority, y_weight)
+    visualize_friend_metrics(x, friend_metrics)
