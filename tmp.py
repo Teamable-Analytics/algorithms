@@ -1,9 +1,11 @@
 import copy
 from algorithm_sandbox.logger import Logger
 from algorithm_sandbox.metrics.friend_metrics import get_friend_metrics
+from algorithm_sandbox.metrics.priority_metrics import get_priority_metrics
 from algorithm_sandbox.mock_team_generation import mock_generation
 from algorithm_sandbox.student_data import fake_students
 from algorithm_sandbox.visualization.visualize_friend_metrics import visualize_friend_metrics
+from algorithm_sandbox.visualization.visualize_priority_metrics import visualize_priority_metrics
 from algorithm_sandbox.visualization.visualize_time import visualize_time
 from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions, WeightAlgorithm
 from team_formation.app.team_generator.algorithm.priority_algorithm.priority import Priority
@@ -20,6 +22,7 @@ if __name__ == '__main__':
     y_priority = []
     y_weight = []
     friend_metrics = []
+    priority_metrics = []
 
     for i in range(1, 10):
         num_teams = _num_teams * i
@@ -34,7 +37,7 @@ if __name__ == '__main__':
         logger = Logger(real=True)
         teams = mock_generation(SocialAlgorithm, AlgorithmOptions(), logger, num_teams, social_students)
         logger.end()
-        logger.print_teams(teams)
+        # logger.print_teams(teams)
         y_social.append(logger.get_time())
 
         friend_metrics.append(get_friend_metrics(teams))
@@ -56,8 +59,7 @@ if __name__ == '__main__':
         y_weight.append(logger.get_time())
 
         logger = Logger(real=True)
-        algorithm_options = AlgorithmOptions(
-            priorities=[
+        priorities = [
                 {
                     'order': 1,
                     'constraint': Priority.TYPE_CONCENTRATE,
@@ -74,13 +76,17 @@ if __name__ == '__main__':
                     'limit': 2,
                     'value': 2,  # female
                 }
-            ],
+            ]
+        algorithm_options = AlgorithmOptions(
+            priorities=priorities,
             diversify_options=[{'id': 1}],
             concentrate_options=[{'id': 0}]
         )
         teams = mock_generation(PriorityAlgorithm, algorithm_options, logger, num_teams, priority_students)
         logger.end()
         y_priority.append(logger.get_time())
+        priority_metrics.append(get_priority_metrics(teams, priorities))
 
+    visualize_priority_metrics(x, priority_metrics)
     # visualize_time(x, y_social, y_priority, y_weight)
-    visualize_friend_metrics(x, friend_metrics)
+    # visualize_friend_metrics(x, friend_metrics)

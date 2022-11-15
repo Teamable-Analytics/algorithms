@@ -81,11 +81,11 @@ class PriorityAlgorithm(WeightAlgorithm):
             team_sets = sorted(team_sets, key=lambda ts: ts.calculate_score(self.priorities, self.student_dict),
                                reverse=True)
             team_sets = team_sets[:self.MAX_KEEP]
-            print(f'Iteration: {iteration} | {[team_set.score for team_set in team_sets]}')
+            # print(f'Iteration: {iteration} | {[team_set.score for team_set in team_sets]}')
             iteration += 1
 
-        print(f'Total iterations: {iteration}')
-        print(f'Scores: {[team_set.score for team_set in team_sets]}')
+        # print(f'Total iterations: {iteration}')
+        # print(f'Scores: {[team_set.score for team_set in team_sets]}')
         return self.save_team_compositions_to_teams(team_sets[0])
 
     def save_team_compositions_to_teams(self, priority_team_set: PriorityTeamSet) -> List[Team]:
