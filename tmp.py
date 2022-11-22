@@ -29,7 +29,14 @@ if __name__ == '__main__':
         num_students = _num_students * i
         x.append(num_teams)
 
-        students = fake_students(n=num_students, f=num_friends, x=12, e=1)
+        students = fake_students(
+            number_of_students=num_students,
+            number_of_friends=num_friends,
+            number_of_enemies=1,
+            age_range=[18, 25],
+            age_distribution='normal',
+            gender_options=['Male', 'Female'],
+        )
         social_students = copy.deepcopy(students)
         priority_students = copy.deepcopy(students)
         weight_student = copy.deepcopy(students)

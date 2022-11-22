@@ -54,8 +54,20 @@ def fake_all_neutral_students(n: int) -> [Student]:
     return students
 
 
-def fake_students(n: int, f: int, x: int = 12, e: int = 0) -> [Student]:
+def fake_students(
+        number_of_students: int,
+        number_of_friends: int,
+        number_of_enemies: int,
+        age_range,
+        age_distribution,
+        gender_options,
+) -> [Student]:
     students = []
+    n = number_of_students
+    f = number_of_friends
+    e = number_of_enemies
+    g = len(gender_options)
+
     for i in range(n):
         relationships = {}
         for j in range(f):
@@ -65,7 +77,7 @@ def fake_students(n: int, f: int, x: int = 12, e: int = 0) -> [Student]:
             enemy_id = random.randrange(0, n)
             relationships[enemy_id] = ENEMY
         students.append(Student(i, relationships=relationships, skills={
-            0: [random.randrange(0, 5)],
-            1: [0 if i < x else 1],
+            0: [random.randrange(age_range[0], age_range[1])],
+            1: [random.randrange(0, g)],
         }))
     return students
