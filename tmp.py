@@ -24,7 +24,7 @@ if __name__ == '__main__':
     friend_metrics = []
     priority_metrics = []
 
-    for i in range(1, 10):
+    for i in range(1, 2):
         num_teams = _num_teams * i
         num_students = _num_students * i
         x.append(num_teams)
@@ -34,8 +34,11 @@ if __name__ == '__main__':
             number_of_friends=num_friends,
             number_of_enemies=1,
             age_range=[18, 25],
-            age_distribution='normal',
-            gender_options=['Male', 'Female'],
+            age_distribution='uniform',
+            gender_options={
+                'male': num_students - 10,
+                'female': 10,
+            },
         )
         social_students = copy.deepcopy(students)
         priority_students = copy.deepcopy(students)

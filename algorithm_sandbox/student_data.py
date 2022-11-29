@@ -66,7 +66,14 @@ def fake_students(
     n = number_of_students
     f = number_of_friends
     e = number_of_enemies
+
     g = len(gender_options)
+    if type(gender_options) == list:
+        genders = [random.randrange(0, g) for _ in range(n)]
+    else:
+        genders = []
+        for i, entity in enumerate(gender_options.items()):
+            genders.extend([i for _ in range(entity[1])])
 
     for i in range(n):
         relationships = {}
@@ -78,6 +85,6 @@ def fake_students(
             relationships[enemy_id] = ENEMY
         students.append(Student(i, relationships=relationships, skills={
             0: [random.randrange(age_range[0], age_range[1])],
-            1: [random.randrange(0, g)],
+            1: [genders[i]],
         }))
     return students
