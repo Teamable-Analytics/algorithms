@@ -56,24 +56,22 @@ def fake_all_neutral_students(n: int) -> [Student]:
 
 def fake_students(
         number_of_students: int,
+        number_of_females: int,
         number_of_friends: int,
         number_of_enemies: int,
         age_range,
-        age_distribution,
-        gender_options,
+        gpa,
+        race,
+        major,
+        year,
+        time,
 ) -> [Student]:
     students = []
     n = number_of_students
     f = number_of_friends
     e = number_of_enemies
 
-    g = len(gender_options)
-    if type(gender_options) == list:
-        genders = [random.randrange(0, g) for _ in range(n)]
-    else:
-        genders = []
-        for i, entity in enumerate(gender_options.items()):
-            genders.extend([i for _ in range(entity[1])])
+    genders = [1] * number_of_females + [2] * (n - number_of_females)
 
     for i in range(n):
         relationships = {}
@@ -86,5 +84,10 @@ def fake_students(
         students.append(Student(i, relationships=relationships, skills={
             0: [random.randrange(age_range[0], age_range[1])],
             1: [genders[i]],
+            2: [random.randrange(gpa[0], gpa[1])],
+            3: [race[random.randrange(0, len(race))]],
+            4: [major[random.randrange(0, len(major))]],
+            5: [year[random.randrange(0, len(year))]],
+            6: [time[random.randrange(0, len(time))]],
         }))
     return students
