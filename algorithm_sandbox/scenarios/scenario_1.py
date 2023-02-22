@@ -1,5 +1,6 @@
 from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions, WeightAlgorithm
 from team_formation.app.team_generator.algorithm.priority_algorithm.priority import Priority
+import copy
 
 priorities = [
     {
@@ -16,8 +17,11 @@ algorithm_options = AlgorithmOptions(
     priorities=priorities,
     diversify_options=[{'id': 1}],
     diversity_weight=1,
+    social_weight=0,
+    preference_weight=0,
+    requirement_weight=0,
 )
 
 
 def s1_options():
-    return priorities, algorithm_options
+    return copy.deepcopy(priorities), copy.deepcopy(algorithm_options)
