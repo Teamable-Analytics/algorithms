@@ -10,7 +10,7 @@ from algorithm_sandbox.student_data import fake_students
 from algorithm_sandbox.visualization.visualize_friend_metrics import visualize_friend_metrics
 from algorithm_sandbox.visualization.visualize_priority_metrics import visualize_priority_metrics
 from algorithm_sandbox.visualization.visualize_metric import visualize_metric
-from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions, WeightAlgorithm
+from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions, WeightAlgorithm, RandomAlgorithm
 from team_formation.app.team_generator.algorithm.priority_algorithm.priority import Priority
 from team_formation.app.team_generator.algorithm.priority_algorithm.priority_algorithm import PriorityAlgorithm
 from team_formation.app.team_generator.algorithm.social_algorithm.social_algorithm import SocialAlgorithm
@@ -24,10 +24,11 @@ if __name__ == '__main__':
     y_social = []
     y_priority = []
     y_weight = []
+    y_random = []
     metric = 'AVG_GINI'
     priorities, algorithm_options = s1_3_options()
 
-    for i in range(1, 10):
+    for i in range(1, 5):
         num_teams = _num_teams * i
         num_students = _num_students * i
         x.append(num_teams)
@@ -47,6 +48,7 @@ if __name__ == '__main__':
         social_students = copy.deepcopy(students)
         priority_students = copy.deepcopy(students)
         weight_student = copy.deepcopy(students)
+        random_students = copy.deepcopy(students)
 
         # SocialAlgorithm
         logger = Logger(real=True)
@@ -94,7 +96,26 @@ if __name__ == '__main__':
         # y_priority.append(get_friend_metrics(teams)[metric])
         y_priority.append(get_priority_metrics(teams, priorities)[metric])
 
-    visualize_metric(x, y_weight, y_social, y_priority, metric)
+        # Random Algorithm
+        logger = Logger(real=True)
+
+        teams = mock_generation(
+            RandomAlgorithm,
+            algorithm_options,
+            logger,
+            num_teams,
+            random_students
+        )
+        logger.end()
+
+        logger.print_teams(teams)
+
+        # priority_metrics = get_priority_metrics(teams, priorities)
+        # y_priority.append(logger.get_time())
+        # y_priority.append(get_friend_metrics(teams)[metric])
+        y_random.append(get_priority_metrics(teams, priorities)[metric])
+
+    visualize_metric(x, y_weight, y_social, y_priority, y_random, metric)
     # visualize_priority_metrics(x, priority_metrics)
     # visualize_time(x, y_social, y_priority, y_weight)
     # visualize_friend_metrics(x, friend_metrics)
