@@ -102,10 +102,10 @@ def get_friend_metrics(teams: list[Team]):
     es = [get_satisfied_enemies(s) for s in students]
 
     return {
-        'S_F': sum(fs) / sum(f) * 100,
-        'S_E': sum(es) / sum(e) * 100,
-        'AVGS_F': sum([fs[i] / f[i] for i in range(len(students))]) * 100 / n,
-        'AVGS_E': sum([es[i] / e[i] for i in range(len(students))]) * 100 / n,
+        'S_F': 0 if sum(f) == 0 else sum(fs) / sum(f) * 100,
+        'S_E': 0 if sum(e) == 0 else sum(es) / sum(e) * 100,
+        'AVGS_F': sum([0 if f[i] == 0 else fs[i] / f[i] for i in range(len(students))]) * 100 / n,
+        'AVGS_E': sum([0 if e[i] == 0 else es[i] / e[i] for i in range(len(students))]) * 100 / n,
         'SHP_F': sum([is_strictly_happy_student_friend(s) for s in students]) * 100 / n,
         'SHP_E': sum([is_strictly_happy_student_enemy(s) for s in students]) * 100 / n,
         'SHT_F': sum([is_strictly_happy_team_friend(t) for t in teams]) * 100 / m,

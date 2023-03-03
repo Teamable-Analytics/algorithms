@@ -63,6 +63,9 @@ algorithm_options = AlgorithmOptions(
         {'id': 5},
     ],
     diversity_weight=1,
+    requirement_weight=0,
+    preference_weight=0,
+    social_weight=0,
 )
 
 

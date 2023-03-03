@@ -59,6 +59,7 @@ def fake_students(
         number_of_females: int,
         number_of_friends: int,
         number_of_enemies: int,
+        friend_distribution,
         age_range,
         gpa,
         race,
@@ -76,7 +77,13 @@ def fake_students(
     for i in range(n):
         relationships = {}
         for j in range(f):
-            friend_id = random.randrange(0, n)
+            if friend_distribution == 'cluster':
+                friend_id = (i//f*f+j) % n
+            else:
+                friend_id = random.randrange(0, n)
+            if friend_id == i:
+                continue
+            print(i, friend_id)
             relationships[friend_id] = FRIEND
         for j in range(e):
             enemy_id = random.randrange(0, n)

@@ -5,7 +5,9 @@ from algorithm_sandbox.metrics.priority_metrics import get_priority_metrics
 from algorithm_sandbox.mock_team_generation import mock_generation
 from algorithm_sandbox.scenarios.scenario_1 import s1_options
 from algorithm_sandbox.scenarios.scenario_1_1 import s1_1_options
+from algorithm_sandbox.scenarios.scenario_1_2 import s1_2_options
 from algorithm_sandbox.scenarios.scenario_1_3 import s1_3_options
+from algorithm_sandbox.scenarios.scenario_2 import s2_options
 from algorithm_sandbox.student_data import fake_students
 from algorithm_sandbox.visualization.visualize_friend_metrics import visualize_friend_metrics
 from algorithm_sandbox.visualization.visualize_priority_metrics import visualize_priority_metrics
@@ -18,7 +20,7 @@ from team_formation.app.team_generator.algorithm.social_algorithm.social_algorit
 if __name__ == '__main__':
     _num_teams = 5
     _num_students = 20
-    num_friends = 3
+    num_friends = 4
     _num_tests = 10
 
     x = []
@@ -26,7 +28,9 @@ if __name__ == '__main__':
     y_priority = []
     y_weight = []
     y_random = []
-    metric = 'AVG_GINI'
+    metric = 'S_F'
+
+    priorities, algorithm_options = s2_options()
 
     for i in range(1, 10):
         num_teams = _num_teams * i
@@ -43,10 +47,11 @@ if __name__ == '__main__':
                 number_of_students=num_students,
                 number_of_females=num_students // 2,
                 number_of_friends=num_friends,
-                number_of_enemies=1,
+                number_of_enemies=0,
+                friend_distribution='cluster',
                 age_range=[18, 25],
                 race=[1, 2, 3, 4],
-                gpa=[0, 100],
+                gpa=[0, 4],
                 major=[1, 2, 3, 4],
                 year=[1, 2, 3, 4],
                 time=[1, 2, 3, 4]
@@ -58,60 +63,63 @@ if __name__ == '__main__':
 
             # SocialAlgorithm
             logger = Logger(real=True)
-            priorities, algorithm_options = s1_options()
+            social_algorithm_options = copy.deepcopy(algorithm_options)
 
             teams = mock_generation(
                 SocialAlgorithm,
-                algorithm_options,
+                social_algorithm_options,
                 logger,
                 num_teams,
                 social_students
             )
             logger.end()
-            y_social_avg += get_priority_metrics(teams, priorities)[metric]
+            y_social_avg += get_friend_metrics(teams)[metric]
+            # y_social_avg += get_priority_metrics(teams, priorities)[metric]
 
             # WeightAlgorithm
             logger = Logger(real=True)
-            priorities, algorithm_options = s1_options()
+            weight_algorithm_options = copy.deepcopy(algorithm_options)
 
             teams = mock_generation(
                 WeightAlgorithm,
-                algorithm_options,
+                weight_algorithm_options,
                 logger,
                 num_teams,
                 weight_student
             )
             logger.end()
-            y_weight_avg += get_priority_metrics(teams, priorities)[metric]
+            y_weight_avg += get_friend_metrics(teams)[metric]
+            # y_weight_avg += get_priority_metrics(teams, priorities)[metric]
 
             # PriorityAlgorithm
             logger = Logger(real=True)
-            priorities, algorithm_options = s1_options()
+            priority_algorithm_options = copy.deepcopy(algorithm_options)
 
             teams = mock_generation(
                 PriorityAlgorithm,
-                algorithm_options,
+                priority_algorithm_options,
                 logger,
                 num_teams,
                 priority_students
             )
             logger.end()
-
-            y_priority_avg += get_priority_metrics(teams, priorities)[metric]
+            y_priority_avg += get_friend_metrics(teams)[metric]
+            # y_priority_avg += get_priority_metrics(teams, priorities)[metric]
 
             # Random Algorithm
             logger = Logger(real=True)
-            priorities, algorithm_options = s1_options()
+            random_algorithm_options = copy.deepcopy(algorithm_options)
 
             teams = mock_generation(
                 RandomAlgorithm,
-                algorithm_options,
+                random_algorithm_options,
                 logger,
                 num_teams,
                 random_students
             )
             logger.end()
-            y_random_avg += get_priority_metrics(teams, priorities)[metric]
+            y_random_avg += get_friend_metrics(teams)[metric]
+            # y_random_avg += get_priority_metrics(teams, priorities)[metric]
 
         y_social.append(y_social_avg / _num_tests)
         y_weight.append(y_weight_avg / _num_tests)
