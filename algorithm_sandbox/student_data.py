@@ -78,23 +78,31 @@ def fake_students(
         relationships = {}
         for j in range(f):
             if friend_distribution == 'cluster':
-                friend_id = (i//f*f+j) % n
+                friend_id = (i // f * f + j) % n
             else:
                 friend_id = random.randrange(0, n)
             if friend_id == i:
                 continue
-            print(i, friend_id)
             relationships[friend_id] = FRIEND
         for j in range(e):
             enemy_id = random.randrange(0, n)
             relationships[enemy_id] = ENEMY
-        students.append(Student(i, relationships=relationships, skills={
-            0: [random.randrange(age_range[0], age_range[1])],
-            1: [genders[i]],
-            2: [random.randrange(gpa[0], gpa[1])],
-            3: [race[random.randrange(0, len(race))]],
-            4: [major[random.randrange(0, len(major))]],
-            5: [year[random.randrange(0, len(year))]],
-            6: [time[random.randrange(0, len(time))]],
-        }))
+        students.append(
+            Student(
+                i,
+                relationships=relationships,
+                skills={
+                    0: [random.randrange(age_range[0], age_range[1])],
+                    1: [genders[i]],
+                    2: [random.randrange(gpa[0], gpa[1])],
+                    3: [race[random.randrange(0, len(race))]],
+                    4: [major[random.randrange(0, len(major))]],
+                    5: [year[random.randrange(0, len(year))]],
+                    6: [time[random.randrange(0, len(time))]],
+                    10: [random.randint(0, 2) // 2],
+                    11: [random.randint(0, 2) // 2],
+                    12: [random.randint(0, 2) // 2],
+                },
+            )
+        )
     return students

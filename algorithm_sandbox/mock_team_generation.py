@@ -117,13 +117,13 @@ def mock_generation_old(alg, alg_options, logger, num_teams: int, data_file_path
     return team_generator.generate()
 
 
-def mock_generation(alg, alg_options, logger, num_teams: int, students: [Student]):
+def mock_generation(alg, alg_options, logger, num_teams: int, students: [Student], teams):
     fake_data = MockData(num_teams, None, students)
     algorithm_options = alg_options
     algorithm = alg(algorithm_options, logger)  # needs algo options
     team_generation_options = fake_data.get_team_generation_option()
     students = fake_data.get_students()
     logger.save_students(students)
-    team_generator = TeamGenerator(students, algorithm, [], team_generation_options)
+    team_generator = TeamGenerator(students, algorithm, teams, team_generation_options)
 
     return team_generator.generate()
