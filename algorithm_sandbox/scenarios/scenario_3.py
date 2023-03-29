@@ -1,3 +1,5 @@
+import random
+
 from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions
 from team_formation.app.team_generator.team import Team
 from team_formation.app.team_generator.algorithm.consts import REQUIREMENT_TYPES
@@ -14,27 +16,20 @@ algorithm_options = AlgorithmOptions(
 )
 
 
-def s3_options(num_team):
+def s3_options(num_team, num_req, req_per_project):
+    requirements = [
+        {
+            'id': i + 10,
+            'operator': REQUIREMENT_TYPES.EXACTLY,
+            'value': 1,
+        }
+        for i in range(num_req)
+    ]
+
     teams = [Team(
         id=str(i),
         project_id=i,
         name=str(i),
-        requirements=[
-            {
-                'id': 10,
-                'operator': REQUIREMENT_TYPES.EXACTLY,
-                'value': 1,
-            },
-            {
-                'id': 11,
-                'operator': REQUIREMENT_TYPES.EXACTLY,
-                'value': 1,
-            },
-            {
-                'id': 12,
-                'operator': REQUIREMENT_TYPES.EXACTLY,
-                'value': 1,
-            },
-        ]
+        requirements=random.sample(requirements, k=req_per_project)
     ) for i in range(num_team)]
     return priorities, algorithm_options, teams
