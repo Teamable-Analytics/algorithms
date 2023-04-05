@@ -24,23 +24,26 @@ if __name__ == '__main__':
     _num_students = 20
     num_friends = 4
     _num_tests = 10
+    _num_req = 20
+    _num_req_per_team = 3
 
     x = []
     y_social = []
     y_priority = []
     y_weight = []
     y_random = []
-    metric = 'AVG_GINI'
+    metric = 'S_T'
 
-    priorities, algorithm_options = s1_1_options()
+    # priorities, algorithm_options = s1_1_options()
     initial_teams = []
 
     for i in range(1, 10):
+        print(i)
         num_teams = _num_teams * i
         num_students = _num_students * i
         x.append(num_students)
 
-        # priorities, algorithm_options, initial_teams = s3_options(num_teams)
+        priorities, algorithm_options, initial_teams = s3_options(num_teams, _num_req, _num_req_per_team)
 
         y_social_avg = 0
         y_priority_avg = 0
@@ -59,8 +62,11 @@ if __name__ == '__main__':
                 gpa=[0, 4],
                 major=[1, 2, 3, 4],
                 year=[1, 2, 3, 4],
-                time=[1, 2, 3, 4]
+                time=[1, 2, 3, 4],
+                number_of_project_req=_num_req,
             )
+
+
             social_students = copy.deepcopy(students)
             priority_students = copy.deepcopy(students)
             weight_student = copy.deepcopy(students)
@@ -84,9 +90,9 @@ if __name__ == '__main__':
                 social_teams,
             )
             logger.end()
-            # y_social_avg += get_project_metrics(teams)[metric]
+            y_social_avg += get_project_metrics(teams)[metric]
             # y_social_avg += get_friend_metrics(teams)[metric]
-            y_social_avg += get_priority_metrics(teams, priorities)[metric]
+            # y_social_avg += get_priority_metrics(teams, priorities)[metric]
 
             # WeightAlgorithm
             logger = Logger(real=True)
@@ -101,9 +107,9 @@ if __name__ == '__main__':
                 weight_teams,
             )
             logger.end()
-            # y_weight_avg += get_project_metrics(teams)[metric]
+            y_weight_avg += get_project_metrics(teams)[metric]
             # y_weight_avg += get_friend_metrics(teams)[metric]
-            y_weight_avg += get_priority_metrics(teams, priorities)[metric]
+            # y_weight_avg += get_priority_metrics(teams, priorities)[metric]
 
             # PriorityAlgorithm
             logger = Logger(real=True)
@@ -115,11 +121,12 @@ if __name__ == '__main__':
                 logger,
                 num_teams,
                 priority_students,
-                initial_teams,
+                priority_teams,
             )
             logger.end()
+            y_priority_avg += get_project_metrics(teams)[metric]
             # y_priority_avg += get_friend_metrics(teams)[metric]
-            y_priority_avg += get_priority_metrics(teams, priorities)[metric]
+            # y_priority_avg += get_priority_metrics(teams, priorities)[metric]
 
             # Random Algorithm
             logger = Logger(real=True)
@@ -135,9 +142,9 @@ if __name__ == '__main__':
             )
             logger.end()
             # y_random_avg += 0
-            # y_random_avg += get_project_metrics(teams)[metric]
+            y_random_avg += get_project_metrics(teams)[metric]
             # y_random_avg += get_friend_metrics(teams)[metric]
-            y_random_avg += get_priority_metrics(teams, priorities)[metric]
+            # y_random_avg += get_priority_metrics(teams, priorities)[metric]
 
         y_social.append(y_social_avg / _num_tests)
         y_weight.append(y_weight_avg / _num_tests)

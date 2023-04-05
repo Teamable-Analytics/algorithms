@@ -66,6 +66,7 @@ def fake_students(
         major,
         year,
         time,
+        number_of_project_req,
 ) -> [Student]:
     students = []
     n = number_of_students
@@ -87,22 +88,25 @@ def fake_students(
         for j in range(e):
             enemy_id = random.randrange(0, n)
             relationships[enemy_id] = ENEMY
+
+        skills = {
+            0: [random.randrange(age_range[0], age_range[1])],
+            1: [genders[i]],
+            2: [random.randrange(gpa[0], gpa[1])],
+            3: [race[random.randrange(0, len(race))]],
+            4: [major[random.randrange(0, len(major))]],
+            5: [year[random.randrange(0, len(year))]],
+            6: [time[random.randrange(0, len(time))]],
+        }
+
+        for j in range(number_of_project_req):
+            skills[j+10] = [random.randint(0, 2) // 2]
+
         students.append(
             Student(
                 i,
                 relationships=relationships,
-                skills={
-                    0: [random.randrange(age_range[0], age_range[1])],
-                    1: [genders[i]],
-                    2: [random.randrange(gpa[0], gpa[1])],
-                    3: [race[random.randrange(0, len(race))]],
-                    4: [major[random.randrange(0, len(major))]],
-                    5: [year[random.randrange(0, len(year))]],
-                    6: [time[random.randrange(0, len(time))]],
-                    10: [random.randint(0, 2) // 2],
-                    11: [random.randint(0, 2) // 2],
-                    12: [random.randint(0, 2) // 2],
-                },
+                skills=skills,
             )
         )
     return students
