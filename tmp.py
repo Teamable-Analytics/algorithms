@@ -1,4 +1,6 @@
 import copy
+import random
+
 from algorithm_sandbox.logger import Logger
 from algorithm_sandbox.metrics.friend_metrics import get_friend_metrics
 from algorithm_sandbox.metrics.priority_metrics import get_priority_metrics
@@ -66,6 +68,7 @@ if __name__ == '__main__':
                 number_of_project_req=_num_req,
             )
 
+            random.shuffle(students)
 
             social_students = copy.deepcopy(students)
             priority_students = copy.deepcopy(students)
