@@ -1,6 +1,7 @@
 import math
 from typing import List, Dict
 
+from algorithm_sandbox.student_data import fake_custom_students
 from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions
 from team_formation.app.team_generator.algorithm.consts import FRIEND, ENEMY, DEFAULT
 from team_formation.app.team_generator.algorithm.social_algorithm.social_algorithm import SocialAlgorithm
@@ -20,7 +21,8 @@ class MockData:
     RELATIONSHIP_ATTRIBUTE_TYPE = 'Include Friends/Exclude Enemies'
     PROJECT_PREF_ATTRIBUTE_TYPE = 'Project Preference'
 
-    def __init__(self, total_teams: int, file_path: str = None, students: List[Student] = None, team_options: [] = None):
+    def __init__(self, total_teams: int, file_path: str = None, students: List[Student] = None,
+                 team_options: [] = None):
         if not students and not file_path:
             raise Exception('One of "students" or "file_path" must be defined.')
 
@@ -103,7 +105,7 @@ class MockData:
         return student_dict
 
 
-def mock_generation(alg, alg_options, logger, num_teams: int, data_file_path: str = None):
+def mock_generation_old(alg, alg_options, logger, num_teams: int, data_file_path: str = None):
     fake_data = MockData(num_teams, data_file_path)
     algorithm_options = alg_options
     algorithm = alg(algorithm_options, logger)  # needs algo options
@@ -114,3 +116,14 @@ def mock_generation(alg, alg_options, logger, num_teams: int, data_file_path: st
 
     return team_generator.generate()
 
+
+def mock_generation(alg, alg_options, logger, num_teams: int, students: [Student], teams):
+    fake_data = MockData(num_teams, None, students)
+    algorithm_options = alg_options
+    algorithm = alg(algorithm_options, logger)  # needs algo options
+    team_generation_options = fake_data.get_team_generation_option()
+    students = fake_data.get_students()
+    logger.save_students(students)
+    team_generator = TeamGenerator(students, algorithm, teams, team_generation_options)
+
+    return team_generator.generate()

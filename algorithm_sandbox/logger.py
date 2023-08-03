@@ -30,6 +30,8 @@ class Logger:
         bar_length = 50
 
         def standardize(value) -> int:
+            if not possible:
+                return 0
             return round((float(value) / possible) * bar_length)
         symbol_frequencies = {
             '▓': standardize(satisfied),
@@ -100,6 +102,12 @@ class Logger:
 
     def print_cliques(self, cliques: List[List[Student]]):
         print(self.format_cliques(cliques))
+
+    def print_time(self):
+        print(self.end_time - self.start_time)
+
+    def get_time(self):
+        return self.end_time - self.start_time
 
     def end(self):
         self.end_time = time.time()
