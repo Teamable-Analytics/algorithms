@@ -4,28 +4,19 @@ from team_formation.app.team_generator.algorithm.consts import DEFAULT, FRIEND, 
 from team_formation.app.team_generator.student import Student
 
 CUSTOM_STUDENTS_1 = [
-    Student(1, relationships={
-        2: FRIEND,
-        3: FRIEND
-    }),
-    Student(2, relationships={
-        1: FRIEND,
-        3: FRIEND
-    }),
-    Student(3, relationships={
-        1: FRIEND,
-        2: FRIEND,  # TODO: change to test behaviour when this is an ENEMY connection
-        4: FRIEND,
-        5: DEFAULT,
-    }),
-    Student(4, relationships={
-        3: FRIEND,
-        5: FRIEND
-    }),
-    Student(5, relationships={
-        3: DEFAULT,
-        4: FRIEND
-    })
+    Student(1, relationships={2: FRIEND, 3: FRIEND}),
+    Student(2, relationships={1: FRIEND, 3: FRIEND}),
+    Student(
+        3,
+        relationships={
+            1: FRIEND,
+            2: FRIEND,  # TODO: change to test behaviour when this is an ENEMY connection
+            4: FRIEND,
+            5: DEFAULT,
+        },
+    ),
+    Student(4, relationships={3: FRIEND, 5: FRIEND}),
+    Student(5, relationships={3: DEFAULT, 4: FRIEND}),
 ]
 
 
@@ -36,9 +27,7 @@ def fake_custom_students() -> [Student]:
 def fake_all_friend_students(n: int) -> [Student]:
     students = []
     for i in range(n):
-        student = Student(i, relationships={
-            other_id: FRIEND for other_id in range(n)
-        })
+        student = Student(i, relationships={other_id: FRIEND for other_id in range(n)})
         student.relationships[i] = DEFAULT
         students.append(student)
     return students
@@ -47,26 +36,24 @@ def fake_all_friend_students(n: int) -> [Student]:
 def fake_all_neutral_students(n: int) -> [Student]:
     students = []
     for i in range(n):
-        student = Student(i, relationships={
-            other_id: DEFAULT for other_id in range(n)
-        })
+        student = Student(i, relationships={other_id: DEFAULT for other_id in range(n)})
         students.append(student)
     return students
 
 
 def fake_students(
-        number_of_students: int,
-        number_of_females: int,
-        number_of_friends: int,
-        number_of_enemies: int,
-        friend_distribution,
-        age_range,
-        gpa,
-        race,
-        major,
-        year,
-        time,
-        number_of_project_req,
+    number_of_students: int,
+    number_of_females: int,
+    number_of_friends: int,
+    number_of_enemies: int,
+    friend_distribution,
+    age_range,
+    gpa,
+    race,
+    major,
+    year,
+    time,
+    number_of_project_req,
 ) -> [Student]:
     students = []
     n = number_of_students
@@ -78,7 +65,7 @@ def fake_students(
     for i in range(n):
         relationships = {}
         for j in range(f):
-            if friend_distribution == 'cluster':
+            if friend_distribution == "cluster":
                 friend_id = (i // f * f + j) % n
             else:
                 friend_id = random.randrange(0, n)
@@ -100,7 +87,9 @@ def fake_students(
         }
 
         for j in range(number_of_project_req):
-            skills[j+10] = [random.randint(0, 2) // 2]
+            # Opey: to my understanding this will return 1 with a 33% chance and 0 with a 66% chance
+            #  I'm assuming skills in the 10+ id range are always the project requirements
+            skills[j + 10] = [random.randint(0, 2) // 2]
 
         students.append(
             Student(

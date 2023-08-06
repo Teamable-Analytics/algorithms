@@ -11,7 +11,7 @@ from team_formation.app.team_generator.team import Team
 
 
 class SocialAlgorithm(WeightAlgorithm):
-    def __init__(self, algorithm_options, logger, *args, **kwargs):
+    def __init__(self, algorithm_options, logger=None, *args, **kwargs):
         super().__init__(algorithm_options, logger)
         self.clique_finder = None
         self.set_default_weights()

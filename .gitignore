@@ -4,3 +4,6 @@
 /algorithm_sandbox/mock_data/
 /algorithm_sandbox/logs/
 __pycache__/
+
+# ignore all data files
+/restructure/simulations/data_service/real_data/*/files/
