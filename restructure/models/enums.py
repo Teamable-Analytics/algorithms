@@ -41,10 +41,11 @@ class ScenarioAttribute(Enum):
     For the sake of benchmarking and testing, these are the only attributes a Student can have.
     """
 
-    GENDER = 1  # very controlled
+    GENDER = 1
     GPA = 2
     AGE = 3
     RACE = 4
     MAJOR = 5
     YEAR_LEVEL = 6
     TIMESLOT_AVAILABILITY = 7
+    PROJECT_PREFERENCES = 8

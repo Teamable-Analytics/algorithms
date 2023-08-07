@@ -1,15 +1,15 @@
 from typing import List
 
-from restructure.models.project import Project
 from restructure.models.student import Student
+from restructure.models.team import Team
 from restructure.simulations.data_service.interfaces import (
     StudentProvider,
-    ProjectProvider,
+    InitialTeamsProvider,
 )
 
 
-class COSC341W2022ProjectProvider(ProjectProvider):
-    def get(self) -> List[Project]:
+class COSC341W2022ProjectProvider(InitialTeamsProvider):
+    def get(self) -> List[Team]:
         pass
 
 

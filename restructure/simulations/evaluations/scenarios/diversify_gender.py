@@ -8,7 +8,7 @@ from restructure.simulations.evaluations.scenarios.goals import DiversityGoal
 class ScenarioDiversifyGender(Scenario):
     @property
     def name(self):
-        return "Diversify on Gender"
+        return "Diversify on gender"
 
     @property
     def goals(self) -> List[Goal]:

@@ -1,19 +1,16 @@
+import copy
 import time
-from typing import List, Dict, Tuple, Type
+from typing import List, Dict, Tuple
 
 from restructure.algorithms.main import MockAlgorithm
 from restructure.models.enums import AlgorithmType
 from restructure.models.student import Student
-from restructure.models.team_set import TeamSet
 from restructure.simulations.data_service.interfaces import (
     StudentProvider,
-    ProjectProvider,
+    InitialTeamsProvider,
 )
 from restructure.simulations.evaluations.interfaces import Scenario, TeamSetMetric
 from restructure.simulations.util.converter import Converter
-from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions
-from team_formation.app.team_generator.team import Team
-from team_formation.app.team_generator.team_generator import TeamGenerationOption
 
 
 class Simulation:
@@ -28,22 +25,22 @@ class Simulation:
         student_provider: StudentProvider,
         metric: TeamSetMetric,
         num_teams: int = None,
-        project_provider: ProjectProvider = None,
+        initial_teams_provider: InitialTeamsProvider = None,
     ):
         self.scenario = scenario
         self.metric = metric
         self.student_provider = student_provider
 
         self.num_teams = num_teams
-        self.project_provider = project_provider
+        self.initial_teams_provider = initial_teams_provider
 
-        if self.num_teams and self.project_provider:
+        if self.num_teams and self.initial_teams_provider:
             raise ValueError(
-                "Either specify num_teams OR give a project provider, not both."
+                "Either specify num_teams OR give a project initial_teams_provider, not both."
             )
-        if not self.num_teams and not self.project_provider:
+        if not self.num_teams and not self.initial_teams_provider:
             raise ValueError(
-                "Either num_teams OR a project provider must be specified."
+                "Either num_teams OR a project initial_teams_provider must be specified."
             )
 
         self.students: List[Student] = self.student_provider.get()
@@ -56,7 +53,10 @@ class Simulation:
         )
         """
         outputs = {algorithm: [] for algorithm in AlgorithmType}
-        projects = self.project_provider.get() if self.project_provider else None
+        initial_teams = (
+            self.initial_teams_provider.get() if self.initial_teams_provider else None
+        )
+        algorithm_students = Converter.students_to_algorithm_students(self.students)
 
         for algorithm_type in AlgorithmType:
             metric_logs = []
@@ -67,7 +67,7 @@ class Simulation:
                 team_generation_options=MockAlgorithm.get_team_generation_options(
                     num_students=len(self.students),
                     num_teams=self.num_teams,
-                    projects=projects,
+                    initial_teams=initial_teams,
                 ),
                 algorithm_options=MockAlgorithm.algorithm_options_from_scenario(
                     algorithm_type=algorithm_type,
@@ -77,11 +77,8 @@ class Simulation:
             )
 
             for _ in range(0, num_runs):
-                algorithm_students = Converter.students_to_algorithm_students(
-                    self.students
-                )
                 start_time = time.time()
-                team_set = mock_algorithm.generate(algorithm_students)
+                team_set = mock_algorithm.generate(copy.deepcopy(algorithm_students))
                 end_time = time.time()
 
                 runtime_logs.append(end_time - start_time)

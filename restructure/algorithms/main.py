@@ -6,6 +6,7 @@ from restructure.models.enums import (
     TokenizationConstraintDirection,
 )
 from restructure.models.project import Project
+from restructure.models.team import Team
 from restructure.models.team_set import TeamSet
 from restructure.simulations.evaluations.enums import PreferenceSubject
 from restructure.simulations.evaluations.interfaces import Scenario
@@ -68,11 +69,11 @@ class MockAlgorithm:
 
     @staticmethod
     def get_team_generation_options(
-        num_students: int, num_teams: int, projects: List[Project] = None
+        num_students: int, num_teams: int, initial_teams: List[Team] = None
     ) -> TeamGenerationOption:
-        if projects:
-            return Converter.projects_to_team_generation_option(
-                projects,
+        if initial_teams:
+            return Converter.initial_teams_to_team_generation_options(
+                initial_teams,
                 num_students=num_students,
             )
 

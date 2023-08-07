@@ -1,30 +1,27 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import List, Dict, Literal, Union, Tuple
 
-from restructure.models.project import Project
 from restructure.models.student import Student
+from restructure.models.team import Team
 
 
 @dataclass
 class MockStudentProviderSettings:
-    num_students: int
-    num_friends_per_student: int
-    num_enemies_per_student: int
-    num_attributes: int
-    num_requirements_to_match: int
-    max_project_preferences_per_student: int
+    number_of_students: int
+    number_of_friends: int
+    number_of_enemies: int
+    friend_distribution: Literal["cluster", "random"]
+    attribute_ranges: Dict[int, Union[List[int], List[Tuple[int, float]]]]
 
 
-class ProjectProvider(ABC):
-
+class InitialTeamsProvider(ABC):
     @abstractmethod
-    def get(self) -> List[Project]:
+    def get(self) -> List[Team]:
         raise NotImplementedError
 
 
 class StudentProvider(ABC):
-
     @abstractmethod
     def get(self) -> List[Student]:
         raise NotImplementedError

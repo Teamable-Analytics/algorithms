@@ -19,7 +19,7 @@ class ScenarioDiversifyGenderMin2Female(Scenario):
 
     @property
     def name(self):
-        return "Diversify on Gender with a minimum of 2 female"
+        return "Diversify on gender with a minimum of 2 female"
 
     @property
     def goals(self) -> List[Goal]:
