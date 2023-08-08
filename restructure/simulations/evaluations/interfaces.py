@@ -24,9 +24,8 @@ class Scenario(ABC):
 
 
 class TeamSetMetric(ABC):
-    @staticmethod
     @abstractmethod
-    def calculate(team_set: TeamSet):
+    def calculate(self, team_set: TeamSet) -> float:
         raise NotImplementedError
 
 

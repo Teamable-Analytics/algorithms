@@ -9,10 +9,10 @@ from restructure.models.team import Team
 @dataclass
 class MockStudentProviderSettings:
     number_of_students: int
-    number_of_friends: int
-    number_of_enemies: int
-    friend_distribution: Literal["cluster", "random"]
     attribute_ranges: Dict[int, Union[List[int], List[Tuple[int, float]]]]
+    number_of_friends: int = 0
+    number_of_enemies: int = 0
+    friend_distribution: Literal["cluster", "random"] = "random"
 
 
 class InitialTeamsProvider(ABC):
@@ -24,6 +24,11 @@ class InitialTeamsProvider(ABC):
 class StudentProvider(ABC):
     @abstractmethod
     def get(self) -> List[Student]:
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def num_students(self) -> int:
         raise NotImplementedError
 
     @property

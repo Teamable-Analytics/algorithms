@@ -13,7 +13,7 @@ class RequirementType(Enum):
     MORE_THAN = "more than"
 
 
-class DiversifyType:
+class DiversifyType(Enum):
     DIVERSIFY = "diversify"
     CONCENTRATE = "concentrate"
 

@@ -1,11 +1,20 @@
-from typing import List
+from typing import List, Literal, Union
 
-from restructure.models.enums import RequirementType, Relationship
+from restructure.models.enums import (
+    RequirementType,
+    Relationship,
+    DiversifyType,
+    TokenizationConstraintDirection,
+)
 from restructure.models.project import ProjectRequirement
 from restructure.models.student import Student
 from restructure.models.team import Team
 from restructure.models.team_set import TeamSet
+from restructure.simulations.evaluations.scenarios.goals import DiversityGoal
 from team_formation.app.team_generator.algorithm.consts import FRIEND, ENEMY, DEFAULT
+from team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
+    Priority,
+)
 from team_formation.app.team_generator.student import Student as AlgorithmStudent
 from team_formation.app.team_generator.team import Team as AlgorithmTeam
 from team_formation.app.team_generator.team_generator import TeamGenerationOption
@@ -161,3 +170,32 @@ class Converter:
             return ENEMY
 
         return DEFAULT
+
+    @staticmethod
+    def diversity_goal_to_algorithm_priority_dict(
+        goal: DiversityGoal,
+    ) -> Union[dict, None]:
+        if not goal.tokenization_constraint:
+            return None
+
+        priority_type = (
+            Priority.TYPE_DIVERSIFY
+            if goal.strategy == DiversifyType.DIVERSIFY
+            else Priority.TYPE_CONCENTRATE
+        )
+
+        limit_option = (
+            Priority.MIN_OF
+            if goal.tokenization_constraint.direction
+            == TokenizationConstraintDirection.MIN_OF
+            else Priority.MAX_OF
+        )
+
+        return {
+            "order": goal.importance,
+            "constraint": priority_type,
+            "skill_id": goal.attribute,
+            "limit_option": limit_option,
+            "limit": goal.tokenization_constraint.threshold,
+            "value": goal.tokenization_constraint.value,
+        }

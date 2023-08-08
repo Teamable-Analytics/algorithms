@@ -5,7 +5,6 @@ from restructure.models.enums import (
     DiversifyType,
     TokenizationConstraintDirection,
 )
-from restructure.models.project import Project
 from restructure.models.team import Team
 from restructure.models.team_set import TeamSet
 from restructure.simulations.evaluations.enums import PreferenceSubject
@@ -52,7 +51,7 @@ class MockAlgorithm:
             students, self.algorithm, [], self.team_generation_options
         )
         teams = team_generator.generate()
-        return Converter.algorithm_output_to_team_set(teams)
+        return Converter.algorithm_teams_to_team_set(teams)
 
     @staticmethod
     def get_algorithm_from_type(
@@ -120,34 +119,11 @@ class MockAlgorithm:
                     diversify_options.append({"id": goal.attribute})
                 else:
                     concentrate_options.append({"id": goal.attribute})
-                priority = {
-                    "order": goal.importance,
-                    "type": goal.strategy.value,
-                    "id": goal.attribute,
-                    "max_of": -1,
-                    "min_of": -1,
-                    "value": -1,
-                }
-                if goal.tokenization_constraint:
-                    priority.update({"value": goal.tokenization_constraint.value})
-                    if (
-                        goal.tokenization_constraint.direction
-                        == TokenizationConstraintDirection.MAX_OF
-                    ):
-                        priority.update(
-                            {"max_of": goal.tokenization_constraint.threshold}
-                        )
-                    if (
-                        goal.tokenization_constraint.direction
-                        == TokenizationConstraintDirection.MIN_OF
-                    ):
-                        priority.update(
-                            {"min_of": goal.tokenization_constraint.threshold}
-                        )
-
-                priorities.append(priority)
+                priority = Converter.diversity_goal_to_algorithm_priority_dict(goal)
+                if priority:
+                    priorities.append(priority)
             if isinstance(goal, ProjectRequirementGoal):
-                has_project_requirement_goal = True
+                has_project_requirement_goal = goal.match_skills
 
         if not has_weight_goal:
             # set default weights if no weights are explicitly given in the scenario

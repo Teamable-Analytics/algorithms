@@ -3,7 +3,7 @@ from typing import Literal, Tuple, List, Dict, Union
 
 from restructure.models.enums import Relationship
 from restructure.models.student import Student
-from restructure.simulations.data_service.interfaces import (
+from restructure.simulations.data.interfaces import (
     MockStudentProviderSettings,
     StudentProvider,
 )
@@ -14,7 +14,7 @@ class MockStudentProvider(StudentProvider):
         self.settings = settings
 
     def get(self) -> List[Student]:
-        return make_fake_students(
+        return create_mock_students(
             self.settings.number_of_students,
             self.settings.number_of_friends,
             self.settings.number_of_enemies,
@@ -23,13 +23,17 @@ class MockStudentProvider(StudentProvider):
         )
 
     @property
+    def num_students(self) -> int:
+        return self.settings.number_of_students
+
+    @property
     def max_project_preferences_per_student(self) -> int:
         # TODO: handle, probably have a way to define attribute ids that can have multiple
         #   values and check for what the ScenarioAttribute.ProjPref's is
-        return 1
+        return 0
 
 
-def make_fake_students(
+def create_mock_students(
     number_of_students: int,
     number_of_friends: int,
     number_of_enemies: int,
@@ -73,4 +77,12 @@ def make_fake_students(
 def attribute_values_from_range(
     range_config: Union[List[int], List[Tuple[int, float]]]
 ) -> List[int]:
-    return []
+    if isinstance(range_config[0], int):
+        # config is a list of possible values
+        return [random.choice(range_config)]
+
+    # config is a list of (value, % chance) tuples
+    possible_values = [_[0] for _ in range_config]
+    weights = [_[1] for _ in range_config]
+
+    return random.choices(possible_values, weights=weights, k=1)

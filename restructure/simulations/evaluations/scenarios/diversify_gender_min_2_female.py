@@ -28,7 +28,7 @@ class ScenarioDiversifyGenderMin2Female(Scenario):
                 DiversifyType.DIVERSIFY,
                 ScenarioAttribute.GENDER.value,
                 tokenization_constraint=TokenizationConstraint(
-                    direction=TokenizationConstraintDirection.MAX_OF,
+                    direction=TokenizationConstraintDirection.MIN_OF,
                     threshold=2,
                     value=self.value_of_female,
                 ),

@@ -29,7 +29,7 @@ class ProjectRequirementGoal(Goal):
 
 @dataclass
 class WeightGoal(Goal):
-    project_requirement_weight: int
-    social_preference_weight: int
-    diversity_goal_weight: int
-    project_preference_weight: int
+    project_requirement_weight: int = 0
+    social_preference_weight: int = 0
+    diversity_goal_weight: int = 0
+    project_preference_weight: int = 0

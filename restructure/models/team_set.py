@@ -9,3 +9,7 @@ class TeamSet:
     _id: int
     name: str = None
     teams: List[Team] = field(default_factory=list)
+
+    @property
+    def num_teams(self) -> int:
+        return len(self.teams)
