@@ -20,7 +20,7 @@ from team_formation.app.team_generator.team import Team as AlgorithmTeam
 from team_formation.app.team_generator.team_generator import TeamGenerationOption
 
 
-class Converter:
+class AlgorithmTranslator:
     @staticmethod
     def initial_teams_to_team_generation_options(
         initial_teams: List[Team], num_students: int
@@ -38,7 +38,7 @@ class Converter:
                     "requirements": [
                         {
                             "id": requirement.attribute,
-                            "operator": Converter.requirement_to_algorithm_requirement_operator(
+                            "operator": AlgorithmTranslator.requirement_to_algorithm_requirement_operator(
                                 requirement.operator
                             ),
                             "value": requirement.value,
@@ -86,7 +86,7 @@ class Converter:
         return TeamSet(
             _id=1,
             teams=[
-                Converter.algorithm_team_to_team(algorithm_team)
+                AlgorithmTranslator.algorithm_team_to_team(algorithm_team)
                 for algorithm_team in algorithm_teams
             ],
         )
@@ -95,7 +95,7 @@ class Converter:
     def students_to_algorithm_students(
         students: List[Student],
     ) -> List[AlgorithmStudent]:
-        return [Converter.student_to_algorithm_student(student) for student in students]
+        return [AlgorithmTranslator.student_to_algorithm_student(student) for student in students]
 
     @staticmethod
     def algorithm_team_to_team(algorithm_team: AlgorithmTeam) -> Team:
@@ -104,13 +104,13 @@ class Converter:
             name=algorithm_team.name,
             project_id=algorithm_team.project_id,
             students=[
-                Converter.algorithm_student_to_student(algorithm_student)
+                AlgorithmTranslator.algorithm_student_to_student(algorithm_student)
                 for algorithm_student in algorithm_team.students
             ],
             requirements=[
                 ProjectRequirement(
                     attribute=requirement["id"],
-                    operator=Converter.algorithm_requirement_operator_to_requirement(
+                    operator=AlgorithmTranslator.algorithm_requirement_operator_to_requirement(
                         requirement["operator"]
                     ),
                     value=requirement["value"],
@@ -125,7 +125,7 @@ class Converter:
             _id=algorithm_student.id,
             attributes=algorithm_student.skills,
             relationships={
-                s_id: Converter.algorithm_relationship_to_relationship(relationship)
+                s_id: AlgorithmTranslator.algorithm_relationship_to_relationship(relationship)
                 for s_id, relationship in algorithm_student.relationships.items()
             },
             preferences=[
@@ -142,7 +142,7 @@ class Converter:
             id=student._id,
             skills=student.attributes,
             relationships={
-                student_id: Converter.relationship_to_algorithm_relationship(
+                student_id: AlgorithmTranslator.relationship_to_algorithm_relationship(
                     relationship
                 )
                 for student_id, relationship in student.relationships.items()

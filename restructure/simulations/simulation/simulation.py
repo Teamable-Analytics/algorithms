@@ -12,7 +12,7 @@ from restructure.simulations.data.interfaces import (
     InitialTeamsProvider,
 )
 from restructure.simulations.evaluations.interfaces import Scenario, TeamSetMetric
-from restructure.simulations.util.converter import Converter
+from restructure.simulations.util.algorithm_translator import AlgorithmTranslator
 from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions
 
 RunOutput = Dict[AlgorithmType, Dict[str, List[float]]]
@@ -71,7 +71,7 @@ class Simulation:
         )
 
         for _ in range(0, num_runs):
-            algorithm_students = Converter.students_to_algorithm_students(
+            algorithm_students = AlgorithmTranslator.students_to_algorithm_students(
                 self.student_provider.get()
             )
             for algorithm_type in AlgorithmType:

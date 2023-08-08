@@ -15,7 +15,7 @@ from restructure.simulations.evaluations.scenarios.goals import (
     DiversityGoal,
     ProjectRequirementGoal,
 )
-from restructure.simulations.util.converter import Converter
+from restructure.simulations.util.algorithm_translator import AlgorithmTranslator
 from team_formation.app.team_generator.algorithm.algorithms import (
     AlgorithmOptions,
     RandomAlgorithm,
@@ -51,7 +51,7 @@ class MockAlgorithm:
             students, self.algorithm, [], self.team_generation_options
         )
         teams = team_generator.generate()
-        return Converter.algorithm_teams_to_team_set(teams)
+        return AlgorithmTranslator.algorithm_teams_to_team_set(teams)
 
     @staticmethod
     def get_algorithm_from_type(
@@ -71,7 +71,7 @@ class MockAlgorithm:
         num_students: int, num_teams: int, initial_teams: List[Team] = None
     ) -> TeamGenerationOption:
         if initial_teams:
-            return Converter.initial_teams_to_team_generation_options(
+            return AlgorithmTranslator.initial_teams_to_team_generation_options(
                 initial_teams,
                 num_students=num_students,
             )
@@ -119,7 +119,7 @@ class MockAlgorithm:
                     diversify_options.append({"id": goal.attribute})
                 else:
                     concentrate_options.append({"id": goal.attribute})
-                priority = Converter.diversity_goal_to_algorithm_priority_dict(goal)
+                priority = AlgorithmTranslator.diversity_goal_to_algorithm_priority_dict(goal)
                 if priority:
                     priorities.append(priority)
             if isinstance(goal, ProjectRequirementGoal):
