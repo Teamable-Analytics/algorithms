@@ -1,4 +1,4 @@
-from typing import List, Literal, Union
+from typing import List, Union
 
 from restructure.models.enums import (
     RequirementType,
@@ -10,7 +10,7 @@ from restructure.models.project import ProjectRequirement
 from restructure.models.student import Student
 from restructure.models.team import Team
 from restructure.models.team_set import TeamSet
-from restructure.simulations.evaluations.scenarios.goals import DiversityGoal
+from restructure.simulations.evaluations.goals import DiversityGoal
 from team_formation.app.team_generator.algorithm.consts import FRIEND, ENEMY, DEFAULT
 from team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
     Priority,

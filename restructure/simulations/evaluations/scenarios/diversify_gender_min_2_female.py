@@ -9,7 +9,7 @@ from restructure.simulations.evaluations.interfaces import (
     Scenario,
     TokenizationConstraint, Goal,
 )
-from restructure.simulations.evaluations.scenarios.goals import DiversityGoal
+from restructure.simulations.evaluations.goals import DiversityGoal
 
 
 class ScenarioDiversifyGenderMin2Female(Scenario):

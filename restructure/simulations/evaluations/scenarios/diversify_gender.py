@@ -2,7 +2,7 @@ from typing import List
 
 from restructure.models.enums import DiversifyType, ScenarioAttribute
 from restructure.simulations.evaluations.interfaces import Scenario, Goal
-from restructure.simulations.evaluations.scenarios.goals import (
+from restructure.simulations.evaluations.goals import (
     DiversityGoal,
     WeightGoal,
 )

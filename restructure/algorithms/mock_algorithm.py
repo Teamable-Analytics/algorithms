@@ -3,13 +3,12 @@ from typing import List
 from restructure.models.enums import (
     AlgorithmType,
     DiversifyType,
-    TokenizationConstraintDirection,
 )
 from restructure.models.team import Team
 from restructure.models.team_set import TeamSet
 from restructure.simulations.evaluations.enums import PreferenceSubject
 from restructure.simulations.evaluations.interfaces import Scenario
-from restructure.simulations.evaluations.scenarios.goals import (
+from restructure.simulations.evaluations.goals import (
     WeightGoal,
     PreferenceGoal,
     DiversityGoal,
