@@ -33,4 +33,4 @@ class TeamSetMetric(ABC):
 class TokenizationConstraint:
     direction: TokenizationConstraintDirection
     threshold: int
-    value: int  # todo: a bit iffy too
+    value: int
