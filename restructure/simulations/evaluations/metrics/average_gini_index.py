@@ -15,7 +15,7 @@ class AverageGiniIndex(TeamSetMetric):
     def __init__(self, attribute: int):
         self.attribute = attribute
 
-    def calculate(self, team_set: TeamSet):
+    def calculate(self, team_set: TeamSet) -> float:
         return (
             sum([team_gini_index(team, self.attribute) for team in team_set.teams])
             / team_set.num_teams

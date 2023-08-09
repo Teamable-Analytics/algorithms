@@ -99,14 +99,15 @@ class AlgorithmTranslator:
 
     @staticmethod
     def algorithm_team_to_team(algorithm_team: AlgorithmTeam) -> Team:
-        return Team(
+        students = [
+            AlgorithmTranslator.algorithm_student_to_student(algorithm_student)
+            for algorithm_student in algorithm_team.students
+        ]
+        team = Team(
             _id=algorithm_team.id,
             name=algorithm_team.name,
             project_id=algorithm_team.project_id,
-            students=[
-                AlgorithmTranslator.algorithm_student_to_student(algorithm_student)
-                for algorithm_student in algorithm_team.students
-            ],
+            students=students,
             requirements=[
                 ProjectRequirement(
                     attribute=requirement["id"],
@@ -118,6 +119,11 @@ class AlgorithmTranslator:
                 for requirement in algorithm_team.requirements
             ],
         )
+
+        for student in students:
+            student.team = team
+
+        return team
 
     @staticmethod
     def algorithm_student_to_student(algorithm_student: AlgorithmStudent) -> Student:

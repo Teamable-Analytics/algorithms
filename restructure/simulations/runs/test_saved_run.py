@@ -40,5 +40,4 @@ def test_saved_run():
             metric=AverageGiniIndex(attribute=ScenarioAttribute.GENDER.value),
         ).run(num_runs=100)
 
-        # print(simulation_outputs)
         print("=>", Simulation.average_metric(simulation_outputs))
