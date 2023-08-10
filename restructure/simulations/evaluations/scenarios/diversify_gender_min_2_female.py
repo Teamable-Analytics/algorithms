@@ -9,7 +9,7 @@ from restructure.simulations.evaluations.interfaces import (
     Scenario,
     TokenizationConstraint, Goal,
 )
-from restructure.simulations.evaluations.goals import DiversityGoal
+from restructure.simulations.evaluations.goals import DiversityGoal, WeightGoal
 
 
 class ScenarioDiversifyGenderMin2Female(Scenario):
@@ -33,4 +33,5 @@ class ScenarioDiversifyGenderMin2Female(Scenario):
                     value=self.value_of_female,
                 ),
             ),
+            WeightGoal(diversity_goal_weight=1),
         ]

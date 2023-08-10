@@ -8,6 +8,12 @@ from restructure.simulations.data.simulated_data.mock_student_provider import (
 from restructure.simulations.evaluations.metrics.average_gini_index import (
     AverageGiniIndex,
 )
+from restructure.simulations.evaluations.metrics.num_requirements_satisfied import (
+    NumRequirementsSatisfied,
+)
+from restructure.simulations.evaluations.metrics.num_teams_meeting_requirements import (
+    NumTeamsMeetingRequirements,
+)
 from restructure.simulations.evaluations.scenarios.diversify_gender_min_2_female import (
     ScenarioDiversifyGenderMin2Female,
 )
@@ -21,7 +27,7 @@ def test_saved_run():
 
     # Defining our changing x-values (in the graph sense)
     class_sizes = [100, 150, 200, 250, 300]
-    num_trials = 1000
+    num_trials = 10
     ratio_of_female_students = 0.5
 
     MALE = 1
@@ -35,6 +41,9 @@ def test_saved_run():
         # set up either mock or real data
         student_provider_settings = MockStudentProviderSettings(
             number_of_students=class_size,
+            number_of_friends=4,
+            number_of_enemies=1,
+            friend_distribution="cluster",
             attribute_ranges={
                 ScenarioAttribute.GENDER.value: [
                     (MALE, 1 - ratio_of_female_students),
@@ -47,7 +56,13 @@ def test_saved_run():
             num_teams=number_of_teams,
             scenario=ScenarioDiversifyGenderMin2Female(value_of_female=FEMALE),
             student_provider=MockStudentProvider(student_provider_settings),
-            metric=AverageGiniIndex(attribute=ScenarioAttribute.GENDER.value),
+            metrics=[
+                AverageGiniIndex(attribute=ScenarioAttribute.GENDER.value),
+                NumRequirementsSatisfied(),
+                NumTeamsMeetingRequirements(),
+            ],
         ).run(num_runs=num_trials)
 
-        print("=>", Simulation.average_metric(simulation_outputs))
+        print("=>", Simulation.average_metric(simulation_outputs, "AverageGiniIndex"))
+        print("=>", Simulation.average_metric(simulation_outputs, "NumRequirementsSatisfied"))
+        print("=>", Simulation.average_metric(simulation_outputs, "NumTeamsMeetingRequirements"))

@@ -23,19 +23,18 @@ class Simulation:
     Represents running a SimulationInstance num_runs times and returning the metrics from each of those runs.
     """
 
-    KEY_METRIC_VALUES = "metric_values"
     KEY_RUNTIMES = "runtimes"
 
     def __init__(
         self,
         scenario: Scenario,
         student_provider: StudentProvider,
-        metric: TeamSetMetric,
+        metrics: List[TeamSetMetric],
         num_teams: int = None,
         initial_teams_provider: InitialTeamsProvider = None,
     ):
         self.scenario = scenario
-        self.metric = metric
+        self.metrics = metrics
         self.student_provider = student_provider
 
         self.num_teams = num_teams
@@ -55,9 +54,9 @@ class Simulation:
         for algorithm_type in AlgorithmType:
             self.algorithm_options[algorithm_type] = None
             self.run_outputs[algorithm_type] = {
-                Simulation.KEY_METRIC_VALUES: [],
-                Simulation.KEY_RUNTIMES: [],
+                metric.name: [] for metric in self.metrics
             }
+            self.run_outputs[algorithm_type].update({Simulation.KEY_RUNTIMES: []})
 
     def run(self, num_runs: int) -> RunOutput:
         initial_teams = (
@@ -87,9 +86,10 @@ class Simulation:
                 self.run_outputs[algorithm_type][Simulation.KEY_RUNTIMES].append(
                     end_time - start_time
                 )
-                self.run_outputs[algorithm_type][Simulation.KEY_METRIC_VALUES].append(
-                    self.metric.calculate(team_set)
-                )
+                for metric in self.metrics:
+                    self.run_outputs[algorithm_type][metric.name].append(
+                        metric.calculate(team_set)
+                    )
 
         return self.run_outputs
 
@@ -105,11 +105,13 @@ class Simulation:
         return self.algorithm_options[algorithm_type]
 
     @staticmethod
-    def average_metric(run_output: RunOutput) -> Dict[AlgorithmType, float]:
+    def average_metric(
+        run_output: RunOutput, metric_name: str
+    ) -> Dict[AlgorithmType, float]:
         averages_output = {}
 
         for algorithm_type in AlgorithmType:
-            metric_values = run_output[algorithm_type][Simulation.KEY_METRIC_VALUES]
+            metric_values = run_output[algorithm_type][metric_name]
             averages_output[algorithm_type] = statistics.mean(metric_values)
 
         return averages_output

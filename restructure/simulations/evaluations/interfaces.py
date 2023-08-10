@@ -28,6 +28,10 @@ class TeamSetMetric(ABC):
     def calculate(self, team_set: TeamSet) -> float:
         raise NotImplementedError
 
+    @property
+    def name(self) -> str:
+        return self.__class__.__name__
+
 
 @dataclass
 class TokenizationConstraint:
