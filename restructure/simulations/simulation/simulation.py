@@ -2,17 +2,16 @@ import copy
 import statistics
 import time
 from collections import defaultdict
-from typing import List, Dict, Tuple, Union
+from typing import List, Dict, Union
 
 from restructure.algorithms.mock_algorithm import MockAlgorithm
 from restructure.models.enums import AlgorithmType
-from restructure.models.student import Student
 from restructure.simulations.data.interfaces import (
     StudentProvider,
     InitialTeamsProvider,
 )
 from restructure.simulations.evaluations.interfaces import Scenario, TeamSetMetric
-from restructure.simulations.util.algorithm_translator import AlgorithmTranslator
+from restructure.algorithms.algorithm_translator import AlgorithmTranslator
 from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions
 
 RunOutput = Dict[AlgorithmType, Dict[str, List[float]]]

@@ -14,7 +14,7 @@ from restructure.simulations.evaluations.goals import (
     DiversityGoal,
     ProjectRequirementGoal,
 )
-from restructure.simulations.util.algorithm_translator import AlgorithmTranslator
+from restructure.algorithms.algorithm_translator import AlgorithmTranslator
 from team_formation.app.team_generator.algorithm.algorithms import (
     AlgorithmOptions,
     RandomAlgorithm,
