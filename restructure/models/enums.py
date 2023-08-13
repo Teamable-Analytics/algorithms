@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List
 
 
 class Relationship(Enum):
@@ -49,3 +50,29 @@ class ScenarioAttribute(Enum):
     YEAR_LEVEL = 6
     TIMESLOT_AVAILABILITY = 7
     PROJECT_PREFERENCES = 8
+
+
+class AttributeValueEnum(Enum):
+    @classmethod
+    def values(cls, integers_only=False) -> List["AttributeValueEnum"]:
+        if integers_only:
+            return [_.value for _ in cls]
+        return [_ for _ in cls]
+
+
+class Gender(AttributeValueEnum):
+    MALE = 1
+    FEMALE = 2
+
+
+class Gpa(AttributeValueEnum):
+    A = 1
+    B = 2
+    C = 3
+
+
+class Age(AttributeValueEnum):
+    _18 = 1
+    _19 = 1
+    _20 = 1
+    _21 = 1

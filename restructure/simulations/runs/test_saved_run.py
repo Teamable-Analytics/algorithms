@@ -1,6 +1,6 @@
 import math
 
-from restructure.models.enums import ScenarioAttribute
+from restructure.models.enums import ScenarioAttribute, Gender
 from restructure.simulations.data.interfaces import MockStudentProviderSettings
 from restructure.simulations.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
@@ -30,9 +30,6 @@ def test_saved_run():
     num_trials = 10
     ratio_of_female_students = 0.5
 
-    MALE = 1
-    FEMALE = 2
-
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
 
@@ -46,15 +43,17 @@ def test_saved_run():
             friend_distribution="cluster",
             attribute_ranges={
                 ScenarioAttribute.GENDER.value: [
-                    (MALE, 1 - ratio_of_female_students),
-                    (FEMALE, ratio_of_female_students),
+                    (Gender.MALE, 1 - ratio_of_female_students),
+                    (Gender.FEMALE, ratio_of_female_students),
                 ],
             },
         )
 
         simulation_outputs = Simulation(
             num_teams=number_of_teams,
-            scenario=ScenarioDiversifyGenderMin2Female(value_of_female=FEMALE),
+            scenario=ScenarioDiversifyGenderMin2Female(
+                value_of_female=Gender.FEMALE.value
+            ),
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=[
                 AverageGiniIndex(attribute=ScenarioAttribute.GENDER.value),
@@ -64,5 +63,13 @@ def test_saved_run():
         ).run(num_runs=num_trials)
 
         print("=>", Simulation.average_metric(simulation_outputs, "AverageGiniIndex"))
-        print("=>", Simulation.average_metric(simulation_outputs, "NumRequirementsSatisfied"))
-        print("=>", Simulation.average_metric(simulation_outputs, "NumTeamsMeetingRequirements"))
+        print(
+            "=>",
+            Simulation.average_metric(simulation_outputs, "NumRequirementsSatisfied"),
+        )
+        print(
+            "=>",
+            Simulation.average_metric(
+                simulation_outputs, "NumTeamsMeetingRequirements"
+            ),
+        )

@@ -1,11 +1,12 @@
 import random
-from typing import Literal, Tuple, List, Dict, Union
+from typing import Literal, List, Dict
 
-from restructure.models.enums import Relationship
+from restructure.models.enums import Relationship, AttributeValueEnum
 from restructure.models.student import Student
 from restructure.simulations.data.interfaces import (
     MockStudentProviderSettings,
     StudentProvider,
+    AttributeRangeConfig,
 )
 
 
@@ -38,7 +39,7 @@ def create_mock_students(
     number_of_friends: int,
     number_of_enemies: int,
     friend_distribution: Literal["cluster", "random"],
-    attribute_ranges: Dict[int, Union[List[int], List[Tuple[int, float]]]],
+    attribute_ranges: Dict[int, AttributeRangeConfig],
 ) -> List[Student]:
     students = []
     n = number_of_students
@@ -74,15 +75,19 @@ def create_mock_students(
     return students
 
 
-def attribute_values_from_range(
-    range_config: Union[List[int], List[Tuple[int, float]]]
-) -> List[int]:
-    if isinstance(range_config[0], int):
-        # config is a list of possible values
-        return [random.choice(range_config)]
+def attribute_values_from_range(range_config: AttributeRangeConfig) -> List[int]:
+    # .value accounts for AttributeValueEnum in the range config
+    if isinstance(range_config[0], (int, AttributeValueEnum)):
+        if isinstance(range_config[0], int):
+            # config is a list of possible values
+            return [random.choice(range_config)]
+        return [random.choice(range_config).value]
 
     # config is a list of (value, % chance) tuples
-    possible_values = [_[0] for _ in range_config]
-    weights = [_[1] for _ in range_config]
+    if isinstance(range_config[0][0], int):
+        possible_values = [_[0] for _ in range_config]
+    else:
+        possible_values = [_[0].value for _ in range_config]
 
+    weights = [_[1] for _ in range_config]
     return random.choices(possible_values, weights=weights, k=1)
