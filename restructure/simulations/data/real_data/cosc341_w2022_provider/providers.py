@@ -8,7 +8,7 @@ from restructure.simulations.data.interfaces import (
 )
 
 
-class COSC341W2022ProjectProvider(InitialTeamsProvider):
+class COSC341W2022InitialTeamsProvider(InitialTeamsProvider):
     def get(self) -> List[Team]:
         pass
 
