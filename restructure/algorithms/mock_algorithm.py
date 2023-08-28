@@ -15,19 +15,19 @@ from restructure.simulations.evaluations.goals import (
     ProjectRequirementGoal,
 )
 from restructure.algorithms.algorithm_translator import AlgorithmTranslator
-from team_formation.app.team_generator.algorithm.algorithms import (
+from old.team_formation.app.team_generator.algorithm.algorithms import (
     AlgorithmOptions,
     RandomAlgorithm,
     WeightAlgorithm,
 )
-from team_formation.app.team_generator.algorithm.priority_algorithm.priority_algorithm import (
+from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority_algorithm import (
     PriorityAlgorithm,
 )
-from team_formation.app.team_generator.algorithm.social_algorithm.social_algorithm import (
+from old.team_formation.app.team_generator.algorithm.social_algorithm.social_algorithm import (
     SocialAlgorithm,
 )
-from team_formation.app.team_generator.student import Student as AlgorithmStudent
-from team_formation.app.team_generator.team_generator import (
+from old.team_formation.app.team_generator import Student as AlgorithmStudent
+from old.team_formation.app.team_generator.team_generator import (
     TeamGenerationOption,
     TeamGenerator,
 )
