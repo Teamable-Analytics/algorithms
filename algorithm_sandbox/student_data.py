@@ -87,8 +87,6 @@ def fake_students(
         }
 
         for j in range(number_of_project_req):
-            # Opey: to my understanding this will return 1 with a 33% chance and 0 with a 66% chance
-            #  I'm assuming skills in the 10+ id range are always the project requirements
             skills[j + 10] = [random.randint(0, 2) // 2]
 
         students.append(
