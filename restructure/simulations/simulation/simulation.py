@@ -12,7 +12,7 @@ from restructure.simulations.data.interfaces import (
 )
 from restructure.simulations.evaluations.interfaces import Scenario, TeamSetMetric
 from restructure.algorithms.algorithm_translator import AlgorithmTranslator
-from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions
+from old.team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions
 
 RunOutput = Dict[AlgorithmType, Dict[str, List[float]]]
 

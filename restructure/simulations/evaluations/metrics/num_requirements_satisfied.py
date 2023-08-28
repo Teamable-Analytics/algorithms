@@ -1,4 +1,4 @@
-from algorithm_sandbox.metrics.project_metric import satisfied_requirements
+from old.algorithm_sandbox.metrics.project_metric import satisfied_requirements
 from restructure.models.team_set import TeamSet
 from restructure.simulations.evaluations.interfaces import TeamSetMetric
 

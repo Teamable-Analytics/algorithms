@@ -11,13 +11,13 @@ from restructure.models.student import Student
 from restructure.models.team import Team
 from restructure.models.team_set import TeamSet
 from restructure.simulations.evaluations.goals import DiversityGoal
-from team_formation.app.team_generator.algorithm.consts import FRIEND, ENEMY, DEFAULT
-from team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
+from old.team_formation.app.team_generator import FRIEND, ENEMY, DEFAULT
+from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
     Priority,
 )
-from team_formation.app.team_generator.student import Student as AlgorithmStudent
-from team_formation.app.team_generator.team import Team as AlgorithmTeam
-from team_formation.app.team_generator.team_generator import TeamGenerationOption
+from old.team_formation.app.team_generator import Student as AlgorithmStudent
+from old.team_formation.app.team_generator.team import Team as AlgorithmTeam
+from old.team_formation.app.team_generator.team_generator import TeamGenerationOption
 
 
 class AlgorithmTranslator:
