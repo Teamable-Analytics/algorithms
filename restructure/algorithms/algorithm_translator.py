@@ -66,10 +66,6 @@ class AlgorithmTranslator:
     def algorithm_requirement_operator_to_requirement(
         algorithm_requirement: str,
     ) -> RequirementType:
-        """
-        TODO: instead of raw strings, ref the dict that stores these in the algo, it's fine since this
-            file is the only file that integrates /simulations with /algorithms
-        """
         if algorithm_requirement == "exactly":
             return RequirementType.EXACTLY
         if algorithm_requirement == "less than":

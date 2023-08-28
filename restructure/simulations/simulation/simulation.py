@@ -19,8 +19,7 @@ RunOutput = Dict[AlgorithmType, Dict[str, List[float]]]
 
 class Simulation:
     """
-    todo: Makes the Y-value(s)
-    Represents running a SimulationInstance num_runs times and returning the metrics from each of those runs.
+    Represents running a Simulation num_runs times and returning the metrics from each of those runs.
     """
 
     KEY_RUNTIMES = "runtimes"
