@@ -46,7 +46,11 @@ def test_saved_run():
                     (Gender.MALE, 1 - ratio_of_female_students),
                     (Gender.FEMALE, ratio_of_female_students),
                 ],
+                ScenarioAttribute.PROJECT_PREFERENCES.value: [1, 2, 3],
             },
+            num_values_per_attribute={
+                ScenarioAttribute.PROJECT_PREFERENCES.value: 3,
+            }
         )
 
         simulation_outputs = Simulation(
