@@ -63,6 +63,9 @@ class AttributeValueEnum(Enum):
 class Gender(AttributeValueEnum):
     MALE = 1
     FEMALE = 2
+    NON_BINARY = 3
+    OTHER = 4
+    NA = 5
 
 
 class Gpa(AttributeValueEnum):
@@ -72,7 +75,7 @@ class Gpa(AttributeValueEnum):
 
 
 class Age(AttributeValueEnum):
-    _18 = 1
-    _19 = 1
-    _20 = 1
-    _21 = 1
+    _18 = 18
+    _19 = 19
+    _20 = 20
+    _21 = 21
