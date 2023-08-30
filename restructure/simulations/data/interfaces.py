@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Dict, Literal, Union, Tuple
 
 from restructure.models.enums import AttributeValueEnum
@@ -13,13 +13,14 @@ AttributeRangeConfig = Union[
     List[Tuple[AttributeValueEnum, float]],
 ]
 
-AttributeRanges = Dict[int, AttributeRangeConfig]
+NumValuesConfig = Union[int, Tuple[int, int]]
 
 
 @dataclass
 class MockStudentProviderSettings:
     number_of_students: int
-    attribute_ranges: Dict[int, AttributeRangeConfig]
+    attribute_ranges: Dict[int, AttributeRangeConfig] = field(default_factory=dict)
+    num_values_per_attribute: Dict[int, NumValuesConfig] = field(default_factory=dict)
     number_of_friends: int = 0
     number_of_enemies: int = 0
     friend_distribution: Literal["cluster", "random"] = "random"
