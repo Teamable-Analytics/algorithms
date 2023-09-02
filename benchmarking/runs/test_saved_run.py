@@ -15,7 +15,7 @@ from benchmarking.evaluations.metrics.num_teams_meeting_requirements import (
     NumTeamsMeetingRequirements,
 )
 from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
-    ScenarioDiversifyGenderMin2Female,
+    DiversifyGenderMin2Female,
 )
 from benchmarking.simulation.simulation import Simulation
 
@@ -55,7 +55,7 @@ def test_saved_run():
 
         simulation_outputs = Simulation(
             num_teams=number_of_teams,
-            scenario=ScenarioDiversifyGenderMin2Female(
+            scenario=DiversifyGenderMin2Female(
                 value_of_female=Gender.FEMALE.value
             ),
             student_provider=MockStudentProvider(student_provider_settings),
