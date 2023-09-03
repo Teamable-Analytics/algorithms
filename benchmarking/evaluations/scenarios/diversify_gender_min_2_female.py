@@ -12,7 +12,7 @@ from benchmarking.evaluations.interfaces import (
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 
 
-class ScenarioDiversifyGenderMin2Female(Scenario):
+class DiversifyGenderMin2Female(Scenario):
 
     def __init__(self, value_of_female: int):
         self.value_of_female = value_of_female

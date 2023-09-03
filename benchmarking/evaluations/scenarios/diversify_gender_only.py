@@ -8,7 +8,7 @@ from benchmarking.evaluations.goals import (
 )
 
 
-class ScenarioDiversifyGenderOnly(Scenario):
+class DiversifyGenderOnly(Scenario):
     @property
     def name(self):
         return "Diversify on gender"
