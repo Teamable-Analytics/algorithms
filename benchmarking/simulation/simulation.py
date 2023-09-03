@@ -4,14 +4,14 @@ import time
 from collections import defaultdict
 from typing import List, Dict, Union
 
-from ai.mock_algorithm import MockAlgorithm
+from benchmarking.simulation.mock_algorithm import MockAlgorithm
 from models.enums import AlgorithmType
 from benchmarking.data.interfaces import (
     StudentProvider,
     InitialTeamsProvider,
 )
 from benchmarking.evaluations.interfaces import Scenario, TeamSetMetric
-from ai.algorithm_translator import AlgorithmTranslator
+from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
 from old.team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions
 
 RunOutput = Dict[AlgorithmType, Dict[str, List[float]]]

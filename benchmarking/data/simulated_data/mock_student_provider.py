@@ -99,6 +99,18 @@ def num_values_for_attribute(num_values_config: NumValuesConfig) -> int:
     return random.randrange(min_choices, max_choices)
 
 
+def random_choice(possible_values: List, size=None, replace=False, weights=None) -> List[int]:
+    """
+    Uses np.random.choice() but always returns a list of int
+    (np.random.choice return numpy.int64 if size=1 and ndarray otherwise)
+    """
+    size = size or 1
+    values = np.random.choice(possible_values, size=size, replace=False)
+    if size == 1:
+        return [int(values)]
+    return [int(val) for val in values]
+
+
 def attribute_values_from_range(range_config: AttributeRangeConfig, num_values: Optional[int] = 1) -> List[int]:
     if isinstance(range_config[0], (int, AttributeValueEnum)):
         if isinstance(range_config[0], int):
@@ -106,7 +118,7 @@ def attribute_values_from_range(range_config: AttributeRangeConfig, num_values: 
         else:
             # .value accounts for AttributeValueEnum in the range config
             possible_values = [enum.value for enum in range_config]
-        return np.random.choice(possible_values, size=num_values, replace=False)
+        return random_choice(possible_values, size=num_values, replace=False)
 
     # config is a list of (value, % chance) tuples
     if isinstance(range_config[0][0], int):
@@ -115,5 +127,4 @@ def attribute_values_from_range(range_config: AttributeRangeConfig, num_values: 
         possible_values = [_[0].value for _ in range_config]
 
     weights = [_[1] for _ in range_config]
-    # return random.choices(possible_values, weights=weights, k=num_values)
-    return np.random.choice(possible_values, p=weights, size=num_values, replace=False)
+    return random_choice(possible_values, weights=weights, size=num_values, replace=False)

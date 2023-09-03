@@ -14,7 +14,7 @@ from benchmarking.evaluations.goals import (
     DiversityGoal,
     ProjectRequirementGoal,
 )
-from ai.algorithm_translator import AlgorithmTranslator
+from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
 from old.team_formation.app.team_generator.algorithm.algorithms import (
     AlgorithmOptions,
     RandomAlgorithm,
@@ -26,7 +26,7 @@ from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority
 from old.team_formation.app.team_generator.algorithm.social_algorithm.social_algorithm import (
     SocialAlgorithm,
 )
-from old.team_formation.app.team_generator import Student as AlgorithmStudent
+from old.team_formation.app.team_generator.student import Student as AlgorithmStudent
 from old.team_formation.app.team_generator.team_generator import (
     TeamGenerationOption,
     TeamGenerator,
