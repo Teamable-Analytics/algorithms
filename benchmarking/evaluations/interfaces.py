@@ -23,12 +23,17 @@ class Scenario(ABC):
 
 
 class TeamSetMetric(ABC):
+    def __init__(self, name: str = None, *args, **kwargs):
+        self._name = name
+
     @abstractmethod
     def calculate(self, team_set: TeamSet) -> float:
         raise NotImplementedError
 
     @property
     def name(self) -> str:
+        if self._name:
+            return self._name
         return self.__class__.__name__
 
 

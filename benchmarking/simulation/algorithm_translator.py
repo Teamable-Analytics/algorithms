@@ -1,5 +1,6 @@
 from typing import List, Union
 
+from benchmarking.evaluations.goals import DiversityGoal
 from models.enums import (
     RequirementType,
     Relationship,
@@ -10,12 +11,11 @@ from models.project import ProjectRequirement
 from models.student import Student
 from models.team import Team
 from models.team_set import TeamSet
-from benchmarking.evaluations.goals import DiversityGoal
-from old.team_formation.app.team_generator import FRIEND, ENEMY, DEFAULT
+from old.team_formation.app.team_generator.algorithm.consts import FRIEND, ENEMY, DEFAULT
 from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
     Priority,
 )
-from old.team_formation.app.team_generator import Student as AlgorithmStudent
+from old.team_formation.app.team_generator.student import Student as AlgorithmStudent
 from old.team_formation.app.team_generator.team import Team as AlgorithmTeam
 from old.team_formation.app.team_generator.team_generator import TeamGenerationOption
 
@@ -23,7 +23,7 @@ from old.team_formation.app.team_generator.team_generator import TeamGenerationO
 class AlgorithmTranslator:
     @staticmethod
     def initial_teams_to_team_generation_options(
-        initial_teams: List[Team], num_students: int
+            initial_teams: List[Team], num_students: int
     ) -> TeamGenerationOption:
         total_teams = 0
         team_options = []
@@ -175,7 +175,7 @@ class AlgorithmTranslator:
 
     @staticmethod
     def diversity_goal_to_algorithm_priority_dict(
-        goal: DiversityGoal,
+            goal: DiversityGoal,
     ) -> Union[dict, None]:
         if not goal.tokenization_constraint:
             return None

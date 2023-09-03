@@ -30,7 +30,6 @@ python3 -m unittest discover tests
 
 #### /ai
 
-- contains helpers that allow benchmarking experiments to mock running an algorithm
 - todo: the logic for each of our algorithms
 - todo: the api that serves these algorithms
 
@@ -46,4 +45,5 @@ python3 -m unittest discover tests
 
 - the tools used to run simulations using our algorithms and benchmark them
 - also contains the code to re-generate the benchmarks we use frequently
+- contains helpers that allow benchmarking experiments to mock running an algorithm
 
