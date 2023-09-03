@@ -16,7 +16,7 @@ class TestMockStudentProvider(unittest.TestCase):
         ).get()
 
         for student in students:
-            self.assertIsInstance(1, Student)
+            self.assertIsInstance(student, Student)
 
     def test_max_project_preferences_are_correctly_inferred(self):
         max_project_preferences_1 = MockStudentProvider(
