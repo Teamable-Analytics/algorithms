@@ -13,6 +13,7 @@ AttributeRangeConfig = Union[
     List[Tuple[AttributeValueEnum, float]],
 ]
 
+# denotes either a fixed value or a (min, max) range
 NumValuesConfig = Union[int, Tuple[int, int]]
 
 
