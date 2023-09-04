@@ -12,3 +12,6 @@ class Team:
     project_id: int = None
     students: List[Student] = field(default_factory=list)
     requirements: List[ProjectRequirement] = field(default_factory=list)
+
+    def get_id(self):
+        return self._id
