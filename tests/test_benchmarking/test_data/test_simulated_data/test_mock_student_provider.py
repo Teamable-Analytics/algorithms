@@ -4,7 +4,7 @@ from models.enums import Gpa, ScenarioAttribute, Relationship
 from models.student import Student
 from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import (
-    attribute_values_from_range, create_mock_students, MockStudentProvider,
+    attribute_values_from_range, create_mock_students, MockStudentProvider, random_choice,
 )
 
 
@@ -108,6 +108,16 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             for student in students:
                 self.assertGreaterEqual(i, len([r for r in student.relationships.values() if r == Relationship.FRIEND]))
                 self.assertGreaterEqual(i, len([r for r in student.relationships.values() if r == Relationship.ENEMY]))
+
+    def test_random_choice__always_returns_list_of_int(self):
+        values_1 = random_choice(possible_values=[1, 2, 3], size=1)
+        values_2 = random_choice(possible_values=[1, 2, 3], size=2)
+        values_3 = random_choice(possible_values=list(range(0, 100)), size=100)
+
+        for value in [values_1, values_2, values_3]:
+            self.assertIsInstance(value, list)
+            self.assertIsInstance(value[0], int)
+            self.assertIsInstance(value[-1], int)
 
     def test_attribute_values_from_range__multiple_values_for_attribute_are_selected_without_replacement(self):
         for _ in range(100):
