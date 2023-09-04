@@ -39,7 +39,9 @@ class TokenizationConstraintDirection(Enum):
 class ScenarioAttribute(Enum):
     """
     Attributes that are used in scenarios.
-    For the sake of benchmarking and testing, these are the only attributes a Student can have.
+    This set of attribute ids are named so that we can refer to them semantically.
+    Any attribute given to a student with an id that is not one of these can semantically mean anything,
+        please document this in your run if doing so.
     """
 
     GENDER = 1
