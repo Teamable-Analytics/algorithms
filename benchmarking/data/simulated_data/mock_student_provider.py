@@ -105,7 +105,7 @@ def random_choice(possible_values: List, size=None, replace=False, weights=None)
     (np.random.choice return numpy.int64 if size=1 and ndarray otherwise)
     """
     size = size or 1
-    values = np.random.choice(possible_values, size=size, replace=False)
+    values = np.random.choice(possible_values, size=size, replace=replace, p=weights)
     if size == 1:
         return [int(values)]
     return [int(val) for val in values]
