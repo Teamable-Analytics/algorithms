@@ -1,4 +1,5 @@
 # Algorithms
+
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ### Setup
@@ -9,7 +10,7 @@
    ```
 2. Install all dependencies.
    ```
-   python3 -m pip3install -r requirements.txt
+   python3 -m pip install -r requirements.txt
    ```
 3. You're good to go!
    > Be sure to read any directory-specific README.md and CONVENTION.md files before starting to work.
@@ -18,6 +19,17 @@
 
 For detailed descriptions of each of the metrics we evaluate our algorithms with respect to, please
 see [METRICS.md](./METRICS.md).
+
+### Format/Lint Code
+
+In order to format your code for this project, run:
+
+```
+python3 -m black .
+```
+
+**Note:** If you just want to check if your formatting is accurate without modifying any files,
+run `python3 -m black . --check` instead.
 
 ### Run Tests
 
