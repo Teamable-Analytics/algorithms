@@ -68,9 +68,11 @@ class Student:
             Schema(Or({int: int}, {})).validate(self.preferences)
             for counter, _ in enumerate(self.preferences.keys(), start=1):
                 if not self.preferences.get(counter, None):
-                    raise SchemaError('Preferences keys are not in increasing order starting from 1')
+                    raise SchemaError(
+                        "Preferences keys are not in increasing order starting from 1"
+                    )
         except SchemaError as error:
-            raise StudentException(f'Error while initializing student: \n{error}')
+            raise StudentException(f"Error while initializing student: \n{error}")
 
     def is_added(self):
         """Check whether or not a student is in a team"""

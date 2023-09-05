@@ -6,17 +6,17 @@ def get_diversity_utility(team, student, diversify_options, concentrate_options)
     temp_team_students.append(student)
 
     max_value_possible = len(diversify_options) + len(concentrate_options)
-    min_value_possible = (-max_value_possible)
+    min_value_possible = -max_value_possible
 
     value = 0
     for diversify_option in diversify_options:
-        bi_old = _blau_index(team.students, diversify_option['id'])
-        bi_new = _blau_index(temp_team_students, diversify_option['id'])
-        value += (bi_new - bi_old)
+        bi_old = _blau_index(team.students, diversify_option["id"])
+        bi_new = _blau_index(temp_team_students, diversify_option["id"])
+        value += bi_new - bi_old
     for concentrate_option in concentrate_options:
-        bi_old = 1 - _blau_index(team.students, concentrate_option['id'])
-        bi_new = 1 - _blau_index(temp_team_students, concentrate_option['id'])
-        value += (bi_new - bi_old)
+        bi_old = 1 - _blau_index(team.students, concentrate_option["id"])
+        bi_new = 1 - _blau_index(temp_team_students, concentrate_option["id"])
+        value += bi_new - bi_old
 
     # Normalize value to the range of [0, 1], then scale it
     normalized_value = (value - min_value_possible) / (2 * max_value_possible)
@@ -50,7 +50,11 @@ def _get_answer_frequencies(students, skill_id):
             num_answers = len(answer_set) if answer_set else 1
             for answer in answer_set:
                 try:
-                    answer_frequencies[answer] += 1 / num_answers if is_multi_answer else 1
+                    answer_frequencies[answer] += (
+                        1 / num_answers if is_multi_answer else 1
+                    )
                 except KeyError:
-                    answer_frequencies[answer] = 1 / num_answers if is_multi_answer else 1
+                    answer_frequencies[answer] = (
+                        1 / num_answers if is_multi_answer else 1
+                    )
     return answer_frequencies

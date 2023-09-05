@@ -4,9 +4,11 @@ from algorithm_sandbox.scenarios.scenario_1_1 import s1_1_options
 from algorithm_sandbox.student_data import fake_students
 from algorithm_sandbox.visualization.visualize_metric import visualize_p_metric
 from team_formation.app.team_generator.algorithm.algorithms import WeightAlgorithm
-from team_formation.app.team_generator.algorithm.priority_algorithm.priority_algorithm import PriorityAlgorithm
+from team_formation.app.team_generator.algorithm.priority_algorithm.priority_algorithm import (
+    PriorityAlgorithm,
+)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     _num_teams = 5
     _num_students = 20
     num_friends = 4
@@ -17,7 +19,7 @@ if __name__ == '__main__':
     x = []
     y_priorities = [[] for _ in range(5)]
     y_weight = []
-    metric = 'LN'
+    metric = "LN"
 
     priorities, algorithm_options = s1_options()
     initial_teams = []
@@ -33,7 +35,7 @@ if __name__ == '__main__':
             number_of_females=num_students // 4,
             number_of_friends=num_friends,
             number_of_enemies=1,
-            friend_distribution='cluster',
+            friend_distribution="cluster",
             age_range=[18, 25],
             race=[1, 2, 3, 4],
             gpa=[0, 4],
@@ -44,7 +46,7 @@ if __name__ == '__main__':
         )
 
         for j in range(5):
-            PriorityAlgorithm.MAX_ITERATE = (j+1) * 5
+            PriorityAlgorithm.MAX_ITERATE = (j + 1) * 5
 
             avg = 0
             for t in range(_num_tests):
@@ -55,10 +57,10 @@ if __name__ == '__main__':
                     num_teams,
                     students,
                     initial_teams,
-                    metric
+                    metric,
                 )
                 avg += time
-            y_priorities[j].append(avg/_num_tests)
+            y_priorities[j].append(avg / _num_tests)
 
         w_avg = 0
         for t in range(_num_tests):
@@ -69,9 +71,9 @@ if __name__ == '__main__':
                 num_teams,
                 students,
                 initial_teams,
-                metric
+                metric,
             )
             w_avg += time
-        y_weight.append(w_avg/_num_tests)
+        y_weight.append(w_avg / _num_tests)
 
     visualize_p_metric(x, y_priorities, y_weight, "time (s)")

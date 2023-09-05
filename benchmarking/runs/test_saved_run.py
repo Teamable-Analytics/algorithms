@@ -50,14 +50,12 @@ def test_saved_run():
             },
             num_values_per_attribute={
                 ScenarioAttribute.PROJECT_PREFERENCES.value: 3,
-            }
+            },
         )
 
         simulation_outputs = Simulation(
             num_teams=number_of_teams,
-            scenario=DiversifyGenderMin2Female(
-                value_of_female=Gender.FEMALE.value
-            ),
+            scenario=DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value),
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=[
                 AverageGiniIndex(attribute=ScenarioAttribute.GENDER.value),

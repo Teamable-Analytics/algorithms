@@ -27,10 +27,16 @@ class SocialGraph:
         """
         levelled_social_graph = {}
         for student, other in combinations(self.students, 2):
-            total_relationship = self._raw_social_graph[(student.id, other.id)] + \
-                                 self._raw_social_graph[(other.id, student.id)]
-            if total_relationship <= level:  # being at this level or better means having a lighter or the same weight
-                levelled_social_graph[(student.id, other.id)] = levelled_social_graph[(other.id, student.id)] = True
+            total_relationship = (
+                self._raw_social_graph[(student.id, other.id)]
+                + self._raw_social_graph[(other.id, student.id)]
+            )
+            if (
+                total_relationship <= level
+            ):  # being at this level or better means having a lighter or the same weight
+                levelled_social_graph[(student.id, other.id)] = levelled_social_graph[
+                    (other.id, student.id)
+                ] = True
         return levelled_social_graph
 
     def has_edge(self, from_id: int, to_id: int) -> bool:
@@ -39,7 +45,11 @@ class SocialGraph:
         return self._social_graph[(from_id, to_id)]
 
     def edges(self) -> List[Tuple[int, int]]:
-        return [(from_id, to_id) for (from_id, to_id), exists in self._social_graph.items() if exists]
+        return [
+            (from_id, to_id)
+            for (from_id, to_id), exists in self._social_graph.items()
+            if exists
+        ]
 
     def _create_social_graph(self, students: List[Student]):
         """
@@ -53,5 +63,7 @@ class SocialGraph:
                 social_graph[(student.id, other.id)] = DEFAULT
                 if other.id in student.relationships:
                     # update to real relationship value if one exists
-                    social_graph[(student.id, other.id)] = student.relationships[other.id]
+                    social_graph[(student.id, other.id)] = student.relationships[
+                        other.id
+                    ]
         return social_graph

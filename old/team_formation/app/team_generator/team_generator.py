@@ -26,7 +26,13 @@ class TeamGenerationOption:
         list of team options containing requirements and team data
     """
 
-    def __init__(self, max_team_size: int, min_team_size: int, total_teams: int, team_options: list):
+    def __init__(
+        self,
+        max_team_size: int,
+        min_team_size: int,
+        total_teams: int,
+        team_options: list,
+    ):
         """
         Parameters
         ----------
@@ -65,39 +71,61 @@ class TeamGenerationOption:
     def validate(self):
         """Validate data"""
 
-        conf_schema = Schema([{
-            'id': str,
-            'project_id': int,
-            'name': str,
-            'requirements': [{
-                'id': int,
-                'value': int,
-                'operator':
-                    And(
-                        str,
-                        lambda n: n in [REQUIREMENT_TYPES.MORE_THAN, REQUIREMENT_TYPES.LESS_THAN,
-                                        REQUIREMENT_TYPES.EXACTLY]
-                    ),
-            }]
-        }])
+        conf_schema = Schema(
+            [
+                {
+                    "id": str,
+                    "project_id": int,
+                    "name": str,
+                    "requirements": [
+                        {
+                            "id": int,
+                            "value": int,
+                            "operator": And(
+                                str,
+                                lambda n: n
+                                in [
+                                    REQUIREMENT_TYPES.MORE_THAN,
+                                    REQUIREMENT_TYPES.LESS_THAN,
+                                    REQUIREMENT_TYPES.EXACTLY,
+                                ],
+                            ),
+                        }
+                    ],
+                }
+            ]
+        )
         try:
             conf_schema.validate(self.team_options)
-            validate_unique_fields(self.team_options, TeamGenerationException, field='id', set_name='team options')
+            validate_unique_fields(
+                self.team_options,
+                TeamGenerationException,
+                field="id",
+                set_name="team options",
+            )
         except SchemaError as se:
             raise TeamGenerationException('Invalid format for "team options"', se)
         try:
             if len(self.team_options) > self.total_teams:
-                raise TeamGenerationException('There are more requirements than there can be teams!')
+                raise TeamGenerationException(
+                    "There are more requirements than there can be teams!"
+                )
         except TypeError as te:
-            raise TeamGenerationException('Invalid parameters causing logic issues:', te)
+            raise TeamGenerationException(
+                "Invalid parameters causing logic issues:", te
+            )
 
         validate_int = [self.max_teams_size, self.min_team_size, self.total_teams]
         for item in validate_int:
             if item and not isinstance(item, int):
-                raise TeamGenerationException('One or more of "max team size", "min team size", and "total teams" is '
-                                              'not an integer')
+                raise TeamGenerationException(
+                    'One or more of "max team size", "min team size", and "total teams" is '
+                    "not an integer"
+                )
         if self.max_teams_size < self.min_team_size:
-            raise TeamGenerationException('The minimum team size is greater than the maximum team size!')
+            raise TeamGenerationException(
+                "The minimum team size is greater than the maximum team size!"
+            )
 
 
 class TeamGenerator:
@@ -126,7 +154,13 @@ class TeamGenerator:
         get teams that are available to fill
     """
 
-    def __init__(self, students, algorithm: Algorithm, initial_teams: list, options: TeamGenerationOption):
+    def __init__(
+        self,
+        students,
+        algorithm: Algorithm,
+        initial_teams: list,
+        options: TeamGenerationOption,
+    ):
         """
         Parameters
         ----------
@@ -151,7 +185,7 @@ class TeamGenerator:
             self.options = Schema(TeamGenerationOption).validate(options)
             self.teams = self.create_teams(Schema([Team]).validate(initial_teams))
         except SchemaError as error:
-            raise TeamGenerationException(f'Invalid parameters: \n{error}')
+            raise TeamGenerationException(f"Invalid parameters: \n{error}")
 
     def generate(self):
         return self.algorithm.generate(self.students, self.teams, self.options)
@@ -176,26 +210,38 @@ class TeamGenerator:
         teams = initial_teams
         for team_option in self.options.team_options:
             for team in initial_teams:
-                if team.id == team_option['id']:
+                if team.id == team_option["id"]:
                     break
             else:
                 teams.append(
-                    Team(team_option['id'], team_option['project_id'], team_option['name'], students=None,
-                         requirements=team_option['requirements'])
+                    Team(
+                        team_option["id"],
+                        team_option["project_id"],
+                        team_option["name"],
+                        students=None,
+                        requirements=team_option["requirements"],
+                    )
                 )
 
         # Create the remaining teams with unique names
         counter = 1
         while len(teams) < self.options.total_teams:
-            name = f'Team {counter}'
+            name = f"Team {counter}"
             if name not in map(lambda t: t.name, teams):
-                teams.append(Team('-1', -1, name))
+                teams.append(Team("-1", -1, name))
             counter += 1
 
         return teams
 
 
-def generate_teams(course_id, section_ids, survey_id, excluded_students_ids: [], excluded_team_ids: [], data_loader):
+def generate_teams(
+    course_id,
+    section_ids,
+    survey_id,
+    excluded_students_ids: [],
+    excluded_team_ids: [],
+    data_loader,
+):
     """Generate teams
 
     Parameters
@@ -239,9 +285,13 @@ def generate_teams(course_id, section_ids, survey_id, excluded_students_ids: [],
 
     team_generation_options = data_loader.get_team_generation_options()
 
-    excluded_teams = data_loader.get_teams_from_excluded_teams(excluded_team_ids, students, team_generation_options)
+    excluded_teams = data_loader.get_teams_from_excluded_teams(
+        excluded_team_ids, students, team_generation_options
+    )
 
-    team_generator = TeamGenerator(students, algorithm, excluded_teams, team_generation_options)
+    team_generator = TeamGenerator(
+        students, algorithm, excluded_teams, team_generation_options
+    )
     teams = team_generator.generate()
 
     return teams

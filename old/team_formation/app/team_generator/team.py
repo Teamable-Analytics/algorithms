@@ -41,7 +41,15 @@ class Team:
 
     students: List[Student] = []
 
-    def __init__(self, id: str, project_id: int, name: str, students: list = None, requirements: list = None, locked: bool = False):
+    def __init__(
+        self,
+        id: str,
+        project_id: int,
+        name: str,
+        students: list = None,
+        requirements: list = None,
+        locked: bool = False,
+    ):
         """
         Parameters
         ----------
@@ -85,14 +93,22 @@ class Team:
             self.students = Schema([Student]).validate(self.students)
             for student in self.students:
                 student.add_team(self)
-            self.requirements = Schema([{
-                'id': int,
-                'operator': Or(REQUIREMENT_TYPES.EXACTLY, REQUIREMENT_TYPES.LESS_THAN, REQUIREMENT_TYPES.MORE_THAN),
-                'value': int
-            }]).validate(self.requirements)
+            self.requirements = Schema(
+                [
+                    {
+                        "id": int,
+                        "operator": Or(
+                            REQUIREMENT_TYPES.EXACTLY,
+                            REQUIREMENT_TYPES.LESS_THAN,
+                            REQUIREMENT_TYPES.MORE_THAN,
+                        ),
+                        "value": int,
+                    }
+                ]
+            ).validate(self.requirements)
             Schema(bool).validate(self._locked)
         except SchemaError as error:
-            raise TeamException(f'Error while initializing team: \n{error}')
+            raise TeamException(f"Error while initializing team: \n{error}")
 
     def student_satisfied_requirements(self, student):
         """Returns the number of currently unmet requirements that this student satisfies
@@ -120,7 +136,9 @@ class Team:
 
         unmet_requirements_satisfied = 0
         for requirement in unmet_requirements:
-            unmet_requirements_satisfied += self.requirement_met_by_student(requirement, student)
+            unmet_requirements_satisfied += self.requirement_met_by_student(
+                requirement, student
+            )
 
         return unmet_requirements_satisfied
 
@@ -145,13 +163,13 @@ class Team:
         """
 
         is_met = False
-        for value in student.get_skill(requirement['id']):
-            if requirement['operator'] == REQUIREMENT_TYPES.LESS_THAN:
-                is_met |= (value < requirement['value'])
-            elif requirement['operator'] == REQUIREMENT_TYPES.MORE_THAN:
-                is_met |= (value > requirement['value'])
+        for value in student.get_skill(requirement["id"]):
+            if requirement["operator"] == REQUIREMENT_TYPES.LESS_THAN:
+                is_met |= value < requirement["value"]
+            elif requirement["operator"] == REQUIREMENT_TYPES.MORE_THAN:
+                is_met |= value > requirement["value"]
             else:  # default case is 'exactly'
-                is_met |= (value == requirement['value'])
+                is_met |= value == requirement["value"]
         return is_met
 
     def student_get_requirements(self, student):

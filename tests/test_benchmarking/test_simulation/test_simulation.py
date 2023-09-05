@@ -36,7 +36,9 @@ class TestSimulation(unittest.TestCase):
         cls.metric_1 = TestMetric(name="Test Metric 1")
         cls.metric_2 = TestMetric(name="Test Metric 2")
         cls.metric_3 = TestMetric(name="Test Metric 3")
-        cls.student_provider = MockStudentProvider(MockStudentProviderSettings(number_of_students=10))
+        cls.student_provider = MockStudentProvider(
+            MockStudentProviderSettings(number_of_students=10)
+        )
 
     def test_run__run_outputs_match_given_metrics_and_trials(self):
         simulation_outputs = Simulation(
@@ -53,11 +55,11 @@ class TestSimulation(unittest.TestCase):
         for algo_type in AlgorithmType:
             run_output = simulation_outputs[algo_type]
             self.assertEqual(
-                len(run_output.keys()), 4,
+                len(run_output.keys()),
+                4,
                 msg="Run output for {} doesn't include the correct number of keys (3 metrics + 1 runtime)",
             )
             for name in ["Test Metric 1", "Test Metric 2", "Test Metric 3"]:
                 self.assertTrue(name in run_output)
                 self.assertEqual(len(run_output[name]), 5)
             self.assertTrue(Simulation.KEY_RUNTIMES in run_output)
-

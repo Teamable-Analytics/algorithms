@@ -1,4 +1,10 @@
-from old.team_formation.app.team_generator.algorithm.consts import DEFAULT, FRIEND, ENEMY, LOW_WEIGHT, HIGH_WEIGHT
+from old.team_formation.app.team_generator.algorithm.consts import (
+    DEFAULT,
+    FRIEND,
+    ENEMY,
+    LOW_WEIGHT,
+    HIGH_WEIGHT,
+)
 
 
 class SocialNetwork:
@@ -19,7 +25,8 @@ class SocialNetwork:
     def get_weight(self, src, dest):
         if src not in self._network or dest not in self._network[src]:
             raise Exception(
-                f'An edge from Student ({src}) to Student ({dest}) could not be found in the social network')
+                f"An edge from Student ({src}) to Student ({dest}) could not be found in the social network"
+            )
         if src == dest:
             return DEFAULT
         return self._network[src][dest]
@@ -56,7 +63,9 @@ class SocialNetwork:
                     new_network[s][other] = new_network[other][s] = 0
                 else:
                     combined_weight = network[s][other] + network[other][s]
-                    new_network[s][other] = new_network[other][s] = _normalize_weight(combined_weight)
+                    new_network[s][other] = new_network[other][s] = _normalize_weight(
+                        combined_weight
+                    )
         return new_network
 
 
@@ -103,7 +112,7 @@ def _shortest_path_cost(src, dest, network, distances):
     Also populates the shortest path cost from src to every other node in the network and stores those values.
     Implementation is specific to this case and only used in _calculate_network_diameter().
     """
-    if distances[src][dest] < float('inf'):
+    if distances[src][dest] < float("inf"):
         return distances[src][dest]  # min cost has already been calculated
 
     student_ids = list(network)
@@ -117,7 +126,9 @@ def _shortest_path_cost(src, dest, network, distances):
                 continue
 
             temp = distances[src][student] + network[student][other]
-            distances[src][other] = temp if temp < distances[src][other] else distances[src][other]
+            distances[src][other] = (
+                temp if temp < distances[src][other] else distances[src][other]
+            )
             distances[other][src] = distances[src][other]
 
     return distances[src][dest]
@@ -127,11 +138,7 @@ def _setup_distances(student_ids):
     """
     Set up the distances dictionary storing distances between nodes in the graph
     """
-    distances = {
-        s: {
-            other: float('inf') for other in student_ids
-        } for s in student_ids
-    }
+    distances = {s: {other: float("inf") for other in student_ids} for s in student_ids}
     for s in student_ids:
         distances[s][s] = 0  # distances to themselves are initialized to 0
 
@@ -143,7 +150,7 @@ def _pop(q, dist):
     Returns and removes from list the student id with the minimum dist as defined in the dist list.
     """
     min_dist_student = None
-    min_dist = float('inf')
+    min_dist = float("inf")
     for s_id in q:
         changed = dist[s_id] < min_dist
         min_dist = dist[s_id] if changed else min_dist

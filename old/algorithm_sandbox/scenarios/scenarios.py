@@ -16,8 +16,8 @@ def get_s1_student():
         number_of_friends=10,
         number_of_enemies=2,
         age_range=[18, 25],
-        age_distribution='uniform',
-        gender_options=['MALE', 'FEMALE'],
+        age_distribution="uniform",
+        gender_options=["MALE", "FEMALE"],
     )
 
 
@@ -35,11 +35,11 @@ def get_s2_student():
         number_of_friends=10,
         number_of_enemies=2,
         age_range=[18, 25],
-        age_distribution='uniform',
+        age_distribution="uniform",
         gender_options={
-            'MALE': 13,
-            'FEMALE': 7,
-        }
+            "MALE": 13,
+            "FEMALE": 7,
+        },
     )
 
 

@@ -1,5 +1,5 @@
 def get_requirement_utility(team, student):
-    """ Return the number of requirements met as a scaled normal value
+    """Return the number of requirements met as a scaled normal value
 
     Gets the number of requirement met, then with the total requirements
     it calculates the normal. The normal value is scaled and returned.

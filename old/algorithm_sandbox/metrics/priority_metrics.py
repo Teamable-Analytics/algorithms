@@ -1,10 +1,12 @@
-from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority import Priority
+from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
+    Priority,
+)
 from old.team_formation.app.team_generator.team import Team
 
 
 def is_priority_satisfied(team: Team, priority):
     students = team.students
-    skill_id = priority['skill_id']
+    skill_id = priority["skill_id"]
     cnt = {}
     for student in students:
         value = student.get_skill(skill_id)[0]
@@ -13,18 +15,18 @@ def is_priority_satisfied(team: Team, priority):
         cnt[value] += 1
 
     for value in cnt.values():
-        if priority['limit_option'] == Priority.MIN_OF:
-            if value < priority['limit']:
+        if priority["limit_option"] == Priority.MIN_OF:
+            if value < priority["limit"]:
                 return False
         else:
-            if value > priority['limit']:
+            if value > priority["limit"]:
                 return False
     return True
 
 
 def gini_index(team: Team, priority):
     students = team.students
-    skill_id = priority['skill_id']
+    skill_id = priority["skill_id"]
     cnt = {}
     for student in students:
         value = student.get_skill(skill_id)[0]
@@ -42,10 +44,10 @@ def gini_index(team: Team, priority):
 
 def get_priority_metrics(teams: list[Team], priorities):
     metrics = {
-        'EXP': 0,
-        'LN': 0,
-        'MAX': 0,
-        'AVG_GINI': 0,
+        "EXP": 0,
+        "LN": 0,
+        "MAX": 0,
+        "AVG_GINI": 0,
     }
 
     k = len(priorities)
@@ -58,10 +60,10 @@ def get_priority_metrics(teams: list[Team], priorities):
             if not sat:
                 total_sat = False
 
-            metrics['LN'] += sat * (k - i) / (k * (k + 1) / 2) / m
-            metrics['EXP'] += sat * (2 ** (k - i - 1)) / (2 ** k - 1) / m
-            metrics['AVG_GINI'] += gini_index(team, priority) / m / k
+            metrics["LN"] += sat * (k - i) / (k * (k + 1) / 2) / m
+            metrics["EXP"] += sat * (2 ** (k - i - 1)) / (2**k - 1) / m
+            metrics["AVG_GINI"] += gini_index(team, priority) / m / k
         if total_sat:
-            metrics['MAX'] = i + 1
+            metrics["MAX"] = i + 1
 
     return metrics

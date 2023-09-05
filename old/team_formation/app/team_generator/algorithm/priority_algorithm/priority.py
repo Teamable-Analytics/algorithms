@@ -9,13 +9,13 @@ class PriorityException(Exception):
 
 class Priority:
     # Constraints
-    TYPE_DIVERSIFY = 'diversify'
-    TYPE_CONCENTRATE = 'concentrate'
-    TYPE_IGNORE = 'ignore'
+    TYPE_DIVERSIFY = "diversify"
+    TYPE_CONCENTRATE = "concentrate"
+    TYPE_IGNORE = "ignore"
 
     # Limit options
-    MIN_OF = 'min_of'
-    MAX_OF = 'max_of'
+    MIN_OF = "min_of"
+    MAX_OF = "max_of"
 
     skill_id: int
     limit_option: str
@@ -23,7 +23,9 @@ class Priority:
     limit: int  # number representing k
     value: str  # string representing x
 
-    def __init__(self, constraint: str, skill_id: int, limit_option: str, limit: int, value: str):
+    def __init__(
+        self, constraint: str, skill_id: int, limit_option: str, limit: int, value: str
+    ):
         self.constraint = constraint
         self.skill_id = skill_id
         self.limit_option = limit_option
@@ -32,12 +34,18 @@ class Priority:
         self.validate()
 
     def validate(self):
-        if self.limit_option == Priority.MIN_OF and self.constraint == Priority.TYPE_DIVERSIFY:
+        if (
+            self.limit_option == Priority.MIN_OF
+            and self.constraint == Priority.TYPE_DIVERSIFY
+        ):
             return True
-        if self.limit_option == Priority.MAX_OF and self.constraint == Priority.TYPE_CONCENTRATE:
+        if (
+            self.limit_option == Priority.MAX_OF
+            and self.constraint == Priority.TYPE_CONCENTRATE
+        ):
             if self.limit > 0:
                 return True
-            raise ValueError('Limit must be greater than 0')
+            raise ValueError("Limit must be greater than 0")
         raise NotImplementedError()
 
     def satisfied_by(self, students: List[Student]) -> bool:
@@ -54,7 +62,13 @@ class Priority:
         """
         if count == 0:
             return True
-        if self.limit_option == Priority.MIN_OF and self.constraint == Priority.TYPE_DIVERSIFY:
+        if (
+            self.limit_option == Priority.MIN_OF
+            and self.constraint == Priority.TYPE_DIVERSIFY
+        ):
             return count >= self.limit
-        if self.limit_option == Priority.MAX_OF and self.constraint == Priority.TYPE_CONCENTRATE:
+        if (
+            self.limit_option == Priority.MAX_OF
+            and self.constraint == Priority.TYPE_CONCENTRATE
+        ):
             return count <= self.limit
