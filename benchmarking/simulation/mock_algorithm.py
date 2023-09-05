@@ -118,7 +118,9 @@ class MockAlgorithm:
                     diversify_options.append({"id": goal.attribute})
                 else:
                     concentrate_options.append({"id": goal.attribute})
-                priority = AlgorithmTranslator.diversity_goal_to_algorithm_priority_dict(goal)
+                priority = (
+                    AlgorithmTranslator.diversity_goal_to_algorithm_priority_dict(goal)
+                )
                 if priority:
                     priorities.append(priority)
             if isinstance(goal, ProjectRequirementGoal):

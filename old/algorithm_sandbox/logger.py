@@ -5,7 +5,11 @@ from old.algorithm_sandbox.algorithm_state import AlgorithmState
 from old.algorithm_sandbox.encoder import Encoder
 from old.team_formation.app.team_generator.algorithm.evaluation import TeamEvaluation
 from old.team_formation.app.team_generator.algorithm.algorithms import Algorithm
-from old.team_formation.app.team_generator.algorithm.consts import ENEMY, UNREGISTERED_STUDENT_ID, FRIEND
+from old.team_formation.app.team_generator.algorithm.consts import (
+    ENEMY,
+    UNREGISTERED_STUDENT_ID,
+    FRIEND,
+)
 from old.team_formation.app.team_generator.student import Student
 from old.team_formation.app.team_generator.team import Team
 
@@ -33,53 +37,69 @@ class Logger:
             if not possible:
                 return 0
             return round((float(value) / possible) * bar_length)
+
         symbol_frequencies = {
-            '▓': standardize(satisfied),
-            '▒‍': standardize(missed),
-            '░': standardize(reach)
+            "▓": standardize(satisfied),
+            "▒‍": standardize(missed),
+            "░": standardize(reach),
         }
         print_symbols(symbol_frequencies)
 
-    def print_teams(self, teams: List[Team], with_relationships: bool = False, only_unmet: bool = False):
+    def print_teams(
+        self,
+        teams: List[Team],
+        with_relationships: bool = False,
+        only_unmet: bool = False,
+    ):
         team_evaluation = TeamEvaluation(teams)
-        print(f'Number of teams: {len(teams)}')
-        print('\t(F)\t', end='')
+        print(f"Number of teams: {len(teams)}")
+        print("\t(F)\t", end="")
         self.print_metrics_bar(team_evaluation.team_set_satisfaction_metrics(True))
-        print('\t(E)\t', end='')
+        print("\t(E)\t", end="")
         self.print_metrics_bar(team_evaluation.team_set_satisfaction_metrics(False))
-        print(f'\tOverall Friend Satisfaction Score: {team_evaluation.team_set_satisfaction_score(friend=True)}')
-        print(f'\tOverall Enemy Satisfaction Score: {team_evaluation.team_set_satisfaction_score(friend=False)}')
+        print(
+            f"\tOverall Friend Satisfaction Score: {team_evaluation.team_set_satisfaction_score(friend=True)}"
+        )
+        print(
+            f"\tOverall Enemy Satisfaction Score: {team_evaluation.team_set_satisfaction_score(friend=False)}"
+        )
         for team in teams:
             friend_score = team_evaluation.team_satisfaction_score(team, friend=True)
             enemy_score = team_evaluation.team_satisfaction_score(team, friend=False)
-            print(f'Team: {team.name} ({team.id})\t| Friend Score: {friend_score}\t| Enemy Score: {enemy_score}')
+            print(
+                f"Team: {team.name} ({team.id})\t| Friend Score: {friend_score}\t| Enemy Score: {enemy_score}"
+            )
             for student in team.students:
-                print(f'\t{self.format_student(student, with_relationships, team if only_unmet else None)}')
+                print(
+                    f"\t{self.format_student(student, with_relationships, team if only_unmet else None)}"
+                )
 
-    def format_student(self, student: Student, with_relationships: bool = False, team: Team = None) -> str:
+    def format_student(
+        self, student: Student, with_relationships: bool = False, team: Team = None
+    ) -> str:
         if not self.real:
-            return f'Student - {student.id}'
+            return f"Student - {student.id}"
         team_member_ids = [student.id for student in team.students] if team else []
         student_name = Encoder.get_student_name(student)
         student_key = Encoder.get_student_key()
 
         friends = [
             Encoder.get_student_name_by_id(student_key, other_id)
-            for other_id, relationship
-            in student.relationships.items()
-            if relationship == FRIEND and other_id != UNREGISTERED_STUDENT_ID and
-               (other_id not in team_member_ids if team else True)
+            for other_id, relationship in student.relationships.items()
+            if relationship == FRIEND
+            and other_id != UNREGISTERED_STUDENT_ID
+            and (other_id not in team_member_ids if team else True)
         ]
 
         enemies = [
             Encoder.get_student_name_by_id(student_key, other_id)
-            for other_id, relationship
-            in student.relationships.items()
-            if relationship == ENEMY and other_id != UNREGISTERED_STUDENT_ID and
-               (other_id in team_member_ids if team else True)
+            for other_id, relationship in student.relationships.items()
+            if relationship == ENEMY
+            and other_id != UNREGISTERED_STUDENT_ID
+            and (other_id in team_member_ids if team else True)
         ]
 
-        output = f'{student_name}'
+        output = f"{student_name}"
         if not with_relationships:
             return output
 
@@ -115,5 +135,5 @@ class Logger:
 
 def print_symbols(symbol_frequencies: Dict[str, int]):
     for text, frequency in symbol_frequencies.items():
-        print(text * frequency, end='')
+        print(text * frequency, end="")
     print()  # for the newline

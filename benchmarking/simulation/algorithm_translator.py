@@ -11,7 +11,11 @@ from models.project import ProjectRequirement
 from models.student import Student
 from models.team import Team
 from models.team_set import TeamSet
-from old.team_formation.app.team_generator.algorithm.consts import FRIEND, ENEMY, DEFAULT
+from old.team_formation.app.team_generator.algorithm.consts import (
+    FRIEND,
+    ENEMY,
+    DEFAULT,
+)
 from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
     Priority,
 )
@@ -23,7 +27,7 @@ from old.team_formation.app.team_generator.team_generator import TeamGenerationO
 class AlgorithmTranslator:
     @staticmethod
     def initial_teams_to_team_generation_options(
-            initial_teams: List[Team], num_students: int
+        initial_teams: List[Team], num_students: int
     ) -> TeamGenerationOption:
         total_teams = 0
         team_options = []
@@ -91,7 +95,10 @@ class AlgorithmTranslator:
     def students_to_algorithm_students(
         students: List[Student],
     ) -> List[AlgorithmStudent]:
-        return [AlgorithmTranslator.student_to_algorithm_student(student) for student in students]
+        return [
+            AlgorithmTranslator.student_to_algorithm_student(student)
+            for student in students
+        ]
 
     @staticmethod
     def algorithm_team_to_team(algorithm_team: AlgorithmTeam) -> Team:
@@ -127,7 +134,9 @@ class AlgorithmTranslator:
             _id=algorithm_student.id,
             attributes=algorithm_student.skills,
             relationships={
-                s_id: AlgorithmTranslator.algorithm_relationship_to_relationship(relationship)
+                s_id: AlgorithmTranslator.algorithm_relationship_to_relationship(
+                    relationship
+                )
                 for s_id, relationship in algorithm_student.relationships.items()
             },
             preferences=[
@@ -175,7 +184,7 @@ class AlgorithmTranslator:
 
     @staticmethod
     def diversity_goal_to_algorithm_priority_dict(
-            goal: DiversityGoal,
+        goal: DiversityGoal,
     ) -> Union[dict, None]:
         if not goal.tokenization_constraint:
             return None

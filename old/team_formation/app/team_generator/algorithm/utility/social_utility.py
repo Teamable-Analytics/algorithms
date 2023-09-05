@@ -1,7 +1,12 @@
 from typing import List
 
-from old.team_formation.app.team_generator.algorithm.consts import LOW_WEIGHT, HIGH_WEIGHT
-from old.team_formation.app.team_generator.algorithm.utility.social_network import SocialNetwork
+from old.team_formation.app.team_generator.algorithm.consts import (
+    LOW_WEIGHT,
+    HIGH_WEIGHT,
+)
+from old.team_formation.app.team_generator.algorithm.utility.social_network import (
+    SocialNetwork,
+)
 from old.team_formation.app.team_generator.student import Student
 
 

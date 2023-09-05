@@ -1,6 +1,10 @@
 import random
 
-from old.team_formation.app.team_generator.algorithm.consts import DEFAULT, FRIEND, ENEMY
+from old.team_formation.app.team_generator.algorithm.consts import (
+    DEFAULT,
+    FRIEND,
+    ENEMY,
+)
 from old.team_formation.app.team_generator.student import Student
 
 CUSTOM_STUDENTS_1 = [

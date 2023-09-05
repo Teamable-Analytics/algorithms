@@ -33,7 +33,7 @@ class VisualizeLogs:
             if student.id == student_id:
                 self._student_cache[student.id] = student
                 return student
-        raise ValueError(f'Cannot find student with id={student_id}')
+        raise ValueError(f"Cannot find student with id={student_id}")
 
     def get_current_team_compositions(self) -> List[Team]:
         return self.algorithm_states[self.state_index].current_team_compositions
@@ -51,44 +51,52 @@ class VisualizeLogs:
         return self.state_index
 
     def draw_student_node(self, student: Student):
-        self.nodes.append({
-            'id': student.id,
-            'label': str(student.id),  # TODO: name?
-            'color': self.get_node_colour(student)
-        })
+        self.nodes.append(
+            {
+                "id": student.id,
+                "label": str(student.id),  # TODO: name?
+                "color": self.get_node_colour(student),
+            }
+        )
 
     def get_node_colour(self, student: Student):
         if self.student_currently_in_team(student.id):
-            return 'grey'
-        return 'rgb(97,195,238)'
-    
-    def draw_student_edge(self, src_student_node_id: int, dest_student_node_id: int, relationship: float):
-        return self.edges.append({
-            'id': f'{src_student_node_id}_{dest_student_node_id}',
-            'from': src_student_node_id,
-            'to': dest_student_node_id,
-            'color': {'color': self.get_edge_colour(relationship)},  # TODO: investigate later
-            })
-    
+            return "grey"
+        return "rgb(97,195,238)"
+
+    def draw_student_edge(
+        self, src_student_node_id: int, dest_student_node_id: int, relationship: float
+    ):
+        return self.edges.append(
+            {
+                "id": f"{src_student_node_id}_{dest_student_node_id}",
+                "from": src_student_node_id,
+                "to": dest_student_node_id,
+                "color": {
+                    "color": self.get_edge_colour(relationship)
+                },  # TODO: investigate later
+            }
+        )
+
     def get_edge_colour(self, relationship: float) -> str:
         if relationship == FRIEND:
-            return 'green'
+            return "green"
         if relationship == ENEMY:
-            return 'red'
-        raise ValueError(f'{relationship} is not a valid relationship value.')
+            return "red"
+        raise ValueError(f"{relationship} is not a valid relationship value.")
 
-    def draw_relationship_edge(self, src_student_node_id: int, dest_student_node_id: int, relationship: float):
+    def draw_relationship_edge(
+        self, src_student_node_id: int, dest_student_node_id: int, relationship: float
+    ):
         if src_student_node_id not in self._nodes_cache:
             self.draw_student_node(self.get_student_by_id(src_student_node_id))
 
         if dest_student_node_id not in self._nodes_cache:
             self.draw_student_node(self.get_student_by_id(dest_student_node_id))
-            
+
         self.draw_student_edge(src_student_node_id, dest_student_node_id, relationship)
-        
+
     def reset(self):
         self.nodes = []
         self.edges = []
         self._nodes_cache = []
-        
-        

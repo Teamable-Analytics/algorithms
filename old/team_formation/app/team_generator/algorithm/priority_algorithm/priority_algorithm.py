@@ -3,17 +3,21 @@ import time
 from typing import Dict, List
 
 from old.team_formation.app.team_generator.algorithm.algorithms import WeightAlgorithm
-from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority import Priority
-from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority_teamset import PriorityTeamSet, \
-    PriorityTeam
+from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
+    Priority,
+)
+from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority_teamset import (
+    PriorityTeamSet,
+    PriorityTeam,
+)
 from old.team_formation.app.team_generator.student import Student
 from old.team_formation.app.team_generator.team import Team
 from old.team_formation.app.team_generator.team_generator import TeamGenerationOption
 
 
 class PriorityAlgorithm(WeightAlgorithm):
-    """Class used to select teams using a priority algorithm.
-    """
+    """Class used to select teams using a priority algorithm."""
+
     MAX_KEEP: int = 3  # nodes
     MAX_SPREAD: int = 3  # nodes
     MAX_ITERATE: int = 15  # times
@@ -42,30 +46,37 @@ class PriorityAlgorithm(WeightAlgorithm):
         for priority in self.options.priorities:
             priorities.append(
                 Priority(
-                    constraint=priority['constraint'],
-                    skill_id=priority['skill_id'],
-                    limit_option=priority['limit_option'],
-                    limit=priority['limit'],
-                    value=priority['value']
+                    constraint=priority["constraint"],
+                    skill_id=priority["skill_id"],
+                    limit_option=priority["limit_option"],
+                    limit=priority["limit"],
+                    value=priority["value"],
                 )
             )
         return priorities
 
-    def generate_initial_teams(self, students: List[Student], teams: List[Team],
-                               team_generation_option: TeamGenerationOption) -> PriorityTeamSet:
+    def generate_initial_teams(
+        self,
+        students: List[Student],
+        teams: List[Team],
+        team_generation_option: TeamGenerationOption,
+    ) -> PriorityTeamSet:
         self.set_default_weights()
         initial_teams = super().generate(students, teams, team_generation_option)
         priority_teams: List[PriorityTeam] = []
         for team in initial_teams:
             priority_team = PriorityTeam(
-                team=team,
-                student_ids=[student.id for student in team.students]
+                team=team, student_ids=[student.id for student in team.students]
             )
             priority_teams.append(priority_team)
         return PriorityTeamSet(priority_teams=priority_teams)
 
-    def generate(self, students: List[Student], teams: List[Team],
-                 team_generation_option: TeamGenerationOption) -> List[Team]:
+    def generate(
+        self,
+        students: List[Student],
+        teams: List[Team],
+        team_generation_option: TeamGenerationOption,
+    ) -> List[Team]:
         """
         Generate teams using a priority algorithm.
         """
@@ -74,16 +85,23 @@ class PriorityAlgorithm(WeightAlgorithm):
         self.priorities = self.create_priority_objects()
         start_time = time.time()
         iteration = 0
-        team_sets = [self.generate_initial_teams(students, teams, team_generation_option)]
+        team_sets = [
+            self.generate_initial_teams(students, teams, team_generation_option)
+        ]
 
-        while (time.time() - start_time) < self.MAX_TIME and iteration < self.MAX_ITERATE:
+        while (
+            time.time() - start_time
+        ) < self.MAX_TIME and iteration < self.MAX_ITERATE:
             new_team_sets: List[PriorityTeamSet] = []
             for team_set in team_sets:
                 new_team_sets += self.mutate(team_set)
             team_sets = new_team_sets + team_sets
-            team_sets = sorted(team_sets, key=lambda ts: ts.calculate_score(self.priorities, self.student_dict),
-                               reverse=True)
-            team_sets = team_sets[:self.MAX_KEEP]
+            team_sets = sorted(
+                team_sets,
+                key=lambda ts: ts.calculate_score(self.priorities, self.student_dict),
+                reverse=True,
+            )
+            team_sets = team_sets[: self.MAX_KEEP]
             # print(f'Iteration: {iteration} | {[team_set.score for team_set in team_sets]}')
             iteration += 1
 
@@ -91,11 +109,18 @@ class PriorityAlgorithm(WeightAlgorithm):
         # print(f'Scores: {[team_set.score for team_set in team_sets]}')
         return self.save_team_compositions_to_teams(team_sets[0])
 
-    def save_team_compositions_to_teams(self, priority_team_set: PriorityTeamSet) -> List[Team]:
+    def save_team_compositions_to_teams(
+        self, priority_team_set: PriorityTeamSet
+    ) -> List[Team]:
         teams: List[Team] = []
-        self.empty_all_teams([priority_team.team for priority_team in priority_team_set.priority_teams])
+        self.empty_all_teams(
+            [priority_team.team for priority_team in priority_team_set.priority_teams]
+        )
         for priority_team in priority_team_set.priority_teams:
-            students = [self.student_dict[student_id] for student_id in priority_team.student_ids]
+            students = [
+                self.student_dict[student_id]
+                for student_id in priority_team.student_ids
+            ]
             self.save_students_to_team(priority_team.team, students)
             teams.append(priority_team.team)
         return teams
@@ -111,8 +136,11 @@ class PriorityAlgorithm(WeightAlgorithm):
         Note, both teams must not be empty
         Actually modifies the team_set passed
         """
-        available_priority_teams = [priority_team for priority_team in team_set.priority_teams
-                                    if not priority_team.team.is_locked]
+        available_priority_teams = [
+            priority_team
+            for priority_team in team_set.priority_teams
+            if not priority_team.team.is_locked
+        ]
         try:
             team1, team2 = random.sample(available_priority_teams, 2)
             student_1_id: int = random.choice(team1.student_ids)
@@ -126,11 +154,21 @@ class PriorityAlgorithm(WeightAlgorithm):
         """
         Mutate a single teamset into child teamsets
         """
-        cloned_team_sets = [team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)]
-        return [self.mutate_team_random(cloned_team_set) for cloned_team_set in cloned_team_sets]
+        cloned_team_sets = [
+            team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)
+        ]
+        return [
+            self.mutate_team_random(cloned_team_set)
+            for cloned_team_set in cloned_team_sets
+        ]
 
-    def swap_student_between_teams(self, team1: PriorityTeam, student_1_id: int, team2: PriorityTeam,
-                                   student_2_id: int):
+    def swap_student_between_teams(
+        self,
+        team1: PriorityTeam,
+        student_1_id: int,
+        team2: PriorityTeam,
+        student_2_id: int,
+    ):
         team1.student_ids.remove(student_1_id)
         team1.student_ids.append(student_2_id)
 

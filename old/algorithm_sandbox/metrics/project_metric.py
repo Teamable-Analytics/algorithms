@@ -25,6 +25,6 @@ def satisfied_requirements(team):
 
 def get_project_metrics(teams: List[Team]):
     return {
-        'S_T': sum([has_team_met_requirements(team) for team in teams]),
-        'S_R': sum([satisfied_requirements(team) for team in teams]),
+        "S_T": sum([has_team_met_requirements(team) for team in teams]),
+        "S_R": sum([satisfied_requirements(team) for team in teams]),
     }

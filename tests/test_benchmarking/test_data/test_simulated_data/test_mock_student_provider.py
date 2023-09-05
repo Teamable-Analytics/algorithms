@@ -4,12 +4,14 @@ from models.enums import Gpa, ScenarioAttribute, Relationship
 from models.student import Student
 from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import (
-    attribute_values_from_range, create_mock_students, MockStudentProvider, random_choice,
+    attribute_values_from_range,
+    create_mock_students,
+    MockStudentProvider,
+    random_choice,
 )
 
 
 class TestMockStudentProvider(unittest.TestCase):
-
     def test_get__returns_student_objects(self):
         students = MockStudentProvider(
             MockStudentProviderSettings(number_of_students=10)
@@ -27,7 +29,7 @@ class TestMockStudentProvider(unittest.TestCase):
                 },
                 num_values_per_attribute={
                     ScenarioAttribute.PROJECT_PREFERENCES.value: 3,
-                }
+                },
             )
         ).max_project_preferences_per_student
 
@@ -41,7 +43,7 @@ class TestMockStudentProvider(unittest.TestCase):
                 },
                 num_values_per_attribute={
                     ScenarioAttribute.PROJECT_PREFERENCES.value: (1, 4),
-                }
+                },
             )
         ).max_project_preferences_per_student
 
@@ -72,7 +74,9 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
         self.assertEqual(len(student.attributes[2]), 2)
         self.assertEqual(len(student.attributes[3]), 1)
 
-    def test_create_mock_students__student_has_num_values_for_attribute_within_range(self):
+    def test_create_mock_students__student_has_num_values_for_attribute_within_range(
+        self,
+    ):
         students = create_mock_students(
             number_of_students=5,
             number_of_friends=0,
@@ -106,8 +110,26 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 num_values_per_attribute={},
             )
             for student in students:
-                self.assertGreaterEqual(i, len([r for r in student.relationships.values() if r == Relationship.FRIEND]))
-                self.assertGreaterEqual(i, len([r for r in student.relationships.values() if r == Relationship.ENEMY]))
+                self.assertGreaterEqual(
+                    i,
+                    len(
+                        [
+                            r
+                            for r in student.relationships.values()
+                            if r == Relationship.FRIEND
+                        ]
+                    ),
+                )
+                self.assertGreaterEqual(
+                    i,
+                    len(
+                        [
+                            r
+                            for r in student.relationships.values()
+                            if r == Relationship.ENEMY
+                        ]
+                    ),
+                )
 
     def test_random_choice__always_returns_list_of_int(self):
         values_1 = random_choice(possible_values=[1, 2, 3], size=1)
@@ -119,7 +141,9 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             self.assertIsInstance(value[0], int)
             self.assertIsInstance(value[-1], int)
 
-    def test_attribute_values_from_range__multiple_values_for_attribute_are_selected_without_replacement(self):
+    def test_attribute_values_from_range__multiple_values_for_attribute_are_selected_without_replacement(
+        self,
+    ):
         for _ in range(100):
             # FIXME: This test is (technically) a little flaky 😬
             # run this multiple times so that this test cannot accidentally
@@ -127,14 +151,22 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             values_1 = attribute_values_from_range([10, 20, 30], num_values=3)
             self.assertListEqual([10, 20, 30], sorted(values_1))
 
-            values_2 = attribute_values_from_range([(10, 0.2), (20, 0.3), (30, 0.5)], num_values=3)
+            values_2 = attribute_values_from_range(
+                [(10, 0.2), (20, 0.3), (30, 0.5)], num_values=3
+            )
             self.assertListEqual([10, 20, 30], sorted(values_2))
 
             values_3 = attribute_values_from_range([Gpa.A, Gpa.B, Gpa.C], num_values=3)
-            self.assertListEqual(sorted([Gpa.A.value, Gpa.B.value, Gpa.C.value]), sorted(values_3))
+            self.assertListEqual(
+                sorted([Gpa.A.value, Gpa.B.value, Gpa.C.value]), sorted(values_3)
+            )
 
-            values_4 = attribute_values_from_range([(Gpa.A, 0.2), (Gpa.B, 0.3), (Gpa.C, 0.5)], num_values=3)
-            self.assertListEqual(sorted([Gpa.A.value, Gpa.B.value, Gpa.C.value]), sorted(values_4))
+            values_4 = attribute_values_from_range(
+                [(Gpa.A, 0.2), (Gpa.B, 0.3), (Gpa.C, 0.5)], num_values=3
+            )
+            self.assertListEqual(
+                sorted([Gpa.A.value, Gpa.B.value, Gpa.C.value]), sorted(values_4)
+            )
 
     def test_attribute_values_from_range__always_returns_correctly_sized_list(self):
         num_values_list = [1, 2, 3]
@@ -153,15 +185,28 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 num_values,
             )
             self.assertEqual(
-                len(attribute_values_from_range([(10, 0.2), (20, 0.3), (30, 0.5)], num_values=num_values)),
+                len(
+                    attribute_values_from_range(
+                        [(10, 0.2), (20, 0.3), (30, 0.5)], num_values=num_values
+                    )
+                ),
                 num_values,
             )
             self.assertEqual(
-                len(attribute_values_from_range([Gpa.A, Gpa.B, Gpa.C], num_values=num_values)),
+                len(
+                    attribute_values_from_range(
+                        [Gpa.A, Gpa.B, Gpa.C], num_values=num_values
+                    )
+                ),
                 num_values,
             )
             self.assertEqual(
-                len(attribute_values_from_range([(Gpa.A, 0.2), (Gpa.B, 0.3), (Gpa.C, 0.5)], num_values=num_values)),
+                len(
+                    attribute_values_from_range(
+                        [(Gpa.A, 0.2), (Gpa.B, 0.3), (Gpa.C, 0.5)],
+                        num_values=num_values,
+                    )
+                ),
                 num_values,
             )
 

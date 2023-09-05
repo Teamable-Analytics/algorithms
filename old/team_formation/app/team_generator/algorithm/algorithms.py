@@ -3,9 +3,17 @@ from typing import List, Tuple
 
 from schema import Schema, SchemaError
 
-from old.team_formation.app.team_generator.algorithm.consts import FRIEND, DEFAULT, ENEMY
-from old.team_formation.app.team_generator.algorithm.utility import get_requirement_utility, get_social_utility, \
-    get_diversity_utility, get_preference_utility
+from old.team_formation.app.team_generator.algorithm.consts import (
+    FRIEND,
+    DEFAULT,
+    ENEMY,
+)
+from old.team_formation.app.team_generator.algorithm.utility import (
+    get_requirement_utility,
+    get_social_utility,
+    get_diversity_utility,
+    get_preference_utility,
+)
 from old.team_formation.app.team_generator.student import Student
 from old.team_formation.app.team_generator.team import Team
 
@@ -43,16 +51,24 @@ class AlgorithmOptions:
     """
 
     BEHAVIOUR_OPTIONS = {
-        'ENFORCE': 'enforce',
-        'INVERT': 'invert',
-        'IGNORE': 'ignore',
+        "ENFORCE": "enforce",
+        "INVERT": "invert",
+        "IGNORE": "ignore",
     }
 
-    def __init__(self, requirement_weight: int = None, social_weight: int = None, diversity_weight: int = None,
-                 preference_weight: int = None, max_project_preferences: int = None, blacklist_behaviour: str = None,
-                 whitelist_behaviour: str = None, diversify_options: List[dict] = None,
-                 concentrate_options: List[dict] = None,
-                 priorities: List[dict] = None):
+    def __init__(
+        self,
+        requirement_weight: int = None,
+        social_weight: int = None,
+        diversity_weight: int = None,
+        preference_weight: int = None,
+        max_project_preferences: int = None,
+        blacklist_behaviour: str = None,
+        whitelist_behaviour: str = None,
+        diversify_options: List[dict] = None,
+        concentrate_options: List[dict] = None,
+        priorities: List[dict] = None,
+    ):
         self.diversity_weight = diversity_weight
         self.preference_weight = preference_weight
         self.requirement_weight = requirement_weight
@@ -60,39 +76,67 @@ class AlgorithmOptions:
 
         self.max_project_preferences = max_project_preferences
 
-        self.blacklist_behaviour = blacklist_behaviour or self.BEHAVIOUR_OPTIONS['IGNORE']
-        self.whitelist_behaviour = whitelist_behaviour or self.BEHAVIOUR_OPTIONS['IGNORE']
+        self.blacklist_behaviour = (
+            blacklist_behaviour or self.BEHAVIOUR_OPTIONS["IGNORE"]
+        )
+        self.whitelist_behaviour = (
+            whitelist_behaviour or self.BEHAVIOUR_OPTIONS["IGNORE"]
+        )
 
         self.diversify_options = diversify_options or []
         self.concentrate_options = concentrate_options or []
 
         self.priorities = priorities or []
-        self.priorities = sorted(self.priorities, key=lambda priority: priority['order'])
+        self.priorities = sorted(
+            self.priorities, key=lambda priority: priority["order"]
+        )
         self.validate()
 
     def validate(self):
-        validate_int = [self.diversity_weight, self.preference_weight, self.requirement_weight, self.social_weight,
-                        self.max_project_preferences]
+        validate_int = [
+            self.diversity_weight,
+            self.preference_weight,
+            self.requirement_weight,
+            self.social_weight,
+            self.max_project_preferences,
+        ]
         for item in validate_int:
             if item and not isinstance(item, int):
-                raise AlgorithmException('One or more of "diversity weight", "preference weight", "requirement '
-                                         'weight", "social weight", "max preferences" is not an integer.')
+                raise AlgorithmException(
+                    'One or more of "diversity weight", "preference weight", "requirement '
+                    'weight", "social weight", "max preferences" is not an integer.'
+                )
 
         validate_str = [self.blacklist_behaviour, self.whitelist_behaviour]
         for item in validate_str:
             if not isinstance(item, str):
-                raise AlgorithmException('One or more of "blacklist behaviour", "whitelist behaviour" is not a string.')
+                raise AlgorithmException(
+                    'One or more of "blacklist behaviour", "whitelist behaviour" is not a string.'
+                )
             if item not in self.BEHAVIOUR_OPTIONS.values():
-                raise AlgorithmException('Invalid behaviour option.')
+                raise AlgorithmException("Invalid behaviour option.")
 
         validate_options_list = [self.concentrate_options, self.diversify_options]
         try:
-            Schema([[{'id': int}]]).validate(validate_options_list)
+            Schema([[{"id": int}]]).validate(validate_options_list)
         except SchemaError as se:
-            raise AlgorithmException('Invalid format for concentrate/diversify options', se)
+            raise AlgorithmException(
+                "Invalid format for concentrate/diversify options", se
+            )
 
         # Validate Priorities
-        priorities_schema = Schema([{'order': int, 'constraint': str, 'skill_id': int, 'limit_option': str, 'limit': int, 'value': int}])
+        priorities_schema = Schema(
+            [
+                {
+                    "order": int,
+                    "constraint": str,
+                    "skill_id": int,
+                    "limit_option": str,
+                    "limit": int,
+                    "value": int,
+                }
+            ]
+        )
 
         try:
             priorities_schema.validate(self.priorities)
@@ -116,14 +160,14 @@ class AlgorithmOptions:
         }
 
         # the ENFORCE option is assumed unless one of the conditions below changes the default behaviour
-        if self.whitelist_behaviour == AlgorithmOptions.BEHAVIOUR_OPTIONS['INVERT']:
+        if self.whitelist_behaviour == AlgorithmOptions.BEHAVIOUR_OPTIONS["INVERT"]:
             adjusted_relationships[FRIEND] = ENEMY
-        elif self.whitelist_behaviour == AlgorithmOptions.BEHAVIOUR_OPTIONS['IGNORE']:
+        elif self.whitelist_behaviour == AlgorithmOptions.BEHAVIOUR_OPTIONS["IGNORE"]:
             adjusted_relationships[FRIEND] = DEFAULT
 
-        if self.blacklist_behaviour == AlgorithmOptions.BEHAVIOUR_OPTIONS['INVERT']:
+        if self.blacklist_behaviour == AlgorithmOptions.BEHAVIOUR_OPTIONS["INVERT"]:
             adjusted_relationships[ENEMY] = FRIEND
-        elif self.blacklist_behaviour == AlgorithmOptions.BEHAVIOUR_OPTIONS['IGNORE']:
+        elif self.blacklist_behaviour == AlgorithmOptions.BEHAVIOUR_OPTIONS["IGNORE"]:
             adjusted_relationships[ENEMY] = DEFAULT
 
         is_modified = False
@@ -155,7 +199,7 @@ class Algorithm:
         try:
             self.options = Schema(AlgorithmOptions).validate(options)
         except SchemaError as error:
-            raise AlgorithmException(f'Error while initializing class: \n{error}')
+            raise AlgorithmException(f"Error while initializing class: \n{error}")
         self.teams = []
         self.logger = logger
         self.stage = 1
@@ -166,7 +210,9 @@ class Algorithm:
     def get_remaining_students(self, all_students: List[Student]) -> List[Student]:
         return [student for student in all_students if not student.is_added()]
 
-    def get_available_teams(self, all_teams: List[Team], team_generation_option, student: Student = None) -> List[Team]:
+    def get_available_teams(
+        self, all_teams: List[Team], team_generation_option, student: Student = None
+    ) -> List[Team]:
         """
         Returns a list of teams available to be joined by a student. If a specific Student is provided, only returns
         teams that that specific student is able to join.
@@ -204,7 +250,9 @@ class Algorithm:
             team_added_student = team.add_student(student)
             student_added_team = student.add_team(team)
             if not team_added_student or not student_added_team:
-                raise AlgorithmException('Cannot add student to team or team cannot add student.')
+                raise AlgorithmException(
+                    "Cannot add student to team or team cannot add student."
+                )
 
     def next_empty_team(self) -> Team:
         for team in self.teams:
@@ -282,17 +330,32 @@ class WeightAlgorithm(Algorithm):
         if student in team.get_students():
             return 0
 
-        requirement_utility = get_requirement_utility(team, student) * self.options.requirement_weight
-        social_utility = get_social_utility(team, [student]) * self.options.social_weight
-        diversity_utility = get_diversity_utility(
-            team, student,
-            self.options.diversify_options,
-            self.options.concentrate_options) * self.options.diversity_weight
-        preference_utility = get_preference_utility(
-            team, student,
-            self.options.max_project_preferences) * self.options.preference_weight
+        requirement_utility = (
+            get_requirement_utility(team, student) * self.options.requirement_weight
+        )
+        social_utility = (
+            get_social_utility(team, [student]) * self.options.social_weight
+        )
+        diversity_utility = (
+            get_diversity_utility(
+                team,
+                student,
+                self.options.diversify_options,
+                self.options.concentrate_options,
+            )
+            * self.options.diversity_weight
+        )
+        preference_utility = (
+            get_preference_utility(team, student, self.options.max_project_preferences)
+            * self.options.preference_weight
+        )
 
-        return requirement_utility + social_utility + diversity_utility + preference_utility
+        return (
+            requirement_utility
+            + social_utility
+            + diversity_utility
+            + preference_utility
+        )
 
 
 class RandomAlgorithm(Algorithm):
@@ -332,7 +395,9 @@ class RandomAlgorithm(Algorithm):
         return smallest_team, random_student
 
 
-def _generate_with_choose(algorithm, students, teams, team_generation_option) -> List[Team]:
+def _generate_with_choose(
+    algorithm, students, teams, team_generation_option
+) -> List[Team]:
     while True:
         available_teams = algorithm.get_available_teams(teams, team_generation_option)
         remaining_students = algorithm.get_remaining_students(students)

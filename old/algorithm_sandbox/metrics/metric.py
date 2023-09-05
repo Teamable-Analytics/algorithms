@@ -22,13 +22,13 @@ def get_metric(metric, teams, priorities):
 
 
 def run_algorithm(
-        algorithm,
-        algorithm_options,
-        priorities,
-        num_teams,
-        students,
-        teams,
-        metric,
+    algorithm,
+    algorithm_options,
+    priorities,
+    num_teams,
+    students,
+    teams,
+    metric,
 ):
     logger = Logger(real=True)
     random_algorithm_options = copy.deepcopy(algorithm_options)

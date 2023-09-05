@@ -1,9 +1,16 @@
 import math
 from typing import List, Dict
 
-from old.team_formation.app.team_generator.algorithm.consts import FRIEND, ENEMY, DEFAULT
+from old.team_formation.app.team_generator.algorithm.consts import (
+    FRIEND,
+    ENEMY,
+    DEFAULT,
+)
 from old.team_formation.app.team_generator.student import Student
-from old.team_formation.app.team_generator.team_generator import TeamGenerationOption, TeamGenerator
+from old.team_formation.app.team_generator.team_generator import (
+    TeamGenerationOption,
+    TeamGenerator,
+)
 from old.algorithm_sandbox.encoder import Encoder, load_json_data
 
 
@@ -12,14 +19,20 @@ class MockData:
     File path should be from the root directory (where test.py is) and lead to a json file with the same structure as
     the one outputted from `group_data_retrieval <COURSE_ID> <GEN_GROUP_SET_ID>`
     """
+
     _fake_data_dict = {}
     _students = {}
-    STUDENT_ROLE = 'Student'
-    RELATIONSHIP_ATTRIBUTE_TYPE = 'Include Friends/Exclude Enemies'
-    PROJECT_PREF_ATTRIBUTE_TYPE = 'Project Preference'
+    STUDENT_ROLE = "Student"
+    RELATIONSHIP_ATTRIBUTE_TYPE = "Include Friends/Exclude Enemies"
+    PROJECT_PREF_ATTRIBUTE_TYPE = "Project Preference"
 
-    def __init__(self, total_teams: int, file_path: str = None, students: List[Student] = None,
-                 team_options: [] = None):
+    def __init__(
+        self,
+        total_teams: int,
+        file_path: str = None,
+        students: List[Student] = None,
+        team_options: [] = None,
+    ):
         if not students and not file_path:
             raise Exception('One of "students" or "file_path" must be defined.')
 
@@ -42,13 +55,15 @@ class MockData:
             min_team_size=math.floor(self.num_students * 1.0 / self.total_teams),
             max_team_size=math.ceil(self.num_students * 1.0 / self.total_teams),
             total_teams=self.total_teams,
-            team_options=self.team_options
+            team_options=self.team_options,
         )
         return team_generation_options
 
     def create_students(self) -> List[Student]:
         self._students = self.create_student_objects()
-        for student_id, student_responses in self._fake_data_dict['student_responses'].items():
+        for student_id, student_responses in self._fake_data_dict[
+            "student_responses"
+        ].items():
             student_id = int(student_id)
             if not self.is_student(student_id):
                 continue
@@ -65,7 +80,9 @@ class MockData:
         return [*self._students.values()]
 
     def attribute_type(self, attribute_id: int) -> str:
-        attribute_type = self._fake_data_dict['attribute_info'][f'{attribute_id}']['attr_type']
+        attribute_type = self._fake_data_dict["attribute_info"][f"{attribute_id}"][
+            "attr_type"
+        ]
         return attribute_type
 
     def get_relationship_value(self, attribute_id: int) -> float:
@@ -78,7 +95,9 @@ class MockData:
             return ENEMY
         return DEFAULT
 
-    def save_relationships(self, student: Student, attribute_id: int, relationships: List[int]):
+    def save_relationships(
+        self, student: Student, attribute_id: int, relationships: List[int]
+    ):
         if not relationships:
             return
         relationship_value = self.get_relationship_value(attribute_id)
@@ -86,15 +105,17 @@ class MockData:
             student.relationships.update({other_id: relationship_value})
 
     def is_student(self, student_id: int) -> bool:
-        student_data = self._fake_data_dict['student_info'][f'{student_id}']
-        student_name = Encoder.get_student_name_by_id(Encoder.get_student_key(), student_id)
+        student_data = self._fake_data_dict["student_info"][f"{student_id}"]
+        student_name = Encoder.get_student_name_by_id(
+            Encoder.get_student_key(), student_id
+        )
         if student_name is None:
             return False
-        return student_data['role'] == MockData.STUDENT_ROLE
+        return student_data["role"] == MockData.STUDENT_ROLE
 
     def create_student_objects(self) -> Dict[int, Student]:
         student_dict = {}
-        for student_id, student_info in self._fake_data_dict['student_info'].items():
+        for student_id, student_info in self._fake_data_dict["student_info"].items():
             student_id = int(student_id)
             if not self.is_student(student_id):
                 continue
@@ -102,7 +123,9 @@ class MockData:
         return student_dict
 
 
-def mock_generation_old(alg, alg_options, logger, num_teams: int, data_file_path: str = None):
+def mock_generation_old(
+    alg, alg_options, logger, num_teams: int, data_file_path: str = None
+):
     fake_data = MockData(num_teams, data_file_path)
     algorithm_options = alg_options
     algorithm = alg(algorithm_options, logger)  # needs algo options
@@ -114,7 +137,9 @@ def mock_generation_old(alg, alg_options, logger, num_teams: int, data_file_path
     return team_generator.generate()
 
 
-def mock_generation(alg, alg_options, logger, num_teams: int, students: [Student], teams):
+def mock_generation(
+    alg, alg_options, logger, num_teams: int, students: [Student], teams
+):
     fake_data = MockData(num_teams, None, students)
     algorithm_options = alg_options
     algorithm = alg(algorithm_options, logger)  # needs algo options

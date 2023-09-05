@@ -1,7 +1,9 @@
 from itertools import combinations
 from typing import List, Set, Tuple
 
-from old.team_formation.app.team_generator.algorithm.social_algorithm.social_graph import SocialGraph
+from old.team_formation.app.team_generator.algorithm.social_algorithm.social_graph import (
+    SocialGraph,
+)
 from old.team_formation.app.team_generator.student import Student
 
 
@@ -42,7 +44,11 @@ class CliqueFinder:
     def find_cliques(self) -> Tuple[int, List[Set[int]]]:
         # Adapted from https://iq.opengenus.org/algorithm-to-find-cliques-of-a-given-size-k/
         k = 2
-        cliques = [{from_id, to_id} for from_id, to_id in self.social_graph.edges() if from_id != to_id]
+        cliques = [
+            {from_id, to_id}
+            for from_id, to_id in self.social_graph.edges()
+            if from_id != to_id
+        ]
         while cliques:
             # result
             yield k, cliques  # https://realpython.com/introduction-to-python-generators/

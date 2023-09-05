@@ -13,15 +13,29 @@ from algorithm_sandbox.scenarios.scenario_1_3 import s1_3_options
 from algorithm_sandbox.scenarios.scenario_2 import s2_options
 from algorithm_sandbox.scenarios.scenario_3 import s3_options
 from algorithm_sandbox.student_data import fake_students
-from algorithm_sandbox.visualization.visualize_friend_metrics import visualize_friend_metrics
-from algorithm_sandbox.visualization.visualize_priority_metrics import visualize_priority_metrics
+from algorithm_sandbox.visualization.visualize_friend_metrics import (
+    visualize_friend_metrics,
+)
+from algorithm_sandbox.visualization.visualize_priority_metrics import (
+    visualize_priority_metrics,
+)
 from algorithm_sandbox.visualization.visualize_metric import visualize_metric
-from team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions, WeightAlgorithm, RandomAlgorithm
-from team_formation.app.team_generator.algorithm.priority_algorithm.priority import Priority
-from team_formation.app.team_generator.algorithm.priority_algorithm.priority_algorithm import PriorityAlgorithm
-from team_formation.app.team_generator.algorithm.social_algorithm.social_algorithm import SocialAlgorithm
+from team_formation.app.team_generator.algorithm.algorithms import (
+    AlgorithmOptions,
+    WeightAlgorithm,
+    RandomAlgorithm,
+)
+from team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
+    Priority,
+)
+from team_formation.app.team_generator.algorithm.priority_algorithm.priority_algorithm import (
+    PriorityAlgorithm,
+)
+from team_formation.app.team_generator.algorithm.social_algorithm.social_algorithm import (
+    SocialAlgorithm,
+)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     _num_teams = 5
     _num_students = 20
     num_friends = 4
@@ -34,7 +48,7 @@ if __name__ == '__main__':
     y_priority = []
     y_weight = []
     y_random = []
-    metric = 'S_T'
+    metric = "S_T"
 
     # priorities, algorithm_options = s1_1_options()
     initial_teams = []
@@ -45,7 +59,9 @@ if __name__ == '__main__':
         num_students = _num_students * i
         x.append(num_students)
 
-        priorities, algorithm_options, initial_teams = s3_options(num_teams, _num_req, _num_req_per_team)
+        priorities, algorithm_options, initial_teams = s3_options(
+            num_teams, _num_req, _num_req_per_team
+        )
 
         y_social_avg = 0
         y_priority_avg = 0
@@ -58,7 +74,7 @@ if __name__ == '__main__':
                 number_of_females=num_students // 2,
                 number_of_friends=num_friends,
                 number_of_enemies=1,
-                friend_distribution='random',
+                friend_distribution="random",
                 age_range=[18, 25],
                 race=[1, 2, 3, 4],
                 gpa=[0, 4],
