@@ -1,9 +1,9 @@
-name: Format Code
+name: Lint Code
 
 on: [push]
 
 jobs:
-  lint:
+  build:
 
     runs-on: ubuntu-latest
     strategy:
