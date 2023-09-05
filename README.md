@@ -1,4 +1,5 @@
 # Algorithms
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ### Setup
 
@@ -8,7 +9,7 @@
    ```
 2. Install all dependencies.
    ```
-   python3 -m pip3 install -r requirements.txt
+   python3 -m pip3install -r requirements.txt
    ```
 3. You're good to go!
    > Be sure to read any directory-specific README.md and CONVENTION.md files before starting to work.
