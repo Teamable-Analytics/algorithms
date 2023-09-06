@@ -6,3 +6,7 @@ from typing import List
 class Attribute:
     _id: int
     possible_values: List[int] = None
+
+    @property
+    def id(self) -> int:
+        return self._id
