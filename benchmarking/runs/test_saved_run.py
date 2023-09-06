@@ -1,7 +1,10 @@
 import math
 
 from models.enums import ScenarioAttribute, Gender
-from benchmarking.data.interfaces import MockStudentProviderSettings
+from benchmarking.data.interfaces import (
+    MockStudentProviderSettings,
+    StudentProvider,
+)
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
 )
@@ -18,7 +21,6 @@ from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
     DiversifyGenderMin2Female,
 )
 from benchmarking.simulation.simulation import Simulation
-from benchmarking.data.interfaces import StudentProvider
 
 
 def test_saved_run(is_mock: bool = True):
