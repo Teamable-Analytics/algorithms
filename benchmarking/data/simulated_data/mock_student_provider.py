@@ -16,9 +16,7 @@ from benchmarking.data.interfaces import (
 class MockStudentProvider(StudentProvider):
     def __init__(self, settings: MockStudentProviderSettings):
         self.settings = settings
-
-    def get(self) -> List[Student]:
-        return create_mock_students(
+        self.students: List[Student] = create_mock_students(
             self.settings.number_of_students,
             self.settings.number_of_friends,
             self.settings.number_of_enemies,
@@ -27,9 +25,12 @@ class MockStudentProvider(StudentProvider):
             self.settings.num_values_per_attribute,
         )
 
+    def get(self) -> List[Student]:
+        return self.students
+
     @property
     def num_students(self) -> int:
-        return self.settings.number_of_students
+        return len(self.students)
 
     @property
     def max_project_preferences_per_student(self) -> int:

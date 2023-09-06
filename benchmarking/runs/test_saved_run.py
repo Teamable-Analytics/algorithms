@@ -18,9 +18,10 @@ from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
     DiversifyGenderMin2Female,
 )
 from benchmarking.simulation.simulation import Simulation
+from benchmarking.data.interfaces import StudentProvider
 
 
-def test_saved_run():
+def test_saved_run(is_mock: bool = True):
     """
     Goal: Run diversify gender scenario, measure average gini index
     """
@@ -36,33 +37,19 @@ def test_saved_run():
         number_of_teams = math.ceil(class_size / 5)
 
         # set up either mock or real data
-        student_provider_settings = MockStudentProviderSettings(
-            number_of_students=class_size,
-            number_of_friends=4,
-            number_of_enemies=1,
-            friend_distribution="cluster",
-            attribute_ranges={
-                ScenarioAttribute.GENDER.value: [
-                    (Gender.MALE, 1 - ratio_of_female_students),
-                    (Gender.FEMALE, ratio_of_female_students),
-                ],
-                ScenarioAttribute.PROJECT_PREFERENCES.value: [1, 2, 3],
-            },
-            num_values_per_attribute={
-                ScenarioAttribute.PROJECT_PREFERENCES.value: 3,
-            },
-        )
-
-        simulation_outputs = Simulation(
+        student_provider_settings = _get_student_provider_settings(is_mock)
+        student_provider = _get_student_provider(student_provider_settings, is_mock)
+        simulation = Simulation(
             num_teams=number_of_teams,
             scenario=DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value),
-            student_provider=MockStudentProvider(student_provider_settings),
+            student_provider=student_provider,
             metrics=[
                 AverageGiniIndex(attribute=ScenarioAttribute.GENDER.value),
                 NumRequirementsSatisfied(),
                 NumTeamsMeetingRequirements(),
             ],
-        ).run(num_runs=num_trials)
+        )
+        simulation_outputs = simulation.run(num_runs=num_trials)
 
         print("=>", Simulation.average_metric(simulation_outputs, "AverageGiniIndex"))
         print(
@@ -75,3 +62,30 @@ def test_saved_run():
                 simulation_outputs, "NumTeamsMeetingRequirements"
             ),
         )
+
+def _get_student_provider_settings(is_mock: bool):
+    if not is_mock:
+        raise NotImplementedError("Cannot get student provider setting")
+
+    return MockStudentProviderSettings(
+        number_of_students=class_size,
+        number_of_friends=4,
+        number_of_enemies=1,
+        friend_distribution="cluster",
+        attribute_ranges={
+            ScenarioAttribute.GENDER.value: [
+                (Gender.MALE, 1 - ratio_of_female_students),
+                (Gender.FEMALE, ratio_of_female_students),
+            ],
+            ScenarioAttribute.PROJECT_PREFERENCES.value: [1, 2, 3],
+        },
+        num_values_per_attribute={
+            ScenarioAttribute.PROJECT_PREFERENCES.value: 3,
+        },
+    )
+
+def _get_student_provider(student_provider: StudentProvider, is_mock: bool):
+    if not is_mock:
+        raise NotImplementedError("Cannot get student provider")
+
+    return MockStudentProvider(student_provider)
