@@ -13,5 +13,6 @@ class Team:
     students: List[Student] = field(default_factory=list)
     requirements: List[ProjectRequirement] = field(default_factory=list)
 
-    def get_id(self):
+    @property
+    def id(self):
         return self._id

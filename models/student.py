@@ -13,5 +13,6 @@ class Student:
     preferences: List[int] = field(default_factory=list)
     team: "Team" = None
 
-    def get_id(self):
+    @property
+    def id(self):
         return self._id

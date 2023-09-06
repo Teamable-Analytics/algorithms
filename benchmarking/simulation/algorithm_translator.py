@@ -31,7 +31,7 @@ class AlgorithmTranslator:
         for i, initial_team in enumerate(initial_teams):
             team_options.append(
                 {
-                    "id": initial_team.get_id(),
+                    "id": initial_team.id,
                     "project_id": initial_team.project_id,
                     "name": initial_team.name
                     or f"Project {initial_team.project_id} - {i}",
@@ -100,7 +100,7 @@ class AlgorithmTranslator:
             for algorithm_student in algorithm_team.students
         ]
         team = Team(
-            _id=algorithm_team.id,
+            id=algorithm_team.id,
             name=algorithm_team.name,
             project_id=algorithm_team.project_id,
             students=students,
@@ -124,7 +124,7 @@ class AlgorithmTranslator:
     @staticmethod
     def algorithm_student_to_student(algorithm_student: AlgorithmStudent) -> Student:
         return Student(
-            _id=algorithm_student.id,
+            id=algorithm_student.id,
             attributes=algorithm_student.skills,
             relationships={
                 s_id: AlgorithmTranslator.algorithm_relationship_to_relationship(relationship)
@@ -141,7 +141,7 @@ class AlgorithmTranslator:
     @staticmethod
     def student_to_algorithm_student(student: Student) -> AlgorithmStudent:
         return AlgorithmStudent(
-            id=student.get_id(),
+            id=student.id,
             skills=student.attributes,
             relationships={
                 student_id: AlgorithmTranslator.relationship_to_algorithm_relationship(
