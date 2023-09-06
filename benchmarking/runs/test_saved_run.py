@@ -65,10 +65,10 @@ def test_saved_run(is_mock: bool = True):
             ),
         )
 
+
 def _get_student_provider_settings(is_mock: bool):
     if not is_mock:
         raise NotImplementedError("Cannot get student provider setting")
-
     return MockStudentProviderSettings(
         number_of_students=class_size,
         number_of_friends=4,
@@ -86,8 +86,8 @@ def _get_student_provider_settings(is_mock: bool):
         },
     )
 
+
 def _get_student_provider(student_provider: StudentProvider, is_mock: bool):
     if not is_mock:
         raise NotImplementedError("Cannot get student provider")
-
     return MockStudentProvider(student_provider)
