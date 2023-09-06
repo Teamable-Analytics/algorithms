@@ -100,7 +100,7 @@ class AlgorithmTranslator:
             for algorithm_student in algorithm_team.students
         ]
         team = Team(
-            id=algorithm_team.id,
+            _id=algorithm_team.id,
             name=algorithm_team.name,
             project_id=algorithm_team.project_id,
             students=students,
@@ -124,7 +124,7 @@ class AlgorithmTranslator:
     @staticmethod
     def algorithm_student_to_student(algorithm_student: AlgorithmStudent) -> Student:
         return Student(
-            id=algorithm_student.id,
+            _id=algorithm_student.id,
             attributes=algorithm_student.skills,
             relationships={
                 s_id: AlgorithmTranslator.algorithm_relationship_to_relationship(relationship)
