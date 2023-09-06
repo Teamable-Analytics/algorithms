@@ -12,3 +12,7 @@ class Student:
     relationships: Dict[int, Relationship] = field(default_factory=dict)
     preferences: List[int] = field(default_factory=list)
     team: "Team" = None
+
+    @property
+    def id(self) -> int:
+        return self._id

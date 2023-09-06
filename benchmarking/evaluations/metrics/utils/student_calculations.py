@@ -9,7 +9,7 @@ def num_friends_satisfied(student: Student) -> int:
         if relation != Relationship.FRIEND:
             continue
         for teammate in student.team.students:
-            if teammate._id != student_id:
+            if teammate.id != student_id:
                 count += 1
     return count
 
@@ -21,7 +21,7 @@ def num_enemies_satisfied(student: Student) -> int:
             continue
         count += 1
         for teammate in student.team.students:
-            if teammate._id != student_id:
+            if teammate.id != student_id:
                 count -= 1
     return count
 
