@@ -14,5 +14,5 @@ class Team:
     requirements: List[ProjectRequirement] = field(default_factory=list)
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self._id

@@ -14,5 +14,5 @@ class Student:
     team: "Team" = None
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self._id

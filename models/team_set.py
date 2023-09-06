@@ -13,3 +13,7 @@ class TeamSet:
     @property
     def num_teams(self) -> int:
         return len(self.teams)
+
+    @property
+    def id(self) -> int:
+        return self._id
