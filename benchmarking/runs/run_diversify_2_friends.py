@@ -16,7 +16,7 @@ from benchmarking.simulation.simulation import Simulation
 from models.enums import ScenarioAttribute, Relationship
 
 
-def copy_of_test_saved_run():
+def run_diversify_2_friends():
     """
     Goal: Run diversify gender scenario, measure average gini index
     """
@@ -77,5 +77,9 @@ def copy_of_test_saved_run():
         )
 
 
+def main():
+    run_diversify_2_friends()
+
+
 if __name__ == "__main__":
-    copy_of_test_saved_run()
+    main()
