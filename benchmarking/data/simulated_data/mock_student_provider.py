@@ -18,7 +18,7 @@ class MockStudentProvider(StudentProvider):
         self.settings = settings
 
     def get(self) -> List[Student]:
-        return create_mock_students(
+        mock_students = create_mock_students(
             self.settings.number_of_students,
             self.settings.number_of_friends,
             self.settings.number_of_enemies,
@@ -26,6 +26,11 @@ class MockStudentProvider(StudentProvider):
             self.settings.attribute_ranges,
             self.settings.num_values_per_attribute,
         )
+        # the students must be shuffled here because certain algorithms
+        #   perform better/worse based on the ordering of students.
+        #   i.e. if each sequential block of 5 students all selected one another as friends
+        random.shuffle(mock_students)
+        return mock_students
 
     @property
     def num_students(self) -> int:

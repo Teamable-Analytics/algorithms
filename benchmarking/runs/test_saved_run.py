@@ -75,3 +75,7 @@ def test_saved_run():
                 simulation_outputs, "NumTeamsMeetingRequirements"
             ),
         )
+
+
+if __name__ == "__main__":
+    test_saved_run()
