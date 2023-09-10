@@ -2,7 +2,6 @@ import math
 
 from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
-from benchmarking.evaluations.metrics.average_gini_index import AverageGiniIndex
 from benchmarking.evaluations.metrics.num_requirements_satisfied import (
     NumRequirementsSatisfied,
 )
@@ -10,10 +9,10 @@ from benchmarking.evaluations.metrics.num_teams_meeting_requirements import (
     NumTeamsMeetingRequirements,
 )
 from benchmarking.evaluations.scenarios.diversify_social_min_2_friends import (
-    DiversifySocialMin2Friends,
+    DiversifySocialFriends,
 )
 from benchmarking.simulation.simulation import Simulation
-from models.enums import ScenarioAttribute, Relationship
+from models.enums import ScenarioAttribute, Relationship, Gender
 
 
 def run_diversify_2_friends():
@@ -24,8 +23,7 @@ def run_diversify_2_friends():
     # Defining our changing x-values (in the graph sense)
     class_sizes = [100, 150, 200, 250, 300]
     num_trials = 10
-    ratio_of_friends = 0.5
-    ratio_of_enemies = 0.1
+    ratio_of_female_students = 0.5
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -39,10 +37,9 @@ def run_diversify_2_friends():
             number_of_enemies=1,
             friend_distribution="cluster",
             attribute_ranges={
-                ScenarioAttribute.SOCIAL.value: [
-                    (Relationship.FRIEND, ratio_of_friends),
-                    (Relationship.ENEMY, ratio_of_enemies),
-                    (Relationship.DEFAULT, 1 - ratio_of_friends - ratio_of_enemies),
+                ScenarioAttribute.GENDER.value: [
+                    (Gender.MALE, 1 - ratio_of_female_students),
+                    (Gender.FEMALE, ratio_of_female_students),
                 ],
                 ScenarioAttribute.PROJECT_PREFERENCES.value: [1, 2, 3],
             },
@@ -53,18 +50,14 @@ def run_diversify_2_friends():
 
         simulation_outputs = Simulation(
             num_teams=number_of_teams,
-            scenario=DiversifySocialMin2Friends(
-                value_of_friend=Relationship.FRIEND.value
-            ),
+            scenario=DiversifySocialFriends(),
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=[
-                AverageGiniIndex(attribute=ScenarioAttribute.SOCIAL.value),
                 NumRequirementsSatisfied(),
                 NumTeamsMeetingRequirements(),
             ],
         ).run(num_runs=num_trials)
 
-        print("=>", Simulation.average_metric(simulation_outputs, "AverageGiniIndex"))
         print(
             "=>",
             Simulation.average_metric(simulation_outputs, "NumRequirementsSatisfied"),
