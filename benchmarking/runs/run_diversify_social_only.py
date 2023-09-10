@@ -2,7 +2,9 @@ import math
 
 from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
-from benchmarking.evaluations.metrics.average_social_satisfied import AverageSocialSatisfaction
+from benchmarking.evaluations.metrics.average_social_satisfied import (
+    AverageSocialSatisfaction,
+)
 from benchmarking.evaluations.metrics.num_requirements_satisfied import (
     NumRequirementsSatisfied,
 )
@@ -55,18 +57,23 @@ def run_diversify_2_friends():
             scenario=DiversifySocialFriends(),
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=[
-                AverageSocialSatisfaction(TeamOption(
-                    strict_mode=False,
-                    friend_mode=True,
-                    is_all_happy=True,
-                    is_strictly_happy=False
-                )),
+                AverageSocialSatisfaction(
+                    TeamOption(
+                        strict_mode=False,
+                        friend_mode=True,
+                        is_all_happy=True,
+                        is_strictly_happy=False,
+                    )
+                ),
                 NumRequirementsSatisfied(),
                 NumTeamsMeetingRequirements(),
             ],
         ).run(num_runs=num_trials)
 
-        print("=>", Simulation.average_metric(simulation_outputs, "AverageSocialSatisfaction"))
+        print(
+            "=>",
+            Simulation.average_metric(simulation_outputs, "AverageSocialSatisfaction"),
+        )
         print(
             "=>",
             Simulation.average_metric(simulation_outputs, "NumRequirementsSatisfied"),

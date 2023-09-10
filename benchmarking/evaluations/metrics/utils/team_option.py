@@ -6,15 +6,19 @@ class TeamOption:
     friend_mode: bool
     is_all_happy: bool
 
-    def __init__(self, strict_mode: bool = True, friend_mode: bool = True, is_strictly_happy: bool = True,
-                 is_all_happy: bool = True):
+    def __init__(
+        self,
+        strict_mode: bool = True,
+        friend_mode: bool = True,
+        is_strictly_happy: bool = True,
+        is_all_happy: bool = True,
+    ):
         self.strict_mode = strict_mode
         self.friend_mode = friend_mode
         self.is_strictly_happy = is_strictly_happy
         self.is_all_happy = is_all_happy
 
     def get_function(self):
-
         if self.strict_mode and self.friend_mode:
             return is_strictly_happy_team_friend
         if self.strict_mode and not self.friend_mode:
