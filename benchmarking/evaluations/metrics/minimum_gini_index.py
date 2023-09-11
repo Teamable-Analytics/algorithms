@@ -13,6 +13,4 @@ class MinimumGiniIndex(TeamSetMetric):
         self.attribute = attribute
 
     def calculate(self, team_set: TeamSet) -> float:
-        return (
-            min([team_gini_index(team, self.attribute) for team in team_set.teams])
-        )
+        return min([team_gini_index(team, self.attribute) for team in team_set.teams])

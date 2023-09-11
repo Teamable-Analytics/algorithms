@@ -46,12 +46,21 @@ def concentrate_gpa_run():
                 AverageGiniIndex(attribute=ScenarioAttribute.GPA.value),
                 MaximumGiniIndex(attribute=ScenarioAttribute.GPA.value),
                 MinimumGiniIndex(attribute=ScenarioAttribute.GPA.value),
-            ]
+            ],
         ).run(num_runs=num_trials)
 
-        print("Average Gini Index for GPA =>", Simulation.average_metric(simulation_outputs, "AverageGiniIndex"))
-        print("Maximum Gini Index for GPA =>", Simulation.average_metric(simulation_outputs, "MaximumGiniIndex"))
-        print("Minimum Gini Index for GPA =>", Simulation.average_metric(simulation_outputs, "MinimumGiniIndex"))
+        print(
+            "Average Gini Index for GPA =>",
+            Simulation.average_metric(simulation_outputs, "AverageGiniIndex"),
+        )
+        print(
+            "Maximum Gini Index for GPA =>",
+            Simulation.average_metric(simulation_outputs, "MaximumGiniIndex"),
+        )
+        print(
+            "Minimum Gini Index for GPA =>",
+            Simulation.average_metric(simulation_outputs, "MinimumGiniIndex"),
+        )
 
 
 if __name__ == "__main__":

@@ -13,6 +13,4 @@ class MaximumGiniIndex(TeamSetMetric):
         self.attribute = attribute
 
     def calculate(self, team_set: TeamSet) -> float:
-        return (
-            max([team_gini_index(team, self.attribute) for team in team_set.teams])
-        )
+        return max([team_gini_index(team, self.attribute) for team in team_set.teams])
