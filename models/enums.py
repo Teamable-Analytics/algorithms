@@ -81,3 +81,15 @@ class Age(AttributeValueEnum):
     _19 = 19
     _20 = 20
     _21 = 21
+
+
+class Race(AttributeValueEnum):
+    African = 1
+    European = 2
+    East_Asian = 3
+    South_Asian = 4
+    South_East_Asian = 5
+    First_Nations_or_Indigenous = 6
+    Hispanic_or_Latin_American = 7
+    Middle_Eastern = 8
+    Other = 9

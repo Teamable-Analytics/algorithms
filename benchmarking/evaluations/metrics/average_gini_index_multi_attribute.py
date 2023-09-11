@@ -12,6 +12,8 @@ class AverageGiniIndexMultiAttribute(TeamSetMetric):
 
     def __init__(self, attributes: list[int], *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if attributes is None or len(attributes) == 0:
+            raise ValueError("Must have at least one attribute")
         self.attributes = attributes
 
     def calculate(self, team_set: TeamSet) -> float:
