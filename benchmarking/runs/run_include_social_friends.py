@@ -5,7 +5,9 @@ from benchmarking.data.simulated_data.mock_student_provider import MockStudentPr
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,
 )
-from benchmarking.evaluations.metrics.utils.team_calculations import is_happy_team_allhp_friend
+from benchmarking.evaluations.metrics.utils.team_calculations import (
+    is_happy_team_allhp_friend,
+)
 from benchmarking.evaluations.scenarios.include_social_friends import (
     IncludeSocialFriends,
 )

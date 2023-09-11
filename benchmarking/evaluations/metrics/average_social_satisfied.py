@@ -13,5 +13,6 @@ class AverageSocialSatisfaction(TeamSetMetric):
 
     def calculate(self, team_set: TeamSet) -> float:
         return (
-            sum([self.metric_function(team) for team in team_set.teams]) / team_set.num_teams
+            sum([self.metric_function(team) for team in team_set.teams])
+            / team_set.num_teams
         )
