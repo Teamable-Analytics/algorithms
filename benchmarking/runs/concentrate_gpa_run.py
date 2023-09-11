@@ -1,6 +1,10 @@
 import math
 
 from benchmarking.data.interfaces import MockStudentProviderSettings
+from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
+from benchmarking.evaluations.metrics.average_gini_index import AverageGiniIndex
+from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
+from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from benchmarking.evaluations.scenarios.concentrate_gpa import ConcentrateGPA
 from benchmarking.simulation.simulation import Simulation
 from models.enums import ScenarioAttribute, Gpa
@@ -37,7 +41,17 @@ def concentrate_gpa_run():
         simulation_outputs = Simulation(
             num_teams=number_of_teams,
             scenario=ConcentrateGPA(),
+            student_provider=MockStudentProvider(student_provider_settings),
+            metrics=[
+                AverageGiniIndex(attribute=ScenarioAttribute.GPA.value),
+                MaximumGiniIndex(attribute=ScenarioAttribute.GPA.value),
+                MinimumGiniIndex(attribute=ScenarioAttribute.GPA.value),
+            ]
         ).run(num_runs=num_trials)
+
+        print("Average Gini Index for GPA =>", Simulation.average_metric(simulation_outputs, "AverageGiniIndex"))
+        print("Maximum Gini Index for GPA =>", Simulation.average_metric(simulation_outputs, "MaximumGiniIndex"))
+        print("Minimum Gini Index for GPA =>", Simulation.average_metric(simulation_outputs, "MinimumGiniIndex"))
 
 
 if __name__ == "__main__":
