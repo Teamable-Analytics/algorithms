@@ -8,10 +8,10 @@ from benchmarking.evaluations.interfaces import (
 from benchmarking.evaluations.goals import WeightGoal, PreferenceGoal
 
 
-class DiversifySocialFriends(Scenario):
+class IncludeSocialFriends(Scenario):
     @property
     def name(self):
-        return "Diversify on social"
+        return "Create teams that group social friends together"
 
     @property
     def goals(self) -> List[Goal]:
