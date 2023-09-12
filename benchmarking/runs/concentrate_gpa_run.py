@@ -12,7 +12,7 @@ from models.enums import ScenarioAttribute, Gpa
 
 def concentrate_gpa_run():
     """
-    Goal: Run concentrate GPA scenario, measure average GPA difference within group
+    Goal: Run concentrate GPA scenario, and measure the average, maximum, and minimum gini scores for gpa
     """
 
     # Define changing values
