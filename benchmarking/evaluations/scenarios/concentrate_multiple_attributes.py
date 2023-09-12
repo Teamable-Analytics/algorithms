@@ -9,16 +9,13 @@ from benchmarking.evaluations.goals import (
 
 
 class ConcentrateMultipleAttributes(Scenario):
-
     def __init__(self, attributes: List[ScenarioAttribute]):
         self.attributes = attributes
 
     @property
     def name(self):
         attribute_name_list = ", ".join([_.name for _ in self.attributes])
-        return (
-            f"Concentrate on multiple attributes ({attribute_name_list})"
-        )
+        return f"Concentrate on multiple attributes ({attribute_name_list})"
 
     @property
     def goals(self) -> List[Goal]:
