@@ -31,15 +31,17 @@ def graph(graph_data: LineGraphMetadata):
         legends.append(curr_data.legend)
 
     # Graph format
-    legend = plt.legend(legends, bbox_to_anchor=(1.05, 1), loc='upper left', edgecolor='none')
+    legend = plt.legend(
+        legends, bbox_to_anchor=(1.05, 1), loc="upper left", edgecolor="none"
+    )
     legend.get_frame().set_alpha(None)
-    legend.get_frame().set_facecolor('white')
+    legend.get_frame().set_facecolor("white")
 
     if graph_data.title is not None:
-        plt.suptitle(graph_data.title, size=20, fontweight='bold', y=0.98)
+        plt.suptitle(graph_data.title, size=20, fontweight="bold", y=0.98)
 
     if graph_data.description is not None:
-        plt.title(graph_data.description, size=13, y=1.05, fontweight='ultralight')
+        plt.title(graph_data.description, size=13, y=1.05, fontweight="ultralight")
 
     if graph_data.x_lim is not None:
         plt.xlim([graph_data.x_lim.start, graph_data.x_lim.end])
@@ -59,26 +61,32 @@ def graph(graph_data: LineGraphMetadata):
     plt.show()
 
 
-"""
+import random
+
+
+def random_num(rand=False):
+    N = random.randint(0, 100) if rand else 100
+    return sorted([random.randint(0, N) for _ in range(100)])
+
+
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 
 graph(
     LineGraphMetadata(
-        legend='THE LEGEND',
-        title='THE TITLE',
-        description='THE DESCRIPTION THE DESCRIPTION THE DESCRIPTION ',
+        legend="THE LEGEND",
+        title="THE TITLE",
+        description="THE DESCRIPTION THE DESCRIPTION THE DESCRIPTION ",
         data=[
-            GraphData(x_data=[...], y_data=[...], legend='LEGEND 1'),
-            GraphData(x_data=[...], y_data=[...], legend='LEGEND 2'),
-            GraphData(x_data=[...], y_data=[...], legend='LEGEND 3'),
-            GraphData(x_data=[...], y_data=[...], legend='LEGEND 4'),
-            GraphData(x_data=[...], y_data=[...], legend='LEGEND 5'),
+            GraphData(x_data=random_num(), y_data=random_num(False), legend="LEGEND 1"),
+            GraphData(x_data=random_num(), y_data=random_num(False), legend="LEGEND 2"),
+            GraphData(x_data=random_num(), y_data=random_num(False), legend="LEGEND 3"),
+            GraphData(x_data=random_num(), y_data=random_num(False), legend="LEGEND 4"),
+            GraphData(x_data=random_num(), y_data=random_num(False), legend="LEGEND 5"),
         ],
-        x_label='X LABEL',
-        y_label='Y LABEL',
+        x_label="X LABEL",
+        y_label="Y LABEL",
         x_lim=None,
         y_lim=None,
     )
 )
-"""
