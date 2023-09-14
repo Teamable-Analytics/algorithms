@@ -61,13 +61,8 @@ def graph(graph_data: LineGraphMetadata):
     plt.show()
 
 
-import random
-
-
-def random_num(rand=False):
-    N = random.randint(0, 100) if rand else 100
-    return sorted([random.randint(0, N) for _ in range(100)])
-
+"""
+# Sample call:
 
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
@@ -78,11 +73,11 @@ graph(
         title="THE TITLE",
         description="THE DESCRIPTION THE DESCRIPTION THE DESCRIPTION ",
         data=[
-            GraphData(x_data=random_num(), y_data=random_num(False), legend="LEGEND 1"),
-            GraphData(x_data=random_num(), y_data=random_num(False), legend="LEGEND 2"),
-            GraphData(x_data=random_num(), y_data=random_num(False), legend="LEGEND 3"),
-            GraphData(x_data=random_num(), y_data=random_num(False), legend="LEGEND 4"),
-            GraphData(x_data=random_num(), y_data=random_num(False), legend="LEGEND 5"),
+            GraphData(x_data=[...], y_data=[...], legend="LEGEND 1"),
+            GraphData(x_data=[...], y_data=[...], legend="LEGEND 2"),
+            GraphData(x_data=[...], y_data=[...], legend="LEGEND 3"),
+            GraphData(x_data=[...], y_data=[...], legend="LEGEND 4"),
+            GraphData(x_data=[...], y_data=[...], legend="LEGEND 5"),
         ],
         x_label="X LABEL",
         y_label="Y LABEL",
@@ -90,3 +85,4 @@ graph(
         y_lim=None,
     )
 )
+"""
