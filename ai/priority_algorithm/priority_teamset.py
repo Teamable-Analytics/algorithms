@@ -1,16 +1,14 @@
 import copy
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Dict
 
-from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
-    Priority,
-)
-from old.team_formation.app.team_generator.algorithm.priority_algorithm.scoring import (
+from ai.priority_algorithm.interfaces import Priority
+from ai.priority_algorithm.scoring import (
     get_priority_satisfaction_array,
     get_multipliers,
 )
-from old.team_formation.app.team_generator.student import Student
-from old.team_formation.app.team_generator.team import Team
+from models.student import Student
+from models.team import Team
 
 """
 These dataclasses are used only in the priority algorithm.
@@ -28,9 +26,9 @@ class PriorityTeam:
 
 @dataclass
 class PriorityTeamSet:
-    priority_teams: List[PriorityTeam] = field(default_factory=list)
+    priority_teams: List[PriorityTeam]
 
-    def __init__(self, *args, **kwargs):
+    def __post_init__(self):
         self.score = None  # not calculated yet
 
     def clone(self):

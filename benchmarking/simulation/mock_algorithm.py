@@ -1,20 +1,23 @@
 from typing import List
 
-from models.enums import (
-    AlgorithmType,
-    DiversifyType,
+from ai.priority_algorithm.priority_algorithm import (
+    PriorityAlgorithm as PriorityAlgorithmNew,
 )
-from models.team import Team
-from models.team_set import TeamSet
 from benchmarking.evaluations.enums import PreferenceSubject
-from benchmarking.evaluations.interfaces import Scenario
 from benchmarking.evaluations.goals import (
     WeightGoal,
     PreferenceGoal,
     DiversityGoal,
     ProjectRequirementGoal,
 )
+from benchmarking.evaluations.interfaces import Scenario
 from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
+from models.enums import (
+    AlgorithmType,
+    DiversifyType,
+)
+from models.team import Team
+from models.team_set import TeamSet
 from old.team_formation.app.team_generator.algorithm.algorithms import (
     AlgorithmOptions,
     RandomAlgorithm,
@@ -64,6 +67,8 @@ class MockAlgorithm:
             return SocialAlgorithm(algorithm_options)
         if algorithm_type == AlgorithmType.PRIORITY:
             return PriorityAlgorithm(algorithm_options)
+        if algorithm_type == AlgorithmType.PRIORITY_NEW:
+            return PriorityAlgorithmNew(algorithm_options)
 
     @staticmethod
     def get_team_generation_options(

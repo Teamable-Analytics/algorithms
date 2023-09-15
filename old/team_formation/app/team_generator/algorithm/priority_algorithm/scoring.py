@@ -43,6 +43,6 @@ def get_satisfaction_ratio(
 
 
 def get_multipliers(priorities: List[Priority]) -> List[int]:
-    # with 2 buckets and [C1, C2, C3], returns [4, 2, 1]
+    # e.g. with 2 buckets and [C1, C2, C3], returns [4, 2, 1]
     multipliers = [NUM_BUCKETS ** (n - 1) for n in range(1, len(priorities) + 1)]
     return multipliers[::-1]
