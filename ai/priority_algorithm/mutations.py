@@ -6,11 +6,11 @@ from models.team_set import TeamSet
 
 
 def swap_student_between_teams(
-        self,
-        team1: Team,
-        student_1: Student,
-        team2: Team,
-        student_2: Student,
+    self,
+    team1: Team,
+    student_1: Student,
+    team2: Team,
+    student_2: Student,
 ):
     """
     Swaps students between teams, needs to use student not student_id
