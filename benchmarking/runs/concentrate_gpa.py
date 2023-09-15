@@ -13,7 +13,7 @@ from benchmarking.simulation.simulation import Simulation
 from models.enums import ScenarioAttribute, Gpa
 
 
-def concentrate_gpa_run():
+def concentrate_gpa():
     """
     Goal: Run concentrate GPA scenario, and measure the average, maximum, and minimum gini scores for gpa
     """
@@ -141,4 +141,4 @@ def concentrate_gpa_run():
 
 
 if __name__ == "__main__":
-    concentrate_gpa_run()
+    concentrate_gpa()

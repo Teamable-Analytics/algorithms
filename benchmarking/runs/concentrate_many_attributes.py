@@ -14,7 +14,7 @@ from benchmarking.simulation.simulation import Simulation
 from models.enums import ScenarioAttribute, Gender, Race
 
 
-def run_concentrate_many_attributes():
+def concentrate_many_attributes():
     """
     Goal: Run concentrate on many attributes scenario (6 attributes), measure average gini index across all attributes
     """
@@ -81,4 +81,4 @@ def run_concentrate_many_attributes():
 
 
 if __name__ == "__main__":
-    run_concentrate_many_attributes()
+    concentrate_many_attributes()
