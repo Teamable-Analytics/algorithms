@@ -2,6 +2,7 @@ import random
 import time
 from typing import Dict, List
 
+from ai.priority_algorithm.mutations import mutate_random_swap
 from old.team_formation.app.team_generator.algorithm.algorithms import WeightAlgorithm
 from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
     Priority,
@@ -102,11 +103,7 @@ class PriorityAlgorithm(WeightAlgorithm):
                 reverse=True,
             )
             team_sets = team_sets[: self.MAX_KEEP]
-            # print(f'Iteration: {iteration} | {[team_set.score for team_set in team_sets]}')
             iteration += 1
-
-        # print(f'Total iterations: {iteration}')
-        # print(f'Scores: {[team_set.score for team_set in team_sets]}')
         return self.save_team_compositions_to_teams(team_sets[0])
 
     def save_team_compositions_to_teams(
@@ -131,25 +128,6 @@ class PriorityAlgorithm(WeightAlgorithm):
         for student in self.students:
             student.team = None
 
-    def mutate_team_random(self, team_set: PriorityTeamSet) -> PriorityTeamSet:
-        """
-        Note, both teams must not be empty
-        Actually modifies the team_set passed
-        """
-        available_priority_teams = [
-            priority_team
-            for priority_team in team_set.priority_teams
-            if not priority_team.team.is_locked
-        ]
-        try:
-            team1, team2 = random.sample(available_priority_teams, 2)
-            student_1_id: int = random.choice(team1.student_ids)
-            student_2_id: int = random.choice(team2.student_ids)
-            self.swap_student_between_teams(team1, student_1_id, team2, student_2_id)
-        except ValueError:
-            return team_set
-        return team_set
-
     def mutate(self, team_set: PriorityTeamSet) -> List[PriorityTeamSet]:
         """
         Mutate a single teamset into child teamsets
@@ -158,19 +136,6 @@ class PriorityAlgorithm(WeightAlgorithm):
             team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)
         ]
         return [
-            self.mutate_team_random(cloned_team_set)
+            mutate_random_swap(cloned_team_set)
             for cloned_team_set in cloned_team_sets
         ]
-
-    def swap_student_between_teams(
-        self,
-        team1: PriorityTeam,
-        student_1_id: int,
-        team2: PriorityTeam,
-        student_2_id: int,
-    ):
-        team1.student_ids.remove(student_1_id)
-        team1.student_ids.append(student_2_id)
-
-        team2.student_ids.remove(student_2_id)
-        team2.student_ids.append(student_1_id)
