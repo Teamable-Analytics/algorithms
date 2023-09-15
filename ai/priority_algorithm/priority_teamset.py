@@ -3,7 +3,10 @@ from dataclasses import dataclass
 from typing import List, Dict
 
 from ai.priority_algorithm.interfaces import Priority
-from ai.priority_algorithm.scoring import get_priority_satisfaction_array, get_multipliers
+from ai.priority_algorithm.scoring import (
+    get_priority_satisfaction_array,
+    get_multipliers,
+)
 from models.student import Student
 from models.team import Team
 

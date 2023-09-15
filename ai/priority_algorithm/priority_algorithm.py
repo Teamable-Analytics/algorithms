@@ -74,14 +74,16 @@ class PriorityAlgorithm(WeightAlgorithm):
         return priorities
 
     def generate_initial_teams(
-            self,
-            students: List[AlgorithmStudent],
-            teams: List[AlgorithmTeam],
-            team_generation_option: TeamGenerationOption,
+        self,
+        students: List[AlgorithmStudent],
+        teams: List[AlgorithmTeam],
+        team_generation_option: TeamGenerationOption,
     ) -> PriorityTeamSet:
         self.set_default_weights()
         initial_teams = super().generate(students, teams, team_generation_option)
-        initial_team_set = AlgorithmTranslator.algorithm_teams_to_team_set(initial_teams)
+        initial_team_set = AlgorithmTranslator.algorithm_teams_to_team_set(
+            initial_teams
+        )
         priority_teams: List[PriorityTeam] = []
         for team in initial_team_set.teams:
             priority_team = PriorityTeam(
@@ -92,10 +94,10 @@ class PriorityAlgorithm(WeightAlgorithm):
         return PriorityTeamSet(priority_teams=priority_teams)
 
     def generate(
-            self,
-            students: List[AlgorithmStudent],
-            teams: List[AlgorithmTeam],
-            team_generation_option: TeamGenerationOption,
+        self,
+        students: List[AlgorithmStudent],
+        teams: List[AlgorithmTeam],
+        team_generation_option: TeamGenerationOption,
     ) -> List[AlgorithmTeam]:
         self.students = AlgorithmTranslator.algorithm_students_to_students(students)
         self.student_dict = self.create_student_dict(self.students)
@@ -107,7 +109,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         ]
 
         while (
-                time.time() - start_time
+            time.time() - start_time
         ) < self.MAX_TIME and iteration < self.MAX_ITERATE:
             new_team_sets: List[PriorityTeamSet] = []
             for team_set in team_sets:
@@ -125,7 +127,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         )
 
     def save_team_compositions_to_teams(
-            self, priority_team_set: PriorityTeamSet
+        self, priority_team_set: PriorityTeamSet
     ) -> List[Team]:
         teams: List[Team] = []
 

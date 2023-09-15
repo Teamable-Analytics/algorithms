@@ -11,9 +11,9 @@ NUM_BUCKETS = 25
 
 
 def get_priority_satisfaction_array(
-        priority_teams: List["PriorityTeam"],
-        priorities: List[Priority],
-        student_dict: Dict[int, Student],
+    priority_teams: List["PriorityTeam"],
+    priorities: List[Priority],
+    student_dict: Dict[int, Student],
 ) -> List[int]:
     return [
         get_priority_satisfaction(priority_teams, priority, student_dict)
@@ -22,9 +22,9 @@ def get_priority_satisfaction_array(
 
 
 def get_priority_satisfaction(
-        priority_teams: List["PriorityTeam"],
-        priority: Priority,
-        student_dict: Dict[int, Student],
+    priority_teams: List["PriorityTeam"],
+    priority: Priority,
+    student_dict: Dict[int, Student],
 ) -> int:
     satisfaction_ratio = get_satisfaction_ratio(priority_teams, priority, student_dict)
     if satisfaction_ratio == 0:
@@ -36,9 +36,9 @@ def get_priority_satisfaction(
 
 
 def get_satisfaction_ratio(
-        priority_teams: List["PriorityTeam"],
-        priority: Priority,
-        student_dict: Dict[int, Student],
+    priority_teams: List["PriorityTeam"],
+    priority: Priority,
+    student_dict: Dict[int, Student],
 ) -> float:
     # returns value in [0, 1] IMPORTANT that it does this, satisfaction value relies on it
     count = 0
