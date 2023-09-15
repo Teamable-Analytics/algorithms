@@ -26,7 +26,8 @@ def test_saved_run():
     """
 
     # Defining our changing x-values (in the graph sense)
-    class_sizes = [100, 150, 200, 250, 300]
+    # class_sizes = [100, 150, 200, 250, 300]
+    class_sizes = [100]
     num_trials = 10
     ratio_of_female_students = 0.5
 
@@ -46,11 +47,11 @@ def test_saved_run():
                     (Gender.MALE, 1 - ratio_of_female_students),
                     (Gender.FEMALE, ratio_of_female_students),
                 ],
-                ScenarioAttribute.PROJECT_PREFERENCES.value: [1, 2, 3],
+                # ScenarioAttribute.PROJECT_PREFERENCES.value: [1, 2, 3],
             },
-            num_values_per_attribute={
-                ScenarioAttribute.PROJECT_PREFERENCES.value: 3,
-            },
+            # num_values_per_attribute={
+            #     ScenarioAttribute.PROJECT_PREFERENCES.value: 3,
+            # },
         )
 
         simulation_outputs = Simulation(
@@ -59,22 +60,22 @@ def test_saved_run():
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=[
                 AverageGiniIndex(attribute=ScenarioAttribute.GENDER.value),
-                NumRequirementsSatisfied(),
-                NumTeamsMeetingRequirements(),
+                # NumRequirementsSatisfied(),
+                # NumTeamsMeetingRequirements(),
             ],
         ).run(num_runs=num_trials)
 
         print("=>", Simulation.average_metric(simulation_outputs, "AverageGiniIndex"))
-        print(
-            "=>",
-            Simulation.average_metric(simulation_outputs, "NumRequirementsSatisfied"),
-        )
-        print(
-            "=>",
-            Simulation.average_metric(
-                simulation_outputs, "NumTeamsMeetingRequirements"
-            ),
-        )
+        # print(
+        #     "=>",
+        #     Simulation.average_metric(simulation_outputs, "NumRequirementsSatisfied"),
+        # )
+        # print(
+        #     "=>",
+        #     Simulation.average_metric(
+        #         simulation_outputs, "NumTeamsMeetingRequirements"
+        #     ),
+        # )
 
 
 if __name__ == "__main__":

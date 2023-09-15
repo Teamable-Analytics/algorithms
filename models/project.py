@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
-from models.enums import RequirementType
+from models.enums import RequirementOperator
 
 
 @dataclass
 class ProjectRequirement:
     attribute: int
-    operator: RequirementType
+    operator: RequirementOperator
     value: int

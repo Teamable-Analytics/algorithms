@@ -1,4 +1,4 @@
-from models.enums import Relationship, RequirementType
+from models.enums import Relationship, RequirementOperator
 from models.project import ProjectRequirement
 from models.student import Student
 
@@ -49,9 +49,9 @@ def is_strictly_happy_student_enemy(student: Student) -> bool:
 def student_meets_requirement(student: Student, requirement: ProjectRequirement):
     is_met = False
     for value in student.attributes[requirement.attribute]:
-        if requirement.operator == RequirementType.LESS_THAN:
+        if requirement.operator == RequirementOperator.LESS_THAN:
             is_met |= value < requirement.value
-        elif requirement.operator == RequirementType.MORE_THAN:
+        elif requirement.operator == RequirementOperator.MORE_THAN:
             is_met |= value > requirement.value
         else:
             is_met |= value == requirement.value

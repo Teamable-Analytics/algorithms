@@ -8,7 +8,7 @@ class Relationship(Enum):
     ENEMY = 1.1
 
 
-class RequirementType(Enum):
+class RequirementOperator(Enum):
     EXACTLY = "exactly"
     LESS_THAN = "less than"
     MORE_THAN = "more than"
@@ -29,6 +29,7 @@ class AlgorithmType(Enum):
     WEIGHT = "weight"
     SOCIAL = "social"
     PRIORITY = "priority"
+    PRIORITY_NEW = "priority_new"
 
 
 class TokenizationConstraintDirection(Enum):

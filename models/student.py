@@ -16,3 +16,9 @@ class Student:
     @property
     def id(self) -> int:
         return self._id
+
+    def add_team(self, team: "Team"):
+        if self.team:
+            return False
+        self.team = team
+        return True

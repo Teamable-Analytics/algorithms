@@ -17,3 +17,14 @@ class Team:
     @property
     def id(self) -> int:
         return self._id
+
+    def empty(self):
+        for student in self.students:
+            student.team = None
+        self.students = []
+
+    def add_student(self, student: "Student"):
+        if self.is_locked or student.team is not None:
+            return False
+        self.students.append(student)
+        return True

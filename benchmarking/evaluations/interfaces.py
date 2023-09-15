@@ -35,10 +35,3 @@ class TeamSetMetric(ABC):
         if self._name:
             return self._name
         return self.__class__.__name__
-
-
-@dataclass
-class TokenizationConstraint:
-    direction: TokenizationConstraintDirection
-    threshold: int
-    value: int

@@ -2,7 +2,7 @@ from typing import List, Union
 
 from benchmarking.evaluations.goals import DiversityGoal
 from models.enums import (
-    RequirementType,
+    RequirementOperator,
     Relationship,
     DiversifyType,
     TokenizationConstraintDirection,
@@ -27,7 +27,7 @@ from old.team_formation.app.team_generator.team_generator import TeamGenerationO
 class AlgorithmTranslator:
     @staticmethod
     def initial_teams_to_team_generation_options(
-        initial_teams: List[Team], num_students: int
+            initial_teams: List[Team], num_students: int
     ) -> TeamGenerationOption:
         total_teams = 0
         team_options = []
@@ -38,11 +38,11 @@ class AlgorithmTranslator:
                     "id": initial_team.id,
                     "project_id": initial_team.project_id,
                     "name": initial_team.name
-                    or f"Project {initial_team.project_id} - {i}",
+                            or f"Project {initial_team.project_id} - {i}",
                     "requirements": [
                         {
                             "id": requirement.attribute,
-                            "operator": AlgorithmTranslator.requirement_to_algorithm_requirement_operator(
+                            "operator": AlgorithmTranslator.requirement_operator_to_algorithm_requirement_operator(
                                 requirement.operator
                             ),
                             "value": requirement.value,
@@ -61,21 +61,21 @@ class AlgorithmTranslator:
         )
 
     @staticmethod
-    def requirement_to_algorithm_requirement_operator(
-        requirement: RequirementType,
+    def requirement_operator_to_algorithm_requirement_operator(
+            requirement: RequirementOperator,
     ) -> str:
         return requirement.value
 
     @staticmethod
-    def algorithm_requirement_operator_to_requirement(
-        algorithm_requirement: str,
-    ) -> RequirementType:
+    def algorithm_requirement_operator_to_requirement_operator(
+            algorithm_requirement: str,
+    ) -> RequirementOperator:
         if algorithm_requirement == "exactly":
-            return RequirementType.EXACTLY
+            return RequirementOperator.EXACTLY
         if algorithm_requirement == "less than":
-            return RequirementType.LESS_THAN
+            return RequirementOperator.LESS_THAN
         if algorithm_requirement == "more than":
-            return RequirementType.MORE_THAN
+            return RequirementOperator.MORE_THAN
 
         raise ValueError(
             f"{algorithm_requirement} is not a valid project requirement operator in the algorithms module"
@@ -93,12 +93,42 @@ class AlgorithmTranslator:
 
     @staticmethod
     def students_to_algorithm_students(
-        students: List[Student],
+            students: List[Student],
     ) -> List[AlgorithmStudent]:
         return [
             AlgorithmTranslator.student_to_algorithm_student(student)
             for student in students
         ]
+
+    @staticmethod
+    def algorithm_students_to_students(
+            algorithm_students: List[AlgorithmStudent],
+    ) -> List[Student]:
+        return [
+            AlgorithmTranslator.algorithm_student_to_student(algorithm_student)
+            for algorithm_student in algorithm_students
+        ]
+
+    @staticmethod
+    def team_to_algorithm_team(team: Team) -> AlgorithmTeam:
+        students = AlgorithmTranslator.students_to_algorithm_students(team.students)
+
+        return AlgorithmTeam(
+            id=str(team.id),
+            project_id=team.project_id,
+            name=team.name,
+            students=students,
+            requirements=[{
+                "id": req.attribute,
+                "operator": AlgorithmTranslator.requirement_operator_to_algorithm_requirement_operator(req.operator),
+                "value": req.value,
+            } for req in team.requirements],
+            locked=team.is_locked,
+        )
+
+    @staticmethod
+    def teams_to_algorithm_teams(teams: List[Team]) -> List[AlgorithmTeam]:
+        return [AlgorithmTranslator.team_to_algorithm_team(team) for team in teams]
 
     @staticmethod
     def algorithm_team_to_team(algorithm_team: AlgorithmTeam) -> Team:
@@ -107,20 +137,21 @@ class AlgorithmTranslator:
             for algorithm_student in algorithm_team.students
         ]
         team = Team(
-            _id=algorithm_team.id,
+            _id=int(algorithm_team.id),
             name=algorithm_team.name,
             project_id=algorithm_team.project_id,
             students=students,
             requirements=[
                 ProjectRequirement(
                     attribute=requirement["id"],
-                    operator=AlgorithmTranslator.algorithm_requirement_operator_to_requirement(
+                    operator=AlgorithmTranslator.algorithm_requirement_operator_to_requirement_operator(
                         requirement["operator"]
                     ),
                     value=requirement["value"],
                 )
                 for requirement in algorithm_team.requirements
             ],
+            is_locked=algorithm_team.is_locked,
         )
 
         for student in students:
@@ -184,7 +215,7 @@ class AlgorithmTranslator:
 
     @staticmethod
     def diversity_goal_to_algorithm_priority_dict(
-        goal: DiversityGoal,
+            goal: DiversityGoal,
     ) -> Union[dict, None]:
         if not goal.tokenization_constraint:
             return None
@@ -198,7 +229,7 @@ class AlgorithmTranslator:
         limit_option = (
             Priority.MIN_OF
             if goal.tokenization_constraint.direction
-            == TokenizationConstraintDirection.MIN_OF
+               == TokenizationConstraintDirection.MIN_OF
             else Priority.MAX_OF
         )
 

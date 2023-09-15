@@ -1,18 +1,17 @@
-import random
 import time
-from typing import Dict, List
+from typing import Dict, List, Literal
 
+from ai.priority_algorithm.interfaces import Priority
 from ai.priority_algorithm.mutations import mutate_random_swap
+from ai.priority_algorithm.priority import TokenizationPriority
+from ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
+from models.enums import DiversifyType, TokenizationConstraintDirection
+from models.student import Student
+from models.team import Team
 from old.team_formation.app.team_generator.algorithm.algorithms import WeightAlgorithm
-from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
-    Priority,
-)
-from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority_teamset import (
-    PriorityTeamSet,
-    PriorityTeam,
-)
-from old.team_formation.app.team_generator.student import Student
-from old.team_formation.app.team_generator.team import Team
+from old.team_formation.app.team_generator.student import Student as AlgorithmStudent
+from old.team_formation.app.team_generator.team import Team as AlgorithmTeam
 from old.team_formation.app.team_generator.team_generator import TeamGenerationOption
 
 
@@ -44,45 +43,62 @@ class PriorityAlgorithm(WeightAlgorithm):
 
     def create_priority_objects(self) -> List[Priority]:
         priorities = []
+
+        # todo: depends on the input dictionary object structure,
+        #  would be better if the input dict just had the right types
+        def get_strategy(constraint: Literal["diversify", "concentrate"]):
+            if constraint == "diversify":
+                return DiversifyType.DIVERSIFY
+            if constraint == "concentrate":
+                return DiversifyType.CONCENTRATE
+            raise TypeError
+
+        def get_direction(limit_option: Literal["min_of", "max_of"]):
+            if limit_option == "min_of":
+                return TokenizationConstraintDirection.MIN_OF
+            if limit_option == "max_of":
+                return TokenizationConstraintDirection.MAX_OF
+            raise TypeError
+
         for priority in self.options.priorities:
             priorities.append(
-                Priority(
-                    constraint=priority["constraint"],
-                    skill_id=priority["skill_id"],
-                    limit_option=priority["limit_option"],
-                    limit=priority["limit"],
+                # todo: currently, only tokenization priorities are supported
+                TokenizationPriority(
+                    attribute_id=priority["skill_id"],
+                    strategy=get_strategy(priority["constraint"]),
+                    direction=get_direction(priority["limit_option"]),
+                    threshold=priority["limit"],
                     value=priority["value"],
                 )
             )
         return priorities
 
     def generate_initial_teams(
-        self,
-        students: List[Student],
-        teams: List[Team],
-        team_generation_option: TeamGenerationOption,
+            self,
+            students: List[AlgorithmStudent],
+            teams: List[AlgorithmTeam],
+            team_generation_option: TeamGenerationOption,
     ) -> PriorityTeamSet:
         self.set_default_weights()
         initial_teams = super().generate(students, teams, team_generation_option)
+        initial_team_set = AlgorithmTranslator.algorithm_teams_to_team_set(initial_teams)
         priority_teams: List[PriorityTeam] = []
-        for team in initial_teams:
+        for team in initial_team_set.teams:
             priority_team = PriorityTeam(
                 team=team, student_ids=[student.id for student in team.students]
             )
             priority_teams.append(priority_team)
+
         return PriorityTeamSet(priority_teams=priority_teams)
 
     def generate(
-        self,
-        students: List[Student],
-        teams: List[Team],
-        team_generation_option: TeamGenerationOption,
-    ) -> List[Team]:
-        """
-        Generate teams using a priority algorithm.
-        """
-        self.students = students
-        self.student_dict = self.create_student_dict(students)
+            self,
+            students: List[AlgorithmStudent],
+            teams: List[AlgorithmTeam],
+            team_generation_option: TeamGenerationOption,
+    ) -> List[AlgorithmTeam]:
+        self.students = AlgorithmTranslator.algorithm_students_to_students(students)
+        self.student_dict = self.create_student_dict(self.students)
         self.priorities = self.create_priority_objects()
         start_time = time.time()
         iteration = 0
@@ -91,7 +107,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         ]
 
         while (
-            time.time() - start_time
+                time.time() - start_time
         ) < self.MAX_TIME and iteration < self.MAX_ITERATE:
             new_team_sets: List[PriorityTeamSet] = []
             for team_set in team_sets:
@@ -104,15 +120,19 @@ class PriorityAlgorithm(WeightAlgorithm):
             )
             team_sets = team_sets[: self.MAX_KEEP]
             iteration += 1
-        return self.save_team_compositions_to_teams(team_sets[0])
+        return AlgorithmTranslator.teams_to_algorithm_teams(
+            self.save_team_compositions_to_teams(team_sets[0])
+        )
 
     def save_team_compositions_to_teams(
-        self, priority_team_set: PriorityTeamSet
+            self, priority_team_set: PriorityTeamSet
     ) -> List[Team]:
         teams: List[Team] = []
-        self.empty_all_teams(
-            [priority_team.team for priority_team in priority_team_set.priority_teams]
-        )
+
+        # empty underlying teams
+        for priority_team in priority_team_set.priority_teams:
+            priority_team.team.empty()
+
         for priority_team in priority_team_set.priority_teams:
             students = [
                 self.student_dict[student_id]
@@ -121,12 +141,6 @@ class PriorityAlgorithm(WeightAlgorithm):
             self.save_students_to_team(priority_team.team, students)
             teams.append(priority_team.team)
         return teams
-
-    def empty_all_teams(self, teams: List[Team]):
-        for team in teams:
-            team.empty()
-        for student in self.students:
-            student.team = None
 
     def mutate(self, team_set: PriorityTeamSet) -> List[PriorityTeamSet]:
         """
