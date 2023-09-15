@@ -136,6 +136,5 @@ class PriorityAlgorithm(WeightAlgorithm):
             team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)
         ]
         return [
-            mutate_random_swap(cloned_team_set)
-            for cloned_team_set in cloned_team_sets
+            mutate_random_swap(cloned_team_set) for cloned_team_set in cloned_team_sets
         ]

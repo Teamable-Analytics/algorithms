@@ -10,7 +10,9 @@ NUM_BUCKETS = 25
 
 
 def get_priority_satisfaction_array(
-    priority_teams: List[PriorityTeam], priorities: List[Priority], student_dict: Dict[int, Student]
+    priority_teams: List[PriorityTeam],
+    priorities: List[Priority],
+    student_dict: Dict[int, Student],
 ) -> List[int]:
     return [
         get_priority_satisfaction(priority_teams, priority, student_dict)

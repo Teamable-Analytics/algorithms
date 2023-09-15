@@ -39,7 +39,7 @@ class PriorityTeamSet:
         return PriorityTeamSet(priority_teams=cloned_priority_teams)
 
     def calculate_score(
-            self, priorities: List[Priority], student_dict: Dict[int, Student]
+        self, priorities: List[Priority], student_dict: Dict[int, Student]
     ) -> float:
         if self.score:
             return self.score
@@ -51,7 +51,9 @@ class PriorityTeamSet:
         score = sum(
             [
                 satisfaction * multiplier
-                for satisfaction, multiplier in zip(priority_satisfaction_array, multipliers)
+                for satisfaction, multiplier in zip(
+                    priority_satisfaction_array, multipliers
+                )
             ]
         )
         self.score = score
