@@ -1,5 +1,7 @@
 import copy
+from dataclasses import dataclass, field
 from typing import List, Dict
+
 from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
     Priority,
 )
@@ -10,21 +12,25 @@ from old.team_formation.app.team_generator.algorithm.priority_algorithm.scoring 
 from old.team_formation.app.team_generator.student import Student
 from old.team_formation.app.team_generator.team import Team
 
+"""
+These dataclasses are used only in the priority algorithm.
+We could simply use the normal Team and TeamSet classes, but then all of their metadata would be deeply cloned.
+Because the priority algorithm deals with mutating teams, deep-cloning team sets is a frequent occurrence and these
+    classes enable a more lightweight representation of the data actually needed by the priority algorithm
+"""
 
+
+@dataclass
 class PriorityTeam:
-    team: Team = None  # just a reference to the team so team requirements can be found easily without duplicating them
+    team: Team  # just a reference to the team so team requirements can be found easily without duplicating them
     student_ids: List[int]
 
-    def __init__(self, team: Team, student_ids: List[int]):
-        self.team = team
-        self.student_ids = student_ids
 
-
+@dataclass
 class PriorityTeamSet:
-    priority_teams: List[PriorityTeam] = []
+    priority_teams: List[PriorityTeam] = field(default_factory=list)
 
-    def __init__(self, priority_teams: List[PriorityTeam]):
-        self.priority_teams = priority_teams
+    def __init__(self, *args, **kwargs):
         self.score = None  # not calculated yet
 
     def clone(self):

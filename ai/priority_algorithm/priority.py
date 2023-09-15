@@ -3,10 +3,6 @@ from typing import List
 from old.team_formation.app.team_generator.student import Student
 
 
-class PriorityException(Exception):
-    pass
-
-
 class Priority:
     # Constraints
     TYPE_DIVERSIFY = "diversify"
