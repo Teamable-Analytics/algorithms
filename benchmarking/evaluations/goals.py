@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 
-from models.enums import DiversifyType
 from benchmarking.evaluations.enums import (
     PreferenceDirection,
     PreferenceSubject,
 )
-from benchmarking.evaluations.interfaces import Goal, TokenizationConstraint
+from benchmarking.evaluations.interfaces import Goal
+from models.enums import DiversifyType
+from models.tokenization_constraint import TokenizationConstraint
 
 
 @dataclass

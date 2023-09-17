@@ -1,16 +1,19 @@
 from math import floor
-from typing import List, Dict
+from typing import List, Dict, TYPE_CHECKING
 
-from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority import (
-    Priority,
-)
-from old.team_formation.app.team_generator.student import Student
+from ai.priority_algorithm.interfaces import Priority
+from models.student import Student
+
+if TYPE_CHECKING:
+    from ai.priority_algorithm.priority_teamset import PriorityTeam
 
 NUM_BUCKETS = 25
 
 
 def get_priority_satisfaction_array(
-    priority_teams: [], priorities: List[Priority], student_dict: Dict[int, Student]
+    priority_teams: List["PriorityTeam"],
+    priorities: List[Priority],
+    student_dict: Dict[int, Student],
 ) -> List[int]:
     return [
         get_priority_satisfaction(priority_teams, priority, student_dict)
@@ -19,7 +22,9 @@ def get_priority_satisfaction_array(
 
 
 def get_priority_satisfaction(
-    priority_teams: [], priority: Priority, student_dict: Dict[int, Student]
+    priority_teams: List["PriorityTeam"],
+    priority: Priority,
+    student_dict: Dict[int, Student],
 ) -> int:
     satisfaction_ratio = get_satisfaction_ratio(priority_teams, priority, student_dict)
     if satisfaction_ratio == 0:
@@ -31,7 +36,9 @@ def get_priority_satisfaction(
 
 
 def get_satisfaction_ratio(
-    priority_teams: [], priority: Priority, student_dict: Dict[int, Student]
+    priority_teams: List["PriorityTeam"],
+    priority: Priority,
+    student_dict: Dict[int, Student],
 ) -> float:
     # returns value in [0, 1] IMPORTANT that it does this, satisfaction value relies on it
     count = 0
@@ -43,6 +50,6 @@ def get_satisfaction_ratio(
 
 
 def get_multipliers(priorities: List[Priority]) -> List[int]:
-    # e.g. with 2 buckets and [C1, C2, C3], returns [4, 2, 1]
+    # with 2 buckets and [C1, C2, C3], returns [4, 2, 1]
     multipliers = [NUM_BUCKETS ** (n - 1) for n in range(1, len(priorities) + 1)]
     return multipliers[::-1]

@@ -7,10 +7,10 @@ from models.enums import (
 )
 from benchmarking.evaluations.interfaces import (
     Scenario,
-    TokenizationConstraint,
     Goal,
 )
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
+from models.tokenization_constraint import TokenizationConstraint
 
 
 class DiversifyGenderMin2Female(Scenario):
