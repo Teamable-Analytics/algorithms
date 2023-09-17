@@ -1,4 +1,5 @@
 import copy
+import math
 import statistics
 import time
 from collections import defaultdict
@@ -31,6 +32,7 @@ class Simulation:
         metrics: List[TeamSetMetric],
         num_teams: int = None,
         initial_teams_provider: InitialTeamsProvider = None,
+        project_list: List[int] = [],
     ):
         self.scenario = scenario
         self.metrics = metrics
@@ -56,6 +58,8 @@ class Simulation:
                 metric.name: [] for metric in self.metrics
             }
             self.run_outputs[algorithm_type].update({Simulation.KEY_RUNTIMES: []})
+
+        self.project_list = project_list
 
     def run(self, num_runs: int) -> RunOutput:
         initial_teams = (
@@ -105,7 +109,7 @@ class Simulation:
 
     @staticmethod
     def average_metric(
-        run_output: RunOutput, metric_name: str
+            run_output: RunOutput, metric_name: str
     ) -> Dict[AlgorithmType, float]:
         averages_output = {}
 

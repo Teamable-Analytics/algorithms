@@ -25,6 +25,8 @@ class MockStudentProvider(StudentProvider):
             self.settings.friend_distribution,
             self.settings.attribute_ranges,
             self.settings.num_values_per_attribute,
+            self.settings.project_list,
+            self.max_project_preferences_per_student,
         )
         # the students must be shuffled here because certain algorithms
         #   perform better/worse based on the ordering of students.
@@ -59,6 +61,8 @@ def create_mock_students(
     friend_distribution: Literal["cluster", "random"],
     attribute_ranges: Dict[int, AttributeRangeConfig],
     num_values_per_attribute: Dict[int, NumValuesConfig],
+    projects: List[int],
+    max_num_preferences: int,
 ) -> List[Student]:
     students = []
     n = number_of_students
@@ -90,11 +94,15 @@ def create_mock_students(
                 attribute_range_config, num_values
             )
 
+        preferences = random.sample(projects, max_num_preferences)
+        random.shuffle(preferences)
+
         students.append(
             Student(
                 i,
                 relationships=relationships,
                 attributes=attributes,
+                preferences=preferences,
             )
         )
     return students
