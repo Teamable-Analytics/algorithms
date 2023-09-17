@@ -99,7 +99,7 @@ def run_pathgasp(sim: Simulation, team_size: int):
                 max_well_being_score = well_being_score
                 ideal_arrangement = arrangement
                 print(f"Mutation #{cnt}, score: {well_being_score}, teams: " +
-                      f"{json.dumps(arrangement, cls=StudentEncoder)}")
+                      f"{json.dumps(arrangement, indent=2, cls=StudentEncoder)}")
             cnt += 1
 
     return ideal_arrangement

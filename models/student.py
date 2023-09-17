@@ -28,4 +28,6 @@ class Student:
 
 class StudentEncoder(JSONEncoder):
     def default(self, o):
-        return o.__dict__
+        return {
+            'id': str(o.id), 'preferences': str(o.preferences)
+        }
