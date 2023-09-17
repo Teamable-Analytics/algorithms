@@ -2,8 +2,6 @@ import matplotlib.pyplot as plt
 
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 
-plt.style.use("bmh")
-
 
 def make_space_above(axes, top_margin=1):
     """
@@ -18,7 +16,10 @@ def make_space_above(axes, top_margin=1):
     fig.set_figheight(figh)
 
 
-def graph(graph_data: LineGraphMetadata):
+def line_graph(graph_data: LineGraphMetadata):
+    # Select graph theme
+    plt.style.use("bmh")
+
     # Data security
     if graph_data.data is None:
         raise ValueError("There is no data to plot")
