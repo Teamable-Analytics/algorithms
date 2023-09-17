@@ -7,11 +7,12 @@ from benchmarking.data.simulated_data.mock_student_provider import MockStudentPr
 from benchmarking.evaluations.scenarios.concentrate_all_attributes import ConcentrateAllAttributes
 from benchmarking.simulation.simulation import Simulation
 
-from models.enums import ScenarioAttribute, Gender, Race
+from models.enums import ScenarioAttribute
 from models.student import Student, StudentEncoder
 
 from itertools import combinations
 import json
+
 
 def generate_team_arrangements(students: List[Student], team_size: int) -> List[List[List[Student]]]:
     """
@@ -38,10 +39,10 @@ def generate_team_arrangements(students: List[Student], team_size: int) -> List[
         if len(students) == len(students_used):
             results.add(tuple(sorted(current_arrangement)))  # Add the sorted tuple to filter duplicates
         else:
-            for team in team_combinations:
-                if all(student not in students_used for student in team):
-                    new_arrangement = current_arrangement + [team]
-                    new_student_used = students_used.union(team)
+            for team_combination in team_combinations:
+                if all(student not in students_used for student in team_combination):
+                    new_arrangement = current_arrangement + [team_combination]
+                    new_student_used = students_used.union(team_combination)
                     recursive_generate(new_arrangement, new_student_used)
 
     recursive_generate([], set())
@@ -102,7 +103,7 @@ def run_pathgasp(sim: Simulation, team_size: int):
                       f"{json.dumps(arrangement, indent=2, cls=StudentEncoder)}")
             cnt += 1
 
-    return (ideal_arrangement, cnt)
+    return ideal_arrangement, cnt
 
 
 CLASS_SIZES = [8, 12, 16, 20, 40, 100]
