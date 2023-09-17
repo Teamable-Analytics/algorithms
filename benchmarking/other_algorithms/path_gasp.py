@@ -102,10 +102,10 @@ def run_pathgasp(sim: Simulation, team_size: int):
                       f"{json.dumps(arrangement, indent=2, cls=StudentEncoder)}")
             cnt += 1
 
-    return ideal_arrangement
+    return (ideal_arrangement, cnt)
 
 
-CLASS_SIZES = [8, 12, 20, 40, 100]
+CLASS_SIZES = [8, 12, 16, 20, 40, 100]
 # CLASS_SIZES = [8]
 TEAM_SIZE = 4
 MAX_NUM_PROJECT_PREFERENCES = 3
@@ -140,8 +140,9 @@ for class_size in CLASS_SIZES:
 
     # Run Path-GASP
     start_time = time.time()
-    run_pathgasp(simulation, team_size=TEAM_SIZE)
+    _, num_iterate = run_pathgasp(simulation, team_size=TEAM_SIZE)
     end_time = time.time()
     run_time = end_time - start_time
     print(f"Run time: {run_time:.4f} seconds")
+    print(f"Iterated {num_iterate} times")
     print()
