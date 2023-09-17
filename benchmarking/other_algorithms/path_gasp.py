@@ -137,15 +137,16 @@ for class_size in CLASS_SIZES:
         project_list=mock_project_list,
     )
 
-    print(f"Maximum well-being score possible: {student_provider_settings.number_of_students * MAX_NUM_PROJECT_PREFERENCES}")
+    print(
+        f"Maximum well-being score possible: {student_provider_settings.number_of_students * MAX_NUM_PROJECT_PREFERENCES}")
 
     simulation = Simulation(
         num_teams=number_of_teams,
         scenario=ConcentrateAllAttributes(),
         student_provider=MockStudentProvider(student_provider_settings),
-        project_list=mock_project_list
+        metrics=[],
+        project_list=mock_project_list,
     )
-
 
     # Run Path-GASP
     start_time = time.time()
