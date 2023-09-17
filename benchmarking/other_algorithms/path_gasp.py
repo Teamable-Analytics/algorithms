@@ -4,9 +4,8 @@ from typing import List, Set
 
 from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
-from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import AverageGiniIndexMultiAttribute
 from benchmarking.evaluations.scenarios.concentrate_all_attributes import ConcentrateAllAttributes
-from benchmarking.simulation.simulation import Simulation, RunOutput
+from benchmarking.simulation.simulation import Simulation
 
 from models.enums import ScenarioAttribute, Gender, Race
 from models.student import Student
@@ -144,18 +143,6 @@ for class_size in CLASS_SIZES:
         num_teams=number_of_teams,
         scenario=ConcentrateAllAttributes(),
         student_provider=MockStudentProvider(student_provider_settings),
-        metrics=[
-            AverageGiniIndexMultiAttribute(
-                attributes=[
-                    ScenarioAttribute.AGE.value,
-                    ScenarioAttribute.GENDER.value,
-                    ScenarioAttribute.GPA.value,
-                    ScenarioAttribute.RACE.value,
-                    ScenarioAttribute.MAJOR.value,
-                    ScenarioAttribute.YEAR_LEVEL.value,
-                ]
-            ),
-        ],
         project_list=mock_project_list
     )
 
