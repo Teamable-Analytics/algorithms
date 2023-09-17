@@ -8,10 +8,10 @@ from benchmarking.evaluations.scenarios.concentrate_all_attributes import Concen
 from benchmarking.simulation.simulation import Simulation
 
 from models.enums import ScenarioAttribute, Gender, Race
-from models.student import Student
+from models.student import Student, StudentEncoder
 
 from itertools import combinations
-
+import json
 
 def generate_team_arrangements(students: List[Student], team_size: int) -> List[List[List[Student]]]:
     """
@@ -98,7 +98,8 @@ def run_pathgasp(sim: Simulation, team_size: int):
             if well_being_score > max_well_being_score:
                 max_well_being_score = well_being_score
                 ideal_arrangement = arrangement
-                print(f"Mutation #{cnt}, score: {well_being_score}, teams: {arrangement}")
+                print(f"Mutation #{cnt}, score: {well_being_score}, teams: " +
+                      f"{json.dumps(arrangement, cls=StudentEncoder)}")
             cnt += 1
 
     return ideal_arrangement
@@ -120,17 +121,6 @@ for class_size in CLASS_SIZES:
 
     student_provider_settings = MockStudentProviderSettings(
         number_of_students=class_size,
-        attribute_ranges={
-            ScenarioAttribute.AGE.value: list(range(20, 24)),
-            ScenarioAttribute.GENDER.value: [
-                (Gender.MALE, 1 - ratio_of_female_students),
-                (Gender.FEMALE, ratio_of_female_students),
-            ],
-            ScenarioAttribute.GPA.value: list(range(60, 100)),
-            ScenarioAttribute.RACE.value: list(range(len(Race))),
-            ScenarioAttribute.MAJOR.value: list(range(1, 4)),
-            ScenarioAttribute.YEAR_LEVEL.value: list(range(3, 5)),
-        },
         num_values_per_attribute={
             ScenarioAttribute.PROJECT_PREFERENCES.value: MAX_NUM_PROJECT_PREFERENCES,
         },

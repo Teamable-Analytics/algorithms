@@ -1,4 +1,6 @@
+import json
 from dataclasses import dataclass, field
+from json import JSONEncoder
 from typing import List, Dict
 
 from models.enums import Relationship
@@ -22,3 +24,8 @@ class Student:
             return False
         self.team = team
         return True
+
+
+class StudentEncoder(JSONEncoder):
+    def default(self, o):
+        return o.__dict__
