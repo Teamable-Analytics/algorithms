@@ -87,7 +87,7 @@ def run_pathgasp(sim: Simulation, team_size: int):
     all_teams_arrangements = generate_team_arrangements(all_students, team_size)
 
     # find all mutations of projects
-    all_projects_arrangements = list(map(list[int], combinations(sim.project_list, number_of_teams)))
+    all_projects_arrangements = list(map(List[int], combinations(sim.project_list, number_of_teams)))
 
     max_well_being_score = 0
     ideal_arrangement = None
