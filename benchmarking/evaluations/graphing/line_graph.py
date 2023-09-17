@@ -22,7 +22,7 @@ def line_graph(graph_data: LineGraphMetadata):
 
     # Data security
     if graph_data.data is None:
-        raise ValueError("There is no data to plot")
+        raise ValueError("There is no data to graph")
 
     # Graphing
     fig, ax = plt.subplots(figsize=(9, 5), squeeze=False)
