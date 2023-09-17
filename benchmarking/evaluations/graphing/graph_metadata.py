@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 
 @dataclass
@@ -9,6 +10,6 @@ class GraphAxisRange:
 
 @dataclass
 class GraphData:
-    x_data: list[float]
-    y_data: list[float]
-    legend: str
+    x_data: List[float]
+    y_data: List[float]
+    name: str

@@ -28,7 +28,7 @@ def graph(graph_data: LineGraphMetadata):
     legends = []
     for curr_data in graph_data.data:
         plt.plot(curr_data.x_data, curr_data.y_data)
-        legends.append(curr_data.legend)
+        legends.append(curr_data.name)
 
     # Graph format
     legend = plt.legend(

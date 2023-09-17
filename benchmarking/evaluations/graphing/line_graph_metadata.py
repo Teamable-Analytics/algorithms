@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List
 
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 
@@ -7,10 +7,9 @@ from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxi
 @dataclass
 class LineGraphMetadata:
     title: str
-    legend: str
-    data: list[GraphData]
+    data: List[GraphData]
+    x_label: str
+    y_label: str
     description: Optional[str]
-    x_label: Optional[str]
-    y_label: Optional[str]
     x_lim: Optional[GraphAxisRange]
     y_lim: Optional[GraphAxisRange]
