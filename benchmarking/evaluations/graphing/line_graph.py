@@ -67,18 +67,16 @@ def line_graph(graph_data: LineGraphMetadata):
 
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
-
-graph(
+line_graph(
     LineGraphMetadata(
-        legend="THE LEGEND",
         title="THE TITLE",
         description="THE DESCRIPTION THE DESCRIPTION THE DESCRIPTION ",
         data=[
-            GraphData(x_data=[...], y_data=[...], legend="LEGEND 1"),
-            GraphData(x_data=[...], y_data=[...], legend="LEGEND 2"),
-            GraphData(x_data=[...], y_data=[...], legend="LEGEND 3"),
-            GraphData(x_data=[...], y_data=[...], legend="LEGEND 4"),
-            GraphData(x_data=[...], y_data=[...], legend="LEGEND 5"),
+            GraphData(x_data=random_num(), y_data=random_num(False), name="LEGEND 1"),
+            GraphData(x_data=random_num(), y_data=random_num(False), name="LEGEND 2"),
+            GraphData(x_data=random_num(), y_data=random_num(False), name="LEGEND 3"),
+            GraphData(x_data=random_num(), y_data=random_num(False), name="LEGEND 4"),
+            GraphData(x_data=random_num(), y_data=random_num(False), name="LEGEND 5"),
         ],
         x_label="X LABEL",
         y_label="Y LABEL",
