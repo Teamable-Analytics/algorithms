@@ -60,21 +60,23 @@ def run_include_social_friends():
                 graph_data_dict[algorithm_type] = GraphData(
                     x_data=[class_size],
                     y_data=[average_runtime],
-                    name=algorithm_type.value
+                    name=algorithm_type.value,
                 )
             else:
                 graph_data_dict[algorithm_type].x_data.append(class_size)
                 graph_data_dict[algorithm_type].y_data.append(average_runtime)
 
-    line_graph(LineGraphMetadata(
-        x_label="Class size",
-        y_label="Run time (seconds)",
-        title="Simulate including friends",
-        data=list(graph_data_dict.values()),
-        description=None,
-        y_lim=None,
-        x_lim=None,
-    ))
+    line_graph(
+        LineGraphMetadata(
+            x_label="Class size",
+            y_label="Run time (seconds)",
+            title="Simulate including friends",
+            data=list(graph_data_dict.values()),
+            description=None,
+            y_lim=None,
+            x_lim=None,
+        )
+    )
 
 
 if __name__ == "__main__":
