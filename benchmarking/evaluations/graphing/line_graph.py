@@ -60,28 +60,3 @@ def line_graph(graph_data: LineGraphMetadata):
 
     plt.tight_layout()
     plt.show()
-
-
-"""
-# Sample call:
-
-from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.graphing.graph_metadata import GraphData
-line_graph(
-    LineGraphMetadata(
-        title="THE TITLE",
-        description="THE DESCRIPTION THE DESCRIPTION THE DESCRIPTION ",
-        data=[
-            GraphData(x_data=random_num(), y_data=random_num(False), name="LEGEND 1"),
-            GraphData(x_data=random_num(), y_data=random_num(False), name="LEGEND 2"),
-            GraphData(x_data=random_num(), y_data=random_num(False), name="LEGEND 3"),
-            GraphData(x_data=random_num(), y_data=random_num(False), name="LEGEND 4"),
-            GraphData(x_data=random_num(), y_data=random_num(False), name="LEGEND 5"),
-        ],
-        x_label="X LABEL",
-        y_label="Y LABEL",
-        x_lim=None,
-        y_lim=None,
-    )
-)
-"""
