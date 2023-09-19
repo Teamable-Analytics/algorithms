@@ -21,7 +21,7 @@ def run_include_social_friends():
     """
 
     # Defining our changing x-values (in the graph sense)
-    class_sizes = [100, 150, 200, 250, 300]
+    class_sizes = [100, 150, 200]
     num_trials = 10
 
     for class_size in class_sizes:
