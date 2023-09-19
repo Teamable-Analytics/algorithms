@@ -2,6 +2,9 @@ import math
 
 from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
+from benchmarking.evaluations.graphing.graph_metadata import GraphData
+from benchmarking.evaluations.graphing.line_graph import line_graph
+from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,
 )
@@ -23,6 +26,9 @@ def run_include_social_friends():
     # Defining our changing x-values (in the graph sense)
     class_sizes = [100, 150, 200, 250, 300]
     num_trials = 10
+
+    # Graph variables
+    graph_data_dict = {}
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -46,10 +52,31 @@ def run_include_social_friends():
             ],
         ).run(num_runs=num_trials)
 
-        print(
-            "=>",
-            Simulation.average_metric(simulation_outputs, "AverageSocialSatisfaction"),
+        average_runtimes = Simulation.average_metric(simulation_outputs, "runtimes")
+
+        # Data processing for graph
+        for algorithm_type, average_runtime in average_runtimes.items():
+            if algorithm_type not in graph_data_dict:
+                graph_data_dict[algorithm_type] = GraphData(
+                    x_data=[class_size],
+                    y_data=[average_runtime],
+                    name=algorithm_type.value,
+                )
+            else:
+                graph_data_dict[algorithm_type].x_data.append(class_size)
+                graph_data_dict[algorithm_type].y_data.append(average_runtime)
+
+    line_graph(
+        LineGraphMetadata(
+            x_label="Class size",
+            y_label="Run time (seconds)",
+            title="Simulate including friends",
+            data=list(graph_data_dict.values()),
+            description=None,
+            y_lim=None,
+            x_lim=None,
         )
+    )
 
 
 if __name__ == "__main__":
