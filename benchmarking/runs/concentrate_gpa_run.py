@@ -64,23 +64,6 @@ def concentrate_gpa_run():
             ],
         ).run(num_runs=num_trials)
 
-        print(
-            "Average Gini Index for GPA =>",
-            Simulation.average_metric(simulation_outputs, "AverageGiniIndex"),
-        )
-        print(
-            "Maximum Gini Index for GPA =>",
-            Simulation.average_metric(simulation_outputs, "MaximumGiniIndex"),
-        )
-        print(
-            "Minimum Gini Index for GPA =>",
-            Simulation.average_metric(simulation_outputs, "MinimumGiniIndex"),
-        )
-        print(
-            "Runtimes =>",
-            Simulation.average_metric(simulation_outputs, "runtimes"),
-        )
-
         average_ginis = Simulation.average_metric(
             simulation_outputs, "AverageGiniIndex"
         )
@@ -90,12 +73,13 @@ def concentrate_gpa_run():
         minimum_ginis = Simulation.average_metric(
             simulation_outputs, "MinimumGiniIndex"
         )
-        average_runtimes = Simulation.average_metric(simulation_outputs, "runtimes")
+        average_runtimes = Simulation.average_metric(
+            simulation_outputs, Simulation.KEY_RUNTIMES
+        )
         metrics = [average_runtimes, average_ginis, minimum_ginis, maximum_ginis]
 
         # Data processing for graph
-        i = 0
-        for metric in metrics:
+        for i, metric in enumerate(metrics):
             for algorithm_type, data in metric.items():
                 if algorithm_type not in graph_dicts[i]:
                     graph_dicts[i][algorithm_type] = GraphData(
@@ -106,14 +90,13 @@ def concentrate_gpa_run():
                 else:
                     graph_dicts[i][algorithm_type].x_data.append(class_size)
                     graph_dicts[i][algorithm_type].y_data.append(data)
-            i += 1
 
     line_graph(
         LineGraphMetadata(
             x_label="Class size",
             y_label="Run time (seconds)",
             title="Concentrate GPA Runtimes",
-            data=list(graph_dicts[0].values()),
+            data=list(graph_runtime_dict.values()),
             description=None,
             y_lim=None,
             x_lim=None,
@@ -125,7 +108,7 @@ def concentrate_gpa_run():
             x_label="Class size",
             y_label="Average Gini Index",
             title="Concentrate GPA Average Gini Index",
-            data=list(graph_dicts[1].values()),
+            data=list(graph_avg_gini_dict.values()),
             description=None,
             y_lim=None,
             x_lim=None,
@@ -137,7 +120,7 @@ def concentrate_gpa_run():
             x_label="Class size",
             y_label="Minimum Gini Index",
             title="Concentrate GPA Minimum Gini",
-            data=list(graph_dicts[2].values()),
+            data=list(graph_min_gini_dict.values()),
             description=None,
             y_lim=None,
             x_lim=None,
@@ -149,7 +132,7 @@ def concentrate_gpa_run():
             x_label="Class size",
             y_label="Maximum Gini Index",
             title="Concentrate GPA Max Gini",
-            data=list(graph_dicts[3].values()),
+            data=list(graph_max_gini_dict.values()),
             description=None,
             y_lim=None,
             x_lim=None,
