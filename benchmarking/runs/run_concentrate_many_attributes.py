@@ -7,16 +7,16 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import (
     AverageGiniIndexMultiAttribute,
 )
-from benchmarking.evaluations.scenarios.concentrate_all_attributes import (
-    ConcentrateAllAttributes,
+from benchmarking.evaluations.scenarios.concentrate_multiple_attributes import (
+    ConcentrateMultipleAttributes,
 )
 from benchmarking.simulation.simulation import Simulation
 from models.enums import ScenarioAttribute, Gender, Race
 
 
-def run_concentrate_all_attributes():
+def run_concentrate_many_attributes():
     """
-    Goal: Run concentrate all attributes scenario, measure average gini index across all attributes
+    Goal: Run concentrate on many attributes scenario (6 attributes), measure average gini index across all attributes
     """
 
     # Defining our changing x-values (in the graph sense)
@@ -43,14 +43,20 @@ def run_concentrate_all_attributes():
                 ScenarioAttribute.MAJOR.value: list(range(1, 4)),
                 ScenarioAttribute.YEAR_LEVEL.value: list(range(3, 5)),
             },
-            num_values_per_attribute={
-                ScenarioAttribute.PROJECT_PREFERENCES.value: 3,
-            },
         )
 
         simulation_outputs = Simulation(
             num_teams=number_of_teams,
-            scenario=ConcentrateAllAttributes(),
+            scenario=ConcentrateMultipleAttributes(
+                [
+                    ScenarioAttribute.AGE,
+                    ScenarioAttribute.GENDER,
+                    ScenarioAttribute.GPA,
+                    ScenarioAttribute.RACE,
+                    ScenarioAttribute.MAJOR,
+                    ScenarioAttribute.YEAR_LEVEL,
+                ]
+            ),
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=[
                 AverageGiniIndexMultiAttribute(
@@ -75,4 +81,4 @@ def run_concentrate_all_attributes():
 
 
 if __name__ == "__main__":
-    run_concentrate_all_attributes()
+    run_concentrate_many_attributes()
