@@ -100,30 +100,6 @@ def calculate_teams_well_being_score(
     return all_teams_well_being_score
 
 
-# def run_pathgasp(sim: Simulation, team_size: int) -> RunOutput:
-#     # find all mutations of teams
-#     all_students = sim.student_provider.get()
-#     all_teams_arrangements = generate_team_arrangements(all_students, team_size)
-#
-#     # find all mutations of projects
-#     all_projects_arrangements: List[List[int]] = list(map(list, combinations(sim.project_list, number_of_teams)))
-#
-#     max_well_being_score = 0
-#     ideal_arrangement = None
-#     cnt = 0
-#     for arrangement in all_teams_arrangements:
-#         for projects_arrangement in all_projects_arrangements:
-#             well_being_score = calculate_teams_well_being_score(arrangement, projects_arrangement)
-#             if well_being_score > max_well_being_score:
-#                 max_well_being_score = well_being_score
-#                 ideal_arrangement = arrangement
-#                 print(f"Mutation #{cnt}, score: {well_being_score}, teams: " +
-#                       f"{json.dumps(arrangement, indent=2, cls=StudentEncoder)}")
-#             cnt += 1
-#
-#     return ideal_arrangement
-
-
 class PathGaspSimulation(Simulation):
     def run(self, team_size: int) -> RunOutput:
         # find all mutations of teams
