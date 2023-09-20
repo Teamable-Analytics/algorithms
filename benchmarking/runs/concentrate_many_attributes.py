@@ -19,7 +19,7 @@ from models.enums import ScenarioAttribute, Gender, Race
 
 def concentrate_many_attributes():
     """
-    Goal: Run concentrate on many attributes scenario (6 attributes), measure average gini index across all attributes
+    Goal: Run concentrate on many attributes scenario (6 attributes), measure average gini index across many attributes
     """
 
     # Defining our changing x-values (in the graph sense)
