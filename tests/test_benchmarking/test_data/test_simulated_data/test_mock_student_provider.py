@@ -67,6 +67,8 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 2: 2,
                 3: 1,
             },
+            max_num_preferences=0,
+            projects=[],
         )
 
         student = students[0]
@@ -92,6 +94,8 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 2: (1, 3),
                 3: (3, 4),
             },
+            max_num_preferences=0,
+            projects=[],
         )
 
         for student in students:
@@ -108,6 +112,8 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 friend_distribution="random",
                 attribute_ranges={},
                 num_values_per_attribute={},
+                max_num_preferences=0,
+                projects=[],
             )
             for student in students:
                 self.assertGreaterEqual(

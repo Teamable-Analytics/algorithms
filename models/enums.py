@@ -30,6 +30,13 @@ class AlgorithmType(Enum):
     SOCIAL = "social"
     PRIORITY = "priority"
     PRIORITY_NEW = "priority_new"
+
+    # These are the algorithms that does not use the resources we have
+    # If add more algorithms that needs overriding the run method, must add to OverrideAlgorithm
+    PATH_GASP = "path_gasp"
+
+
+class OverrideAlgorithm(Enum):
     PATH_GASP = "path_gasp"
 
 

@@ -1,12 +1,11 @@
 import copy
-import math
 import statistics
 import time
 from collections import defaultdict
 from typing import List, Dict, Union
 
 from benchmarking.simulation.mock_algorithm import MockAlgorithm
-from models.enums import AlgorithmType
+from models.enums import AlgorithmType, OverrideAlgorithm
 from benchmarking.data.interfaces import (
     StudentProvider,
     InitialTeamsProvider,
@@ -56,7 +55,7 @@ class Simulation:
         self.algorithm_types = (
             algorithm_types
             if algorithm_types and len(algorithm_types) > 0
-            else [alg for alg in AlgorithmType]
+            else self._get_runnable_algorithms()
         )
         for algorithm_type in self.algorithm_types:
             self.algorithm_options[algorithm_type] = None
@@ -128,3 +127,8 @@ class Simulation:
             averages_output[algorithm_type] = statistics.mean(metric_values)
 
         return averages_output
+
+    @staticmethod
+    def _get_runnable_algorithms():
+        override_algo_set = set([_.name for _ in OverrideAlgorithm])
+        return [algo for algo in AlgorithmType if algo.name not in override_algo_set]
