@@ -30,6 +30,7 @@ class AlgorithmType(Enum):
     SOCIAL = "social"
     PRIORITY = "priority"
     PRIORITY_NEW = "priority_new"
+    PATH_GASP = "path_gasp"
 
 
 class TokenizationConstraintDirection(Enum):

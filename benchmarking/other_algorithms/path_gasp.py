@@ -1,18 +1,21 @@
 import math
 import time
-from typing import List, Set
+from collections import defaultdict
+from typing import List, Set, Dict
 
 from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
+from benchmarking.evaluations.graphing.graph_metadata import GraphData
+from benchmarking.evaluations.graphing.line_graph import line_graph
+from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.scenarios.concentrate_all_attributes import ConcentrateAllAttributes
-from benchmarking.simulation.simulation import Simulation
+from benchmarking.simulation.simulation import Simulation, RunOutput
 
-from models.enums import ScenarioAttribute
+from models.enums import ScenarioAttribute, AlgorithmType
 from models.student import Student, StudentEncoder
 
 from itertools import combinations
 import json
-
 
 def generate_team_arrangements(students: List[Student], team_size: int) -> List[List[List[Student]]]:
     """
@@ -82,68 +85,124 @@ def calculate_teams_well_being_score(teams: List[List[Student]], project_assignm
     return all_teams_well_being_score
 
 
-def run_pathgasp(sim: Simulation, team_size: int):
-    # find all mutations of teams
-    all_students = sim.student_provider.get()
-    all_teams_arrangements = generate_team_arrangements(all_students, team_size)
+# def run_pathgasp(sim: Simulation, team_size: int) -> RunOutput:
+#     # find all mutations of teams
+#     all_students = sim.student_provider.get()
+#     all_teams_arrangements = generate_team_arrangements(all_students, team_size)
+#
+#     # find all mutations of projects
+#     all_projects_arrangements: List[List[int]] = list(map(list, combinations(sim.project_list, number_of_teams)))
+#
+#     max_well_being_score = 0
+#     ideal_arrangement = None
+#     cnt = 0
+#     for arrangement in all_teams_arrangements:
+#         for projects_arrangement in all_projects_arrangements:
+#             well_being_score = calculate_teams_well_being_score(arrangement, projects_arrangement)
+#             if well_being_score > max_well_being_score:
+#                 max_well_being_score = well_being_score
+#                 ideal_arrangement = arrangement
+#                 print(f"Mutation #{cnt}, score: {well_being_score}, teams: " +
+#                       f"{json.dumps(arrangement, indent=2, cls=StudentEncoder)}")
+#             cnt += 1
+#
+#     return ideal_arrangement
 
-    # find all mutations of projects
-    all_projects_arrangements: List[List[int]] = list(map(list, combinations(sim.project_list, number_of_teams)))
 
-    max_well_being_score = 0
-    ideal_arrangement = None
-    cnt = 0
-    for arrangement in all_teams_arrangements:
-        for projects_arrangement in all_projects_arrangements:
-            well_being_score = calculate_teams_well_being_score(arrangement, projects_arrangement)
-            if well_being_score > max_well_being_score:
-                max_well_being_score = well_being_score
-                ideal_arrangement = arrangement
-                print(f"Mutation #{cnt}, score: {well_being_score}, teams: " +
-                      f"{json.dumps(arrangement, indent=2, cls=StudentEncoder)}")
-            cnt += 1
+class PathGaspSimulation(Simulation):
 
-    return ideal_arrangement, cnt
+    def run(self, team_size: int) -> RunOutput:
+        # find all mutations of teams
+        all_students = self.student_provider.get()
+
+        all_teams_arrangements = generate_team_arrangements(all_students, team_size)
+
+        # find all mutations of projects
+        all_projects_arrangements: List[List[int]] = list(map(list, combinations(self.project_list, number_of_teams)))
+
+        # Run algorithm
+        start_time = time.time()
+        max_well_being_score = 0
+        ideal_arrangement = None
+        cnt = 0
+        for arrangement in all_teams_arrangements:
+            for projects_arrangement in all_projects_arrangements:
+                well_being_score = calculate_teams_well_being_score(arrangement, projects_arrangement)
+                if well_being_score > max_well_being_score:
+                    max_well_being_score = well_being_score
+                    ideal_arrangement = arrangement
+                    print(f"Mutation #{cnt}, score: {well_being_score}, teams: " +
+                          f"{json.dumps(arrangement, indent=2, cls=StudentEncoder)}")
+                cnt += 1
+
+        end_time = time.time()
+        self.run_outputs[AlgorithmType.PATH_GASP][Simulation.KEY_RUNTIMES] = [end_time - start_time]
+
+        # TODO: Metric evaluation using ideal_arrangement
+
+        return self.run_outputs
 
 
-CLASS_SIZES = [8, 12, 16, 20, 40, 100]
-# CLASS_SIZES = [8]
-TEAM_SIZE = 4
-MAX_NUM_PROJECT_PREFERENCES = 3
+if __name__ == '__main__':
+    CLASS_SIZES = [8, 12, 16, 20, 24, 28, 32]
+    TEAM_SIZE = 4
+    MAX_NUM_PROJECT_PREFERENCES = 3
 
-for class_size in CLASS_SIZES:
-    print(f"Class size: {class_size}")
+    # Graph variables
+    graph_data_dict: Dict[AlgorithmType, GraphData] = {}
 
-    number_of_teams = math.ceil(class_size / 4)
-    ratio_of_female_students = 0.5
+    for class_size in CLASS_SIZES:
+        print(f"Class size: {class_size}")
 
-    mock_num_projects = math.ceil(number_of_teams * 1.5)  # number of project should be more than number of teams
-    mock_project_list = [i + 1 for i in range(mock_num_projects)]
+        number_of_teams = math.ceil(class_size / 4)
+        ratio_of_female_students = 0.5
 
-    student_provider_settings = MockStudentProviderSettings(
-        number_of_students=class_size,
-        num_values_per_attribute={
-            ScenarioAttribute.PROJECT_PREFERENCES.value: MAX_NUM_PROJECT_PREFERENCES,
-        },
-        project_list=mock_project_list,
+        mock_num_projects = math.ceil(number_of_teams * 1.5)  # number of project should be more than number of teams
+        mock_project_list = [i + 1 for i in range(mock_num_projects)]
+
+        student_provider_settings = MockStudentProviderSettings(
+            number_of_students=class_size,
+            num_values_per_attribute={
+                ScenarioAttribute.PROJECT_PREFERENCES.value: MAX_NUM_PROJECT_PREFERENCES,
+            },
+            project_list=mock_project_list,
+        )
+
+        print(
+            f"Maximum well-being score possible: {student_provider_settings.number_of_students * MAX_NUM_PROJECT_PREFERENCES}")
+
+        simulation_outputs = PathGaspSimulation(
+            num_teams=number_of_teams,
+            scenario=ConcentrateAllAttributes(),
+            student_provider=MockStudentProvider(student_provider_settings),
+            metrics=[],
+            project_list=mock_project_list,
+            algorithm_types=[AlgorithmType.PATH_GASP],
+        ).run(team_size=TEAM_SIZE)
+
+        average_runtimes = Simulation.average_metric(simulation_outputs, "runtimes")
+
+        # Data processing for graph
+        for algorithm_type, average_runtime in average_runtimes.items():
+            if algorithm_type not in graph_data_dict:
+                graph_data_dict[algorithm_type] = GraphData(
+                    x_data=[class_size],
+                    y_data=[average_runtime],
+                    name=algorithm_type.value,
+                )
+            else:
+                graph_data_dict[algorithm_type].x_data.append(class_size)
+                graph_data_dict[algorithm_type].y_data.append(average_runtime)
+
+    line_graph(
+        LineGraphMetadata(
+            x_label="Class size",
+            y_label="Run time (seconds)",
+            title="Run PATH-GASP",
+            data=list(graph_data_dict.values()),
+            description=None,
+            y_lim=None,
+            x_lim=None,
+        )
     )
 
-    print(
-        f"Maximum well-being score possible: {student_provider_settings.number_of_students * MAX_NUM_PROJECT_PREFERENCES}")
-
-    simulation = Simulation(
-        num_teams=number_of_teams,
-        scenario=ConcentrateAllAttributes(),
-        student_provider=MockStudentProvider(student_provider_settings),
-        metrics=[],
-        project_list=mock_project_list,
-    )
-
-    # Run Path-GASP
-    start_time = time.time()
-    _, num_iterate = run_pathgasp(simulation, team_size=TEAM_SIZE)
-    end_time = time.time()
-    run_time = end_time - start_time
-    print(f"Run time: {run_time:.4f} seconds")
-    print(f"Iterated {num_iterate} times")
-    print()

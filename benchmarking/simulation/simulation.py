@@ -32,7 +32,8 @@ class Simulation:
         metrics: List[TeamSetMetric],
         num_teams: int = None,
         initial_teams_provider: InitialTeamsProvider = None,
-        project_list: List[int] = [],
+        project_list: List[int] = None,
+        algorithm_types: List[AlgorithmType] = None,
     ):
         self.scenario = scenario
         self.metrics = metrics
@@ -52,7 +53,9 @@ class Simulation:
 
         self.run_outputs = defaultdict(dict)
         self.algorithm_options: Dict[AlgorithmType, Union[None, AlgorithmOptions]] = {}
-        for algorithm_type in AlgorithmType:
+        self.algorithm_types = algorithm_types if algorithm_types and len(algorithm_types) > 0\
+            else [alg for alg in AlgorithmType]
+        for algorithm_type in self.algorithm_types:
             self.algorithm_options[algorithm_type] = None
             self.run_outputs[algorithm_type] = {
                 metric.name: [] for metric in self.metrics
@@ -75,7 +78,8 @@ class Simulation:
             algorithm_students = AlgorithmTranslator.students_to_algorithm_students(
                 self.student_provider.get()
             )
-            for algorithm_type in AlgorithmType:
+
+            for algorithm_type in self.algorithm_types:
                 mock_algorithm = MockAlgorithm(
                     algorithm_type=algorithm_type,
                     team_generation_options=team_generation_options,
@@ -114,6 +118,9 @@ class Simulation:
         averages_output = {}
 
         for algorithm_type in AlgorithmType:
+            if algorithm_type not in run_output:
+                continue
+
             metric_values = run_output[algorithm_type][metric_name]
             averages_output[algorithm_type] = statistics.mean(metric_values)
 
