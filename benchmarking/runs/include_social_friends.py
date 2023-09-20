@@ -17,7 +17,7 @@ from benchmarking.evaluations.scenarios.include_social_friends import (
 from benchmarking.simulation.simulation import Simulation
 
 
-def run_include_social_friends():
+def include_social_friends():
     """
     Goal: Run including social friends, measure average social satisfied team
     (a team socially satisfied when all member is happy)
@@ -80,4 +80,4 @@ def run_include_social_friends():
 
 
 if __name__ == "__main__":
-    run_include_social_friends()
+    include_social_friends()
