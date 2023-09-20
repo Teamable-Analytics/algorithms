@@ -53,8 +53,11 @@ class Simulation:
 
         self.run_outputs = defaultdict(dict)
         self.algorithm_options: Dict[AlgorithmType, Union[None, AlgorithmOptions]] = {}
-        self.algorithm_types = algorithm_types if algorithm_types and len(algorithm_types) > 0\
+        self.algorithm_types = (
+            algorithm_types
+            if algorithm_types and len(algorithm_types) > 0
             else [alg for alg in AlgorithmType]
+        )
         for algorithm_type in self.algorithm_types:
             self.algorithm_options[algorithm_type] = None
             self.run_outputs[algorithm_type] = {
@@ -113,7 +116,7 @@ class Simulation:
 
     @staticmethod
     def average_metric(
-            run_output: RunOutput, metric_name: str
+        run_output: RunOutput, metric_name: str
     ) -> Dict[AlgorithmType, float]:
         averages_output = {}
 
