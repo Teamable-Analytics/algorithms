@@ -9,7 +9,9 @@ from benchmarking.data.simulated_data.mock_student_provider import MockStudentPr
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.scenarios.concentrate_all_attributes import ConcentrateAllAttributes
+from benchmarking.evaluations.scenarios.concentrate_all_attributes import (
+    ConcentrateAllAttributes,
+)
 from benchmarking.simulation.simulation import Simulation, RunOutput
 from models.enums import Relationship, ScenarioAttribute, AlgorithmType, Gender, Race
 from models.student import Student
@@ -39,7 +41,9 @@ class RarestFirstSimulation(Simulation):
         support_groups = self._get_support_groups(student_list)
 
         # Step 2: Get the lowest cardinality support
-        lowest_cardinality_group_attribute = min(support_groups, key=lambda x: len(support_groups[x]))
+        lowest_cardinality_group_attribute = min(
+            support_groups, key=lambda x: len(support_groups[x])
+        )
         lowest_cardinality_group = support_groups[lowest_cardinality_group_attribute]
 
         # Step 3: Run the algorithm
@@ -50,18 +54,24 @@ class RarestFirstSimulation(Simulation):
             for attribute in ScenarioAttribute:
                 if attribute.value == lowest_cardinality_group_attribute:
                     continue
-                current_support_group = self._get_support_group(student_list, attribute.value)
+                current_support_group = self._get_support_group(
+                    student_list, attribute.value
+                )
 
                 for student_in_current_support_group in current_support_group:
                     if student_in_current_support_group.id == student.id:
                         continue
 
-                    current_distance = self._find_distance(student_list, student.id,
-                                                           student_in_current_support_group.id)
+                    current_distance = self._find_distance(
+                        student_list, student.id, student_in_current_support_group.id
+                    )
                     if not current_distance:
                         continue
 
-                    if not local_max_distance or current_distance.distance > local_max_distance.distance:
+                    if (
+                        not local_max_distance
+                        or current_distance.distance > local_max_distance.distance
+                    ):
                         local_max_distance = current_distance
 
             # i*
@@ -72,7 +82,9 @@ class RarestFirstSimulation(Simulation):
         print(max_distances)
 
         end_time = time()
-        self.run_outputs[AlgorithmType.RAREST_FIRST][Simulation.KEY_RUNTIMES] = [end_time - start_time]
+        self.run_outputs[AlgorithmType.RAREST_FIRST][Simulation.KEY_RUNTIMES] = [
+            end_time - start_time
+        ]
         return self.run_outputs
 
     def _set_up_social_network(self, student_list: List[Student]):
@@ -86,9 +98,13 @@ class RarestFirstSimulation(Simulation):
 
                 relationship = student.relationships.get(other_student.id)
                 if relationship:
-                    self.social_network[(student.id, other_student.id)] = relationship.value
+                    self.social_network[
+                        (student.id, other_student.id)
+                    ] = relationship.value
                 else:
-                    self.social_network[(student.id, other_student.id)] = Relationship.DEFAULT.value
+                    self.social_network[
+                        (student.id, other_student.id)
+                    ] = Relationship.DEFAULT.value
 
                 # Since Dijkstra's algorithm cannot handle negative weight, for this graph, we use these values:
                 #   - FRIEND: 0.0
@@ -110,7 +126,9 @@ class RarestFirstSimulation(Simulation):
     def _get_support_groups(student_list: List[Student]) -> Dict[int, List[Student]]:
         support_groups = {}
         for attribute in ScenarioAttribute:
-            support_group = RarestFirstSimulation._get_support_group(student_list, attribute.value)
+            support_group = RarestFirstSimulation._get_support_group(
+                student_list, attribute.value
+            )
             if len(support_group) == 0:
                 continue
 
@@ -118,10 +136,9 @@ class RarestFirstSimulation(Simulation):
 
         return support_groups
 
-    def _find_distance(self,
-                       student_list: List[Student],
-                       start_student_id: int,
-                       target_student_id: int) -> Optional[Distance]:
+    def _find_distance(
+        self, student_list: List[Student], start_student_id: int, target_student_id: int
+    ) -> Optional[Distance]:
         """
         Dijkstra's algorithm implementation
         """
@@ -131,11 +148,14 @@ class RarestFirstSimulation(Simulation):
         visited: Set[int] = set()
         for student in student_list:
             if student.id == start_student_id:
-                heappush(distances,
-                         Distance(
-                             distance=0,
-                             end_student=start_student_id,
-                             path=[start_student_id]))
+                heappush(
+                    distances,
+                    Distance(
+                        distance=0,
+                        end_student=start_student_id,
+                        path=[start_student_id],
+                    ),
+                )
         visited.add(start_student_id)
 
         # Dijkstra's algorithm
@@ -148,19 +168,22 @@ class RarestFirstSimulation(Simulation):
                 if student.id in visited:
                     continue
 
-                heappush(distances,
-                         Distance(
-                             distance=shortest_distance.distance + self.social_network[(next_student_id, student.id)],
-                             end_student=student.id,
-                             path=shortest_distance.path + [student.id]))
+                heappush(
+                    distances,
+                    Distance(
+                        distance=shortest_distance.distance
+                        + self.social_network[(next_student_id, student.id)],
+                        end_student=student.id,
+                        path=shortest_distance.path + [student.id],
+                    ),
+                )
 
         for distance in distances:
             if distance.end_student == target_student_id:
                 return distance
 
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     CLASS_SIZES = [8, 12, 16, 20, 40, 60, 80, 100]
     # CLASS_SIZES = [8, 12, 16, 20]
     TEAM_SIZE = 4
