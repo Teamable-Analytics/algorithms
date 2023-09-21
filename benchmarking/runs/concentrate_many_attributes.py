@@ -4,6 +4,9 @@ from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
 )
+from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
+from benchmarking.evaluations.graphing.line_graph import line_graph
+from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import (
     AverageGiniIndexMultiAttribute,
 )
@@ -16,13 +19,20 @@ from models.enums import ScenarioAttribute, Gender, Race
 
 def concentrate_many_attributes():
     """
-    Goal: Run concentrate on many attributes scenario (6 attributes), measure average gini index across all attributes
+    Goal: Run concentrate on many attributes scenario (6 attributes), measure average gini index across many attributes
     """
 
     # Defining our changing x-values (in the graph sense)
-    class_sizes = [100, 150, 200, 250, 300]
+    class_sizes = list(range(50, 601, 50))
     num_trials = 10
     ratio_of_female_students = 0.5
+
+    graph_runtime_dict = {}
+    graph_avg_gini_dict = {}
+    graph_dicts = [
+        graph_runtime_dict,
+        graph_avg_gini_dict,
+    ]
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -72,12 +82,51 @@ def concentrate_many_attributes():
             ],
         ).run(num_runs=num_trials)
 
-        print(
-            "=>",
-            Simulation.average_metric(
-                simulation_outputs, "AverageGiniIndexMultiAttribute"
-            ),
+        average_gini = Simulation.average_metric(
+            simulation_outputs, "AverageGiniIndexMultiAttribute"
         )
+
+        average_runtimes = Simulation.average_metric(
+            simulation_outputs, Simulation.KEY_RUNTIMES
+        )
+
+        metrics = [average_runtimes, average_gini]
+
+        for i, metric in enumerate(metrics):
+            for algorithm_type, data in metric.items():
+                if algorithm_type not in graph_dicts[i]:
+                    graph_dicts[i][algorithm_type] = GraphData(
+                        x_data=[class_size],
+                        y_data=[data],
+                        name=algorithm_type.value,
+                    )
+                else:
+                    graph_dicts[i][algorithm_type].x_data.append(class_size)
+                    graph_dicts[i][algorithm_type].y_data.append(data)
+
+    line_graph(
+        LineGraphMetadata(
+            x_label="Class size",
+            y_label="Run time (seconds)",
+            title="Concentrate Many Attributes Runtimes",
+            data=list(graph_runtime_dict.values()),
+            description=None,
+            y_lim=None,
+            x_lim=None,
+        )
+    )
+
+    line_graph(
+        LineGraphMetadata(
+            x_label="Class size",
+            y_label="Average Gini Index",
+            title="Concentrate Many Attributes Average Gini Index",
+            data=list(graph_avg_gini_dict.values()),
+            description=None,
+            y_lim=GraphAxisRange(0, 1),
+            x_lim=None,
+        )
+    )
 
 
 if __name__ == "__main__":
