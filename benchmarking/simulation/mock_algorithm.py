@@ -69,8 +69,11 @@ class MockAlgorithm:
             return PriorityAlgorithm(algorithm_options)
         if algorithm_type == AlgorithmType.PRIORITY_NEW:
             return PriorityAlgorithmNew(algorithm_options)
+
         # The implementation of this algorithm must override the run method
         if algorithm_type == AlgorithmType.PATH_GASP:
+            return None
+        if algorithm_type == AlgorithmType.RAREST_FIRST:
             return None
 
     @staticmethod
