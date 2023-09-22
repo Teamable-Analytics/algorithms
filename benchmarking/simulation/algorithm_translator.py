@@ -222,8 +222,6 @@ class AlgorithmTranslator:
     def diversity_goal_to_algorithm_priority_dict(
         goal: DiversityGoal,
     ) -> Union[dict, None]:
-        if not goal.tokenization_constraint:
-            return None
 
         priority_type = (
             Priority.TYPE_DIVERSIFY
@@ -237,6 +235,18 @@ class AlgorithmTranslator:
             == TokenizationConstraintDirection.MIN_OF
             else Priority.MAX_OF
         )
+
+        # Fixme: work around because priority requires a tokenization constraint currently
+        if not goal.tokenization_constraint:
+            print("Warning: work around used")
+            return {
+                "order": goal.importance,
+                "constraint": priority_type,
+                "skill_id": goal.attribute,
+                "limit_option": Priority.MIN_OF,
+                "limit": 0,
+                "value": -1,
+            }
 
         return {
             "order": goal.importance,

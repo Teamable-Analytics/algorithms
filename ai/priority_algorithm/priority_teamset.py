@@ -54,5 +54,6 @@ class PriorityTeamSet:
                 )
             ]
         )
+        print(score)
         self.score = score
         return self.score
