@@ -30,3 +30,18 @@ def mutate_random_swap(priority_team_set: PriorityTeamSet) -> PriorityTeamSet:
     except ValueError:
         return priority_team_set
     return priority_team_set
+
+def mutate_local_max(priority_team_set: PriorityTeamSet) -> PriorityTeamSet:
+    available_priority_teams = [
+        priority_team
+        for priority_team in priority_team_set.priority_teams
+        if not priority_team.team.is_locked
+    ]
+    try:
+        team_1, team_2 = random.sample(available_priority_teams, 2)
+        student_1_id: int = random.choice(team_1.student_ids)
+        student_2_id: int = random.choice(team_2.student_ids)
+        swap_student_between_teams(team_1, student_1_id, team_2, student_2_id)
+    except ValueError:
+        return priority_team_set
+    return priority_team_set
