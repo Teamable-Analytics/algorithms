@@ -18,6 +18,10 @@ class Team:
     def id(self) -> int:
         return self._id
 
+    @property
+    def size(self) -> int:
+        return len(self.students)
+
     def empty(self):
         for student in self.students:
             student.team = None
