@@ -229,13 +229,6 @@ class AlgorithmTranslator:
             else Priority.TYPE_CONCENTRATE
         )
 
-        limit_option = (
-            Priority.MIN_OF
-            if goal.tokenization_constraint.direction
-            == TokenizationConstraintDirection.MIN_OF
-            else Priority.MAX_OF
-        )
-
         # Fixme: work around because priority requires a tokenization constraint currently
         if not goal.tokenization_constraint:
             print("Warning: work around used")
@@ -243,10 +236,17 @@ class AlgorithmTranslator:
                 "order": goal.importance,
                 "constraint": priority_type,
                 "skill_id": goal.attribute,
-                "limit_option": Priority.MIN_OF,
-                "limit": 0,
+                "limit_option": Priority.MAX_OF,
+                "limit": 100,
                 "value": -1,
             }
+
+        limit_option = (
+            Priority.MIN_OF
+            if goal.tokenization_constraint.direction
+            == TokenizationConstraintDirection.MIN_OF
+            else Priority.MAX_OF
+        )
 
         return {
             "order": goal.importance,
