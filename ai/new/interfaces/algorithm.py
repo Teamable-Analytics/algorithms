@@ -47,13 +47,6 @@ class Algorithm(ABC):
 
 
 class ChooseAlgorithm(Algorithm):
-    def __init__(
-        self,
-        algorithm_options: AlgorithmOptions,
-        team_generation_options: TeamGenerationOptions,
-    ):
-        super().__init__(algorithm_options, team_generation_options)
-
     @abstractmethod
     def choose(
         self, teams: List[Team], students: List[Student]

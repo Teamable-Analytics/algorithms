@@ -16,6 +16,7 @@ class AlgorithmOptions(ABC):
 
 @dataclass
 class RandomAlgorithmOptions(AlgorithmOptions):
+    a: int
     def validate(self):
         super().validate()
 

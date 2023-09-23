@@ -1,7 +1,8 @@
 from random import randint
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, cast
 
 from ai.new.interfaces.algorithm import ChooseAlgorithm
+from ai.new.interfaces.algorithm_options import WeightAlgorithmOptions
 from ai.new.utils import generate_with_choose
 from models.student import Student
 from models.team import Team
@@ -9,6 +10,10 @@ from models.team_set import TeamSet
 
 
 class WeightAlgorithm(ChooseAlgorithm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.algorithm_options: WeightAlgorithmOptions = cast(WeightAlgorithmOptions, self.algorithm_options)
+
     def generate(self, students: List[Student]) -> TeamSet:
         return generate_with_choose(self, students, self.teams)
 
