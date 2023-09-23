@@ -12,7 +12,9 @@ from models.team_set import TeamSet
 class RandomAlgorithm(ChooseAlgorithm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.algorithm_options: RandomAlgorithmOptions = cast(RandomAlgorithmOptions, self.algorithm_options)
+        self.algorithm_options: RandomAlgorithmOptions = cast(
+            RandomAlgorithmOptions, self.algorithm_options
+        )
 
     def generate(self, students: List[Student]) -> TeamSet:
         return generate_with_choose(self, students, self.teams)
