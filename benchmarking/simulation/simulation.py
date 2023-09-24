@@ -1,5 +1,6 @@
 import copy
 import statistics
+import threading
 import time
 from collections import defaultdict
 from typing import List, Dict, Union
@@ -12,7 +13,11 @@ from benchmarking.data.interfaces import (
 )
 from benchmarking.evaluations.interfaces import Scenario, TeamSetMetric
 from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
+from benchmarking.simulation.mock_algorithm import MockAlgorithm
+from api.models.enums import AlgorithmType
 from old.team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions
+from old.team_formation.app.team_generator.student import Student as AlgorithmStudent
+from old.team_formation.app.team_generator.team_generator import TeamGenerationOption
 
 RunOutput = Dict[AlgorithmType, Dict[str, List[float]]]
 
@@ -78,26 +83,46 @@ class Simulation:
             algorithm_students = AlgorithmTranslator.students_to_algorithm_students(
                 self.student_provider.get()
             )
+
+            threads = []
             for algorithm_type in self.algorithm_types:
-                mock_algorithm = MockAlgorithm(
-                    algorithm_type=algorithm_type,
-                    team_generation_options=team_generation_options,
-                    algorithm_options=self._algorithm_options(algorithm_type),
-                )
-
-                start_time = time.time()
-                team_set = mock_algorithm.generate(copy.deepcopy(algorithm_students))
-                end_time = time.time()
-
-                self.run_outputs[algorithm_type][Simulation.KEY_RUNTIMES].append(
-                    end_time - start_time
-                )
-                for metric in self.metrics:
-                    self.run_outputs[algorithm_type][metric.name].append(
-                        metric.calculate(team_set)
+                thread = threading.Thread(
+                    target=lambda: self._run_for_algorithm_type(
+                        algorithm_type, team_generation_options, algorithm_students
                     )
+                )
+                threads.append(thread)
+                thread.start()
+
+            # wait for all threads to finish before moving to the next trial
+            for thread in threads:
+                thread.join()
 
         return self.run_outputs
+
+    def _run_for_algorithm_type(
+        self,
+        algorithm_type: AlgorithmType,
+        team_generation_options: "TeamGenerationOption",
+        algorithm_students: List[AlgorithmStudent],
+    ):
+        mock_algorithm = MockAlgorithm(
+            algorithm_type=algorithm_type,
+            team_generation_options=team_generation_options,
+            algorithm_options=self._algorithm_options(algorithm_type),
+        )
+
+        start_time = time.time()
+        team_set = mock_algorithm.generate(copy.deepcopy(algorithm_students))
+        end_time = time.time()
+
+        self.run_outputs[algorithm_type][Simulation.KEY_RUNTIMES].append(
+            end_time - start_time
+        )
+        for metric in self.metrics:
+            self.run_outputs[algorithm_type][metric.name].append(
+                metric.calculate(team_set)
+            )
 
     def _algorithm_options(self, algorithm_type: AlgorithmType):
         if algorithm_type not in self.algorithm_options:

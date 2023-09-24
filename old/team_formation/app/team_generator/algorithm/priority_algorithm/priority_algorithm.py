@@ -20,8 +20,8 @@ class PriorityAlgorithm(WeightAlgorithm):
 
     MAX_KEEP: int = 3  # nodes
     MAX_SPREAD: int = 3  # nodes
-    MAX_ITERATE: int = 15  # times
-    MAX_TIME: int = 30  # seconds
+    MAX_ITERATE: int = 1500  # times
+    MAX_TIME: int = 7  # seconds
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
