@@ -45,6 +45,11 @@ def mutate_local_max(
     priorities: List[Priority],
     student_dict: Dict[int, Student],
 ) -> PriorityTeamSet:
+    """
+    This mutation finds the lowest two scoring teams, and then computes the scores of all possible combinations of
+    students on those teams. It replaces one of the teams with the team with the highest score found, and puts all other
+    students on the other team.
+    """
     available_priority_teams = [
         priority_team
         for priority_team in priority_team_set.priority_teams
@@ -65,7 +70,31 @@ def mutate_local_max(
         team_size = len(team_1.student_ids)
         student_combinations = list(itertools.combinations(students, team_size))
 
-        # Make into team_sets
+        max_score = 0
+        max_index = 0
+        for i, combo in enumerate(student_combinations):
+            combo_1 = [
+                *combo,
+            ]
+            combo_2 = [item for item in students if item not in combo_1]
+            team_1.student_ids = combo_1
+            team_2.student_ids = combo_2
+            team_1_score = score(team_1, priorities, student_dict)
+            team_2_score = score(team_2, priorities, student_dict)
+            if team_1_score > max_score | team_2_score > max_score:
+                max_index = i
+                max_score = (
+                    team_1_score if team_1_score > team_2_score else team_2_score
+                )
+
+        best_team_1_students = [
+            *student_combinations[max_index],
+        ]
+        best_team_2_students = [
+            item for item in students if item not in best_team_1_students
+        ]
+        team_1.student_ids = best_team_1_students
+        team_2.student_ids = best_team_2_students
 
     except ValueError:
         return priority_team_set
