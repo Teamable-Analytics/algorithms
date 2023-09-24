@@ -1,5 +1,7 @@
 import math
 
+import typer
+
 from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
@@ -13,14 +15,13 @@ from benchmarking.simulation.simulation import Simulation
 from models.enums import ScenarioAttribute, Gpa
 
 
-def concentrate_gpa():
+def concentrate_gpa(num_trials: int = 10):
     """
     Goal: Run concentrate GPA scenario, and measure the average, maximum, and minimum gini scores for gpa
     """
 
     # Define changing values
     class_sizes = [50, 100, 150, 200, 250, 300, 350, 400]
-    num_trials = 10
     ratio_of_a_students = 0.25
     ratio_of_b_students = 0.50
     ratio_of_c_students = 0.25
@@ -141,4 +142,4 @@ def concentrate_gpa():
 
 
 if __name__ == "__main__":
-    concentrate_gpa()
+    typer.run(concentrate_gpa)
