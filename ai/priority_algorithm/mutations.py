@@ -1,3 +1,4 @@
+import itertools
 import random
 from typing import List, Dict
 
@@ -40,7 +41,9 @@ def mutate_random_swap(priority_team_set: PriorityTeamSet) -> PriorityTeamSet:
 
 
 def mutate_local_max(
-    priority_team_set: PriorityTeamSet, priorities: List[Priority]
+    priority_team_set: PriorityTeamSet,
+    priorities: List[Priority],
+    student_dict: Dict[int, Student],
 ) -> PriorityTeamSet:
     available_priority_teams = [
         priority_team
@@ -48,16 +51,33 @@ def mutate_local_max(
         if not priority_team.team.is_locked
     ]
     try:
-        team_1, team_2 = random.sample(available_priority_teams, 2)
-        student_1_id: int = random.choice(team_1.student_ids)
-        student_2_id: int = random.choice(team_2.student_ids)
-        swap_student_between_teams(team_1, student_1_id, team_2, student_2_id)
+        # Sort teams and take the two lowest scoring teams
+        available_priority_teams = sorted(
+            available_priority_teams,
+            key=(lambda team: score(team, priorities, student_dict)),
+        )
+        team_1 = available_priority_teams[0]
+        team_2 = available_priority_teams[1]
+
+        # Finds all combinations of students for the two teams
+        students = team_1.student_ids + team_2.student_ids
+        # TODO: Determine how we want to find team size
+        team_size = len(team_1.student_ids)
+        student_combinations = list(itertools.combinations(students, team_size))
+
+        # Make into team_sets
+
+
     except ValueError:
         return priority_team_set
     return priority_team_set
 
 
-def score(priority_team: PriorityTeam, priorities: List[Priority], student_dict: Dict[int, Student]) -> int:
+def score(
+    priority_team: PriorityTeam,
+    priorities: List[Priority],
+    student_dict: Dict[int, Student],
+) -> int:
     priority_satisfaction_array = get_priority_satisfaction_array(
         [priority_team], priorities, student_dict
     )
