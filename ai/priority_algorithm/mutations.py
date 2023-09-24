@@ -67,7 +67,6 @@ def mutate_local_max(
 
         # Make into team_sets
 
-
     except ValueError:
         return priority_team_set
     return priority_team_set

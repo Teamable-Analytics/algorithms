@@ -153,5 +153,8 @@ class PriorityAlgorithm(WeightAlgorithm):
         ]
         return [
             mutate_local_max(cloned_team_sets[0], self.priorities, self.student_dict),
-            *[mutate_random_swap(cloned_team_set) for cloned_team_set in cloned_team_sets[1:]]
+            *[
+                mutate_random_swap(cloned_team_set)
+                for cloned_team_set in cloned_team_sets[1:]
+            ],
         ]

@@ -222,7 +222,6 @@ class AlgorithmTranslator:
     def diversity_goal_to_algorithm_priority_dict(
         goal: DiversityGoal,
     ) -> Union[dict, None]:
-
         priority_type = (
             Priority.TYPE_DIVERSIFY
             if goal.strategy == DiversifyType.DIVERSIFY
