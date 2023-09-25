@@ -12,10 +12,10 @@ from models.student import Student
 
 
 def swap_student_between_teams(
-    team_1: PriorityTeam,
-    student_1_id: int,
-    team_2: PriorityTeam,
-    student_2_id: int,
+        team_1: PriorityTeam,
+        student_1_id: int,
+        team_2: PriorityTeam,
+        student_2_id: int,
 ):
     team_1.student_ids.remove(student_1_id)
     team_1.student_ids.append(student_2_id)
@@ -41,14 +41,15 @@ def mutate_random_swap(priority_team_set: PriorityTeamSet) -> PriorityTeamSet:
 
 
 def mutate_local_max(
-    priority_team_set: PriorityTeamSet,
-    priorities: List[Priority],
-    student_dict: Dict[int, Student],
+        priority_team_set: PriorityTeamSet,
+        priorities: List[Priority],
+        student_dict: Dict[int, Student],
 ) -> PriorityTeamSet:
     """
     This mutation finds the lowest two scoring teams, and then computes the scores of all possible combinations of
     students on those teams. It replaces one of the teams with the team with the highest score found, and puts all other
-    students on the other team.
+    students on the other team. This implementation does not account for if the second team's score increases or
+    decreases.
     """
     available_priority_teams = [
         priority_team
@@ -102,9 +103,9 @@ def mutate_local_max(
 
 
 def score(
-    priority_team: PriorityTeam,
-    priorities: List[Priority],
-    student_dict: Dict[int, Student],
+        priority_team: PriorityTeam,
+        priorities: List[Priority],
+        student_dict: Dict[int, Student],
 ) -> int:
     priority_satisfaction_array = get_priority_satisfaction_array(
         [priority_team], priorities, student_dict
@@ -114,7 +115,7 @@ def score(
         [
             satisfaction * multiplier
             for satisfaction, multiplier in zip(
-                priority_satisfaction_array, multipliers
-            )
+            priority_satisfaction_array, multipliers
+        )
         ]
     )
