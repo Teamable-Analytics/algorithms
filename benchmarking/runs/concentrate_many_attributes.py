@@ -1,5 +1,7 @@
 import math
 
+import typer
+
 from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
@@ -129,4 +131,4 @@ def concentrate_many_attributes(num_trials: int = 10):
 
 
 if __name__ == "__main__":
-    concentrate_many_attributes()
+    typer.run(concentrate_many_attributes)
