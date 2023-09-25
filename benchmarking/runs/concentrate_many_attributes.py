@@ -1,5 +1,7 @@
 import math
 
+import typer
+
 from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
@@ -17,14 +19,13 @@ from benchmarking.simulation.simulation import Simulation
 from models.enums import ScenarioAttribute, Gender, Race
 
 
-def concentrate_many_attributes():
+def concentrate_many_attributes(num_trials: int = 10):
     """
     Goal: Run concentrate on many attributes scenario (6 attributes), measure average gini index across many attributes
     """
 
     # Defining our changing x-values (in the graph sense)
     class_sizes = list(range(50, 601, 50))
-    num_trials = 10
     ratio_of_female_students = 0.5
 
     graph_runtime_dict = {}
@@ -130,4 +131,4 @@ def concentrate_many_attributes():
 
 
 if __name__ == "__main__":
-    concentrate_many_attributes()
+    typer.run(concentrate_many_attributes)
