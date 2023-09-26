@@ -77,22 +77,20 @@ def mutate_local_max(
             combo_1 = [
                 *combo,
             ]
-            combo_2 = [item for item in students if item not in combo_1]
+            combo_2 = [_ for _ in students if _ not in combo_1]
             team_1.student_ids = combo_1
             team_2.student_ids = combo_2
             team_1_score = score(team_1, priorities, student_dict)
             team_2_score = score(team_2, priorities, student_dict)
-            if team_1_score > max_score | team_2_score > max_score:
+            if team_1_score > max_score or team_2_score > max_score:
                 max_index = i
-                max_score = (
-                    team_1_score if team_1_score > team_2_score else team_2_score
-                )
+                max_score = max(team_1_score, team_2_score)
 
         best_team_1_students = [
             *student_combinations[max_index],
         ]
         best_team_2_students = [
-            item for item in students if item not in best_team_1_students
+            _ for _ in students if _ not in best_team_1_students
         ]
         team_1.student_ids = best_team_1_students
         team_2.student_ids = best_team_2_students

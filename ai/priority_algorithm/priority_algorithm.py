@@ -20,8 +20,8 @@ class PriorityAlgorithm(WeightAlgorithm):
 
     MAX_KEEP: int = 3  # nodes
     MAX_SPREAD: int = 3  # nodes
-    MAX_ITERATE: int = 15  # times
-    MAX_TIME: int = 30  # seconds
+    MAX_ITERATE: int = 1500  # times
+    MAX_TIME: int = 5  # seconds
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -122,6 +122,7 @@ class PriorityAlgorithm(WeightAlgorithm):
             )
             team_sets = team_sets[: self.MAX_KEEP]
             iteration += 1
+        print(iteration, "/" * 500)
         return AlgorithmTranslator.teams_to_algorithm_teams(
             self.save_team_compositions_to_teams(team_sets[0])
         )
