@@ -106,10 +106,14 @@ class PathGaspSimulation(Simulation):
         all_students = self.student_provider.get()
 
         all_teams_arrangements = generate_team_arrangements(all_students, team_size)
+        attribute_ranges = self.student_provider.settings.attribute_ranges
+        project_list = attribute_ranges.get(
+            ScenarioAttribute.PROJECT_PREFERENCES.value, []
+        )
 
         # find all mutations of projects
         all_projects_arrangements: List[List[int]] = list(
-            map(list, combinations(self.project_list, number_of_teams))
+            map(list, combinations(project_list, number_of_teams))
         )
 
         # Run algorithm
@@ -165,7 +169,9 @@ if __name__ == "__main__":
             num_values_per_attribute={
                 ScenarioAttribute.PROJECT_PREFERENCES.value: MAX_NUM_PROJECT_PREFERENCES,
             },
-            project_list=mock_project_list,
+            attribute_ranges={
+                ScenarioAttribute.PROJECT_PREFERENCES.value: mock_project_list
+            },
         )
 
         print(
@@ -177,7 +183,6 @@ if __name__ == "__main__":
             scenario=ConcentrateAllAttributes(),
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=[],
-            project_list=mock_project_list,
             algorithm_types=[AlgorithmType.PATH_GASP],
         ).run(team_size=TEAM_SIZE)
 

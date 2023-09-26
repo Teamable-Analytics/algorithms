@@ -24,7 +24,6 @@ class MockStudentProviderSettings:
     number_of_friends: int = 0
     number_of_enemies: int = 0
     friend_distribution: Literal["cluster", "random"] = "random"
-    project_list: List[int] = field(default_factory=list)
 
 
 class InitialTeamsProvider(ABC):
