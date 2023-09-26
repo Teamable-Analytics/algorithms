@@ -1,6 +1,5 @@
 import math
 from dataclasses import dataclass, field
-from json import JSONEncoder
 from time import time
 
 from typing import Dict, List, Set, Optional, Tuple
@@ -57,7 +56,7 @@ class RarestFirstSimulation(Simulation):
         for student in student_list:
             for other_student in student_list:
                 if student.id == other_student.id:
-                    break
+                    continue
 
                 distance_matrix[(student.id, other_student.id)] = (
                     self._find_distance(student_list, start_student_id=student.id, target_student_id=other_student.id)
@@ -75,8 +74,8 @@ class RarestFirstSimulation(Simulation):
                 for other_student in support_group:
                     if other_student.id == student.id:
                         continue
-                    distance = distance_matrix.get((student.id, other_student.id), get_default_distance(float('inf')))
-                    if 0 < distance.distance < min_d.distance:
+                    distance = distance_matrix.get((student.id, other_student.id), get_default_distance(-1))
+                    if 0 <= distance.distance < min_d.distance:
                         min_d = distance
 
                 if min_d.distance != float('inf'):
@@ -142,6 +141,9 @@ class RarestFirstSimulation(Simulation):
                 if student.id == other_student.id:
                     continue
 
+                # From original paper: The weights on the edges of G should be interpreted as follows: a low-weight
+                # edge between nodes i, j implies that candidate i and j can collaborate and/or communicate more
+                # easily than candidates connected with a high-weight edge.
                 relationship = student.relationships.get(other_student.id)
                 if relationship:
                     self.social_network[
@@ -156,7 +158,6 @@ class RarestFirstSimulation(Simulation):
                 #   - FRIEND: 0.0
                 #   - DEFAULT: 1.0
                 #   - ENEMY: 2.1
-                # TODO: Check if the enum is align with author's intention
                 self.social_network[(student.id, other_student.id)] += - Relationship.FRIEND.value
 
     @staticmethod
@@ -209,6 +210,9 @@ class RarestFirstSimulation(Simulation):
         # Dijkstra's algorithm
         while len(visited) < len(student_list):
             shortest_distance: Distance = heappop(distances)
+            if shortest_distance.end_student == target_student_id:
+                return shortest_distance
+
             next_student_id = shortest_distance.end_student
             visited.add(next_student_id)
 
@@ -225,10 +229,6 @@ class RarestFirstSimulation(Simulation):
                         path=shortest_distance.path + [student.id],
                     ),
                 )
-
-        for distance in distances:
-            if distance.end_student == target_student_id:
-                return distance
 
         # Not connected case
         return get_default_distance(-1)
