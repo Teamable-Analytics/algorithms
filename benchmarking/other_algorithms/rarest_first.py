@@ -1,5 +1,6 @@
 import math
 from dataclasses import dataclass, field
+from json import JSONEncoder
 from time import time
 
 from typing import Dict, List, Set, Optional, Tuple
@@ -22,14 +23,19 @@ from heapq import heappush, heappop
 @dataclass(order=True)
 class Distance:
     distance: float
+    start_student: int = field(compare=False)
     end_student: int = field(compare=False)
     path: List[int] = field(compare=False)
+
+
+def get_default_distance(value):
+    return Distance(distance=value, start_student=-1, end_student=-1, path=[])
 
 
 class RarestFirstSimulation(Simulation):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.social_network: Dict[Tuple[int, int], int] = {}
+        self.social_network: Dict[Tuple[int, int], float] = {}
 
     def run(self, team_size: int) -> RunOutput:
         start_time = time()
@@ -46,11 +52,42 @@ class RarestFirstSimulation(Simulation):
         )
         lowest_cardinality_group = support_groups[lowest_cardinality_group_attribute]
 
+        # Prebuild distance
+        distance_matrix: Dict[Tuple[int, int], Distance] = {}
+        for student in student_list:
+            for other_student in student_list:
+                if student.id == other_student.id:
+                    break
+
+                distance_matrix[(student.id, other_student.id)] = (
+                    self._find_distance(student_list, start_student_id=student.id, target_student_id=other_student.id)
+                )
+
+        # Prebuild i/S(a) matrix
+        distance_to_support_group: Dict[Tuple[int, int], Distance] = {}
+        for student in student_list:
+            for attribute in ScenarioAttribute:
+                support_group = support_groups.get(attribute.value, [])
+                if not support_group:
+                    continue
+
+                min_d: Distance = get_default_distance(float('inf'))
+                for other_student in support_group:
+                    if other_student.id == student.id:
+                        continue
+                    distance = distance_matrix.get((student.id, other_student.id), get_default_distance(float('inf')))
+                    if 0 < distance.distance < min_d.distance:
+                        min_d = distance
+
+                if min_d.distance != float('inf'):
+                    distance_to_support_group[(student.id, attribute.value)] = min_d
+
         # Step 3: Run the algorithm
         max_distances: Dict[int, Distance] = {}
 
         for student in lowest_cardinality_group:
-            local_max_distance: Optional[Distance] = None
+            # R_ai
+            local_max_distance: Distance = get_default_distance(float('-inf'))
             for attribute in ScenarioAttribute:
                 if attribute.value == lowest_cardinality_group_attribute:
                     continue
@@ -62,25 +99,34 @@ class RarestFirstSimulation(Simulation):
                     if student_in_current_support_group.id == student.id:
                         continue
 
-                    current_distance = self._find_distance(
-                        student_list, student.id, student_in_current_support_group.id
-                    )
+                    current_distance = distance_matrix.get((student.id, student_in_current_support_group.id), None)
                     if not current_distance:
                         continue
 
-                    if (
-                        not local_max_distance
-                        or current_distance.distance > local_max_distance.distance
-                    ):
+                    if current_distance.distance > local_max_distance.distance:
                         local_max_distance = current_distance
 
             # i*
-            max_distances[student.id] = local_max_distance
+            if local_max_distance.distance != float('-inf'):
+                max_distances[student.id] = local_max_distance
+
+        # Find i*
+        i_star: Distance = get_default_distance(float('inf'))
+        for student_id, distance in max_distances.items():
+            if distance.distance == -1:
+                continue
+
+            if i_star.distance > distance.distance:
+                i_star = distance
 
         # Step 4: Add all individuals along the path from i* to the support group for all attribute in attributes
-        # TODO: Above
-        print(max_distances)
+        result: Set[int] = {i_star.start_student}
+        for attribute in ScenarioAttribute:
+            distance_from_i_star = distance_to_support_group.get((i_star.start_student, attribute.value), None)
+            if distance_from_i_star:
+                result.add(distance_from_i_star.end_student)
 
+        print("Result: " + str(result))
         end_time = time()
         self.run_outputs[AlgorithmType.RAREST_FIRST][Simulation.KEY_RUNTIMES] = [
             end_time - start_time
@@ -110,7 +156,8 @@ class RarestFirstSimulation(Simulation):
                 #   - FRIEND: 0.0
                 #   - DEFAULT: 1.0
                 #   - ENEMY: 2.1
-                # self.social_network[(student.id, other_student.id)] += Relationship.FRIEND.value
+                # TODO: Check if the enum is align with author's intention
+                self.social_network[(student.id, other_student.id)] += - Relationship.FRIEND.value
 
     @staticmethod
     def _get_support_group(student_list: List[Student], attribute_id: int):
@@ -137,7 +184,7 @@ class RarestFirstSimulation(Simulation):
         return support_groups
 
     def _find_distance(
-        self, student_list: List[Student], start_student_id: int, target_student_id: int
+            self, student_list: List[Student], start_student_id: int, target_student_id: int
     ) -> Optional[Distance]:
         """
         Dijkstra's algorithm implementation
@@ -152,6 +199,7 @@ class RarestFirstSimulation(Simulation):
                     distances,
                     Distance(
                         distance=0,
+                        start_student=start_student_id,
                         end_student=start_student_id,
                         path=[start_student_id],
                     ),
@@ -171,8 +219,8 @@ class RarestFirstSimulation(Simulation):
                 heappush(
                     distances,
                     Distance(
-                        distance=shortest_distance.distance
-                        + self.social_network[(next_student_id, student.id)],
+                        distance=shortest_distance.distance + self.social_network[(next_student_id, student.id)],
+                        start_student=start_student_id,
                         end_student=student.id,
                         path=shortest_distance.path + [student.id],
                     ),
@@ -181,6 +229,9 @@ class RarestFirstSimulation(Simulation):
         for distance in distances:
             if distance.end_student == target_student_id:
                 return distance
+
+        # Not connected case
+        return get_default_distance(-1)
 
 
 if __name__ == "__main__":
@@ -220,8 +271,8 @@ if __name__ == "__main__":
                 ScenarioAttribute.RACE.value: list(range(len(Race))),
                 ScenarioAttribute.MAJOR.value: list(range(1, 4)),
                 ScenarioAttribute.YEAR_LEVEL.value: list(range(3, 5)),
+                ScenarioAttribute.PROJECT_PREFERENCES.value: mock_project_list,
             },
-            project_list=mock_project_list,
         )
 
         simulation_outputs = RarestFirstSimulation(
@@ -229,7 +280,6 @@ if __name__ == "__main__":
             scenario=ConcentrateAllAttributes(),
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=[],
-            project_list=mock_project_list,
             algorithm_types=[AlgorithmType.RAREST_FIRST],
         ).run(team_size=TEAM_SIZE)
 
@@ -251,7 +301,7 @@ if __name__ == "__main__":
         LineGraphMetadata(
             x_label="Class size",
             y_label="Run time (seconds)",
-            title="Run PATH-GASP",
+            title="Run RareFirst algorithm",
             data=list(graph_data_dict.values()),
             description=None,
             y_lim=None,
