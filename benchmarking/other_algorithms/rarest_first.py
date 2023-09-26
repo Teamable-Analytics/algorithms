@@ -58,8 +58,10 @@ class RarestFirstSimulation(Simulation):
                 if student.id == other_student.id:
                     continue
 
-                distance_matrix[(student.id, other_student.id)] = (
-                    self._find_distance(student_list, start_student_id=student.id, target_student_id=other_student.id)
+                distance_matrix[(student.id, other_student.id)] = self._find_distance(
+                    student_list,
+                    start_student_id=student.id,
+                    target_student_id=other_student.id,
                 )
 
         # Prebuild i/S(a) matrix
@@ -70,15 +72,17 @@ class RarestFirstSimulation(Simulation):
                 if not support_group:
                     continue
 
-                min_d: Distance = get_default_distance(float('inf'))
+                min_d: Distance = get_default_distance(float("inf"))
                 for other_student in support_group:
                     if other_student.id == student.id:
                         continue
-                    distance = distance_matrix.get((student.id, other_student.id), get_default_distance(-1))
+                    distance = distance_matrix.get(
+                        (student.id, other_student.id), get_default_distance(-1)
+                    )
                     if 0 <= distance.distance < min_d.distance:
                         min_d = distance
 
-                if min_d.distance != float('inf'):
+                if min_d.distance != float("inf"):
                     distance_to_support_group[(student.id, attribute.value)] = min_d
 
         # Step 3: Run the algorithm
@@ -86,7 +90,7 @@ class RarestFirstSimulation(Simulation):
 
         for student in lowest_cardinality_group:
             # R_ai
-            local_max_distance: Distance = get_default_distance(float('-inf'))
+            local_max_distance: Distance = get_default_distance(float("-inf"))
             for attribute in ScenarioAttribute:
                 if attribute.value == lowest_cardinality_group_attribute:
                     continue
@@ -98,7 +102,9 @@ class RarestFirstSimulation(Simulation):
                     if student_in_current_support_group.id == student.id:
                         continue
 
-                    current_distance = distance_matrix.get((student.id, student_in_current_support_group.id), None)
+                    current_distance = distance_matrix.get(
+                        (student.id, student_in_current_support_group.id), None
+                    )
                     if not current_distance:
                         continue
 
@@ -106,11 +112,11 @@ class RarestFirstSimulation(Simulation):
                         local_max_distance = current_distance
 
             # i*
-            if local_max_distance.distance != float('-inf'):
+            if local_max_distance.distance != float("-inf"):
                 max_distances[student.id] = local_max_distance
 
         # Find i*
-        i_star: Distance = get_default_distance(float('inf'))
+        i_star: Distance = get_default_distance(float("inf"))
         for student_id, distance in max_distances.items():
             if distance.distance == -1:
                 continue
@@ -121,7 +127,9 @@ class RarestFirstSimulation(Simulation):
         # Step 4: Add all individuals along the path from i* to the support group for all attribute in attributes
         result: Set[int] = {i_star.start_student}
         for attribute in ScenarioAttribute:
-            distance_from_i_star = distance_to_support_group.get((i_star.start_student, attribute.value), None)
+            distance_from_i_star = distance_to_support_group.get(
+                (i_star.start_student, attribute.value), None
+            )
             if distance_from_i_star:
                 result.add(distance_from_i_star.end_student)
 
@@ -158,7 +166,9 @@ class RarestFirstSimulation(Simulation):
                 #   - FRIEND: 0.0
                 #   - DEFAULT: 1.0
                 #   - ENEMY: 2.1
-                self.social_network[(student.id, other_student.id)] += - Relationship.FRIEND.value
+                self.social_network[
+                    (student.id, other_student.id)
+                ] += -Relationship.FRIEND.value
 
     @staticmethod
     def _get_support_group(student_list: List[Student], attribute_id: int):
@@ -185,7 +195,7 @@ class RarestFirstSimulation(Simulation):
         return support_groups
 
     def _find_distance(
-            self, student_list: List[Student], start_student_id: int, target_student_id: int
+        self, student_list: List[Student], start_student_id: int, target_student_id: int
     ) -> Optional[Distance]:
         """
         Dijkstra's algorithm implementation
@@ -223,7 +233,8 @@ class RarestFirstSimulation(Simulation):
                 heappush(
                     distances,
                     Distance(
-                        distance=shortest_distance.distance + self.social_network[(next_student_id, student.id)],
+                        distance=shortest_distance.distance
+                        + self.social_network[(next_student_id, student.id)],
                         start_student=start_student_id,
                         end_student=student.id,
                         path=shortest_distance.path + [student.id],
