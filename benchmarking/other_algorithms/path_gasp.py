@@ -107,7 +107,9 @@ class PathGaspSimulation(Simulation):
 
         all_teams_arrangements = generate_team_arrangements(all_students, team_size)
         attribute_ranges = self.student_provider.settings.attribute_ranges
-        project_list = attribute_ranges.get(ScenarioAttribute.PROJECT_PREFERENCES.value, None)
+        project_list = attribute_ranges.get(
+            ScenarioAttribute.PROJECT_PREFERENCES.value, None
+        )
 
         # find all mutations of projects
         all_projects_arrangements: List[List[int]] = list(
