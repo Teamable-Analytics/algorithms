@@ -55,33 +55,29 @@ def mutate_robinhood(
     )
     try:
         for priority in priorities:
+            # We need to clone the priority_team_set because we will be modifying it in order to get the score of the whole TeamSet
             cloned_priority_team_set: PriorityTeamSet = priority_team_set.clone()
+
             available_priority_teams = [
                 priority_team
                 for priority_team in cloned_priority_team_set.priority_teams
                 if not priority_team.team.is_locked
             ]
 
-            # Get all teams that satisfy the priority
-            satisfied_teams: List[PriorityTeam] = [
-                team
-                for team in available_priority_teams
+            # Sort the teams into two lists: those that satisfy the priority and those that don't
+            satisfied_teams: List[PriorityTeam] = []
+            unsatisfied_teams: List[PriorityTeam] = []
+            for team in available_priority_teams:
                 if priority.satisfied_by(
                     [student_dict[student_id] for student_id in team.student_ids]
-                )
-            ]
-            # Get all teams that do not satisfy the priority
-            unsatisfied_teams: List[PriorityTeam] = [
-                team for team in available_priority_teams if team not in satisfied_teams
-            ]
+                ):
+                    satisfied_teams.append(team)
+                else:
+                    unsatisfied_teams.append(team)
 
             # Choose a random team from each list
-            satisfied_team: PriorityTeam = satisfied_teams.pop(
-                random.randrange(len(satisfied_teams))
-            )
-            unsatisfied_team: PriorityTeam = unsatisfied_teams.pop(
-                random.randrange(len(unsatisfied_teams))
-            )
+            satisfied_team: PriorityTeam = random.choice(satisfied_teams)
+            unsatisfied_team: PriorityTeam = random.choice(unsatisfied_teams)
 
             # List of all students in the two teams
             students: List[int] = (
@@ -94,25 +90,12 @@ def mutate_robinhood(
                 itertools.combinations(students, len(unsatisfied_team.student_ids))
             )
 
-            # Find the Calculate the score of each team
+            # Calculate the score of each team
             for team in possible_teams:
-                # Build teams
-                team_1 = unsatisfied_team
-                team_1.student_ids = team
-                team_2 = satisfied_team
-                team_2.student_ids = [
+                # Modify the cloned PriorityTeamSet to reflect the new team
+                unsatisfied_team.student_ids = team
+                satisfied_team.student_ids = [
                     student_id for student_id in students if student_id not in team
-                ]
-
-                # Build the resulting PriorityTeamSet
-                cloned_priority_team_set.priority_teams = [
-                    *[
-                        team
-                        for team in cloned_priority_team_set.priority_teams
-                        if team not in [team_1, team_2]
-                    ],
-                    team_1,
-                    team_2,
                 ]
 
                 # Calculate the score of the resulting PriorityTeamSet
@@ -120,7 +103,8 @@ def mutate_robinhood(
                     priorities, student_dict
                 )
                 if score > best_team_set_score:
-                    best_team_set = cloned_priority_team_set
+                    # Clone the PriorityTeamSet because we will be modifying on the next iteration
+                    best_team_set = cloned_priority_team_set.clone()
                     best_team_set_score = score
     except ValueError:
         return best_team_set
