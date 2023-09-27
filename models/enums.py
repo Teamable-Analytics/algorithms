@@ -9,9 +9,9 @@ class Relationship(Enum):
 
 
 class RelationshipBehaviour(Enum):
-    ENFORCE = 1
-    INVERT = 2
-    IGNORE = 3
+    ENFORCE = "enforce"
+    INVERT = "invert"
+    IGNORE = "ignore"
 
 
 class RequirementOperator(Enum):

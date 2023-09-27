@@ -48,33 +48,3 @@ class WeightAlgorithm(ChooseAlgorithm):
         """
         # todo: finish
         return 1
-
-        # if student in team.students:
-        #     return 0
-        #
-        # requirement_utility = (
-        #     get_requirement_utility(team, student) * self.options.requirement_weight
-        # )
-        # social_utility = (
-        #     get_social_utility(team, [student]) * self.options.social_weight
-        # )
-        # diversity_utility = (
-        #     get_diversity_utility(
-        #         team,
-        #         student,
-        #         self.options.diversify_options,
-        #         self.options.concentrate_options,
-        #     )
-        #     * self.options.diversity_weight
-        # )
-        # preference_utility = (
-        #     get_preference_utility(team, student, self.options.max_project_preferences)
-        #     * self.options.preference_weight
-        # )
-        #
-        # return (
-        #     requirement_utility
-        #     + social_utility
-        #     + diversity_utility
-        #     + preference_utility
-        # )
