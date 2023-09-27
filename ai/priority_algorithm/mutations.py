@@ -49,6 +49,41 @@ def mutate_robinhood(
     Robinhood is a mutation that finds a team t1 that does not satisfy a priority c, and a team t2 that does satisfy c.
     It then creates all possible teams using the students of t1 and t2, and chooses the M best teams.
     """
+
+    # Argument checking
+    if len(priority_team_set.priority_teams) == 0:
+        raise ValueError("PriorityTeamSet must have at least one team")
+    if len(priority_team_set.priority_teams) == 1:
+        return priority_team_set
+    if len(priorities) == 0:
+        raise ValueError("Must have at least one priority")
+    all_students: List[Student] = [
+        student
+        for team in priority_team_set.priority_teams
+        for student in team.team.students
+    ]
+    if len(all_students) != len(student_dict):
+        raise ValueError("student_dict must contain all students in priority_team_set")
+    for student in all_students:
+        if student.id not in student_dict:
+            raise ValueError(
+                "student_dict must contain all students in priority_team_set"
+            )
+    if len(all_students) == 0:
+        raise ValueError("PriorityTeamSet must have at least one student")
+    if (
+        len(
+            [
+                team
+                for team in priority_team_set.priority_teams
+                if not team.team.is_locked
+            ]
+        )
+        < 2
+    ):
+        return priority_team_set
+
+    # Init best team set
     best_team_set: PriorityTeamSet = priority_team_set
     best_team_set_score: float = priority_team_set.calculate_score(
         priorities, student_dict
@@ -76,8 +111,18 @@ def mutate_robinhood(
                     unsatisfied_teams.append(team)
 
             # Choose a random team from each list
-            satisfied_team: PriorityTeam = random.choice(satisfied_teams)
-            unsatisfied_team: PriorityTeam = random.choice(unsatisfied_teams)
+            if len(unsatisfied_teams) == 0 or len(satisfied_teams) == 0:
+                satisfied_team = random.choice(available_priority_teams)
+                unsatisfied_team = random.choice(
+                    [
+                        team
+                        for team in available_priority_teams
+                        if team != satisfied_team
+                    ]
+                )
+            else:
+                satisfied_team = random.choice(satisfied_teams)
+                unsatisfied_team = random.choice(unsatisfied_teams)
 
             # List of all students in the two teams
             students: List[int] = (
