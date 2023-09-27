@@ -40,10 +40,12 @@ class AlgorithmType(Enum):
     # These are the algorithms that does not use the resources we have
     # If add more algorithms that needs overriding the run method, must add to OverrideAlgorithm
     PATH_GASP = "path_gasp"
+    DDR = "double_round_robin"
 
 
 class OverrideAlgorithm(Enum):
     PATH_GASP = "path_gasp"
+    DDR = "double_round_robin"
 
 
 class TokenizationConstraintDirection(Enum):

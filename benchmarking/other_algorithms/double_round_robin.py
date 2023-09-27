@@ -37,14 +37,13 @@ from benchmarking.data.simulated_data.mock_student_provider import MockStudentPr
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.scenarios.concentrate_multiple_attributes import ConcentrateMultipleAttributes
-from benchmarking.other_algorithms.utils.generate_team_arrangements import generate_team_arrangements
+from benchmarking.evaluations.scenarios.concentrate_multiple_attributes import (
+    ConcentrateMultipleAttributes,
+)
 from benchmarking.simulation.simulation import Simulation
 from models.enums import ScenarioAttribute, AlgorithmType, Gender, Race
 
-from models.project import ProjectRequirement
 from models.student import Student
-from old.team_formation.app.team_generator.algorithm.consts import REQUIREMENT_TYPES
 
 
 @dataclass
@@ -53,7 +52,9 @@ class Project:
     requirements: List[int]
 
 
-def _calculate_utilities(projects: List[Project], students: List[Student]) -> Dict[Tuple[int, int], int]:
+def _calculate_utilities(
+    projects: List[Project], students: List[Student]
+) -> Dict[Tuple[int, int], int]:
     utilities: Dict[Tuple[int, int], int] = {}
 
     for project in projects:
@@ -63,7 +64,13 @@ def _calculate_utilities(projects: List[Project], students: List[Student]) -> Di
             student_attributes = student.attributes
             for attribute_id, attribute_values in student_attributes.items():
                 if attribute_id in project_requirements:
-                    student_utilities += sum([1 for attribute_value in attribute_values if attribute_value > 0])
+                    student_utilities += sum(
+                        [
+                            1
+                            for attribute_value in attribute_values
+                            if attribute_value > 0
+                        ]
+                    )
                 else:
                     student_utilities -= 1
 
@@ -82,11 +89,19 @@ class DoubleRoundRobin(Simulation):
         projects = []
         all_attribute_requirements = list(ScenarioAttribute)
         for project_id in project_ids:
-            projects.append(Project(
-                id=project_id,
-                requirements=list(
-                    map(lambda x: x.value, random.sample(all_attribute_requirements, num_reqs_per_project)))
-            ))
+            projects.append(
+                Project(
+                    id=project_id,
+                    requirements=list(
+                        map(
+                            lambda x: x.value,
+                            random.sample(
+                                all_attribute_requirements, num_reqs_per_project
+                            ),
+                        )
+                    ),
+                )
+            )
         return projects
 
     def run(self, team_size: int):
@@ -112,7 +127,9 @@ class DoubleRoundRobin(Simulation):
                 key = (n.id, o.id)
                 utility = U.get(key)
                 if utility is None:
-                    raise ValueError(f"No utility value for project {n.id} and student {o.id}")
+                    raise ValueError(
+                        f"No utility value for project {n.id} and student {o.id}"
+                    )
                 if utility > 0:
                     U_plus[key] = utility
                     U_plus_items.add(o.id)
@@ -122,14 +139,16 @@ class DoubleRoundRobin(Simulation):
 
         ### Step 2
         k = len(U_minus_items) % len(N)
-        U_minus_items |= set([-i for i in range(1, k + 1)])  # Dummy student has negative id
+        U_minus_items |= set(
+            [-i for i in range(1, k + 1)]
+        )  # Dummy student has negative id
 
         ### Step 3
         chosen = set()
         result: Dict[int, List[int]] = {}
         while len(chosen) < len(U_minus_items):
             for n in N:
-                max_util = float('-inf')
+                max_util = float("-inf")
                 max_util_item = None
                 for item_id in U_minus_items:
                     if item_id in chosen:
@@ -146,12 +165,11 @@ class DoubleRoundRobin(Simulation):
                 else:
                     result[n.id] = [max_util_item]
 
-
         ### Step 4
         chosen = set()
         while len(chosen) < len(U_plus_items):
             for n in N[::-1]:
-                max_util = float('-inf')
+                max_util = float("-inf")
                 max_util_item = None
                 for item_id in U_plus_items:
                     if item_id in chosen:
@@ -168,14 +186,12 @@ class DoubleRoundRobin(Simulation):
                 else:
                     result[n.id] = [max_util_item]
 
-
         ### Step 5
         for key, values in result.items():
             result[key] = [value for value in values if value is not None and value > 0]
 
-
         end_time = time.time()
-        self.run_outputs[AlgorithmType.PATH_GASP][Simulation.KEY_RUNTIMES] = [
+        self.run_outputs[AlgorithmType.DDR][Simulation.KEY_RUNTIMES] = [
             end_time - start_time
         ]
 
@@ -217,7 +233,7 @@ if __name__ == "__main__":
                 ScenarioAttribute.RACE.value: list(range(len(Race))),
                 ScenarioAttribute.MAJOR.value: list(range(1, 4)),
                 ScenarioAttribute.YEAR_LEVEL.value: list(range(3, 5)),
-                ScenarioAttribute.PROJECT_PREFERENCES.value: mock_project_list
+                ScenarioAttribute.PROJECT_PREFERENCES.value: mock_project_list,
             },
         )
 
@@ -235,9 +251,8 @@ if __name__ == "__main__":
             ),
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=[],
-            algorithm_types=[AlgorithmType.PATH_GASP],
+            algorithm_types=[AlgorithmType.DDR],
         ).run(team_size=TEAM_SIZE)
-
 
         average_runtimes = Simulation.average_metric(simulation_outputs, "runtimes")
         # Data processing for graph
