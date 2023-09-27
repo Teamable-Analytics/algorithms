@@ -25,6 +25,7 @@ def generate_team_arrangements(
 ) -> List[List[List[Student]]]:
     """
     Get all possible team arrangements
+
     Runtime:
         O( (N choose k) * N )
             with N = len(students) and K = team_size
