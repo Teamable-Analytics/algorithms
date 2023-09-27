@@ -1,6 +1,5 @@
 import math
 import time
-from collections import defaultdict
 from typing import List, Set, Dict
 
 from benchmarking.data.interfaces import MockStudentProviderSettings
@@ -8,8 +7,8 @@ from benchmarking.data.simulated_data.mock_student_provider import MockStudentPr
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.scenarios.concentrate_all_attributes import (
-    ConcentrateAllAttributes,
+from benchmarking.evaluations.scenarios.concentrate_multiple_attributes import (
+    ConcentrateMultipleAttributes,
 )
 from benchmarking.simulation.simulation import Simulation, RunOutput
 
@@ -180,7 +179,16 @@ if __name__ == "__main__":
 
         simulation_outputs = PathGaspSimulation(
             num_teams=number_of_teams,
-            scenario=ConcentrateAllAttributes(),
+            scenario=ConcentrateMultipleAttributes(
+                [
+                    ScenarioAttribute.AGE,
+                    ScenarioAttribute.GENDER,
+                    ScenarioAttribute.GPA,
+                    ScenarioAttribute.RACE,
+                    ScenarioAttribute.MAJOR,
+                    ScenarioAttribute.YEAR_LEVEL,
+                ]
+            ),
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=[],
             algorithm_types=[AlgorithmType.PATH_GASP],
