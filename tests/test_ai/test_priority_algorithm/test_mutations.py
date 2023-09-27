@@ -59,14 +59,12 @@ class TestMutations(unittest.TestCase):
             Student(_id=1, name="John"),
             Student(_id=2, name="Joe"),
             Student(_id=3, name=""),
-            Student(_id=4, name="123")
+            Student(_id=4, name="123"),
         ]
         cls.student_dict = {}
         for student in cls.students:
             cls.student_dict[student.id] = student
-        cls.priorities = [
-            EvenPriority()
-        ]
+        cls.priorities = [EvenPriority()]
         teams = [
             Team(1, "Team 1", 1, cls.students[0:2]),
             Team(2, "Team 2", 1, cls.students[2:4]),
@@ -90,7 +88,9 @@ class TestMutations(unittest.TestCase):
         priority_team_set = mutate_local_max(
             self.priority_team_set, self.priorities, self.student_dict
         )
-        self.assertEqual(12, priority_team_set.calculate_score(self.priorities, self.student_dict))
+        self.assertEqual(
+            12, priority_team_set.calculate_score(self.priorities, self.student_dict)
+        )
 
     def test_score__returns_correct_score(self):
         # Neither Team satisfies priority
@@ -107,4 +107,6 @@ class TestMutations(unittest.TestCase):
         priority_team_set = mutate_local_max(
             self.priority_team_set, self.priorities, self.student_dict
         )
-        self.assertEqual(312, priority_team_set.calculate_score(self.priorities, self.student_dict))
+        self.assertEqual(
+            312, priority_team_set.calculate_score(self.priorities, self.student_dict)
+        )
