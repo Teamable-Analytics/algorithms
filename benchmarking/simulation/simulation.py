@@ -105,7 +105,7 @@ class Simulation:
         return self.run_outputs
 
     def _algorithm_options(self, algorithm_type: AlgorithmType):
-        if algorithm_type not in self.algorithm_options:
+        if self.algorithm_options[algorithm_type] is None:
             algorithm_options = MockAlgorithm.algorithm_options_from_scenario(
                 algorithm_type=algorithm_type,
                 scenario=self.scenario,
