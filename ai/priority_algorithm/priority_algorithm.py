@@ -2,7 +2,8 @@ import time
 from typing import Dict, List, Literal
 
 from ai.priority_algorithm.interfaces import Priority
-from ai.priority_algorithm.mutations import mutate_random_swap, mutate_robinhood
+from ai.priority_algorithm.mutations.random import mutate_random_swap
+from ai.priority_algorithm.mutations.robinhood import mutate_robinhood
 from ai.priority_algorithm.priority import TokenizationPriority
 from ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
 from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
