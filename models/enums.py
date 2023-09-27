@@ -8,6 +8,12 @@ class Relationship(Enum):
     ENEMY = 1.1
 
 
+class RelationshipBehaviour(Enum):
+    ENFORCE = "enforce"
+    INVERT = "invert"
+    IGNORE = "ignore"
+
+
 class RequirementOperator(Enum):
     EXACTLY = "exactly"
     LESS_THAN = "less than"

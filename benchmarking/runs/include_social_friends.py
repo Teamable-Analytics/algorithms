@@ -1,5 +1,7 @@
 import math
 
+import typer
+
 from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
@@ -17,7 +19,7 @@ from benchmarking.evaluations.scenarios.include_social_friends import (
 from benchmarking.simulation.simulation import Simulation
 
 
-def run_include_social_friends():
+def include_social_friends(num_trials: int = 10):
     """
     Goal: Run including social friends, measure average social satisfied team
     (a team socially satisfied when all member is happy)
@@ -25,7 +27,6 @@ def run_include_social_friends():
 
     # Defining our changing x-values (in the graph sense)
     class_sizes = [100, 150, 200, 250, 300]
-    num_trials = 10
 
     # Graph variables
     graph_data_dict = {}
@@ -80,4 +81,4 @@ def run_include_social_friends():
 
 
 if __name__ == "__main__":
-    run_include_social_friends()
+    typer.run(include_social_friends)
