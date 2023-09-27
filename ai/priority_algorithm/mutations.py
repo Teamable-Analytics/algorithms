@@ -144,6 +144,9 @@ def mutate_robinhood(
                 ]
 
                 # Calculate the score of the resulting PriorityTeamSet
+                cloned_priority_team_set.score = (
+                    None  # Reset the score to force recalculation after modification
+                )
                 score = cloned_priority_team_set.calculate_score(
                     priorities, student_dict
                 )
