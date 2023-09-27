@@ -1,5 +1,7 @@
 import math
 
+import typer
+
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
@@ -25,7 +27,7 @@ from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
 from benchmarking.simulation.simulation import Simulation
 
 
-def diversify_gender_min_2():
+def diversify_gender_min_2(num_trials: int = 10):
     """
     Goal: Run diversify gender scenario, measure average, min, and max gini index
     """
@@ -54,9 +56,6 @@ def diversify_gender_min_2():
         # set up either mock or real data
         student_provider_settings = MockStudentProviderSettings(
             number_of_students=class_size,
-            number_of_friends=4,
-            number_of_enemies=1,
-            friend_distribution="cluster",
             attribute_ranges={
                 ScenarioAttribute.GENDER.value: [
                     (Gender.MALE, 1 - ratio_of_female_students),
@@ -153,4 +152,4 @@ def diversify_gender_min_2():
 
 
 if __name__ == "__main__":
-    diversify_gender_min_2()
+    typer.run(diversify_gender_min_2)
