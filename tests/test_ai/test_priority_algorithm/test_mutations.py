@@ -56,8 +56,8 @@ class TestMutations(unittest.TestCase):
     @classmethod
     def setUp(cls):
         cls.students = [
-            Student(_id=1, name="John"),
-            Student(_id=2, name="Joe"),
+            Student(_id=2, name="John"),
+            Student(_id=1, name="Joe"),
             Student(_id=3, name=""),
             Student(_id=4, name="123"),
         ]
