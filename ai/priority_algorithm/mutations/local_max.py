@@ -24,6 +24,8 @@ def mutate_local_max(
         if not priority_team.team.is_locked
     ]
     try:
+        if len(available_priority_teams) < 2:
+            return priority_team_set
         # Sort teams and take the two lowest scoring teams
         available_priority_teams = sorted(
             available_priority_teams,
