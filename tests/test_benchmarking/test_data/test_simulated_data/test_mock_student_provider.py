@@ -2,12 +2,12 @@ import unittest
 
 from models.enums import Gpa, ScenarioAttribute, Relationship
 from models.student import Student
-from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import (
     attribute_values_from_range,
     create_mock_students,
     MockStudentProvider,
     random_choice,
+    MockStudentProviderSettings,
 )
 
 

@@ -1,8 +1,10 @@
 import unittest
 from typing import List
 
-from benchmarking.data.interfaces import MockStudentProviderSettings
-from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
+from benchmarking.data.simulated_data.mock_student_provider import (
+    MockStudentProvider,
+    MockStudentProviderSettings,
+)
 from benchmarking.evaluations.goals import DiversityGoal
 from benchmarking.evaluations.interfaces import TeamSetMetric, Scenario
 from benchmarking.simulation.simulation import Simulation
