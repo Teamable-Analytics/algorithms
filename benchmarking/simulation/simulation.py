@@ -39,6 +39,12 @@ class Simulation:
 
         self.num_teams = num_teams
         self.initial_teams_provider = initial_teams_provider
+        self.algorithm_types = algorithm_types or [_ for _ in AlgorithmType]
+
+        if not self.algorithm_types:
+            raise ValueError(
+                "If you override algorithm_types, you must specify at least 1 algorithm type to run a simulation."
+            )
 
         if self.num_teams and self.initial_teams_provider:
             raise ValueError(
@@ -77,7 +83,6 @@ class Simulation:
             algorithm_students = AlgorithmTranslator.students_to_algorithm_students(
                 self.student_provider.get()
             )
-
             for algorithm_type in self.algorithm_types:
                 mock_algorithm = MockAlgorithm(
                     algorithm_type=algorithm_type,
@@ -116,10 +121,7 @@ class Simulation:
     ) -> Dict[AlgorithmType, float]:
         averages_output = {}
 
-        for algorithm_type in AlgorithmType:
-            if algorithm_type not in run_output:
-                continue
-
+        for algorithm_type in run_output.keys():
             metric_values = run_output[algorithm_type][metric_name]
             averages_output[algorithm_type] = statistics.mean(metric_values)
 
