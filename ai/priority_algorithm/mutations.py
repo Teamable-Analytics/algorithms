@@ -46,8 +46,7 @@ def mutate_robinhood(
     student_dict: Dict[int, Student],
 ) -> PriorityTeamSet:
     """
-    Robinhood is a mutation that finds a team t1 that does not satisfy a priority c, and a team t2 that does satisfy c.
-    It then creates all possible teams using the students of t1 and t2, and chooses the M best teams.
+    Robinhood is a mutation that finds a team t1 that does not satisfy a priority c, and a team t2 that does satisfy c. It then creates all possible team sets by mutating the students of t1 and t2, and chooses the best team. This is done across all constraints.
     """
 
     # Argument checking
