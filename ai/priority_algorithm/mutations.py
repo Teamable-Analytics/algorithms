@@ -50,36 +50,8 @@ def mutate_robinhood(
     """
 
     # Argument checking
-    if len(priority_team_set.priority_teams) == 0:
-        raise ValueError("PriorityTeamSet must have at least one team")
-    if len(priority_team_set.priority_teams) == 1:
-        return priority_team_set
-    if len(priorities) == 0:
-        raise ValueError("Must have at least one priority")
-    all_students: List[Student] = [
-        student
-        for team in priority_team_set.priority_teams
-        for student in team.team.students
-    ]
-    if len(all_students) != len(student_dict):
-        raise ValueError("student_dict must contain all students in priority_team_set")
-    for student in all_students:
-        if student.id not in student_dict:
-            raise ValueError(
-                "student_dict must contain all students in priority_team_set"
-            )
-    if len(all_students) == 0:
-        raise ValueError("PriorityTeamSet must have at least one student")
-    if (
-        len(
-            [
-                team
-                for team in priority_team_set.priority_teams
-                if not team.team.is_locked
-            ]
-        )
-        < 2
-    ):
+    # Can also raise a ValueError
+    if not valid_robinhood_arguments(priority_team_set, priorities, student_dict):
         return priority_team_set
 
     # Init best team set
@@ -123,39 +95,113 @@ def mutate_robinhood(
                 satisfied_team = random.choice(satisfied_teams)
                 unsatisfied_team = random.choice(unsatisfied_teams)
 
-            # List of all students in the two teams
-            students: List[int] = (
-                satisfied_team.student_ids + unsatisfied_team.student_ids
+            # Perform the local max portion of the robinhood mutation
+            (
+                local_best_team_set,
+                local_best_team_set_score,
+            ) = perform_local_max_portion_of_robinhood(
+                cloned_priority_team_set,
+                priorities,
+                student_dict,
+                satisfied_team,
+                unsatisfied_team,
             )
 
-            # Generate all possible teams using the students from the two teams
-            # Elements of this list are lists of student ids
-            possible_teams: List[List[int]] = list(
-                itertools.combinations(students, len(unsatisfied_team.student_ids))
-            )
-
-            # Calculate the score of each team
-            for team in possible_teams:
-                # Modify the cloned PriorityTeamSet to reflect the new team
-                unsatisfied_team.student_ids = team
-                satisfied_team.student_ids = [
-                    student_id for student_id in students if student_id not in team
-                ]
-
-                # Calculate the score of the resulting PriorityTeamSet
-                cloned_priority_team_set.score = (
-                    None  # Reset the score to force recalculation after modification
-                )
-                score = cloned_priority_team_set.calculate_score(
-                    priorities, student_dict
-                )
-                if score > best_team_set_score:
-                    # Clone the PriorityTeamSet because we will be modifying on the next iteration
-                    best_team_set = cloned_priority_team_set.clone()
-                    best_team_set_score = score
+            # Update the best team set if the local best team set is better
+            if local_best_team_set_score > best_team_set_score:
+                best_team_set = local_best_team_set
+                best_team_set_score = local_best_team_set_score
     except ValueError:
         return best_team_set
     return best_team_set
+
+
+def perform_local_max_portion_of_robinhood(
+    cloned_priority_team_set: PriorityTeamSet,
+    priorities: List[Priority],
+    student_dict: Dict[int, Student],
+    selected_team_a: PriorityTeam,
+    selected_team_b: PriorityTeam,
+) -> (PriorityTeamSet, float):
+    """
+    Performs the local max portion of the robinhood mutation. This is the part where we generate all possible teams using the students from the two teams, and choose the best team.
+
+    returns (best_team_set, best_team_set_score)
+    """
+
+    # Init best team set
+    best_team_set: PriorityTeamSet = cloned_priority_team_set
+    best_team_set_score: float = cloned_priority_team_set.calculate_score(
+        priorities, student_dict
+    )
+
+    # List of all students in the two teams
+    students: List[int] = selected_team_a.student_ids + selected_team_b.student_ids
+
+    # Generate all possible teams using the students from the two teams
+    # Elements of this list are lists of student ids
+    possible_teams: List[List[int]] = list(
+        itertools.combinations(students, len(selected_team_b.student_ids))
+    )
+
+    # Calculate the score of each team
+    for team in possible_teams:
+        # Modify the cloned PriorityTeamSet to reflect the new team
+        selected_team_b.student_ids = team
+        selected_team_a.student_ids = [
+            student_id for student_id in students if student_id not in team
+        ]
+
+        # Calculate the score of the resulting PriorityTeamSet
+        cloned_priority_team_set.score = (
+            None  # Reset the score to force recalculation after modification
+        )
+        score = cloned_priority_team_set.calculate_score(priorities, student_dict)
+        if score > best_team_set_score:
+            # Clone the PriorityTeamSet because we will be modifying on the next iteration
+            best_team_set = cloned_priority_team_set.clone()
+            best_team_set_score = score
+
+    return best_team_set, best_team_set_score
+
+
+def valid_robinhood_arguments(
+    priority_team_set: PriorityTeamSet,
+    priorities: List[Priority],
+    student_dict: Dict[int, Student],
+) -> bool:
+    if len(priority_team_set.priority_teams) == 0:
+        raise ValueError("PriorityTeamSet must have at least one team")
+    if len(priority_team_set.priority_teams) == 1:
+        return False
+    if len(priorities) == 0:
+        raise ValueError("Must have at least one priority")
+    all_students: List[Student] = [
+        student
+        for team in priority_team_set.priority_teams
+        for student in team.team.students
+    ]
+    if len(all_students) != len(student_dict):
+        raise ValueError("student_dict must contain all students in priority_team_set")
+    for student in all_students:
+        if student.id not in student_dict:
+            raise ValueError(
+                "student_dict must contain all students in priority_team_set"
+            )
+    if len(all_students) == 0:
+        raise ValueError("PriorityTeamSet must have at least one student")
+    if (
+        len(
+            [
+                team
+                for team in priority_team_set.priority_teams
+                if not team.team.is_locked
+            ]
+        )
+        < 2
+    ):
+        return False
+    return True
 
 
 def score(
