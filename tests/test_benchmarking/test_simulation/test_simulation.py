@@ -63,5 +63,25 @@ class TestSimulation(unittest.TestCase):
             )
             for name in ["Test Metric 1", "Test Metric 2", "Test Metric 3"]:
                 self.assertTrue(name in run_output)
-                self.assertEqual(len(run_output[name]), 5)
+                self.assertEqual(
+                    len(run_output[name]),
+                    5,
+                    msg="Incorrect number of trials for metric.",
+                )
             self.assertTrue(Simulation.KEY_RUNTIMES in run_output)
+
+    def test_run__only_simulates_specified_algorithms_when_specified(self):
+        simulation_outputs = Simulation(
+            algorithm_types=[AlgorithmType.SOCIAL, AlgorithmType.WEIGHT],
+            num_teams=2,
+            scenario=self.scenario,
+            student_provider=self.student_provider,
+            metrics=[
+                self.metric_1,
+            ],
+        ).run(num_runs=1)
+        self.assertEqual(
+            len(simulation_outputs), 2, msg="Incorrect number of keys in run outputs"
+        )
+        self.assertTrue(AlgorithmType.SOCIAL in simulation_outputs)
+        self.assertTrue(AlgorithmType.WEIGHT in simulation_outputs)
