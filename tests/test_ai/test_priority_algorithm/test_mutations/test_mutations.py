@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from typing import List
 
 from ai.priority_algorithm.interfaces import Priority
-from ai.priority_algorithm.mutations import mutate_local_max, score
+from ai.priority_algorithm.mutations.local_max import mutate_local_max
+from ai.priority_algorithm.mutations.utils import score
 from ai.priority_algorithm.priority import TokenizationPriority
 from ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
 from benchmarking.data.interfaces import MockStudentProviderSettings
