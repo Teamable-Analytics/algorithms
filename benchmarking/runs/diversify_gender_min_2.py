@@ -72,7 +72,7 @@ def diversify_gender_min_2():
             metrics=[
                 AverageGiniIndex(attribute=ScenarioAttribute.GENDER.value),
                 MaximumGiniIndex(attribute=ScenarioAttribute.GENDER.value),
-                MinimumGiniIndex(attribute=ScenarioAttribute.GENDER.value)
+                MinimumGiniIndex(attribute=ScenarioAttribute.GENDER.value),
             ],
         ).run(num_runs=num_trials)
 
