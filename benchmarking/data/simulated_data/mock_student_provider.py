@@ -93,7 +93,7 @@ def create_mock_students(
         # Get projects and max_num_preferences from attribute dictionary
         project_attribute_id = ScenarioAttribute.PROJECT_PREFERENCES.value
         projects = attributes.get(project_attribute_id, [])
-        max_num_preferences = num_values_per_attribute.get(project_attribute_id, 0)
+        max_num_preferences = num_values_per_attribute.get(project_attribute_id, 0) if len(projects) > 0 else 0
 
         # Generate preference for student
         preferences = random.sample(projects, max_num_preferences)

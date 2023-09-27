@@ -1,6 +1,5 @@
 import math
 import time
-from collections import defaultdict
 from typing import List, Set, Dict
 
 from benchmarking.data.interfaces import MockStudentProviderSettings
@@ -8,9 +7,8 @@ from benchmarking.data.simulated_data.mock_student_provider import MockStudentPr
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.scenarios.concentrate_all_attributes import (
-    ConcentrateAllAttributes,
-)
+from benchmarking.evaluations.scenarios.concentrate_multiple_attributes import ConcentrateMultipleAttributes
+from benchmarking.other_algorithms.utils.generate_team_arrangements import generate_team_arrangements
 from benchmarking.simulation.simulation import Simulation, RunOutput
 
 from models.enums import ScenarioAttribute, AlgorithmType
@@ -18,60 +16,6 @@ from models.student import Student, StudentEncoder
 
 from itertools import combinations
 import json
-
-
-def generate_team_arrangements(
-    students: List[Student], team_size: int
-) -> List[List[List[Student]]]:
-    """
-    Get all possible team arrangements
-
-    Runtime:
-        O( (N choose k) * N )
-            with N = len(students) and K = team_size
-    """
-    if len(students) % team_size != 0:
-        raise ValueError("Number of people must be divisible by team size")
-
-    student_ids = [student.id for student in students]
-    student_id_map = {student.id: student for student in students}
-    team_combinations = list(combinations(student_ids, team_size))
-    results = set()  # this result only contains student ids
-
-    def recursive_generate(
-        current_arrangement: List[List[int]], students_used: Set[int]
-    ):
-        """
-        Args:
-            current_arrangement: The team we are constructing
-            students_used: A set of students who already in current_arrangement
-        """
-        if len(students) == len(students_used):
-            results.add(
-                tuple(sorted(current_arrangement))
-            )  # Add the sorted tuple to filter duplicates
-        else:
-            for team_combination in team_combinations:
-                if all(student not in students_used for student in team_combination):
-                    new_arrangement = current_arrangement + [team_combination]
-                    new_student_used = students_used.union(team_combination)
-                    recursive_generate(new_arrangement, new_student_used)
-
-    recursive_generate([], set())
-
-    # map back to students
-    real_results: List[List[List[Student]]] = []
-    for arrangement in results:
-        team_list = []
-        for team in arrangement:
-            student_list: List[Student] = [
-                student_id_map.get(student_id) for student_id in team
-            ]
-            team_list.append(student_list)
-
-        real_results.append(team_list)
-
-    return real_results
 
 
 def calculate_student_well_being_score(student: Student, project: int) -> float:
@@ -84,7 +28,7 @@ def calculate_student_well_being_score(student: Student, project: int) -> float:
 
 
 def calculate_teams_well_being_score(
-    teams: List[List[Student]], project_assignment: List[int]
+        teams: List[List[Student]], project_assignment: List[int]
 ) -> float:
     all_teams_well_being_score = 0
 
@@ -180,7 +124,16 @@ if __name__ == "__main__":
 
         simulation_outputs = PathGaspSimulation(
             num_teams=number_of_teams,
-            scenario=ConcentrateAllAttributes(),
+            scenario=ConcentrateMultipleAttributes(
+                [
+                    ScenarioAttribute.AGE,
+                    ScenarioAttribute.GENDER,
+                    ScenarioAttribute.GPA,
+                    ScenarioAttribute.RACE,
+                    ScenarioAttribute.MAJOR,
+                    ScenarioAttribute.YEAR_LEVEL,
+                ]
+            ),
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=[],
             algorithm_types=[AlgorithmType.PATH_GASP],
