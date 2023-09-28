@@ -2,9 +2,9 @@ import math
 
 import typer
 
-from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
+    MockStudentProviderSettings,
 )
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph

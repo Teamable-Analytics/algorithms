@@ -4,6 +4,7 @@ from typing import Dict, List, Literal
 from ai.priority_algorithm.interfaces import Priority
 from ai.priority_algorithm.mutations.local_max import mutate_local_max
 from ai.priority_algorithm.mutations.random_swap import mutate_random_swap
+from ai.priority_algorithm.mutations.robinhood import mutate_robinhood
 from ai.priority_algorithm.priority import TokenizationPriority
 from ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
 from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
@@ -21,8 +22,8 @@ class PriorityAlgorithm(WeightAlgorithm):
 
     MAX_KEEP: int = 3  # nodes
     MAX_SPREAD: int = 3  # nodes
-    MAX_ITERATE: int = 15  # times
-    MAX_TIME: int = 30  # seconds
+    MAX_ITERATE: int = 1500  # times
+    MAX_TIME: int = 1  # seconds
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -149,13 +150,27 @@ class PriorityAlgorithm(WeightAlgorithm):
         """
         Mutate a single teamset into child teamsets
         """
+        algorithm = 1
         cloned_team_sets = [
             team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)
         ]
-        return [
-            mutate_local_max(cloned_team_sets[0], self.priorities, self.student_dict),
-            *[
+        if algorithm == 1:
+            return [
                 mutate_random_swap(cloned_team_set)
-                for cloned_team_set in cloned_team_sets[1:]
-            ],
-        ]
+                for cloned_team_set in cloned_team_sets
+            ]
+        elif algorithm == 2:
+            return [
+                mutate_robinhood(cloned_team_set, self.priorities, self.student_dict)
+                for cloned_team_set in cloned_team_sets
+            ]
+        elif algorithm == 3:
+            return [
+                mutate_local_max(
+                    cloned_team_sets[0], self.priorities, self.student_dict
+                ),
+                *[
+                    mutate_random_swap(cloned_team_set)
+                    for cloned_team_set in cloned_team_sets[1:]
+                ],
+            ]
