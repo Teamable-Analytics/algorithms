@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import List, Dict
 
 from ai.priority_algorithm.interfaces import Priority
 from ai.priority_algorithm.priority_teamset import PriorityTeam

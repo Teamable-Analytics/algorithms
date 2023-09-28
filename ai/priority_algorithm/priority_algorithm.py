@@ -2,7 +2,8 @@ import time
 from typing import Dict, List, Literal
 
 from ai.priority_algorithm.interfaces import Priority
-from ai.priority_algorithm.mutations.random import mutate_random_swap
+from ai.priority_algorithm.mutations.local_max import mutate_local_max
+from ai.priority_algorithm.mutations.random_swap import mutate_random_swap
 from ai.priority_algorithm.mutations.robinhood import mutate_robinhood
 from ai.priority_algorithm.priority import TokenizationPriority
 from ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
@@ -162,4 +163,14 @@ class PriorityAlgorithm(WeightAlgorithm):
             return [
                 mutate_robinhood(cloned_team_set, self.priorities, self.student_dict)
                 for cloned_team_set in cloned_team_sets
+            ]
+        elif algorithm == 3:
+            return [
+                mutate_local_max(
+                    cloned_team_sets[0], self.priorities, self.student_dict
+                ),
+                *[
+                    mutate_random_swap(cloned_team_set)
+                    for cloned_team_set in cloned_team_sets[1:]
+                ],
             ]
