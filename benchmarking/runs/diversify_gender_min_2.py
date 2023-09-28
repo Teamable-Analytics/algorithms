@@ -2,33 +2,41 @@ import math
 
 import typer
 
-from benchmarking.data.simulated_data.mock_student_provider import (
-    MockStudentProvider,
-    MockStudentProviderSettings,
-)
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.metrics.average_gini_index import AverageGiniIndex
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
-from benchmarking.evaluations.scenarios.concentrate_gpa import ConcentrateGPA
+from models.enums import ScenarioAttribute, Gender
+from benchmarking.data.interfaces import MockStudentProviderSettings
+from benchmarking.data.simulated_data.mock_student_provider import (
+    MockStudentProvider,
+)
+from benchmarking.evaluations.metrics.average_gini_index import (
+    AverageGiniIndex,
+)
+from benchmarking.evaluations.metrics.num_requirements_satisfied import (
+    NumRequirementsSatisfied,
+)
+from benchmarking.evaluations.metrics.num_teams_meeting_requirements import (
+    NumTeamsMeetingRequirements,
+)
+from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
+    DiversifyGenderMin2Female,
+)
 from benchmarking.simulation.simulation import Simulation
-from models.enums import ScenarioAttribute, Gpa
 
 
-def concentrate_gpa(num_trials: int = 10):
+def diversify_gender_min_2(num_trials: int = 10):
     """
-    Goal: Run concentrate GPA scenario, and measure the average, maximum, and minimum gini scores for gpa
+    Goal: Run diversify gender scenario, measure average, min, and max gini index
     """
 
-    # Define changing values
-    class_sizes = [50, 100, 150, 200, 250, 300, 350, 400]
-    ratio_of_a_students = 0.25
-    ratio_of_b_students = 0.50
-    ratio_of_c_students = 0.25
+    # Defining our changing x-values (in the graph sense)
+    class_sizes = list(range(50, 501, 50))
+    num_trials = 10
+    ratio_of_female_students = 0.2
 
-    # Graph variables
     graph_runtime_dict = {}
     graph_avg_gini_dict = {}
     graph_min_gini_dict = {}
@@ -45,25 +53,25 @@ def concentrate_gpa(num_trials: int = 10):
 
         number_of_teams = math.ceil(class_size / 5)
 
+        # set up either mock or real data
         student_provider_settings = MockStudentProviderSettings(
             number_of_students=class_size,
             attribute_ranges={
-                ScenarioAttribute.GPA.value: [
-                    (Gpa.A, ratio_of_a_students),
-                    (Gpa.B, ratio_of_b_students),
-                    (Gpa.C, ratio_of_c_students),
-                ]
+                ScenarioAttribute.GENDER.value: [
+                    (Gender.MALE, 1 - ratio_of_female_students),
+                    (Gender.FEMALE, ratio_of_female_students),
+                ],
             },
         )
 
         simulation_outputs = Simulation(
             num_teams=number_of_teams,
-            scenario=ConcentrateGPA(),
+            scenario=DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value),
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=[
-                AverageGiniIndex(attribute=ScenarioAttribute.GPA.value),
-                MaximumGiniIndex(attribute=ScenarioAttribute.GPA.value),
-                MinimumGiniIndex(attribute=ScenarioAttribute.GPA.value),
+                AverageGiniIndex(attribute=ScenarioAttribute.GENDER.value),
+                MaximumGiniIndex(attribute=ScenarioAttribute.GENDER.value),
+                MinimumGiniIndex(attribute=ScenarioAttribute.GENDER.value),
             ],
         ).run(num_runs=num_trials)
 
@@ -98,7 +106,7 @@ def concentrate_gpa(num_trials: int = 10):
         LineGraphMetadata(
             x_label="Class size",
             y_label="Run time (seconds)",
-            title="Concentrate GPA Runtimes",
+            title="Diversity Gender With Min of Two Runtimes",
             data=list(graph_runtime_dict.values()),
             description=None,
             y_lim=None,
@@ -110,7 +118,7 @@ def concentrate_gpa(num_trials: int = 10):
         LineGraphMetadata(
             x_label="Class size",
             y_label="Average Gini Index",
-            title="Concentrate GPA Average Gini Index",
+            title="Diversity Gender With Min of Two Average Gini Index",
             data=list(graph_avg_gini_dict.values()),
             description=None,
             y_lim=None,
@@ -122,7 +130,7 @@ def concentrate_gpa(num_trials: int = 10):
         LineGraphMetadata(
             x_label="Class size",
             y_label="Minimum Gini Index",
-            title="Concentrate GPA Minimum Gini",
+            title="Diversity Gender With Min of Two Minimum Gini",
             data=list(graph_min_gini_dict.values()),
             description=None,
             y_lim=None,
@@ -134,7 +142,7 @@ def concentrate_gpa(num_trials: int = 10):
         LineGraphMetadata(
             x_label="Class size",
             y_label="Maximum Gini Index",
-            title="Concentrate GPA Max Gini",
+            title="Diversity Gender With Min of Two Max Gini",
             data=list(graph_max_gini_dict.values()),
             description=None,
             y_lim=None,
@@ -144,4 +152,4 @@ def concentrate_gpa(num_trials: int = 10):
 
 
 if __name__ == "__main__":
-    typer.run(concentrate_gpa)
+    typer.run(diversify_gender_min_2)

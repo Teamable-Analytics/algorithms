@@ -1,4 +1,5 @@
 import random
+from dataclasses import dataclass, field
 from typing import Literal, List, Dict, Optional
 
 import numpy as np
@@ -6,11 +7,20 @@ import numpy as np
 from models.enums import Relationship, AttributeValueEnum, ScenarioAttribute
 from models.student import Student
 from benchmarking.data.interfaces import (
-    MockStudentProviderSettings,
     StudentProvider,
     AttributeRangeConfig,
     NumValuesConfig,
 )
+
+
+@dataclass
+class MockStudentProviderSettings:
+    number_of_students: int
+    attribute_ranges: Dict[int, AttributeRangeConfig] = field(default_factory=dict)
+    num_values_per_attribute: Dict[int, NumValuesConfig] = field(default_factory=dict)
+    number_of_friends: int = 0
+    number_of_enemies: int = 0
+    friend_distribution: Literal["cluster", "random"] = "random"
 
 
 class MockStudentProvider(StudentProvider):
