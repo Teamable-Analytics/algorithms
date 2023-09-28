@@ -46,12 +46,12 @@ class WeightAlgorithmOptions(AlgorithmOptions):
             Schema([int]).validate(self.concentrate_options)
         except SchemaError as error:
             raise ValueError(f"Error while validating WeightAlgorithmOptions \n{error}")
-        
 
 
 @dataclass
 class PriorityAlgorithmOptions(WeightAlgorithmOptions):
     priorities: List[dict] = field(default_factory=list)
+
     # TODO: Decide what to do here.
     def validate(self):
         super().validate()
