@@ -142,7 +142,9 @@ def perform_local_max_portion_of_robinhood(
     )
 
     # List of all students in the two teams
-    students: List[int] = selected_team_a.student_ids + selected_team_b.student_ids
+    students: List[int] = list(selected_team_a.student_ids) + list(
+        selected_team_b.student_ids
+    )
 
     # Generate all possible teams using the students from the two teams
     # Elements of this list are lists of student ids
