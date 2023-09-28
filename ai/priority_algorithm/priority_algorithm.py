@@ -127,6 +127,7 @@ class PriorityAlgorithm(WeightAlgorithm):
             )
             team_sets = team_sets[: self.MAX_KEEP]
             iteration += 1
+        print(f"Num iterations: {iteration}")
         return AlgorithmTranslator.teams_to_algorithm_teams(
             self.save_team_compositions_to_teams(team_sets[0])
         )

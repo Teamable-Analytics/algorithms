@@ -13,4 +13,3 @@ class LineGraphMetadata:
     description: Optional[str]
     x_lim: Optional[GraphAxisRange]
     y_lim: Optional[GraphAxisRange]
-    save_path: Optional[str]

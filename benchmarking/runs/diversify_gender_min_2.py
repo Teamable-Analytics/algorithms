@@ -33,7 +33,7 @@ def diversify_gender_min_2(num_trials: int = 10):
     """
 
     # Defining our changing x-values (in the graph sense)
-    class_sizes = list(range(50, 501, 50))
+    class_sizes = list(range(50, 61, 10))
     num_trials = 10
     ratio_of_female_students = 0.2
 
@@ -111,7 +111,6 @@ def diversify_gender_min_2(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
-            save_path="Diversify Gender With Min of Two Runtimes.png",
         )
     )
 
@@ -124,7 +123,6 @@ def diversify_gender_min_2(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
-            save_path="Diversify Gender With Min of Two Average Gini Index.png",
         )
     )
 
@@ -137,7 +135,6 @@ def diversify_gender_min_2(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
-            save_path="Diversify Gender With Min of Two Minimum Gini.png",
         )
     )
 
@@ -150,7 +147,6 @@ def diversify_gender_min_2(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
-            save_path="Diversify Gender With Min of Two Max Gini.png",
         )
     )
 
