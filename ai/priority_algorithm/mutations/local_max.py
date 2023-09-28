@@ -87,7 +87,7 @@ def mutate_local_max_epsilon(
     if chance < epsilon:
         team_1 = min(available_priority_teams, key=(lambda team: score(team, priorities, student_dict)))
         team_2 = team_1
-        while team_1 != team_2:
+        while team_1 == team_2:
             team_2 = random.choice(available_priority_teams)
     else:
         available_priority_teams = sorted(
