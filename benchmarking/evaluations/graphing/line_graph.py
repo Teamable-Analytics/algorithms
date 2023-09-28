@@ -60,3 +60,5 @@ def line_graph(graph_data: LineGraphMetadata):
 
     plt.tight_layout()
     plt.show()
+    if graph_data.save_path is not None:
+        plt.savefig(graph_data.save_path)

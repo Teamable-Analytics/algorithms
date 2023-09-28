@@ -111,6 +111,7 @@ def diversify_gender_min_2(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
+            save_path="Diversity Gender With Min of Two Runtimes.png",
         )
     )
 
@@ -123,6 +124,7 @@ def diversify_gender_min_2(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
+            save_path="Diversity Gender With Min of Two Average Gini Index.png",
         )
     )
 
@@ -135,6 +137,7 @@ def diversify_gender_min_2(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
+            save_path="Diversity Gender With Min of Two Minimum Gini.png",
         )
     )
 
@@ -147,6 +150,7 @@ def diversify_gender_min_2(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
+            save_path="Diversity Gender With Min of Two Max Gini.png",
         )
     )
 
