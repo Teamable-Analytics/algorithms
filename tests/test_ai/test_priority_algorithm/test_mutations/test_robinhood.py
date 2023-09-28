@@ -2,24 +2,31 @@ import unittest
 from typing import List, Dict, Tuple
 
 from ai.priority_algorithm.interfaces import Priority
-from ai.priority_algorithm.mutations.robinhood import mutate_robinhood
+from ai.priority_algorithm.mutations import utils
+from ai.priority_algorithm.mutations.robinhood import (
+    mutate_robinhood,
+    mutate_robinhood_holistic,
+)
 from ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
 from models.student import Student
 from models.team import Team
 
 
-class TestPriority(Priority):
+class StudentListPriority(Priority):
     """
     A custom priority for this test.
-    It wants students 1 and 2 to be in the same team
+    It wants all students in list to be in a team
     """
+
+    def __init__(self, students: List[int]):
+        self.students = students
 
     def validate(self):
         return True
 
     def satisfied_by(self, students: List[Student]) -> bool:
         ids = [student.id for student in students]
-        return 1 in ids and 2 in ids
+        return set(self.students).issubset(set(ids))
 
 
 def equal_priority_team_sets(a: PriorityTeamSet, b: PriorityTeamSet) -> bool:
@@ -83,119 +90,191 @@ class TestMutateRobinhood(unittest.TestCase):
         """
         Either no teams should change or two teams should change.
         """
+        for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
+            priority_team_set, student_dict = create_new_priority_team_set(3, 9)
+            priorities = [StudentListPriority([1, 2])]
 
-        priority_team_set, student_dict = create_new_priority_team_set(3, 9)
-        priorities = [TestPriority()]
+            mutated_team_set = mutate_func(priority_team_set, priorities, student_dict)
 
-        mutated_team_set = mutate_robinhood(priority_team_set, priorities, student_dict)
+            # Count the number of teams that changed
+            changed_teams = 0
+            for i in range(3):
+                if (
+                    get_priority_team(i, priority_team_set).student_ids
+                    != get_priority_team(i, mutated_team_set).student_ids
+                ):
+                    changed_teams += 1
 
-        # Count the number of teams that changed
-        changed_teams = 0
-        for i in range(3):
-            if (
-                get_priority_team(i, priority_team_set).student_ids
-                != get_priority_team(i, mutated_team_set).student_ids
-            ):
-                changed_teams += 1
-
-        self.assertIn(changed_teams, [0, 2], "Exactly 0 or 2 teams should be changed")
+            self.assertIn(
+                changed_teams, [0, 2], "Exactly 0 or 2 teams should be changed"
+            )
 
     def test_mutate_robinhood__does_mutate_when_not_optimal(self):
         """
         The mutated team set should be different from the original team set.
         Not guaranteed to change, so this test may fail. (~(1/3)^100 = 2e-48 chance of failing)
         """
-        priority_team_set, student_dict = create_new_priority_team_set(3, 9)
-        priorities = [TestPriority()]
+        for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
+            priority_team_set, student_dict = create_new_priority_team_set(3, 9)
+            priorities = [StudentListPriority([1, 2])]
 
-        for _ in range(100):
-            mutated_team_set = mutate_robinhood(
-                priority_team_set.clone(), priorities, student_dict
+            for _ in range(100):
+                mutated_team_set = mutate_func(
+                    priority_team_set.clone(), priorities, student_dict
+                )
+                if not equal_priority_team_sets(priority_team_set, mutated_team_set):
+                    return
+
+            self.assertTrue(
+                False,
+                "The mutated team set should be different from the original team set. NOTE: This test may fail because the mutated team set is not guaranteed to change.",
             )
-            if not equal_priority_team_sets(priority_team_set, mutated_team_set):
-                return
-
-        self.assertTrue(
-            False,
-            "The mutated team set should be different from the original team set. NOTE: This test may fail because the mutated team set is not guaranteed to change.",
-        )
 
     def test_mutate_robinhood__does_not_change_locked_teams(self):
         """
         Locked teams should not change
         """
-        priority_team_set, student_dict = create_new_priority_team_set(3, 9)
-        priorities = [TestPriority()]
-        priority_team_set.priority_teams[0].team.is_locked = True
 
-        mutated_team_set = mutate_robinhood(priority_team_set, priorities, student_dict)
+        for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
+            priority_team_set, student_dict = create_new_priority_team_set(3, 9)
+            priorities = [StudentListPriority([1, 2])]
+            priority_team_set.priority_teams[0].team.is_locked = True
 
-        self.assertEqual(
-            get_priority_team(0, priority_team_set).student_ids,
-            get_priority_team(0, mutated_team_set).student_ids,
-            "Locked teams should not change",
-        )
+            mutated_team_set = mutate_func(priority_team_set, priorities, student_dict)
+
+            self.assertEqual(
+                get_priority_team(0, priority_team_set).student_ids,
+                get_priority_team(0, mutated_team_set).student_ids,
+                "Locked teams should not change",
+            )
 
     def test_mutate_robinhood__does_not_make_team_set_worse(self):
         """
         The score of the mutated team set should be at least as good as the original team set
         """
-        priority_team_set, student_dict = create_new_priority_team_set(3, 9)
-        priorities = [TestPriority()]
+        for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
+            priority_team_set, student_dict = create_new_priority_team_set(3, 9)
+            priorities = [StudentListPriority([1, 2])]
 
-        mutated_team_set = mutate_robinhood(priority_team_set, priorities, student_dict)
+            mutated_team_set = mutate_func(priority_team_set, priorities, student_dict)
 
-        # Reset the scores to force them to be recalculated
-        priority_team_set.score = None
-        mutated_team_set.score = None
+            # Reset the scores to force them to be recalculated
+            priority_team_set.score = None
+            mutated_team_set.score = None
 
-        self.assertGreaterEqual(
-            mutated_team_set.calculate_score(priorities, student_dict),
-            priority_team_set.calculate_score(priorities, student_dict),
-            "The score of the mutated team set should be at least as good as the original team set",
-        )
+            self.assertGreaterEqual(
+                mutated_team_set.calculate_score(priorities, student_dict),
+                priority_team_set.calculate_score(priorities, student_dict),
+                "The score of the mutated team set should be at least as good as the original team set",
+            )
 
-        # Also try this when the original team set is optimal
-        priority_team_set, student_dict = create_new_priority_team_set(3, 9)
-        priority_team_set.priority_teams[0].student_ids = [0, 1, 2]
-        priority_team_set.priority_teams[1].student_ids = [3, 4, 5]
-        priority_team_set.priority_teams[2].student_ids = [6, 7, 8]
+            # Also try this when the original team set is optimal
+            priority_team_set, student_dict = create_new_priority_team_set(3, 9)
+            priority_team_set.priority_teams[0].student_ids = [0, 1, 2]
+            priority_team_set.priority_teams[1].student_ids = [3, 4, 5]
+            priority_team_set.priority_teams[2].student_ids = [6, 7, 8]
 
-        mutated_team_set = mutate_robinhood(priority_team_set, priorities, student_dict)
+            mutated_team_set = mutate_func(priority_team_set, priorities, student_dict)
 
-        # Reset the scores to force them to be recalculated
-        priority_team_set.score = None
-        mutated_team_set.score = None
+            # Reset the scores to force them to be recalculated
+            priority_team_set.score = None
+            mutated_team_set.score = None
 
-        self.assertGreaterEqual(
-            mutated_team_set.calculate_score(priorities, student_dict),
-            priority_team_set.calculate_score(priorities, student_dict),
-            "The score of the mutated team set should be at least as good as the original team set",
-        )
+            self.assertGreaterEqual(
+                mutated_team_set.calculate_score(priorities, student_dict),
+                priority_team_set.calculate_score(priorities, student_dict),
+                "The score of the mutated team set should be at least as good as the original team set",
+            )
 
     def test_mutate_robinhood__all_students_in_mutated_team_set(self):
         """
         All students in the original team set should be in the mutated team set
         """
+        for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
+            priority_team_set, student_dict = create_new_priority_team_set(3, 9)
+            priorities = [StudentListPriority([1, 2])]
+
+            mutated_team_set = mutate_robinhood(
+                priority_team_set, priorities, student_dict
+            )
+
+            # Count the number of students in the original team set that are not in the mutated team set
+            all_students = [
+                student.id
+                for priority_team in priority_team_set.priority_teams
+                for student in priority_team.team.students
+            ]
+
+            self.assertEqual(
+                len(all_students),
+                9,
+                "There should be the same number of students in the mutated team set as in the original team set",
+            )
+
+            missing_students = 0
+            for i in range(9):
+                if i not in all_students:
+                    missing_students += 1
+
+            self.assertEqual(
+                missing_students, 0, "Not all students are in the mutated team set"
+            )
+
+    def test_mutate_robinhood__returns_PriorityTeamSet_object(self):
+        """
+        mutate_robinhood should return a PriorityTeamSet object
+        """
+        for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
+            priority_team_set, student_dict = create_new_priority_team_set(3, 9)
+            priorities = [StudentListPriority([1, 2])]
+
+            mutated_team_set = mutate_func(priority_team_set, priorities, student_dict)
+
+            self.assertIsInstance(
+                mutated_team_set,
+                PriorityTeamSet,
+                "mutate_robinhood should return a PriorityTeamSet object",
+            )
+
+    def test_mutate_robinhood_holistic__changes_only_min_and_max_scoring_teams(self):
         priority_team_set, student_dict = create_new_priority_team_set(3, 9)
-        priorities = [TestPriority()]
-
-        mutated_team_set = mutate_robinhood(priority_team_set, priorities, student_dict)
-
-        # Count the number of students in the original team set that are not in the mutated team set
-        all_students = [
-            student.id
-            for priority_team in priority_team_set.priority_teams
-            for student in priority_team.team.students
+        # This list of priorities make it so that the teams start with an identifiable order to their scores and can be improved when running mutate_robinhood_holistic
+        priorities = [
+            StudentListPriority([1, 7]),
+            StudentListPriority([0]),
+            StudentListPriority([4, 8]),
         ]
 
-        assert len(all_students) == 9
+        # Find the min and max scoring teams
+        team_scores: List[Tuple[PriorityTeam, int]] = []
+        for team in priority_team_set.priority_teams:
+            team_scores.append((team, utils.score(team, priorities, student_dict)))
 
-        missing_students = 0
-        for i in range(9):
-            if i not in all_students:
-                missing_students += 1
+        min_scoring_team: int = min(team_scores, key=lambda x: x[1])[0].team.id
+        max_scoring_team: int = max(team_scores, key=lambda x: x[1])[0].team.id
+        other_team: int = (
+            {0, 1, 2}.difference({min_scoring_team, max_scoring_team}).pop()
+        )
 
+        mutated_team_set = mutate_robinhood_holistic(
+            priority_team_set.clone(), priorities, student_dict
+        )
+
+        # check that the min and max scoring teams have changed
+        self.assertNotEqual(
+            get_priority_team(min_scoring_team, priority_team_set).student_ids,
+            get_priority_team(min_scoring_team, mutated_team_set).student_ids,
+            "The min scoring team should change",
+        )
+        self.assertNotEqual(
+            get_priority_team(max_scoring_team, priority_team_set).student_ids,
+            get_priority_team(max_scoring_team, mutated_team_set).student_ids,
+            "The max scoring team should change",
+        )
+
+        # Check that the other team has not changed
         self.assertEqual(
-            missing_students, 0, "Not all students are in the mutated team set"
+            get_priority_team(other_team, priority_team_set).student_ids,
+            get_priority_team(other_team, mutated_team_set).student_ids,
+            "The other team should not change",
         )
