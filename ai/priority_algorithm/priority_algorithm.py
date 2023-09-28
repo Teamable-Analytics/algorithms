@@ -2,7 +2,7 @@ import time
 from typing import Dict, List, Literal
 
 from ai.priority_algorithm.interfaces import Priority
-from ai.priority_algorithm.mutations.local_max import mutate_local_max
+from ai.priority_algorithm.mutations.local_max import mutate_local_max, mutate_local_max_epsilon
 from ai.priority_algorithm.mutations.random_swap import mutate_random_swap
 from ai.priority_algorithm.mutations.robinhood import mutate_robinhood
 from ai.priority_algorithm.priority import TokenizationPriority
@@ -150,7 +150,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         """
         Mutate a single teamset into child teamsets
         """
-        algorithm = 1
+        algorithm = 4
         cloned_team_sets = [
             team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)
         ]
@@ -176,9 +176,11 @@ class PriorityAlgorithm(WeightAlgorithm):
             ]
         elif algorithm == 4:
             return [
-                mutate_random_swap(cloned_team_sets[0]),
+                mutate_local_max_epsilon(
+                    cloned_team_sets[0], self.priorities, self.student_dict, 0.05
+                ),
                 *[
-                    mutate_local_max_epsilon(cloned_team_set, self.priorities, self.student_dict, 0.05)
+                    mutate_random_swap(cloned_team_set)
                     for cloned_team_set in cloned_team_sets[1:]
                 ],
             ]
