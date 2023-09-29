@@ -55,6 +55,11 @@ class Simulation:
                 "Either num_teams OR a project initial_teams_provider must be specified."
             )
 
+        if len(self.metrics) < 1:
+            raise ValueError(
+                "At least one metric must be specified for a simulation."
+            )
+
         self.run_outputs = defaultdict(dict)
         self.algorithm_options: Dict[AlgorithmType, Union[None, AlgorithmOptions]] = {}
         for algorithm_type in self.algorithm_types:
