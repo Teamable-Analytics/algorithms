@@ -53,7 +53,7 @@ class Simulation:
             raise ValueError(
                 "Either num_teams OR a project initial_teams_provider must be specified."
             )
-        if len(self.metrics) < 1:
+        if not self.metrics:
             raise ValueError("At least one metric must be specified for a simulation.")
 
         self.run_outputs = defaultdict(dict)
