@@ -92,6 +92,8 @@ class Simulation:
                     end_time - start_time
                 )
                 for metric in self.metrics:
+                    if algorithm_type is AlgorithmType.PRIORITY:
+                        print("hello")
                     self.run_outputs[algorithm_type][metric.name].append(
                         metric.calculate(team_set)
                     )
