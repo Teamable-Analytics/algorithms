@@ -95,9 +95,11 @@ def mutate_robinhood_holistic(
     if not valid_robinhood_arguments(priority_team_set, priorities, student_dict):
         return priority_team_set
 
+    cloned_priority_team_set: PriorityTeamSet = priority_team_set.clone()
+
     available_priority_teams = [
         priority_team
-        for priority_team in priority_team_set.priority_teams
+        for priority_team in cloned_priority_team_set.priority_teams
         if not priority_team.team.is_locked
     ]
 
