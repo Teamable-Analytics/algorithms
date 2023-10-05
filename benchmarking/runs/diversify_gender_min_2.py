@@ -7,20 +7,13 @@ from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
-from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from models.enums import ScenarioAttribute, Gender
+from api.models.enums import ScenarioAttribute, Gender
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
 from benchmarking.evaluations.metrics.average_gini_index import (
     AverageGiniIndex,
-)
-from benchmarking.evaluations.metrics.num_requirements_satisfied import (
-    NumRequirementsSatisfied,
-)
-from benchmarking.evaluations.metrics.num_teams_meeting_requirements import (
-    NumTeamsMeetingRequirements,
 )
 from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
     DiversifyGenderMin2Female,

@@ -1,11 +1,9 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from typing import List, Dict, Literal, Union, Tuple
+from typing import List, Union, Tuple
 
-from models.enums import AttributeValueEnum
-from models.project import Project
-from models.student import Student
-from models.team import Team, TeamShell
+from api.models.enums import AttributeValueEnum
+from api.models.student import Student
+from api.models.team import Team
 
 AttributeRangeConfig = Union[
     List[int],
