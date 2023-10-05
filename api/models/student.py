@@ -22,3 +22,14 @@ class Student:
             return False
         self.team = team
         return True
+
+    def to_json(self):
+        attributes_json = {}
+        for key, value in self.attributes.items():
+            attributes_json[str(key)] = value
+        return {
+            "_id": self._id,
+            "name": self.name,
+            "attributes": attributes_json,
+            "preferences": self.preferences,
+        }

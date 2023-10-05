@@ -42,3 +42,8 @@ class Team(TeamShell):
             return False
         self.students.append(student)
         return True
+
+    def to_json(self):
+        return {
+            "students": [student.to_json() for student in self.students],
+        }

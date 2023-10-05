@@ -7,6 +7,9 @@ class Relationship(Enum):
     DEFAULT = 0
     ENEMY = 1.1
 
+    def to_json(self):
+        return self.value
+
 
 class RelationshipBehaviour(Enum):
     ENFORCE = "enforce"

@@ -1,4 +1,5 @@
 import copy
+import json
 import statistics
 import time
 from collections import defaultdict
@@ -96,6 +97,11 @@ class Simulation:
                     self.run_outputs[algorithm_type][metric.name].append(
                         metric.calculate(team_set)
                     )
+                print(team_set.teams[0].students[0].attributes)
+                print(json.dumps(team_set.teams[0].students[0]))
+                json_string = json.dumps(team_set.teams, indent=4)
+                with open(f"{algorithm_type}-{self.student_provider.num_students}-students.json", "w") as json_file:
+                    json_file.write(json_string)
 
         return self.run_outputs
 
