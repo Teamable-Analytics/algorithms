@@ -3,7 +3,10 @@ from typing import List, Dict, Tuple
 
 from api.ai.priority_algorithm.interfaces import Priority
 from api.ai.priority_algorithm.mutations import utils
-from api.ai.priority_algorithm.mutations.robinhood import mutate_robinhood, mutate_robinhood_holistic
+from api.ai.priority_algorithm.mutations.robinhood import (
+    mutate_robinhood,
+    mutate_robinhood_holistic,
+)
 from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
 from api.models.student import Student
 from api.models.team import Team
