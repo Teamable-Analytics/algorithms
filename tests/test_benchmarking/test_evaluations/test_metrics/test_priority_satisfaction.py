@@ -1,9 +1,9 @@
 import unittest
 
+from api.models.student import Student
+from api.models.team import Team
+from api.models.team_set import TeamSet
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from models.student import Student
-from models.team import Team
-from models.team_set import TeamSet
 from tests.test_ai.test_priority_algorithm.test_mutations.test_local_max import (
     JohnPriority,
     EvenPriority,

@@ -1,9 +1,9 @@
 from typing import List
-import numpy as np
-from ai.priority_algorithm.interfaces import Priority
+
+from api.ai.priority_algorithm.interfaces import Priority
+from api.models.team import Team
+from api.models.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
-from models.team import Team
-from models.team_set import TeamSet
 
 
 class PrioritySatisfaction(TeamSetMetric):
@@ -22,14 +22,12 @@ class PrioritySatisfaction(TeamSetMetric):
             if self.is_linear
             else self.computer_exponential_weights()
         )
-        return sum(
-            sum(
-                [
-                    np.multiply(weights, self.priorities_satisfied(team))
-                    for team in team_set.teams
-                ]
-            )
-        )
+        total_score = 0
+        for team in team_set.teams:
+            priorities = self.priorities_satisfied(team)
+            product = sum(w * p for w, p in zip(weights, priorities))
+            total_score += product
+        return total_score
 
     def compute_linear_weights(self) -> List[int]:
         k = len(self.priorities)
