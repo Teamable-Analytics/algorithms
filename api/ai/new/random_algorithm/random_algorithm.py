@@ -1,7 +1,7 @@
 from random import randint
 from typing import List, Tuple, Optional, cast
 
-from ai.new.interfaces.algorithm import Algorithm, ChooseAlgorithm
+from ai.new.interfaces.algorithm import ChooseAlgorithm
 from ai.new.interfaces.algorithm_options import RandomAlgorithmOptions
 from ai.new.utils import generate_with_choose
 from models.student import Student

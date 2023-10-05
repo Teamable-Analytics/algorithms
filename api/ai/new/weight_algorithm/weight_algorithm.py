@@ -1,4 +1,3 @@
-from random import randint
 from typing import List, Tuple, Optional, cast
 
 from ai.new.interfaces.algorithm import ChooseAlgorithm

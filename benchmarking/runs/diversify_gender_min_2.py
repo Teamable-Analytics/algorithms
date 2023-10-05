@@ -15,12 +15,6 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 from benchmarking.evaluations.metrics.average_gini_index import (
     AverageGiniIndex,
 )
-from benchmarking.evaluations.metrics.num_requirements_satisfied import (
-    NumRequirementsSatisfied,
-)
-from benchmarking.evaluations.metrics.num_teams_meeting_requirements import (
-    NumTeamsMeetingRequirements,
-)
 from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
     DiversifyGenderMin2Female,
 )

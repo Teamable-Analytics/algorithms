@@ -19,11 +19,11 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from api.views import StudentViewSet
+from api.views import GenerateTeamsViewSet
 
 router = DefaultRouter()
 
-router.register(r"student", StudentViewSet, basename="student")
+router.register(r"generate", GenerateTeamsViewSet, basename="generate_teams")
 
 urlpatterns = [
     path("admin/", admin.site.urls),

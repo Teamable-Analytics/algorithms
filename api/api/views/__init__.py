@@ -1,1 +1,1 @@
-from .student import StudentViewSet
+from .generate_teams import GenerateTeamsViewSet

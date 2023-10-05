@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from typing import List
 
-from models.enums import TokenizationConstraintDirection
 from models.team_set import TeamSet
 
 
