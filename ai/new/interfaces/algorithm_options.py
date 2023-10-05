@@ -61,3 +61,9 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
 class SocialAlgorithmOptions(WeightAlgorithmOptions):
     def validate(self):
         super().validate()
+
+
+@dataclass
+class PathGaspAlgorithmOptions(AlgorithmOptions):
+    def validate(self):
+        super().validate()
