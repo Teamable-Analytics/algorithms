@@ -1,6 +1,6 @@
 from typing import Dict, Any
 
-from models.team import Team
+from api.models.team import Team
 
 
 class TeamSerializer:

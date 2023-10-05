@@ -2,13 +2,13 @@ import copy
 from dataclasses import dataclass
 from typing import List, Dict
 
-from ai.priority_algorithm.interfaces import Priority
-from ai.priority_algorithm.scoring import (
+from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.priority_algorithm.scoring import (
     get_priority_satisfaction_array,
     get_multipliers,
 )
-from models.student import Student
-from models.team import Team
+from api.models.student import Student
+from api.models.team import Team
 
 """
 These dataclasses are used only in the priority algorithm.

@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
 
-from models.enums import Relationship
+from api.models.enums import Relationship
 
 
 @dataclass

@@ -1,12 +1,12 @@
 from random import randint
 from typing import List, Tuple, Optional, cast
 
-from ai.new.interfaces.algorithm import ChooseAlgorithm
-from ai.new.interfaces.algorithm_options import RandomAlgorithmOptions
-from ai.new.utils import generate_with_choose
-from models.student import Student
-from models.team import Team
-from models.team_set import TeamSet
+from api.ai.new.interfaces.algorithm import ChooseAlgorithm
+from api.ai.new.interfaces.algorithm_options import RandomAlgorithmOptions
+from api.ai.new.utils import generate_with_choose
+from api.models.student import Student
+from api.models.team import Team
+from api.models.team_set import TeamSet
 
 
 class RandomAlgorithm(ChooseAlgorithm):

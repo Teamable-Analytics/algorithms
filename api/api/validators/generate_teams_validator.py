@@ -1,4 +1,4 @@
-from api.validators.interface import Validator
+from api.api.validators.interface import Validator
 
 
 class GenerateTeamsValidator(Validator):
@@ -27,4 +27,3 @@ class GenerateTeamsValidator(Validator):
 
     def validate_team_options(self):
         pass
-

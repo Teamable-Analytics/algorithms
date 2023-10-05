@@ -1,16 +1,16 @@
 import time
 from typing import Dict, List, Literal
 
-from ai.priority_algorithm.interfaces import Priority
-from ai.priority_algorithm.mutations.local_max import mutate_local_max
-from ai.priority_algorithm.mutations.random_swap import mutate_random_swap
-from ai.priority_algorithm.mutations.robinhood import mutate_robinhood
-from ai.priority_algorithm.priority import TokenizationPriority
-from ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.priority_algorithm.mutations.local_max import mutate_local_max
+from api.ai.priority_algorithm.mutations.random_swap import mutate_random_swap
+from api.ai.priority_algorithm.mutations.robinhood import mutate_robinhood
+from api.ai.priority_algorithm.priority import TokenizationPriority
+from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
 from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
-from models.enums import DiversifyType, TokenizationConstraintDirection
-from models.student import Student
-from models.team import Team
+from api.models.enums import DiversifyType, TokenizationConstraintDirection
+from api.models.student import Student
+from api.models.team import Team
 from old.team_formation.app.team_generator.algorithm.algorithms import WeightAlgorithm
 from old.team_formation.app.team_generator.student import Student as AlgorithmStudent
 from old.team_formation.app.team_generator.team import Team as AlgorithmTeam

@@ -1,11 +1,11 @@
 from typing import Dict, Any, List
 from dataclasses import dataclass, field
 
-from ai.new.interfaces.algorithm_options import AlgorithmOptions
-from ai.new.interfaces.team_generation_options import TeamGenerationOptions
-from models.enums import AlgorithmType
-from models.project import Project
-from models.student import Student
+from api.ai.new.interfaces.algorithm_options import AlgorithmOptions
+from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
+from api.models.enums import AlgorithmType
+from api.models.project import Project
+from api.models.student import Student
 
 
 @dataclass
@@ -38,4 +38,3 @@ class GenerateTeamsDataLoader:
 
     def _get_team_generation_options(self) -> TeamGenerationOptions:
         pass
-

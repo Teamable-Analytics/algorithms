@@ -1,6 +1,6 @@
 from typing import Dict, Any
 
-from models.team_set import TeamSet
+from api.models.team_set import TeamSet
 
 
 class TeamSetSerializer:
@@ -14,4 +14,3 @@ class TeamSetSerializer:
     @property
     def data(self) -> Dict[str, Any]:
         pass
-

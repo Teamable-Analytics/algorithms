@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import List, Union, Tuple
 
-from models.enums import AttributeValueEnum
-from models.student import Student
-from models.team import Team
+from api.models.enums import AttributeValueEnum
+from api.models.student import Student
+from api.models.team import Team
 
 AttributeRangeConfig = Union[
     List[int],

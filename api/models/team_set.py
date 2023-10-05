@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from models.team import Team
+from api.models.team import Team
 
 
 @dataclass

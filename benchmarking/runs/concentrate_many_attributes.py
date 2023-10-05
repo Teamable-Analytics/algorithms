@@ -16,7 +16,7 @@ from benchmarking.evaluations.scenarios.concentrate_multiple_attributes import (
     ConcentrateMultipleAttributes,
 )
 from benchmarking.simulation.simulation import Simulation
-from models.enums import ScenarioAttribute, Gender, Race
+from api.models.enums import ScenarioAttribute, Gender, Race
 
 
 def concentrate_many_attributes(num_trials: int = 10):

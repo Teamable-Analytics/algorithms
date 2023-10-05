@@ -2,7 +2,7 @@ from typing import List
 
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
-from models.enums import DiversifyType, ScenarioAttribute
+from api.models.enums import DiversifyType, ScenarioAttribute
 
 
 class ConcentrateGPA(Scenario):

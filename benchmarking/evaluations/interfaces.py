@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from models.team_set import TeamSet
+from api.models.team_set import TeamSet
 
 
 class Goal(ABC):

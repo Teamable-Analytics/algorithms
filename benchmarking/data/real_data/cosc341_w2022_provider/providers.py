@@ -1,7 +1,7 @@
 from typing import List
 
-from models.student import Student
-from models.team import Team
+from api.models.student import Student
+from api.models.team import Team
 from benchmarking.data.interfaces import (
     StudentProvider,
     InitialTeamsProvider,

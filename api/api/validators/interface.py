@@ -3,7 +3,6 @@ from typing import Any, Dict
 
 
 class Validator(ABC):
-
     def __init__(self, data: Dict[str, Any]):
         self.data = data
 

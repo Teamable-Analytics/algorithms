@@ -2,17 +2,17 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 
-from api.serializers.team_set import TeamSetSerializer
-from api.utils.generate_teams import generate_teams
-from api.utils.generate_teams_data_loader import GenerateTeamsDataLoader
-from api.utils.response_with_metadata import ResponseWithMetadata
-from api.validators.generate_teams_validator import GenerateTeamsValidator
+from api.api.serializers.team_set import TeamSetSerializer
+from api.api.utils.generate_teams import generate_teams
+from api.api.utils.generate_teams_data_loader import GenerateTeamsDataLoader
+from api.api.utils.response_with_metadata import ResponseWithMetadata
+from api.api.validators.generate_teams_validator import GenerateTeamsValidator
 
 
 class GenerateTeamsViewSet(viewsets.GenericViewSet):
     pass
 
-    @action(url_path='teams', detail=False, methods=["POST"])
+    @action(url_path="teams", detail=False, methods=["POST"])
     def generate_teams(self, request):
         """
         Steps to do this:
@@ -40,4 +40,6 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
         serialized_team_set = JSONRenderer().render(TeamSetSerializer(team_set).data)
 
         print(request_data)
-        return ResponseWithMetadata(data_label="teams", data=serialized_team_set, status=200)
+        return ResponseWithMetadata(
+            data_label="teams", data=serialized_team_set, status=200
+        )

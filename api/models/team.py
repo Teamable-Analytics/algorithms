@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from models.project import ProjectRequirement
-from models.student import Student
+from api.models.project import ProjectRequirement
+from api.models.student import Student
 
 
 @dataclass

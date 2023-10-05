@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import List
 
-from ai.priority_algorithm.interfaces import Priority
-from models.enums import DiversifyType, TokenizationConstraintDirection
-from models.student import Student
+from api.ai.priority_algorithm.interfaces import Priority
+from api.models.enums import DiversifyType, TokenizationConstraintDirection
+from api.models.student import Student
 
 
 @dataclass

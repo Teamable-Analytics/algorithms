@@ -14,7 +14,7 @@ from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from benchmarking.evaluations.scenarios.concentrate_gpa import ConcentrateGPA
 from benchmarking.simulation.simulation import Simulation
-from models.enums import ScenarioAttribute, Gpa
+from api.models.enums import ScenarioAttribute, Gpa
 
 
 def concentrate_gpa(num_trials: int = 10):

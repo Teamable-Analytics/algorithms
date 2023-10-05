@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import List
 from schema import Schema, SchemaError
-from models.enums import RelationshipBehaviour
+from api.models.enums import RelationshipBehaviour
 
 
 class AlgorithmOptions(ABC):

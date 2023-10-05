@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from models.student import Student
+from api.models.student import Student
 
 
 class Priority(ABC):

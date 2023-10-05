@@ -1,10 +1,10 @@
 import itertools
 from typing import List, Dict
 
-from ai.priority_algorithm.interfaces import Priority
-from ai.priority_algorithm.mutations.utils import score
-from ai.priority_algorithm.priority_teamset import PriorityTeamSet
-from models.student import Student
+from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.priority_algorithm.mutations.utils import score
+from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet
+from api.models.student import Student
 
 
 def mutate_local_max(
