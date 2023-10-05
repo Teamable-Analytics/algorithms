@@ -17,10 +17,19 @@ class PrioritySatisfaction(TeamSetMetric):
         self.is_linear = is_linear
 
     def calculate(self, team_set: TeamSet) -> float:
-        weights = self.compute_linear_weights() if self.is_linear else self.computer_exponential_weights()
-        return sum([
-            np.multiply(weights, self.priorities_satisfied(team)) for team in TeamSet.teams
-        ])
+        weights = (
+            self.compute_linear_weights()
+            if self.is_linear
+            else self.computer_exponential_weights()
+        )
+        return sum(
+            sum(
+                [
+                    np.multiply(weights, self.priorities_satisfied(team))
+                    for team in team_set.teams
+                ]
+            )
+        )
 
     def compute_linear_weights(self) -> List[int]:
         k = len(self.priorities)
@@ -29,9 +38,12 @@ class PrioritySatisfaction(TeamSetMetric):
 
     def computer_exponential_weights(self) -> List[float]:
         k = len(self.priorities)
-        weights = [(2 ** (k - 1)) / ((2 ** k) - 1) for i in range(1, k + 1)]
+        weights = [(2 ** (k - i)) / ((2**k) - 1) for i in range(1, k + 1)]
         return weights
 
     def priorities_satisfied(self, team: Team) -> List[int]:
-        satisfied = [1 if priority.satisfied_by(team.students) else 0 for priority in self.priorities]
+        satisfied = [
+            1 if priority.satisfied_by(team.students) else 0
+            for priority in self.priorities
+        ]
         return satisfied
