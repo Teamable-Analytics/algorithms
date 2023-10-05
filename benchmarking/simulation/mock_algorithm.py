@@ -1,6 +1,6 @@
 from typing import List
 
-from ai.priority_algorithm.priority_algorithm import (
+from api.ai.priority_algorithm.priority_algorithm import (
     PriorityAlgorithm as PriorityAlgorithmNew,
 )
 from benchmarking.evaluations.enums import PreferenceSubject
@@ -12,12 +12,12 @@ from benchmarking.evaluations.goals import (
 )
 from benchmarking.evaluations.interfaces import Scenario
 from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
-from models.enums import (
+from api.models.enums import (
     AlgorithmType,
     DiversifyType,
 )
-from models.team import Team
-from models.team_set import TeamSet
+from api.models.team import Team
+from api.models.team_set import TeamSet
 from old.team_formation.app.team_generator.algorithm.algorithms import (
     AlgorithmOptions,
     RandomAlgorithm,

@@ -1,11 +1,11 @@
 import unittest
 from typing import List
 
-from ai.priority_algorithm.interfaces import Priority
-from ai.priority_algorithm.mutations import score
-from ai.priority_algorithm import PriorityTeamSet, PriorityTeam
-from models.student import Student
-from models.team import Team
+from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.priority_algorithm.mutations.utils import score
+from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from api.models.student import Student
+from api.models.team import Team
 from tests.test_ai.test_priority_algorithm.test_mutations.test_local_max import (
     EvenPriority,
 )

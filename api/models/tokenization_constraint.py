@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from models.enums import TokenizationConstraintDirection
+from api.models.enums import TokenizationConstraintDirection
 
 
 @dataclass

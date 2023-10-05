@@ -2,11 +2,11 @@ import unittest
 from dataclasses import dataclass
 from typing import List
 
-from ai.priority_algorithm.interfaces import Priority
-from ai.priority_algorithm.mutations import mutate_local_max
-from ai.priority_algorithm import PriorityTeamSet, PriorityTeam
-from models.student import Student
-from models.team import Team
+from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.priority_algorithm.mutations import mutate_local_max
+from api.ai.priority_algorithm import PriorityTeamSet, PriorityTeam
+from api.models.student import Student
+from api.models.team import Team
 
 
 @dataclass

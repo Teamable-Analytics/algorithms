@@ -5,7 +5,7 @@ from collections import defaultdict
 from typing import List, Dict, Union
 
 from benchmarking.simulation.mock_algorithm import MockAlgorithm
-from models.enums import AlgorithmType
+from api.models.enums import AlgorithmType
 from benchmarking.data.interfaces import (
     StudentProvider,
     InitialTeamsProvider,
