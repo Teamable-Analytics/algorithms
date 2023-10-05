@@ -126,7 +126,7 @@ def diversify_gender_min_2(num_trials: int = 10):
         LineGraphMetadata(
             x_label="Class size",
             y_label="Run time (seconds)",
-            title="Diversity Gender With Min of Two Runtimes",
+            title="Diversify Gender With Min of Two Runtimes",
             data=list(graph_runtime_dict.values()),
             description=None,
             y_lim=None,
@@ -138,7 +138,7 @@ def diversify_gender_min_2(num_trials: int = 10):
         LineGraphMetadata(
             x_label="Class size",
             y_label="Average Gini Index",
-            title="Diversity Gender With Min of Two Average Gini Index",
+            title="Diversify Gender With Min of Two Average Gini Index",
             data=list(graph_avg_gini_dict.values()),
             description=None,
             y_lim=None,
@@ -150,7 +150,7 @@ def diversify_gender_min_2(num_trials: int = 10):
         LineGraphMetadata(
             x_label="Class size",
             y_label="Minimum Gini Index",
-            title="Diversity Gender With Min of Two Minimum Gini",
+            title="Diversify Gender With Min of Two Minimum Gini",
             data=list(graph_min_gini_dict.values()),
             description=None,
             y_lim=None,
@@ -162,7 +162,7 @@ def diversify_gender_min_2(num_trials: int = 10):
         LineGraphMetadata(
             x_label="Class size",
             y_label="Maximum Gini Index",
-            title="Diversity Gender With Min of Two Max Gini",
+            title="Diversify Gender With Min of Two Max Gini",
             data=list(graph_max_gini_dict.values()),
             description=None,
             y_lim=None,

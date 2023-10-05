@@ -1,3 +1,4 @@
+import random
 import unittest
 from typing import List, Dict, Tuple
 
@@ -38,8 +39,13 @@ def equal_priority_team_sets(a: PriorityTeamSet, b: PriorityTeamSet) -> bool:
     for priority_team_a, priority_team_b in zip(a.priority_teams, b.priority_teams):
         if priority_team_a.team.id != priority_team_b.team.id:
             return False
-        if not set(priority_team_a.student_ids).symmetric_difference(
-            set(priority_team_b.student_ids)
+        if (
+            len(
+                set(priority_team_a.student_ids).symmetric_difference(
+                    set(priority_team_b.student_ids)
+                )
+            )
+            != 0
         ):
             return False
     return True
@@ -114,19 +120,24 @@ class TestMutateRobinhood(unittest.TestCase):
         The mutated team set should be different from the original team set.
         Not guaranteed to change, so this test may fail. (~(1/3)^100 = 2e-48 chance of failing)
         """
-        for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
+        functions = [mutate_robinhood, mutate_robinhood_holistic]
+        for mutate_func in functions:
             priority_team_set, student_dict = create_new_priority_team_set(3, 9)
             priorities = [StudentListPriority([1, 2])]
-
+            result = False
             for _ in range(100):
+                random.shuffle(
+                    priority_team_set.priority_teams
+                )  # Randomize the order so that deterministic algorithms don't get stuck
                 mutated_team_set = mutate_func(
                     priority_team_set.clone(), priorities, student_dict
                 )
                 if not equal_priority_team_sets(priority_team_set, mutated_team_set):
-                    return
+                    result = True
+                    break
 
             self.assertTrue(
-                False,
+                result,
                 "The mutated team set should be different from the original team set. NOTE: This test may fail because the mutated team set is not guaranteed to change.",
             )
 

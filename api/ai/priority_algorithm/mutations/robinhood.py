@@ -95,9 +95,11 @@ def mutate_robinhood_holistic(
     if not valid_robinhood_arguments(priority_team_set, priorities, student_dict):
         return priority_team_set
 
+    cloned_priority_team_set: PriorityTeamSet = priority_team_set.clone()
+
     available_priority_teams = [
         priority_team
-        for priority_team in priority_team_set.priority_teams
+        for priority_team in cloned_priority_team_set.priority_teams
         if not priority_team.team.is_locked
     ]
 
@@ -108,11 +110,12 @@ def mutate_robinhood_holistic(
 
     # Find the min and max scores
     min_scoring_team: Tuple[PriorityTeam, int] = min(team_scores, key=lambda x: x[1])
+    team_scores.remove(min_scoring_team)
     max_scoring_team: Tuple[PriorityTeam, int] = max(team_scores, key=lambda x: x[1])
 
     # Perform local max portion of robinhood
     team_set, score = perform_local_max_portion_of_robinhood(
-        priority_team_set,
+        cloned_priority_team_set,
         priorities,
         student_dict,
         min_scoring_team[0],
@@ -142,7 +145,9 @@ def perform_local_max_portion_of_robinhood(
     )
 
     # List of all students in the two teams
-    students: List[int] = selected_team_a.student_ids + selected_team_b.student_ids
+    students: List[int] = list(selected_team_a.student_ids) + list(
+        selected_team_b.student_ids
+    )
 
     # Generate all possible teams using the students from the two teams
     # Elements of this list are lists of student ids
@@ -153,7 +158,7 @@ def perform_local_max_portion_of_robinhood(
     # Calculate the score of each team
     for team in possible_teams:
         # Modify the cloned PriorityTeamSet to reflect the new team
-        selected_team_b.student_ids = team
+        selected_team_b.student_ids = list(team)
         selected_team_a.student_ids = [
             student_id for student_id in students if student_id not in team
         ]
