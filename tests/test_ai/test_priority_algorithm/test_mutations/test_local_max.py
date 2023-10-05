@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from typing import List
 
 from api.ai.priority_algorithm.interfaces import Priority
-from api.ai.priority_algorithm.mutations import mutate_local_max
-from api.ai.priority_algorithm import PriorityTeamSet, PriorityTeam
+from api.ai.priority_algorithm.mutations.local_max import mutate_local_max
+from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
 from api.models.student import Student
 from api.models.team import Team
 
