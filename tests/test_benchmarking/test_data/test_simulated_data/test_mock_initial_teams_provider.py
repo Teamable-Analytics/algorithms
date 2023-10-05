@@ -6,9 +6,9 @@ from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     team_shells_to_teams,
     MockInitialTeamsProviderSettings,
 )
-from models.enums import RequirementOperator
-from models.project import Project, ProjectRequirement
-from models.team import Team, TeamShell
+from api.models.enums import RequirementOperator
+from api.models.project import Project, ProjectRequirement
+from api.models.team import Team, TeamShell
 
 
 class TestMockInitialTeamsProvider(unittest.TestCase):
