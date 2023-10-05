@@ -4,7 +4,10 @@ from typing import Dict, List, Literal
 from api.ai.priority_algorithm.interfaces import Priority
 from api.ai.priority_algorithm.mutations.local_max import mutate_local_max
 from api.ai.priority_algorithm.mutations.random_swap import mutate_random_swap
-from api.ai.priority_algorithm.mutations.robinhood import mutate_robinhood
+from api.ai.priority_algorithm.mutations.robinhood import (
+    mutate_robinhood,
+    mutate_robinhood_holistic,
+)
 from api.ai.priority_algorithm.priority import TokenizationPriority
 from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
 from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
@@ -165,6 +168,13 @@ class PriorityAlgorithm(WeightAlgorithm):
                 for cloned_team_set in cloned_team_sets
             ]
         elif algorithm == 3:
+            return [
+                mutate_robinhood_holistic(
+                    cloned_team_set, self.priorities, self.student_dict
+                )
+                for cloned_team_set in cloned_team_sets
+            ]
+        elif algorithm == 4:
             return [
                 mutate_local_max(
                     cloned_team_sets[0], self.priorities, self.student_dict
