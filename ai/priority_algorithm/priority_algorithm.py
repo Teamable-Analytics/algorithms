@@ -127,7 +127,6 @@ class PriorityAlgorithm(WeightAlgorithm):
             )
             team_sets = team_sets[: self.MAX_KEEP]
             iteration += 1
-        print(f"Num iterations: {iteration}")
         return AlgorithmTranslator.teams_to_algorithm_teams(
             self.save_team_compositions_to_teams(team_sets[0])
         )
@@ -154,7 +153,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         """
         Mutate a single teamset into child teamsets
         """
-        algorithm = 2
+        algorithm = 1
         cloned_team_sets = [
             team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)
         ]
