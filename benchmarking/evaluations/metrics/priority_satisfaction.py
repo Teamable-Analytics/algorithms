@@ -27,11 +27,12 @@ class PrioritySatisfaction(TeamSetMetric):
             priorities = self.priorities_satisfied(team)
             product = sum(w * p for w, p in zip(weights, priorities))
             total_score += product
-        # Normalize the scores between 0 and 1 for easier comparison
+        # Normalize the scores between 0 and 1 for easier comparison by dividing by the num teams
+        total_score /= team_set.num_teams
         if self.is_linear:
-            total_score /= team_set.num_teams * sum(range(1, len(self.priorities) + 1))
-        else:
-            total_score /= team_set.num_teams
+            # Need to also divide by the maximum possible score for linear ordered weights as they do not sum to one
+            theoretical_max = sum(range(1, len(self.priorities) + 1))
+            total_score /= theoretical_max
         return total_score
 
     def compute_linear_weights(self) -> List[int]:
@@ -46,7 +47,6 @@ class PrioritySatisfaction(TeamSetMetric):
 
     def priorities_satisfied(self, team: Team) -> List[int]:
         satisfied = [
-            int(priority.satisfied_by(team.students))
-            for priority in self.priorities
+            int(priority.satisfied_by(team.students)) for priority in self.priorities
         ]
         return satisfied

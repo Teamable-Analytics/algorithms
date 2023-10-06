@@ -4,9 +4,9 @@ from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from tests.test_ai.test_priority_algorithm.test_mutations.test_local_max import (
-    JohnPriority,
+from tests.test_api.test_ai.test_priority_algorithm.test_mutations.test_local_max import (
     EvenPriority,
+    JohnPriority,
 )
 
 
@@ -57,8 +57,10 @@ class TestPrioritySatisfactionMetric(unittest.TestCase):
     def test_calculate__evaluates_metric_correctly(self):
         actual_calculate_value = self.priority_satisfaction.calculate(self.team_set)
         self.assertAlmostEqual(5 / 3 / 3, actual_calculate_value, delta=0.000001)
-        self.priority_satisfaction.is_linear = True
-        actual_calculate_value = self.priority_satisfaction.calculate(self.team_set)
+        priority_satisfaction_linear = PrioritySatisfaction(
+            priorities=[EvenPriority(), JohnPriority()], is_linear=True
+        )
+        actual_calculate_value = priority_satisfaction_linear.calculate(self.team_set)
         self.assertAlmostEqual(
             (2 + 2 + 1) / 3 / 3, actual_calculate_value, delta=0.000001
         )

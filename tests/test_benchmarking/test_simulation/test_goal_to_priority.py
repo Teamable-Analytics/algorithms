@@ -39,6 +39,7 @@ class TestGoalToPriority(unittest.TestCase):
                 ),
             ),
             WeightGoal(diversity_goal_weight=1),
+            DiversityGoal(DiversifyType.DIVERSIFY, ScenarioAttribute.MAJOR.value),
         ]
 
     def test_goal_to_priority__converts_goal_into_priority_correctly(self):
@@ -61,3 +62,4 @@ class TestGoalToPriority(unittest.TestCase):
         )
         self.assertEqual(expected_priority_2, priority_2)
         self.assertRaises(NotImplementedError, goal_to_priority, self.goals[2])
+        self.assertRaises(NotImplementedError, goal_to_priority, self.goals[3])
