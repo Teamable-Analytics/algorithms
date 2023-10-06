@@ -12,7 +12,7 @@ from tests.test_ai.test_priority_algorithm.test_mutations.test_local_max import 
 
 class TestPrioritySatisfactionMetric(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setUp(cls):
         students = [
             Student(_id=2, name="Steve"),
             Student(_id=4, name="John"),
@@ -57,3 +57,6 @@ class TestPrioritySatisfactionMetric(unittest.TestCase):
     def test_calculate__evaluates_metric_correctly(self):
         actual_calculate_value = self.priority_satisfaction.calculate(self.team_set)
         self.assertAlmostEqual(5 / 3 / 3, actual_calculate_value, delta=0.000001)
+        self.priority_satisfaction.is_linear = True
+        actual_calculate_value = self.priority_satisfaction.calculate(self.team_set)
+        self.assertAlmostEqual((2 + 2 + 1) / 3 / 3, actual_calculate_value, delta=0.000001)
