@@ -42,7 +42,6 @@ class TestGoalToPriority(unittest.TestCase):
         ]
 
     def test_goal_to_priority__converts_goal_into_priority_correctly(self):
-        print(self.goals)
         priority_1 = goal_to_priority(self.goals[0])
         priority_2 = goal_to_priority(self.goals[1])
         expected_priority_1 = TokenizationPriority(

@@ -46,7 +46,7 @@ class PrioritySatisfaction(TeamSetMetric):
 
     def priorities_satisfied(self, team: Team) -> List[int]:
         satisfied = [
-            1 if priority.satisfied_by(team.students) else 0
+            int(priority.satisfied_by(team.students))
             for priority in self.priorities
         ]
         return satisfied
