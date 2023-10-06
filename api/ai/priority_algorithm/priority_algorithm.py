@@ -25,7 +25,7 @@ class PriorityAlgorithm(WeightAlgorithm):
 
     MAX_KEEP: int = 3  # nodes
     MAX_SPREAD: int = 3  # nodes
-    MAX_ITERATE: int = 150  # times
+    MAX_ITERATE: int = 1500  # times
     MAX_TIME: int = 100  # seconds
 
     def __init__(self, *args, **kwargs):
@@ -153,7 +153,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         """
         Mutate a single teamset into child teamsets
         """
-        algorithm = 1
+        algorithm = 3
         cloned_team_sets = [
             team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)
         ]

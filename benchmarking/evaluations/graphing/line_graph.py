@@ -59,4 +59,4 @@ def line_graph(graph_data: LineGraphMetadata):
     make_space_above(ax)
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(f"{graph_data.title}.png")

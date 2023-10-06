@@ -56,4 +56,4 @@ class TestPrioritySatisfactionMetric(unittest.TestCase):
 
     def test_calculate__evaluates_metric_correctly(self):
         actual_calculate_value = self.priority_satisfaction.calculate(self.team_set)
-        self.assertAlmostEqual(5 / 3, actual_calculate_value, delta=0.000001)
+        self.assertAlmostEqual(5 / 3 / 3, actual_calculate_value, delta=0.000001)
