@@ -14,7 +14,7 @@ class Algorithm(ABC):
         self,
         algorithm_options: AlgorithmOptions,
         team_generation_options: TeamGenerationOptions,
-            algorithm_config: AlgorithmConfig = None,
+        algorithm_config: AlgorithmConfig = None,
     ):
         self.algorithm_options: AlgorithmOptions = algorithm_options
         self.team_generation_options: TeamGenerationOptions = team_generation_options

@@ -10,6 +10,7 @@ class AlgorithmOptions(ABC):
     An algorithm option is semantically different from AlgorithmConfig.
     AlgorithmOptions specifies the customizable aspects of an algorithm made available for users to specify to their needs.
     """
+
     def __post_init__(self):
         self.validate()
 

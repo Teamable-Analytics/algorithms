@@ -8,6 +8,7 @@ class AlgorithmConfig(ABC):
 
     i.e. The maximum amount of time an algorithm is allowed to run for is a config choice, not an options choice.
     """
+
     def __post_init__(self):
         self.validate()
 
