@@ -117,28 +117,20 @@ class TestMutateRobinhood(unittest.TestCase):
 
     def test_mutate_robinhood__does_mutate_when_not_optimal(self):
         """
-        The mutated team set should be different from the original team set.
-        Not guaranteed to change, so this test may fail. (~(1/3)^100 = 2e-48 chance of failing)
+        The mutated team set should be different from the original team set
         """
         functions = [mutate_robinhood, mutate_robinhood_holistic]
         for mutate_func in functions:
-            priority_team_set, student_dict = create_new_priority_team_set(3, 9)
+            priority_team_set, student_dict = create_new_priority_team_set(2, 4)
             priorities = [StudentListPriority([1, 2])]
-            result = False
-            for _ in range(100):
-                random.shuffle(
-                    priority_team_set.priority_teams
-                )  # Randomize the order so that deterministic algorithms don't get stuck
-                mutated_team_set = mutate_func(
-                    priority_team_set.clone(), priorities, student_dict
-                )
-                if not equal_priority_team_sets(priority_team_set, mutated_team_set):
-                    result = True
-                    break
 
-            self.assertTrue(
-                result,
-                "The mutated team set should be different from the original team set. NOTE: This test may fail because the mutated team set is not guaranteed to change.",
+            mutated_team_set = mutate_func(
+                priority_team_set.clone(), priorities, student_dict
+            )
+
+            self.assertFalse(
+                equal_priority_team_sets(priority_team_set, mutated_team_set),
+                "The mutated team set should be different from the original team set",
             )
 
     def test_mutate_robinhood__does_not_change_locked_teams(self):
