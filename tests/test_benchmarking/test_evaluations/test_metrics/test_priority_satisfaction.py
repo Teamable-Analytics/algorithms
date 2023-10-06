@@ -59,4 +59,6 @@ class TestPrioritySatisfactionMetric(unittest.TestCase):
         self.assertAlmostEqual(5 / 3 / 3, actual_calculate_value, delta=0.000001)
         self.priority_satisfaction.is_linear = True
         actual_calculate_value = self.priority_satisfaction.calculate(self.team_set)
-        self.assertAlmostEqual((2 + 2 + 1) / 3 / 3, actual_calculate_value, delta=0.000001)
+        self.assertAlmostEqual(
+            (2 + 2 + 1) / 3 / 3, actual_calculate_value, delta=0.000001
+        )

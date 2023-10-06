@@ -29,7 +29,7 @@ class PrioritySatisfaction(TeamSetMetric):
             total_score += product
         # Normalize the scores between 0 and 1 for easier comparison
         if self.is_linear:
-            total_score /= (team_set.num_teams * sum(range(1, len(self.priorities) + 1)))
+            total_score /= team_set.num_teams * sum(range(1, len(self.priorities) + 1))
         else:
             total_score /= team_set.num_teams
         return total_score
