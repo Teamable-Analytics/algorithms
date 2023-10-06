@@ -340,8 +340,8 @@ class WeightAlgorithm(Algorithm):
             get_diversity_utility(
                 team,
                 student,
-                self.options.diversify_options,
-                self.options.concentrate_options,
+                self.options.attributes_to_diversify,
+                self.options.attributes_to_concentrate,
             )
             * self.options.diversity_weight
         )

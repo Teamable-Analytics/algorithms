@@ -4,6 +4,12 @@ from api.ai.new.interfaces.algorithm import ChooseAlgorithm
 from api.ai.new.interfaces.algorithm_config import WeightAlgorithmConfig
 from api.ai.new.interfaces.algorithm_options import WeightAlgorithmOptions
 from api.ai.new.utils import generate_with_choose
+from api.ai.new.weight_algorithm.utility import (
+    get_requirement_utility,
+    get_social_utility,
+    get_diversity_utility,
+    get_preference_utility,
+)
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
@@ -54,5 +60,35 @@ class WeightAlgorithm(ChooseAlgorithm):
         Get the utility for each of the four weights, requirement/social/diversity/preference.
         Then combine each of the normalized weights. Each utility is modified based on the options.
         """
-        # todo: finish
-        return 1
+        if student in team.students:
+            return 0
+
+        requirement_utility = (
+            get_requirement_utility(team, student)
+            * self.algorithm_options.requirement_weight
+        )
+        social_utility = (
+            get_social_utility(team, [student]) * self.algorithm_options.social_weight
+        )
+        diversity_utility = (
+            get_diversity_utility(
+                team,
+                student,
+                self.algorithm_options.attributes_to_diversify,
+                self.algorithm_options.attributes_to_concentrate,
+            )
+            * self.algorithm_options.diversity_weight
+        )
+        preference_utility = (
+            get_preference_utility(
+                team, student, self.algorithm_options.max_project_preferences
+            )
+            * self.algorithm_options.preference_weight
+        )
+
+        return (
+            requirement_utility
+            + social_utility
+            + diversity_utility
+            + preference_utility
+        )
