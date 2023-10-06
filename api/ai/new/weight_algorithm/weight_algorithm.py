@@ -1,11 +1,14 @@
 from typing import List, Tuple, Optional, cast
 
 from api.ai.new.interfaces.algorithm import ChooseAlgorithm
+from api.ai.new.interfaces.algorithm_config import WeightAlgorithmConfig
 from api.ai.new.interfaces.algorithm_options import WeightAlgorithmOptions
 from api.ai.new.utils import generate_with_choose
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
+
+DEFAULT_WEIGHT_ALGORITHM_CONFIG = WeightAlgorithmConfig()
 
 
 class WeightAlgorithm(ChooseAlgorithm):
@@ -14,6 +17,12 @@ class WeightAlgorithm(ChooseAlgorithm):
         self.algorithm_options: WeightAlgorithmOptions = cast(
             WeightAlgorithmOptions, self.algorithm_options
         )
+        if self.algorithm_config:
+            self.algorithm_config: WeightAlgorithmConfig = cast(
+                WeightAlgorithmConfig, self.algorithm_config
+            )
+        else:
+            self.algorithm_config = DEFAULT_WEIGHT_ALGORITHM_CONFIG
 
     def generate(self, students: List[Student]) -> TeamSet:
         return generate_with_choose(self, students, self.teams)

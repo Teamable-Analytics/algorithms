@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Optional
 
+from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
 from api.ai.new.interfaces.algorithm_options import AlgorithmOptions
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
 from api.models.student import Student
@@ -13,9 +14,11 @@ class Algorithm(ABC):
         self,
         algorithm_options: AlgorithmOptions,
         team_generation_options: TeamGenerationOptions,
+            algorithm_config: AlgorithmConfig = None,
     ):
         self.algorithm_options: AlgorithmOptions = algorithm_options
         self.team_generation_options: TeamGenerationOptions = team_generation_options
+        self.algorithm_config: AlgorithmConfig = algorithm_config
         self.teams: List[Team] = []
 
     @abstractmethod
