@@ -21,7 +21,7 @@ def get_preference_utility(team, student, project_preference_len):
     """
     if not project_preference_len:
         return 0
-    preferences = student.project_preferences
+    preferences = student.preferences
     team_project = team.project_id
     value = project_preference_len
     for pref_value in preferences.values():
