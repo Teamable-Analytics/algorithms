@@ -153,7 +153,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         """
         Mutate a single teamset into child teamsets
         """
-        algorithm = 3
+        algorithm = 4
         cloned_team_sets = [
             team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)
         ]
