@@ -74,7 +74,9 @@ def line_graph(graph_data: LineGraphMetadata):
         plt.ylabel(graph_data.y_label)
 
     if graph_data.num_minor_ticks:
-        ax[0][0].xaxis.set_minor_locator(AutoMinorLocator(graph_data.num_minor_ticks + 1))
+        ax[0][0].xaxis.set_minor_locator(
+            AutoMinorLocator(graph_data.num_minor_ticks + 1)
+        )
     else:
         ax[0][0].xaxis.set_minor_locator(AutoMinorLocator())
 
