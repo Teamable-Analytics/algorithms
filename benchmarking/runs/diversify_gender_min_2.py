@@ -131,6 +131,7 @@ def diversify_gender_min_2(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 
@@ -146,6 +147,7 @@ def diversify_gender_min_2(num_trials: int = 10):
                 metrics["AverageGiniIndex"].max_value,
             ),
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 
@@ -160,6 +162,7 @@ def diversify_gender_min_2(num_trials: int = 10):
                 metrics["MinGiniIndex"].min_value, metrics["MinGiniIndex"].max_value
             ),
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 
@@ -174,6 +177,7 @@ def diversify_gender_min_2(num_trials: int = 10):
                 metrics["MaxGiniIndex"].min_value, metrics["MaxGiniIndex"].max_value
             ),
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 
@@ -189,6 +193,7 @@ def diversify_gender_min_2(num_trials: int = 10):
                 metrics["PrioritySatisfaction"].max_value,
             ),
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 

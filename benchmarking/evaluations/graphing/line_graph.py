@@ -1,6 +1,7 @@
 from typing import List, Tuple
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator, MaxNLocator
 
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 
@@ -71,6 +72,11 @@ def line_graph(graph_data: LineGraphMetadata):
 
     if graph_data.y_label is not None:
         plt.ylabel(graph_data.y_label)
+
+    if graph_data.num_minor_ticks:
+        ax[0][0].xaxis.set_minor_locator(AutoMinorLocator(graph_data.num_minor_ticks + 1))
+    else:
+        ax[0][0].xaxis.set_minor_locator(AutoMinorLocator())
 
     make_space_above(ax)
 

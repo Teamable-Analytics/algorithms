@@ -118,6 +118,7 @@ def concentrate_many_attributes(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 
@@ -133,6 +134,7 @@ def concentrate_many_attributes(num_trials: int = 10):
                 metrics["AverageGiniIndexMulti"].max_value,
             ),
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 
