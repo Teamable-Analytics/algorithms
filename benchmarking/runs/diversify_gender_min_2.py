@@ -1,11 +1,13 @@
 import math
+from typing import Dict
 
 import typer
 
 from benchmarking.evaluations.goals import DiversityGoal
-from benchmarking.evaluations.graphing.graph_metadata import GraphData
+from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
+from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from api.models.enums import ScenarioAttribute, Gender
@@ -34,6 +36,8 @@ def diversify_gender_min_2(num_trials: int = 10):
     num_trials = 10
     ratio_of_female_students = 0.2
 
+    scenario = DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value)
+
     graph_runtime_dict = {}
     graph_avg_gini_dict = {}
     graph_min_gini_dict = {}
@@ -46,6 +50,18 @@ def diversify_gender_min_2(num_trials: int = 10):
         graph_max_gini_dict,
         graph_priority_dict,
     ]
+
+    metrics: Dict[str, TeamSetMetric] = {
+        "AverageGiniIndex": AverageGiniIndex(attribute=ScenarioAttribute.GENDER.value),
+        "MaxGiniIndex": MaximumGiniIndex(attribute=ScenarioAttribute.GENDER.value),
+        "MinGiniIndex": MinimumGiniIndex(attribute=ScenarioAttribute.GENDER.value),
+        "PrioritySatisfaction": PrioritySatisfaction(
+            goals_to_priorities(
+                [goal for goal in scenario.goals if isinstance(goal, DiversityGoal)]
+            ),
+            False,
+        ),
+    }
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -63,27 +79,11 @@ def diversify_gender_min_2(num_trials: int = 10):
             },
         )
 
-        scenario = DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value)
-
         simulation_outputs = Simulation(
             num_teams=number_of_teams,
             scenario=scenario,
             student_provider=MockStudentProvider(student_provider_settings),
-            metrics=[
-                AverageGiniIndex(attribute=ScenarioAttribute.GENDER.value),
-                MaximumGiniIndex(attribute=ScenarioAttribute.GENDER.value),
-                MinimumGiniIndex(attribute=ScenarioAttribute.GENDER.value),
-                PrioritySatisfaction(
-                    goals_to_priorities(
-                        [
-                            goal
-                            for goal in scenario.goals
-                            if isinstance(goal, DiversityGoal)
-                        ]
-                    ),
-                    False,
-                ),
-            ],
+            metrics=list(metrics.values()),
         ).run(num_runs=num_trials)
 
         average_ginis = Simulation.average_metric(
@@ -101,7 +101,7 @@ def diversify_gender_min_2(num_trials: int = 10):
         satisfied_priorities = Simulation.average_metric(
             simulation_outputs, "PrioritySatisfaction"
         )
-        metrics = [
+        metric_values = [
             average_runtimes,
             average_ginis,
             minimum_ginis,
@@ -110,7 +110,7 @@ def diversify_gender_min_2(num_trials: int = 10):
         ]
 
         # Data processing for graph
-        for i, metric in enumerate(metrics):
+        for i, metric in enumerate(metric_values):
             for algorithm_type, data in metric.items():
                 if algorithm_type not in graph_dicts[i]:
                     graph_dicts[i][algorithm_type] = GraphData(
@@ -141,7 +141,10 @@ def diversify_gender_min_2(num_trials: int = 10):
             title="Diversify Gender With Min of Two Average Gini Index",
             data=list(graph_avg_gini_dict.values()),
             description=None,
-            y_lim=None,
+            y_lim=GraphAxisRange(
+                metrics["AverageGiniIndex"].min_value,
+                metrics["AverageGiniIndex"].max_value,
+            ),
             x_lim=None,
         )
     )
@@ -153,7 +156,9 @@ def diversify_gender_min_2(num_trials: int = 10):
             title="Diversify Gender With Min of Two Minimum Gini",
             data=list(graph_min_gini_dict.values()),
             description=None,
-            y_lim=None,
+            y_lim=GraphAxisRange(
+                metrics["MinGiniIndex"].min_value, metrics["MinGiniIndex"].max_value
+            ),
             x_lim=None,
         )
     )
@@ -165,7 +170,9 @@ def diversify_gender_min_2(num_trials: int = 10):
             title="Diversify Gender With Min of Two Max Gini",
             data=list(graph_max_gini_dict.values()),
             description=None,
-            y_lim=None,
+            y_lim=GraphAxisRange(
+                metrics["MaxGiniIndex"].min_value, metrics["MaxGiniIndex"].max_value
+            ),
             x_lim=None,
         )
     )
@@ -177,7 +184,10 @@ def diversify_gender_min_2(num_trials: int = 10):
             title="Diversity Gender With Min of Two Satisfied Priorities",
             data=list(graph_priority_dict.values()),
             description=None,
-            y_lim=None,
+            y_lim=GraphAxisRange(
+                metrics["PrioritySatisfaction"].min_value,
+                metrics["PrioritySatisfaction"].max_value,
+            ),
             x_lim=None,
         )
     )
