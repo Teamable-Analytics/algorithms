@@ -9,7 +9,9 @@ class MinimumGiniIndex(TeamSetMetric):
     """
 
     def __init__(self, attribute: int, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        min_value = 0
+        max_value = 1
+        super().__init__(min_value, max_value, *args, **kwargs)
         self.attribute = attribute
 
     def calculate(self, team_set: TeamSet) -> float:

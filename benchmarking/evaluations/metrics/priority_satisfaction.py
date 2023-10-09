@@ -12,7 +12,9 @@ class PrioritySatisfaction(TeamSetMetric):
     """
 
     def __init__(self, priorities: List[Priority], is_linear: bool, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        min_value = 0
+        max_value = 1
+        super().__init__(min_value, max_value, *args, **kwargs)
         self.priorities = priorities
         self.is_linear = is_linear
 
