@@ -29,7 +29,6 @@ def line_graph(graph_data: LineGraphMetadata):
     # Graphing
     fig, ax = plt.subplots(figsize=(9, 5), squeeze=False)
     legends = []
-    line_styles: List[str] = ["-", "--", "-.", ":"]
     line_styles: List[Tuple[int, Tuple[int, ...]]] = [
         (0, ()),  # solid
         (0, (5, 2)),  # dashed
