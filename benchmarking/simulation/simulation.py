@@ -1,4 +1,5 @@
 import copy
+import json
 import statistics
 import time
 from collections import defaultdict
@@ -88,6 +89,11 @@ class Simulation:
                 start_time = time.time()
                 team_set = mock_algorithm.generate(copy.deepcopy(algorithm_students))
                 end_time = time.time()
+                print(json.dumps(team_set.teams[0].students[0].__json__()))
+                file_path = f"{algorithm_type}-{self.student_provider.num_students}-students.json"
+                with open(file_path, 'w') as json_file:
+                    print(team_set)
+                    json.dump(team_set, json_file)
 
                 self.run_outputs[algorithm_type][Simulation.KEY_RUNTIMES].append(
                     end_time - start_time

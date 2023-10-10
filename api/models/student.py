@@ -22,3 +22,12 @@ class Student:
             return False
         self.team = team
         return True
+
+    def __json__(self):
+        return {
+            'id': self._id,
+            'name': self.name,
+            'attributes': self.attributes,
+            'relationships': self.relationships,
+            'preferences': self.preferences
+        }

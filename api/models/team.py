@@ -42,3 +42,8 @@ class Team(TeamShell):
             return False
         self.students.append(student)
         return True
+
+    def __dict__(self):
+        return {
+            "students": self.students.__dict__
+        }
