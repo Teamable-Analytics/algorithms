@@ -102,7 +102,7 @@ def concentrate_multiple_max_3(num_trials: int = 10):
         ).run(num_runs=num_trials)
 
         average_ginis = Simulation.average_metric(
-            simulation_outputs, "AverageGiniIndex"
+            simulation_outputs, "AverageGiniIndexMultiAttribute"
         )
         average_runtimes = Simulation.average_metric(
             simulation_outputs, Simulation.KEY_RUNTIMES
