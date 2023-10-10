@@ -72,3 +72,9 @@ class SocialAlgorithmOptions(WeightAlgorithmOptions):
 class PathGaspAlgorithmOptions(AlgorithmOptions):
     def validate(self):
         super().validate()
+
+
+@dataclass
+class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
+    def validate(self):
+        super().validate()
