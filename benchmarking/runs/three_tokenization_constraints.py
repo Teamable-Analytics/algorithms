@@ -18,21 +18,22 @@ from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import 
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.multiple_tokenization_goals import (
-    MultipleTokenizationGoals,
-)
+from benchmarking.evaluations.scenarios.three_tokenization_constraints import ThreeTokenizationConstraints
+
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.simulation import Simulation
 
 
-def concentrate_multiple_max_3(num_trials: int = 10):
+def three_tokenization_constraints(
+    num_trials: int = 10,
+):
     """
-    Goal: Run a scenario with multiple tokenization constraints to benchmark the algorithm
+    Goal: Run a scenario with three tokenization constraints:
+    concentrate GPA max three, diversify race min two, and concentrate age max three.
     """
 
     # Defining our changing x-values (in the graph sense)
     class_sizes = list(range(50, 501, 50))
-    num_trials = 10
     ratio_of_european_students = 0.45
     ratio_of_middle_eastern_students = 0.25
     ratio_of_african_students = 0.15
@@ -88,7 +89,7 @@ def concentrate_multiple_max_3(num_trials: int = 10):
             },
         )
 
-        scenario = MultipleTokenizationGoals(
+        scenario = ThreeTokenizationConstraints(
             value_of_age=Age._20.value,
             value_of_gpa=Gpa.B.value,
             value_of_race=Race.Middle_Eastern.value,
@@ -151,7 +152,7 @@ def concentrate_multiple_max_3(num_trials: int = 10):
         LineGraphMetadata(
             x_label="Class size",
             y_label="Run time (seconds)",
-            title="Multiple Tokenization Goals Runtimes",
+            title="Three Tokenization Constraints Runtimes",
             data=list(graph_runtime_dict.values()),
             description=None,
             y_lim=None,
@@ -163,7 +164,7 @@ def concentrate_multiple_max_3(num_trials: int = 10):
         LineGraphMetadata(
             x_label="Class size",
             y_label="Average Gini Index",
-            title="Multiple Tokenization Goals Average Gini Index",
+            title="Three Tokenization Constraints Average Gini Index",
             data=list(graph_avg_gini_dict.values()),
             description=None,
             y_lim=None,
@@ -175,7 +176,7 @@ def concentrate_multiple_max_3(num_trials: int = 10):
         LineGraphMetadata(
             x_label="Class size",
             y_label="Priorities Satisfied",
-            title="Multiple Tokenization Goals Satisfied Priorities",
+            title="Three Tokenization Constraints Satisfied Priorities",
             data=list(graph_priority_dict.values()),
             description=None,
             y_lim=None,
@@ -185,4 +186,4 @@ def concentrate_multiple_max_3(num_trials: int = 10):
 
 
 if __name__ == "__main__":
-    typer.run(concentrate_multiple_max_3)
+    typer.run(three_tokenization_constraints)
