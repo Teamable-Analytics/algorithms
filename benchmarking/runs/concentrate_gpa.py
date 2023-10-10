@@ -25,7 +25,7 @@ def concentrate_gpa(num_trials: int = 10):
     """
 
     # Define changing values
-    class_sizes = [50, 100, 150]
+    class_sizes = [50, 100, 150, 200, 250, 300, 350, 400]
     ratio_of_a_students = 0.25
     ratio_of_b_students = 0.50
     ratio_of_c_students = 0.25
