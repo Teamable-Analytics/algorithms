@@ -25,7 +25,7 @@ def concentrate_gpa(num_trials: int = 10):
     """
 
     # Define changing values
-    class_sizes = [50, 100, 150, 200, 250, 300, 350, 400]
+    class_sizes = [50, 100, 150]
     ratio_of_a_students = 0.25
     ratio_of_b_students = 0.50
     ratio_of_c_students = 0.25
@@ -118,10 +118,7 @@ def concentrate_gpa(num_trials: int = 10):
             title="Concentrate GPA Average Gini Index",
             data=list(graph_avg_gini_dict.values()),
             description=None,
-            y_lim=GraphAxisRange(
-                metrics["AverageGiniIndex"].min_value,
-                metrics["AverageGiniIndex"].max_value,
-            ),
+            y_lim=GraphAxisRange(*metrics["AverageGiniIndex"].theoretical_range),
             x_lim=None,
             num_minor_ticks=None,
         )
@@ -134,9 +131,7 @@ def concentrate_gpa(num_trials: int = 10):
             title="Concentrate GPA Minimum Gini",
             data=list(graph_min_gini_dict.values()),
             description=None,
-            y_lim=GraphAxisRange(
-                metrics["MinGiniIndex"].min_value, metrics["MinGiniIndex"].max_value
-            ),
+            y_lim=GraphAxisRange(*metrics["MinGiniIndex"].theoretical_range),
             x_lim=None,
             num_minor_ticks=None,
         )
@@ -149,9 +144,7 @@ def concentrate_gpa(num_trials: int = 10):
             title="Concentrate GPA Max Gini",
             data=list(graph_max_gini_dict.values()),
             description=None,
-            y_lim=GraphAxisRange(
-                metrics["MaxGiniIndex"].min_value, metrics["MaxGiniIndex"].max_value
-            ),
+            y_lim=GraphAxisRange(*metrics["MaxGiniIndex"].theoretical_range),
             x_lim=None,
             num_minor_ticks=None,
         )

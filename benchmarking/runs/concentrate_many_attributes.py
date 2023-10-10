@@ -129,10 +129,7 @@ def concentrate_many_attributes(num_trials: int = 10):
             title="Concentrate Many Attributes Average Gini Index",
             data=list(graph_avg_gini_dict.values()),
             description=None,
-            y_lim=GraphAxisRange(
-                metrics["AverageGiniIndexMulti"].min_value,
-                metrics["AverageGiniIndexMulti"].max_value,
-            ),
+            y_lim=GraphAxisRange(*metrics["AverageGiniIndexMulti"].theoretical_range),
             x_lim=None,
             num_minor_ticks=None,
         )

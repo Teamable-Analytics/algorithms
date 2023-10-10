@@ -11,9 +11,7 @@ class NumTeamsMeetingRequirements(TeamSetMetric):
     """
 
     def __init__(self, num_teams: int, *args, **kwargs):
-        min_value = 0
-        max_value = num_teams
-        super().__init__(min_value, max_value, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def calculate(self, team_set: TeamSet) -> float:
         return sum([has_team_met_requirements(team) for team in team_set.teams])

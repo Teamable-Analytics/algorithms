@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Tuple, Optional
 
 from api.models.team_set import TeamSet
 
@@ -22,23 +22,24 @@ class Scenario(ABC):
 
 class TeamSetMetric(ABC):
     def __init__(
-        self, min_value: float, max_value: float, name: str = None, *args, **kwargs
+        self,
+        theoretical_range: Tuple[float, float] = None,
+        name: str = None,
+        *args,
+        **kwargs
     ):
         self._name = name
-        self._min_value = min_value
-        self._max_value = max_value
+        self._theoretical_range = theoretical_range
 
     @abstractmethod
     def calculate(self, team_set: TeamSet) -> float:
         raise NotImplementedError
 
     @property
-    def min_value(self) -> float:
-        return self._min_value
-
-    @property
-    def max_value(self) -> float:
-        return self._max_value
+    def theoretical_range(self) -> Optional[Tuple[float, float]]:
+        if self._theoretical_range:
+            return self._theoretical_range
+        return None
 
     @property
     def name(self) -> str:

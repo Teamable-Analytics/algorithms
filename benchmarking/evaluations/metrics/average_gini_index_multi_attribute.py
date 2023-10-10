@@ -13,9 +13,7 @@ class AverageGiniIndexMultiAttribute(TeamSetMetric):
     """
 
     def __init__(self, attributes: List[int], *args, **kwargs):
-        min_value = 0
-        max_value = 1
-        super().__init__(min_value, max_value, *args, **kwargs)
+        super().__init__(theoretical_range=(0, 1), *args, **kwargs)
         if attributes is None or len(attributes) == 0:
             raise ValueError("Must have at least one attribute")
         self.attributes = attributes

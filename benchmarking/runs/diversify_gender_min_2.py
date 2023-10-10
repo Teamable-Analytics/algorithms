@@ -142,10 +142,7 @@ def diversify_gender_min_2(num_trials: int = 10):
             title="Diversify Gender With Min of Two Average Gini Index",
             data=list(graph_avg_gini_dict.values()),
             description=None,
-            y_lim=GraphAxisRange(
-                metrics["AverageGiniIndex"].min_value,
-                metrics["AverageGiniIndex"].max_value,
-            ),
+            y_lim=GraphAxisRange(*metrics["AverageGiniIndex"].theoretical_range),
             x_lim=None,
             num_minor_ticks=None,
         )
@@ -158,9 +155,7 @@ def diversify_gender_min_2(num_trials: int = 10):
             title="Diversify Gender With Min of Two Minimum Gini",
             data=list(graph_min_gini_dict.values()),
             description=None,
-            y_lim=GraphAxisRange(
-                metrics["MinGiniIndex"].min_value, metrics["MinGiniIndex"].max_value
-            ),
+            y_lim=GraphAxisRange(*metrics["MinGiniIndex"].theoretical_range),
             x_lim=None,
             num_minor_ticks=None,
         )
@@ -173,9 +168,7 @@ def diversify_gender_min_2(num_trials: int = 10):
             title="Diversify Gender With Min of Two Max Gini",
             data=list(graph_max_gini_dict.values()),
             description=None,
-            y_lim=GraphAxisRange(
-                metrics["MaxGiniIndex"].min_value, metrics["MaxGiniIndex"].max_value
-            ),
+            y_lim=GraphAxisRange(*metrics["MaxGiniIndex"].theoretical_range),
             x_lim=None,
             num_minor_ticks=None,
         )
@@ -188,10 +181,7 @@ def diversify_gender_min_2(num_trials: int = 10):
             title="Diversity Gender With Min of Two Satisfied Priorities",
             data=list(graph_priority_dict.values()),
             description=None,
-            y_lim=GraphAxisRange(
-                metrics["PrioritySatisfaction"].min_value,
-                metrics["PrioritySatisfaction"].max_value,
-            ),
+            y_lim=GraphAxisRange(*metrics["PrioritySatisfaction"].theoretical_range),
             x_lim=None,
             num_minor_ticks=None,
         )
