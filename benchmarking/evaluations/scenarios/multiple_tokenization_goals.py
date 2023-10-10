@@ -1,6 +1,10 @@
 from typing import List
 
-from api.models.enums import DiversifyType, ScenarioAttribute, TokenizationConstraintDirection
+from api.models.enums import (
+    DiversifyType,
+    ScenarioAttribute,
+    TokenizationConstraintDirection,
+)
 from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
@@ -24,8 +28,8 @@ class MultipleTokenizationGoals(Scenario):
                 tokenization_constraint=TokenizationConstraint(
                     direction=TokenizationConstraintDirection.MAX_OF,
                     threshold=3,
-                    value=self.value_of_gpa
-                )
+                    value=self.value_of_gpa,
+                ),
             ),
             DiversityGoal(
                 DiversifyType.DIVERSIFY,
@@ -42,8 +46,8 @@ class MultipleTokenizationGoals(Scenario):
                 tokenization_constraint=TokenizationConstraint(
                     direction=TokenizationConstraintDirection.MAX_OF,
                     threshold=3,
-                    value=self.value_of_age
-                )
+                    value=self.value_of_age,
+                ),
             ),
-            WeightGoal(diversity_goal_weight=1)
+            WeightGoal(diversity_goal_weight=1),
         ]
