@@ -18,7 +18,9 @@ from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import 
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.three_tokenization_constraints import ThreeTokenizationConstraints
+from benchmarking.evaluations.scenarios.three_tokenization_constraints import (
+    ThreeTokenizationConstraints,
+)
 
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.simulation import Simulation
