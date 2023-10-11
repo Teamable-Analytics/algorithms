@@ -14,3 +14,4 @@ class LineGraphMetadata:
     x_lim: Optional[GraphAxisRange]
     y_lim: Optional[GraphAxisRange]
     num_minor_ticks: Optional[int]
+    save_graph: bool = False
