@@ -2,10 +2,10 @@ import itertools
 import random
 from typing import List, Dict
 
-from ai.priority_algorithm.interfaces import Priority
-from ai.priority_algorithm.mutations.utils import score, get_available_teams
-from ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
-from models.student import Student
+from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.priority_algorithm.mutations.utils import score, get_available_teams
+from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from api.models.student import Student
 
 
 def mutate_local_max(
@@ -85,7 +85,10 @@ def mutate_local_max_epsilon(
     # Sort teams and take the two lowest scoring teams
     chance = random.random()
     if chance < epsilon:
-        team_1 = min(available_priority_teams, key=(lambda team: score(team, priorities, student_dict)))
+        team_1 = min(
+            available_priority_teams,
+            key=(lambda team: score(team, priorities, student_dict)),
+        )
         team_2 = team_1
         while team_1 == team_2:
             team_2 = random.choice(available_priority_teams)
