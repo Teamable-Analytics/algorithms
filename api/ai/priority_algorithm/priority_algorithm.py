@@ -189,7 +189,9 @@ class PriorityAlgorithm(WeightAlgorithm):
             ]
         elif algorithm == 5:
             return [
-                mutate_local_max_epsilon(cloned_team_sets[0], self.priorities, self.student_dict, 0.05),
+                mutate_local_max_epsilon(
+                    cloned_team_sets[0], self.priorities, self.student_dict, 0.05
+                ),
                 *[
                     mutate_random_swap(cloned_team_set)
                     for cloned_team_set in cloned_team_sets[1:]
