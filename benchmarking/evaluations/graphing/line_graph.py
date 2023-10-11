@@ -46,7 +46,11 @@ def line_graph(graph_data: LineGraphMetadata):
         plt.plot(
             curr_data.x_data, curr_data.y_data, linestyle=line_style, marker=marker
         )
-        legends.append(curr_data.name)
+        legends.append(
+            curr_data.name
+            if curr_data.legend_subtitle is None
+            else curr_data.name + "\n" + curr_data.legend_subtitle
+        )
 
     # Graph format
     legend = plt.legend(

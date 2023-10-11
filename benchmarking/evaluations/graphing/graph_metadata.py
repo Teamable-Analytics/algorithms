@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 
 @dataclass
@@ -13,3 +13,4 @@ class GraphData:
     x_data: List[float]
     y_data: List[float]
     name: str
+    legend_subtitle: Optional[str] = None
