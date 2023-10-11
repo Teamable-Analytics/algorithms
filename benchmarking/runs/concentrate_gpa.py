@@ -1,4 +1,5 @@
 import math
+from typing import Dict
 
 import typer
 
@@ -6,9 +7,10 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
-from benchmarking.evaluations.graphing.graph_metadata import GraphData
+from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
+from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.average_gini_index import AverageGiniIndex
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
@@ -40,6 +42,12 @@ def concentrate_gpa(num_trials: int = 10):
         graph_max_gini_dict,
     ]
 
+    metrics: Dict[str, TeamSetMetric] = {
+        "AverageGiniIndex": AverageGiniIndex(attribute=ScenarioAttribute.GPA.value),
+        "MaxGiniIndex": MaximumGiniIndex(attribute=ScenarioAttribute.GPA.value),
+        "MinGiniIndex": MinimumGiniIndex(attribute=ScenarioAttribute.GPA.value),
+    }
+
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
 
@@ -60,11 +68,7 @@ def concentrate_gpa(num_trials: int = 10):
             num_teams=number_of_teams,
             scenario=ConcentrateGPA(),
             student_provider=MockStudentProvider(student_provider_settings),
-            metrics=[
-                AverageGiniIndex(attribute=ScenarioAttribute.GPA.value),
-                MaximumGiniIndex(attribute=ScenarioAttribute.GPA.value),
-                MinimumGiniIndex(attribute=ScenarioAttribute.GPA.value),
-            ],
+            metrics=list(metrics.values()),
         ).run(num_runs=num_trials)
 
         average_ginis = Simulation.average_metric(
@@ -79,10 +83,10 @@ def concentrate_gpa(num_trials: int = 10):
         average_runtimes = Simulation.average_metric(
             simulation_outputs, Simulation.KEY_RUNTIMES
         )
-        metrics = [average_runtimes, average_ginis, minimum_ginis, maximum_ginis]
+        metric_values = [average_runtimes, average_ginis, minimum_ginis, maximum_ginis]
 
         # Data processing for graph
-        for i, metric in enumerate(metrics):
+        for i, metric in enumerate(metric_values):
             for algorithm_type, data in metric.items():
                 if algorithm_type not in graph_dicts[i]:
                     graph_dicts[i][algorithm_type] = GraphData(
@@ -103,6 +107,7 @@ def concentrate_gpa(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 
@@ -113,8 +118,9 @@ def concentrate_gpa(num_trials: int = 10):
             title="Concentrate GPA Average Gini Index",
             data=list(graph_avg_gini_dict.values()),
             description=None,
-            y_lim=None,
+            y_lim=GraphAxisRange(*metrics["AverageGiniIndex"].theoretical_range),
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 
@@ -125,8 +131,9 @@ def concentrate_gpa(num_trials: int = 10):
             title="Concentrate GPA Minimum Gini",
             data=list(graph_min_gini_dict.values()),
             description=None,
-            y_lim=None,
+            y_lim=GraphAxisRange(*metrics["MinGiniIndex"].theoretical_range),
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 
@@ -137,8 +144,9 @@ def concentrate_gpa(num_trials: int = 10):
             title="Concentrate GPA Max Gini",
             data=list(graph_max_gini_dict.values()),
             description=None,
-            y_lim=None,
+            y_lim=GraphAxisRange(*metrics["MaxGiniIndex"].theoretical_range),
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 

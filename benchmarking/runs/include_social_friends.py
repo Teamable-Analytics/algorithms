@@ -78,6 +78,7 @@ def include_social_friends(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 

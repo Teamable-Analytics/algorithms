@@ -1,4 +1,7 @@
+from typing import List, Tuple
+
 import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator, MaxNLocator
 
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 
@@ -27,8 +30,22 @@ def line_graph(graph_data: LineGraphMetadata):
     # Graphing
     fig, ax = plt.subplots(figsize=(9, 5), squeeze=False)
     legends = []
-    for curr_data in graph_data.data:
-        plt.plot(curr_data.x_data, curr_data.y_data)
+    line_styles: List[Tuple[int, Tuple[int, ...]]] = [
+        (0, ()),  # solid
+        (0, (5, 2)),  # dashed
+        (0, (1, 1)),  # densely dotted
+        (0, (5, 1, 1, 1)),  # dashdotted
+        (0, (5, 1, 1, 1, 1, 1)),  # dashdotdotted
+        (0, (3, 1, 3, 1, 1, 1)),  # dashdash dotted
+        (0, (3, 1, 3, 1, 1, 1, 1, 1)),  # dashdash dotdotted
+    ]
+    markers: List[str] = ["o", "v", "s", "d", "x", "P", "*"]
+    for i, curr_data in enumerate(graph_data.data):
+        line_style = line_styles[i % len(line_styles)]
+        marker = markers[i % len(markers)]
+        plt.plot(
+            curr_data.x_data, curr_data.y_data, linestyle=line_style, marker=marker
+        )
         legends.append(curr_data.name)
 
     # Graph format
@@ -55,6 +72,13 @@ def line_graph(graph_data: LineGraphMetadata):
 
     if graph_data.y_label is not None:
         plt.ylabel(graph_data.y_label)
+
+    if graph_data.num_minor_ticks:
+        ax[0][0].xaxis.set_minor_locator(
+            AutoMinorLocator(graph_data.num_minor_ticks + 1)
+        )
+    else:
+        ax[0][0].xaxis.set_minor_locator(AutoMinorLocator())
 
     make_space_above(ax)
 
