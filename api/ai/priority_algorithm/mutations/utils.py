@@ -26,3 +26,11 @@ def score(
             )
         ]
     )
+
+
+def get_available_teams(priority_team_set: PriorityTeamSet) -> List[PriorityTeam]:
+    return [
+        priority_team
+        for priority_team in priority_team_set.priority_teams
+        if not priority_team.team.is_locked
+    ]

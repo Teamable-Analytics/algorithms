@@ -1,9 +1,10 @@
 import itertools
+import random
 from typing import List, Dict
 
 from api.ai.priority_algorithm.interfaces import Priority
-from api.ai.priority_algorithm.mutations.utils import score
-from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet
+from api.ai.priority_algorithm.mutations.utils import score, get_available_teams
+from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
 from api.models.student import Student
 
 
@@ -18,23 +19,28 @@ def mutate_local_max(
     students on the other team. This implementation does not account for if the second team's score increases or
     decreases.
     """
-    available_priority_teams = [
-        priority_team
-        for priority_team in priority_team_set.priority_teams
-        if not priority_team.team.is_locked
-    ]
-    try:
-        if len(available_priority_teams) < 2:
-            return priority_team_set
-        # Sort teams and take the two lowest scoring teams
-        available_priority_teams = sorted(
-            available_priority_teams,
-            key=(lambda team: score(team, priorities, student_dict)),
-        )
-        team_1 = available_priority_teams[0]
-        team_2 = available_priority_teams[1]
+    available_priority_teams = get_available_teams(priority_team_set)
+    if len(available_priority_teams) < 2:
+        return priority_team_set
+    # Sort teams and take the two lowest scoring teams
+    available_priority_teams = sorted(
+        available_priority_teams,
+        key=(lambda team: score(team, priorities, student_dict)),
+    )
+    team_1 = available_priority_teams[0]
+    team_2 = available_priority_teams[1]
+    return find_local_max(priority_team_set, priorities, student_dict, team_1, team_2)
 
-        # Finds all combinations of students for the two teams
+
+def find_local_max(
+    priority_team_set: PriorityTeamSet,
+    priorities: List[Priority],
+    student_dict: Dict[int, Student],
+    team_1: PriorityTeam,
+    team_2: PriorityTeam,
+) -> PriorityTeamSet:
+    # Finds all combinations of students for the two teams
+    try:
         students = team_1.student_ids + team_2.student_ids
         # TODO: Determine how we want to find team size
         team_size = len(team_1.student_ids)
@@ -65,3 +71,32 @@ def mutate_local_max(
     except ValueError:
         return priority_team_set
     return priority_team_set
+
+
+def mutate_local_max_epsilon(
+    priority_team_set: PriorityTeamSet,
+    priorities: List[Priority],
+    student_dict: Dict[int, Student],
+    epsilon: float,
+) -> PriorityTeamSet:
+    available_priority_teams = get_available_teams(priority_team_set)
+    if len(available_priority_teams) < 2:
+        return priority_team_set
+    # Sort teams and take the two lowest scoring teams
+    chance = random.random()
+    if chance < epsilon:
+        team_1 = min(
+            available_priority_teams,
+            key=(lambda team: score(team, priorities, student_dict)),
+        )
+        team_2 = team_1
+        while team_1 == team_2:
+            team_2 = random.choice(available_priority_teams)
+    else:
+        available_priority_teams = sorted(
+            available_priority_teams,
+            key=(lambda team: score(team, priorities, student_dict)),
+        )
+        team_1 = available_priority_teams[0]
+        team_2 = available_priority_teams[1]
+    return find_local_max(priority_team_set, priorities, student_dict, team_1, team_2)
