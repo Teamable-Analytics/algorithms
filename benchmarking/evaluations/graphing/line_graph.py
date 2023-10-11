@@ -3,6 +3,7 @@ from typing import List, Tuple
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MaxNLocator
 
+from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 
 
@@ -40,12 +41,31 @@ def line_graph(graph_data: LineGraphMetadata):
         (0, (3, 1, 3, 1, 1, 1, 1, 1)),  # dashdash dotdotted
     ]
     markers: List[str] = ["o", "v", "s", "d", "x", "P", "*"]
+    curr_data: GraphData
     for i, curr_data in enumerate(graph_data.data):
-        line_style = line_styles[i % len(line_styles)]
-        marker = markers[i % len(markers)]
-        plt.plot(
-            curr_data.x_data, curr_data.y_data, linestyle=line_style, marker=marker
+        # Get line styles from input, else use default values
+        line_style = (
+            curr_data.line_style
+            if curr_data.line_style is not None
+            else line_styles[i % len(line_styles)]
         )
+        marker = (
+            curr_data.marker
+            if curr_data.marker is not None
+            else markers[i % len(markers)]
+        )
+        color = curr_data.line_color
+
+        # Plot line
+        plt.plot(
+            curr_data.x_data,
+            curr_data.y_data,
+            linestyle=line_style,
+            marker=marker,
+            color=color,
+        )
+
+        # Add line to legend
         legends.append(
             curr_data.name
             if curr_data.legend_subtitle is None
