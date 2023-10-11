@@ -8,10 +8,13 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 from benchmarking.evaluations.goals import DiversityGoal
 from benchmarking.evaluations.interfaces import TeamSetMetric, Scenario
 from benchmarking.simulation.simulation import Simulation
-from models.enums import DiversifyType, AlgorithmType
+from api.models.enums import DiversifyType, AlgorithmType
 
 
 class TestMetric(TeamSetMetric):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def calculate(self, team_set: "TeamSet") -> float:
         return 1
 

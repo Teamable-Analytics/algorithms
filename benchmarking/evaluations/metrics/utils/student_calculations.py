@@ -1,6 +1,6 @@
-from models.enums import Relationship, RequirementOperator
-from models.project import ProjectRequirement
-from models.student import Student
+from api.models.enums import Relationship, RequirementOperator
+from api.models.project import ProjectRequirement
+from api.models.student import Student
 
 
 def num_friends_satisfied(student: Student) -> int:
