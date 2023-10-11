@@ -10,7 +10,7 @@ from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetad
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
-from api.models.enums import ScenarioAttribute, Gender
+from api.models.enums import ScenarioAttribute, Gender, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -78,11 +78,24 @@ def diversify_gender_min_2(num_trials: int = 10):
             },
         )
 
+        mutation_types: Dict[str, int] = {
+            "random": 1,
+            "robinhood": 2,
+            "robinhood holistic": 3,
+            "local max": 4,
+            "local max epsilon": 5,
+        }
+
         simulation_outputs = Simulation(
             num_teams=number_of_teams,
             scenario=scenario,
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=list(metrics.values()),
+            algorithm_types=[
+                AlgorithmType.RANDOM,
+                AlgorithmType.WEIGHT,
+                *[AlgorithmType.PRIORITY_NEW for _ in range(len(mutation_types))],
+            ],
         ).run(num_runs=num_trials)
 
         average_ginis = Simulation.average_metric(
@@ -116,6 +129,11 @@ def diversify_gender_min_2(num_trials: int = 10):
                         x_data=[class_size],
                         y_data=[data],
                         name=algorithm_type.value,
+                        legend_subtitle=(
+                            None
+                            if algorithm_type != AlgorithmType.PRIORITY_NEW
+                            else "mutation type"
+                        ),
                     )
                 else:
                     graph_dicts[i][algorithm_type].x_data.append(class_size)

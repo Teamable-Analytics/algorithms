@@ -78,7 +78,12 @@ class Simulation:
             algorithm_students = AlgorithmTranslator.students_to_algorithm_students(
                 self.student_provider.get()
             )
+            mutation_type_index = 0
             for algorithm_type in self.algorithm_types:
+                if algorithm_type == AlgorithmType.PRIORITY_NEW:
+                    with open("../../mutation_type.txt", "w+") as f:
+                        f.write(str(mutation_type_index))
+                        mutation_type_index += 1
                 mock_algorithm = MockAlgorithm(
                     algorithm_type=algorithm_type,
                     team_generation_options=team_generation_options,
