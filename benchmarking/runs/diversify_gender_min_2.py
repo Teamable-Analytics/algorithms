@@ -33,7 +33,6 @@ def diversify_gender_min_2(num_trials: int = 10):
 
     # Defining our changing x-values (in the graph sense)
     class_sizes = list(range(50, 501, 50))
-    num_trials = 10
     ratio_of_female_students = 0.2
 
     scenario = DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value)
