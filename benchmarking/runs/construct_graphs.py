@@ -40,6 +40,7 @@ if __name__ == "__main__":
         "three-tokenization-priority",
     ]
     mutations = [
+        "social",
         "baseline",
         "mutate-local-max",
         "epsilon-0.05",
@@ -101,6 +102,7 @@ if __name__ == "__main__":
             if scenario == scenarios[0]
             else "Three Tokenization Constraints"
         )
+        graph_descriptions = "Priority (300 iterations, 1000sec)\nStudents (2 friends, 2 enemies, clustered)"
 
         save_graphs = True
 
@@ -111,7 +113,7 @@ if __name__ == "__main__":
                     y_label="Run time (seconds)",
                     title=f"{scenario_title} Runtimes",
                     data=list(graph_runtime_list),
-                    description=None,
+                    description=graph_descriptions,
                     y_lim=None,
                     x_lim=None,
                     num_minor_ticks=None,
@@ -126,7 +128,7 @@ if __name__ == "__main__":
                     y_label="Average Gini Index",
                     title=f"{scenario_title} Average Gini Index",
                     data=list(graph_avg_gini_list),
-                    description=None,
+                    description=graph_descriptions,
                     y_lim=GraphAxisRange(*metrics["AverageGiniIndex"].theoretical_range),
                     x_lim=None,
                     num_minor_ticks=None,
@@ -141,7 +143,7 @@ if __name__ == "__main__":
                     y_label="Minimum Gini Index",
                     title=f"{scenario_title} Minimum Gini",
                     data=list(graph_min_gini_list),
-                    description=None,
+                    description=graph_descriptions,
                     y_lim=GraphAxisRange(*metrics["MinGiniIndex"].theoretical_range),
                     x_lim=None,
                     num_minor_ticks=None,
@@ -156,7 +158,7 @@ if __name__ == "__main__":
                     y_label="Maximum Gini Index",
                     title=f"{scenario_title} Max Gini",
                     data=list(graph_max_gini_list),
-                    description=None,
+                    description=graph_descriptions,
                     y_lim=GraphAxisRange(*metrics["MaxGiniIndex"].theoretical_range),
                     x_lim=None,
                     num_minor_ticks=None,
@@ -171,7 +173,7 @@ if __name__ == "__main__":
                     y_label="Priorities Satisfied",
                     title=f"{scenario_title} Satisfied Priorities",
                     data=list(graph_priority_list),
-                    description=None,
+                    description=graph_descriptions,
                     y_lim=GraphAxisRange(*metrics["PrioritySatisfaction"].theoretical_range),
                     x_lim=None,
                     num_minor_ticks=None,
@@ -186,7 +188,7 @@ if __name__ == "__main__":
                     y_label="Social Satisfaction",
                     title=f"{scenario_title} Social Satisfaction",
                     data=list(graph_priority_list),
-                    description="Ratio of teams with at least 1 SHP",
+                    description=graph_descriptions+"\nRatio of teams with at least 1 SHP",
                     y_lim=None,
                     x_lim=None,
                     num_minor_ticks=None,
