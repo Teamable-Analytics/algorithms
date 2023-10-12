@@ -30,15 +30,20 @@ from api.models.project import Project, ProjectRequirement
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
-from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider, MockStudentProviderSettings
+from benchmarking.data.simulated_data.mock_student_provider import (
+    MockStudentProvider,
+    MockStudentProviderSettings,
+)
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 
 
 def calculate_value(student: Student, requirements: List[ProjectRequirement]) -> int:
-    return sum([
-        1 if student.meets_requirement(requirement) else -1
-        for requirement in requirements
-    ])
+    return sum(
+        [
+            1 if student.meets_requirement(requirement) else -1
+            for requirement in requirements
+        ]
+    )
 
 
 class TeamWithValues(Team):
@@ -63,7 +68,9 @@ class StudentProjectValue:
     def __init__(self, student: Student, project: Project):
         self.student = student
         self.project = project
-        self.value = 0 if student.id < 0 else calculate_value(student, project.requirements)
+        self.value = (
+            0 if student.id < 0 else calculate_value(student, project.requirements)
+        )
 
     def __lt__(self, other):
         # Redefine the less than operator to make it a max heap
@@ -71,16 +78,18 @@ class StudentProjectValue:
 
 
 class MultipleRoundRobinAlgorithm(Algorithm):
-    def __init__(self,
-                 algorithm_options: MultipleRoundRobinAlgorithmOptions,
-                 team_generation_options: TeamGenerationOptions,
-                 projects: List[Project]):
+    def __init__(
+        self,
+        algorithm_options: MultipleRoundRobinAlgorithmOptions,
+        team_generation_options: TeamGenerationOptions,
+        projects: List[Project],
+    ):
         super().__init__(algorithm_options, team_generation_options)
         self.projects = projects
 
-    def _get_values_heap(self,
-                         students: List[Student],
-                         teams: List[TeamWithValues]) -> List[StudentProjectValue]:
+    def _get_values_heap(
+        self, students: List[Student], teams: List[TeamWithValues]
+    ) -> List[StudentProjectValue]:
         """
         Calculate each student values to each project and push them into a heap
 
@@ -96,14 +105,18 @@ class MultipleRoundRobinAlgorithm(Algorithm):
 
         return values_heap
 
-    def _has_student_with_positive_value(self, project_student_values: List[StudentProjectValue]) -> bool:
+    def _has_student_with_positive_value(
+        self, project_student_values: List[StudentProjectValue]
+    ) -> bool:
         """
         Check if there is a student with positive value to any project
         """
         largest_value = nsmallest(1, project_student_values)[0]  # O(1)
         return largest_value.value > 0
 
-    def _has_dummy_student(self, project_student_values: List[StudentProjectValue]) -> bool:
+    def _has_dummy_student(
+        self, project_student_values: List[StudentProjectValue]
+    ) -> bool:
         """
         Check if there is a student with positive value to any project
         """
@@ -114,7 +127,9 @@ class MultipleRoundRobinAlgorithm(Algorithm):
         return [Student(_id=-index - 1) for index in range(num_dummy_students)]
 
     def generate(self, students: List[Student]) -> TeamSet:
-        teams = [TeamWithValues(idx, project) for idx, project in enumerate(self.projects)]  # O(N)
+        teams = [
+            TeamWithValues(idx, project) for idx, project in enumerate(self.projects)
+        ]  # O(N)
 
         values_heap = self._get_values_heap(students, teams)  # O(N * H)
 
@@ -126,7 +141,9 @@ class MultipleRoundRobinAlgorithm(Algorithm):
                 students.extend(self._get_dummy_students(num_dummy_students))
 
             for team_idx in range(len(teams)):
-                if not self._has_student_with_positive_value(values_heap) and self._has_dummy_student(values_heap):
+                if not self._has_student_with_positive_value(
+                    values_heap
+                ) and self._has_dummy_student(values_heap):
                     dummy_student = values_heap.pop()
                     teams[team_idx].add_student(dummy_student.student)
                 else:
