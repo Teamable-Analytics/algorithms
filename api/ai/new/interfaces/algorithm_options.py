@@ -72,3 +72,9 @@ class SocialAlgorithmOptions(WeightAlgorithmOptions):
 class PathGaspAlgorithmOptions(AlgorithmOptions):
     def validate(self):
         super().validate()
+
+
+@dataclass
+class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
+    def validate(self):
+        super().validate()
