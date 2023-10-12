@@ -1,8 +1,9 @@
 import math
 
+import jsonpickle
 import typer
 
-from api.models.enums import ScenarioAttribute, Gender, Gpa, Age, Race
+from api.models.enums import ScenarioAttribute, Gender, Gpa, Age, Race, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
     MockStudentProvider,
@@ -15,9 +16,11 @@ from benchmarking.evaluations.metrics.average_gini_index import AverageGiniIndex
 from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import (
     AverageGiniIndexMultiAttribute,
 )
+from benchmarking.evaluations.metrics.average_social_satisfied import AverageSocialSatisfaction
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
+from benchmarking.evaluations.metrics.utils.team_calculations import is_happy_team_1shp_friend
 from benchmarking.evaluations.scenarios.three_tokenization_constraints import (
     ThreeTokenizationConstraints,
 )
@@ -56,10 +59,12 @@ def three_tokenization_constraints(
     graph_runtime_dict = {}
     graph_avg_gini_dict = {}
     graph_priority_dict = {}
+    graph_social_sat_dict = {}
     graph_dicts = [
         graph_runtime_dict,
         graph_avg_gini_dict,
         graph_priority_dict,
+        graph_social_sat_dict,
     ]
 
     for class_size in class_sizes:
@@ -89,6 +94,9 @@ def three_tokenization_constraints(
                     (Age._21, ratio_of_age_21_students),
                 ],
             },
+            number_of_friends=2,
+            number_of_enemies=2,
+            friend_distribution="cluster",
         )
 
         scenario = ThreeTokenizationConstraints(
@@ -119,6 +127,12 @@ def three_tokenization_constraints(
                     ),
                     False,
                 ),
+                AverageSocialSatisfaction(
+                    is_happy_team_1shp_friend
+                )
+            ],
+            algorithm_types=[
+                AlgorithmType.PRIORITY_NEW,
             ],
         ).run(num_runs=num_trials)
 
@@ -131,10 +145,15 @@ def three_tokenization_constraints(
         satisfied_priorities = Simulation.average_metric(
             simulation_outputs, "PrioritySatisfaction"
         )
+        social_sat = Simulation.average_metric(
+            simulation_outputs, "AverageSocialSatisfaction"
+        )
+
         metrics = [
             average_runtimes,
             average_ginis,
             satisfied_priorities,
+            social_sat
         ]
 
         # Data processing for graph
@@ -150,41 +169,46 @@ def three_tokenization_constraints(
                     graph_dicts[i][algorithm_type].x_data.append(class_size)
                     graph_dicts[i][algorithm_type].y_data.append(data)
 
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Run time (seconds)",
-            title="Three Tokenization Constraints Runtimes",
-            data=list(graph_runtime_dict.values()),
-            description=None,
-            y_lim=None,
-            x_lim=None,
-        )
-    )
+    # Save data rather than graph it
+    json_string = jsonpickle.encode(graph_dicts)
+    with open("three-tokenization-priority-epsilon-1.json", "w+") as f:
+        f.write(json_string)
 
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Average Gini Index",
-            title="Three Tokenization Constraints Average Gini Index",
-            data=list(graph_avg_gini_dict.values()),
-            description=None,
-            y_lim=None,
-            x_lim=None,
-        )
-    )
-
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Priorities Satisfied",
-            title="Three Tokenization Constraints Satisfied Priorities",
-            data=list(graph_priority_dict.values()),
-            description=None,
-            y_lim=None,
-            x_lim=None,
-        )
-    )
+    # line_graph(
+    #     LineGraphMetadata(
+    #         x_label="Class size",
+    #         y_label="Run time (seconds)",
+    #         title="Three Tokenization Constraints Runtimes",
+    #         data=list(graph_runtime_dict.values()),
+    #         description=None,
+    #         y_lim=None,
+    #         x_lim=None,
+    #     )
+    # )
+    #
+    # line_graph(
+    #     LineGraphMetadata(
+    #         x_label="Class size",
+    #         y_label="Average Gini Index",
+    #         title="Three Tokenization Constraints Average Gini Index",
+    #         data=list(graph_avg_gini_dict.values()),
+    #         description=None,
+    #         y_lim=None,
+    #         x_lim=None,
+    #     )
+    # )
+    #
+    # line_graph(
+    #     LineGraphMetadata(
+    #         x_label="Class size",
+    #         y_label="Priorities Satisfied",
+    #         title="Three Tokenization Constraints Satisfied Priorities",
+    #         data=list(graph_priority_dict.values()),
+    #         description=None,
+    #         y_lim=None,
+    #         x_lim=None,
+    #     )
+    # )
 
 
 if __name__ == "__main__":

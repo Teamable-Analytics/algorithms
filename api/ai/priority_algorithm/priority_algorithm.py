@@ -156,7 +156,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         """
         Mutate a single teamset into child teamsets
         """
-        algorithm = 1
+        algorithm = 5
         cloned_team_sets = [
             team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)
         ]
@@ -190,7 +190,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         elif algorithm == 5:
             return [
                 mutate_local_max_epsilon(
-                    cloned_team_sets[0], self.priorities, self.student_dict, 0.05
+                    cloned_team_sets[0], self.priorities, self.student_dict, 1.00
                 ),
                 *[
                     mutate_random_swap(cloned_team_set)
