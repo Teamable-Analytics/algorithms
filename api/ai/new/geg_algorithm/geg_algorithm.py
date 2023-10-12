@@ -148,19 +148,6 @@ class EnvyGraph:
             path.pop()
             visited.remove(node)
 
-    def draw(self) -> None:
-        import networkx as nx
-        import matplotlib.pyplot as plt
-
-        G = nx.DiGraph()
-        G.add_nodes_from(self.graph.keys())
-        for source, targets in self.graph.items():
-            for target in targets:
-                G.add_edge(source, target)
-
-        nx.draw(G, with_labels=True)
-        plt.show()
-
 
 def requirement_met_by_student(
     requirement: ProjectRequirement, student: Student
