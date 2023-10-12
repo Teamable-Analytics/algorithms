@@ -9,7 +9,7 @@ class MaximumGiniIndex(TeamSetMetric):
     """
 
     def __init__(self, attribute: int, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(theoretical_range=(0, 1), *args, **kwargs)
         self.attribute = attribute
 
     def calculate(self, team_set: TeamSet) -> float:

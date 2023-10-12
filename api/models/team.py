@@ -42,3 +42,11 @@ class Team(TeamShell):
             return False
         self.students.append(student)
         return True
+
+    def num_requirements_met_by_student(self, student: "Student") -> int:
+        return sum(
+            [
+                int(student.meets_requirement(requirement))
+                for requirement in self.requirements
+            ]
+        )

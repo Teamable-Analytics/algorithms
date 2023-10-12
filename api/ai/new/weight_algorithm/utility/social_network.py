@@ -1,37 +1,31 @@
-from old.team_formation.app.team_generator.algorithm.consts import (
-    DEFAULT,
-    FRIEND,
-    ENEMY,
-    LOW_WEIGHT,
-    HIGH_WEIGHT,
-)
+from typing import List, Dict
+
+from api.models.enums import Relationship, Weight
+from api.models.student import Student
 
 
 class SocialNetwork:
     _network = {}
 
-    def __init__(self, students, should_balance=True):
+    def __init__(self, students: List[Student], balanced=True):
         """
-        WARNING:
-        Attempting to create a SocialNetwork without balancing it causes inconsistencies in its methods.
+        WARNING: Passing an unbalanced social network to SubSocialNetwork causes inconsistencies in its methods.
         The ability to do this is currently only used for testing purposes.
         """
         self._network = self._create_social_network(students)
-        if should_balance:
+        if balanced:
             self._network = self._balance_network(self._network)
-        else:
-            print("[WARNING]: Creating an unbalanced SocialNetwork is unadvised.")
 
     def get_network(self):
         return self._network
 
-    def get_weight(self, src, dest):
+    def get_weight(self, src: int, dest: int) -> int:
         if src not in self._network or dest not in self._network[src]:
             raise Exception(
                 f"An edge from Student ({src}) to Student ({dest}) could not be found in the social network"
             )
         if src == dest:
-            return DEFAULT
+            return Relationship.DEFAULT.value
         return self._network[src][dest]
 
     def get_diameter(self):
@@ -41,7 +35,7 @@ class SocialNetwork:
         """
         return _calculate_network_diameter(self._network)
 
-    def _create_social_network(self, students):
+    def _create_social_network(self, students: List[Student]):
         social_network = {}
         for student in students:
             student_network = {}
@@ -49,11 +43,13 @@ class SocialNetwork:
                 if other.id in student.relationships:
                     student_network[other.id] = student.relationships[other.id]
                 else:
-                    student_network[other.id] = DEFAULT
+                    student_network[other.id] = Relationship.DEFAULT.value
             social_network[student.id] = student_network
         return social_network
 
-    def _balance_network(self, network):
+    def _balance_network(
+        self, network: Dict[int : Dict[int, int]]
+    ) -> Dict[int : Dict[int, int]]:
         """
         Balances the weights in a social network graph. Each edge will have the same weight in both directions,
         and this weight is calculated by the sum of the weights in either direction between any given pair of students
@@ -72,18 +68,20 @@ class SocialNetwork:
         return new_network
 
 
-def _normalize_weight(combined_weight):
+def _normalize_weight(combined_weight: int) -> float:
     # this is the theoretical max/min that any combined weight could be
-    theo_max = 2 * ENEMY
-    theo_min = 2 * FRIEND
+    theo_max = 2 * Relationship.ENEMY.value
+    theo_min = 2 * Relationship.FRIEND.value
 
     n = (combined_weight - theo_min) / (theo_max - theo_min)
     # place in the range of [LOW_VALUE, HIGH_VALUE]
-    normalized_weight = LOW_WEIGHT + ((HIGH_WEIGHT - LOW_WEIGHT) * n)
+    normalized_weight = Weight.LOW_WEIGHT.value + (
+        (Weight.HIGH_WEIGHT.value - Weight.LOW_WEIGHT.value) * n
+    )
     return normalized_weight
 
 
-def _calculate_network_diameter(network):
+def _calculate_network_diameter(network: Dict[int : Dict[int, int]]) -> float:
     """
     Calculates the diameter of this network.
 
@@ -91,7 +89,7 @@ def _calculate_network_diameter(network):
         { shortest path's cost for each unique pair of student in the social network }
     """
     student_ids = list(network)
-    diameter = LOW_WEIGHT
+    diameter = Weight.LOW_WEIGHT.value
     if len(student_ids) < 2:
         return diameter
 
@@ -109,7 +107,12 @@ def _calculate_network_diameter(network):
     return diameter
 
 
-def _shortest_path_cost(src, dest, network, distances):
+def _shortest_path_cost(
+    src: int,
+    dest: int,
+    network: Dict[int : Dict[int, int]],
+    distances: Dict[int : Dict[int, float]],
+) -> float:
     """
     Calculates and/or returns the minimum path cost to traverse from src to dest in the network graph.
     Also populates the shortest path cost from src to every other node in the network and stores those values.
@@ -137,7 +140,7 @@ def _shortest_path_cost(src, dest, network, distances):
     return distances[src][dest]
 
 
-def _setup_distances(student_ids):
+def _setup_distances(student_ids: List[int]):
     """
     Set up the distances dictionary storing distances between nodes in the graph
     """
