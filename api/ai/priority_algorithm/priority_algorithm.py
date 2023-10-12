@@ -33,7 +33,6 @@ class PriorityAlgorithm(WeightAlgorithm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.mutation_type = None
         self.student_dict: Dict[int, Student] = {}
         self.priorities: List[Priority] = []
         self.students: List[Student] = []
@@ -117,10 +116,6 @@ class PriorityAlgorithm(WeightAlgorithm):
             self.generate_initial_teams(students, teams, team_generation_option)
         ]
 
-        # Read which mutation type to use from mutation_type.txt
-        with open("../../mutation_type.txt", "r") as f:
-            self.mutation_type = int(f.read())
-
         while (
             time.time() - start_time
         ) < self.MAX_TIME and iteration < self.MAX_ITERATE:
@@ -161,7 +156,7 @@ class PriorityAlgorithm(WeightAlgorithm):
         """
         Mutate a single teamset into child teamsets
         """
-        algorithm = self.mutation_type
+        algorithm = 1
         cloned_team_sets = [
             team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)
         ]
