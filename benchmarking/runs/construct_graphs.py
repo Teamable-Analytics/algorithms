@@ -45,6 +45,8 @@ if __name__ == "__main__":
         "epsilon-0.05",
         "epsilon-0.25",
         "epsilon-1",
+        "robinhood",
+        "robinhood-holistic",
     ]
 
     # Produce a set of graphs for each scenario
@@ -75,8 +77,11 @@ if __name__ == "__main__":
 
         # Read the data from the files
         for mutation in mutations:
-            with open(f"{scenario}-{mutation}.json", "r") as f:
-                json_graph_dicts: List[Dict[str, GraphData]] = jsonpickle.decode(f.read())
+            try:
+                with open(f"{scenario}-{mutation}.json", "r") as f:
+                    json_graph_dicts: List[Dict[str, GraphData]] = jsonpickle.decode(f.read())
+            except FileNotFoundError:
+                continue
 
             for graph_dict in json_graph_dicts:
                 for algorithm_type, graph_data in graph_dict.items():
