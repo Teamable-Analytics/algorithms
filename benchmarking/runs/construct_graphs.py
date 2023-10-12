@@ -9,12 +9,18 @@ from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.average_gini_index import AverageGiniIndex
-from benchmarking.evaluations.metrics.average_social_satisfied import AverageSocialSatisfaction
+from benchmarking.evaluations.metrics.average_social_satisfied import (
+    AverageSocialSatisfaction,
+)
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.metrics.utils.team_calculations import is_happy_team_1shp_friend
-from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import DiversifyGenderMin2Female
+from benchmarking.evaluations.metrics.utils.team_calculations import (
+    is_happy_team_1shp_friend,
+)
+from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
+    DiversifyGenderMin2Female,
+)
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 
 if __name__ == "__main__":
@@ -80,7 +86,9 @@ if __name__ == "__main__":
         for mutation in mutations:
             try:
                 with open(f"{scenario}-{mutation}.json", "r") as f:
-                    json_graph_dicts: List[Dict[str, GraphData]] = jsonpickle.decode(f.read())
+                    json_graph_dicts: List[Dict[str, GraphData]] = jsonpickle.decode(
+                        f.read()
+                    )
             except FileNotFoundError:
                 continue
 
@@ -91,7 +99,9 @@ if __name__ == "__main__":
                         if mutation == "baseline":
                             graph_data.legend_subtitle = "(Random)"
                         else:
-                            graph_data.legend_subtitle = f'({mutation.replace("-", " ").title()})'
+                            graph_data.legend_subtitle = (
+                                f'({mutation.replace("-", " ").title()})'
+                            )
 
             for i in range(len(json_graph_dicts)):
                 graph_lists[i].extend(list(json_graph_dicts[i].values()))
@@ -129,7 +139,9 @@ if __name__ == "__main__":
                     title=f"{scenario_title} Average Gini Index",
                     data=list(graph_avg_gini_list),
                     description=graph_descriptions,
-                    y_lim=GraphAxisRange(*metrics["AverageGiniIndex"].theoretical_range),
+                    y_lim=GraphAxisRange(
+                        *metrics["AverageGiniIndex"].theoretical_range
+                    ),
                     x_lim=None,
                     num_minor_ticks=None,
                     save_graph=save_graphs,
@@ -174,22 +186,23 @@ if __name__ == "__main__":
                     title=f"{scenario_title} Satisfied Priorities",
                     data=list(graph_priority_list),
                     description=graph_descriptions,
-                    y_lim=GraphAxisRange(*metrics["PrioritySatisfaction"].theoretical_range),
+                    y_lim=GraphAxisRange(-0.1, 1.1),
                     x_lim=None,
                     num_minor_ticks=None,
                     save_graph=save_graphs,
                 )
             )
 
-        if len(graph_priority_list) != 0:
+        if len(graph_social_list) != 0:
             line_graph(
                 LineGraphMetadata(
                     x_label="Class size",
                     y_label="Social Satisfaction",
                     title=f"{scenario_title} Social Satisfaction",
-                    data=list(graph_priority_list),
-                    description=graph_descriptions+"\nRatio of teams with at least 1 SHP",
-                    y_lim=None,
+                    data=list(graph_social_list),
+                    description=graph_descriptions
+                    + "\nRatio of teams with at least 1 SHP",
+                    y_lim=GraphAxisRange(-0.0, 0.06),
                     x_lim=None,
                     num_minor_ticks=None,
                     save_graph=save_graphs,
