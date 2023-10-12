@@ -175,7 +175,7 @@ class AlgorithmTranslator:
                 )
                 for s_id, relationship in algorithm_student.relationships.items()
             },
-            preferences=[
+            project_preferences=[
                 project_id
                 for _, project_id in sorted(
                     algorithm_student.preferences.items(), key=lambda item: item[0]
@@ -196,7 +196,7 @@ class AlgorithmTranslator:
             },
             preferences={
                 index: project_id
-                for index, project_id in enumerate(student.preferences)
+                for index, project_id in enumerate(student.project_preferences)
             },
         )
 

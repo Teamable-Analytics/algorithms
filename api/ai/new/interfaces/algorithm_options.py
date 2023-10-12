@@ -34,8 +34,8 @@ class WeightAlgorithmOptions(AlgorithmOptions):
     max_project_preferences: int
     friend_behaviour: RelationshipBehaviour
     enemy_behaviour: RelationshipBehaviour
-    diversify_options: List[int] = field(default_factory=list)
-    concentrate_options: List[int] = field(default_factory=list)
+    attributes_to_diversify: List[int] = field(default_factory=list)
+    attributes_to_concentrate: List[int] = field(default_factory=list)
 
     def validate(self):
         super().validate()
@@ -47,8 +47,8 @@ class WeightAlgorithmOptions(AlgorithmOptions):
             Schema(int).validate(self.max_project_preferences)
             Schema(RelationshipBehaviour).validate(self.friend_behaviour)
             Schema(RelationshipBehaviour).validate(self.enemy_behaviour)
-            Schema([int]).validate(self.diversify_options)
-            Schema([int]).validate(self.concentrate_options)
+            Schema([int]).validate(self.attributes_to_diversify)
+            Schema([int]).validate(self.attributes_to_concentrate)
         except SchemaError as error:
             raise ValueError(f"Error while validating WeightAlgorithmOptions \n{error}")
 
