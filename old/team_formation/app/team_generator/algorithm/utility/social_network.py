@@ -10,14 +10,17 @@ from old.team_formation.app.team_generator.algorithm.consts import (
 class SocialNetwork:
     _network = {}
 
-    def __init__(self, students, balanced=True):
+    def __init__(self, students, should_balance=True):
         """
-        WARNING: Passing an unbalanced social network to SubSocialNetwork causes inconsistencies in its methods.
+        WARNING:
+        Attempting to create a SocialNetwork without balancing it causes inconsistencies in its methods.
         The ability to do this is currently only used for testing purposes.
         """
         self._network = self._create_social_network(students)
-        if balanced:
+        if should_balance:
             self._network = self._balance_network(self._network)
+        else:
+            print("[WARNING]: Creating an unbalanced SocialNetwork is unadvised.")
 
     def get_network(self):
         return self._network
