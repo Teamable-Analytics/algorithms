@@ -99,7 +99,7 @@ def diversify_gender_min_2(num_trials: int = 10):
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=list(metrics.values()),
             algorithm_types=[
-                AlgorithmType.PRIORITY_NEW,
+                AlgorithmType.SOCIAL,
             ],
         ).run(num_runs=num_trials)
 
@@ -150,7 +150,7 @@ def diversify_gender_min_2(num_trials: int = 10):
 
     # Save data rather than graph it
     json_string = jsonpickle.encode(graph_dicts)
-    with open("diversify-gender-epsilon-1.json", "w+") as f:
+    with open("diversify-gender-social.json", "w+") as f:
         f.write(json_string)
 
     # with open("json_trash.json", "r") as f:

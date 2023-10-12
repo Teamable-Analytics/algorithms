@@ -132,7 +132,7 @@ def three_tokenization_constraints(
                 )
             ],
             algorithm_types=[
-                AlgorithmType.PRIORITY_NEW,
+                AlgorithmType.SOCIAL,
             ],
         ).run(num_runs=num_trials)
 
@@ -171,7 +171,7 @@ def three_tokenization_constraints(
 
     # Save data rather than graph it
     json_string = jsonpickle.encode(graph_dicts)
-    with open("three-tokenization-priority-epsilon-1.json", "w+") as f:
+    with open("three-tokenization-priority-social.json", "w+") as f:
         f.write(json_string)
 
     # line_graph(
