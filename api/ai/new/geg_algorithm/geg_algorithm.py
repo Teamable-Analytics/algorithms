@@ -253,8 +253,6 @@ class GEGAlgorithm(Algorithm):
                 i_star, self.utilities.get((i_star, student.id))
             )
 
-            # While G(pi) contains directed cycle C do
-            # allocation_C = pi(i) if i not in C else pi(i_j+1) if i == i_j in C
             C = self.envy_graph.get_all_cycles()
             while len(C) > 0:
                 for cycle in C:
