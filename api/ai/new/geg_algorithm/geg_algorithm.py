@@ -272,8 +272,6 @@ class GEGAlgorithm(Algorithm):
                                 i_j + 1, self.utilities.get((i_j + 1, student.id))
                             )
 
-                    # Find the student with the lowest utility in the cycle
-
         return self.construct_team_from_allocation()
 
 
