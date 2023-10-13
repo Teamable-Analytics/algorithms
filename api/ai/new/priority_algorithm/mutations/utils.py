@@ -1,8 +1,8 @@
 from typing import List, Dict
 
-from api.ai.priority_algorithm.interfaces import Priority
-from api.ai.priority_algorithm.priority_teamset import PriorityTeam
-from api.ai.priority_algorithm.scoring import (
+from api.ai.new.priority_algorithm.interfaces import Priority
+from api.ai.new.priority_algorithm.priority_teamset import PriorityTeam
+from api.ai.new.priority_algorithm.scoring import (
     get_multipliers,
     get_priority_satisfaction_array,
 )

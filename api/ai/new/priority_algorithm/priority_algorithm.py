@@ -15,7 +15,6 @@ from api.ai.new.priority_algorithm.mutations.robinhood import (
 )
 from api.ai.new.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
 from api.ai.new.weight_algorithm.weight_algorithm import WeightAlgorithm
-from api.models.enums import RelationshipBehaviour
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
