@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from typing import List
 from schema import Schema, SchemaError
 
-from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.new.priority_algorithm.interfaces import Priority
 from api.models.enums import RelationshipBehaviour
 
 
