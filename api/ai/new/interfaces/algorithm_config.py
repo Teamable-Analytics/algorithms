@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 
 class AlgorithmConfig(ABC):
@@ -32,6 +33,12 @@ class SocialAlgorithmConfig(AlgorithmConfig):
         super().validate()
 
 
+@dataclass
 class PriorityAlgorithmConfig(AlgorithmConfig):
+    MAX_KEEP: int  # nodes
+    MAX_SPREAD: int  # nodes
+    MAX_ITERATE: int  # iterations
+    MAX_TIME: int  # seconds
+
     def validate(self):
         super().validate()

@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import List
 from schema import Schema, SchemaError
+
+from api.ai.new.priority_algorithm.interfaces import Priority
 from api.models.enums import RelationshipBehaviour
 
 
@@ -55,9 +57,8 @@ class WeightAlgorithmOptions(AlgorithmOptions):
 
 @dataclass
 class PriorityAlgorithmOptions(WeightAlgorithmOptions):
-    priorities: List[dict] = field(default_factory=list)
+    priorities: List[Priority] = field(default_factory=list)
 
-    # TODO: Decide what to do here.
     def validate(self):
         super().validate()
 
