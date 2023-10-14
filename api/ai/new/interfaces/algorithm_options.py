@@ -5,6 +5,7 @@ from schema import Schema, SchemaError
 
 from api.ai.new.priority_algorithm.interfaces import Priority
 from api.models.enums import RelationshipBehaviour
+from api.models.project import Project
 
 
 class AlgorithmOptions(ABC):
@@ -73,3 +74,15 @@ class SocialAlgorithmOptions(WeightAlgorithmOptions):
 class PathGaspAlgorithmOptions(AlgorithmOptions):
     def validate(self):
         super().validate()
+
+
+@dataclass
+class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
+    projects: List[Project]
+
+    def validate(self):
+        super().validate()
+
+        Schema([Project]).validate(self.projects)
+        if len(self.projects) == 0:
+            raise SchemaError("Project list cannot be empty")

@@ -46,7 +46,7 @@ class TestSimulation(unittest.TestCase):
         )
 
     def test_run__run_outputs_match_given_metrics_and_trials(self):
-        simulation_outputs = Simulation(
+        sim = Simulation(
             num_teams=2,
             scenario=self.scenario,
             student_provider=self.student_provider,
@@ -55,9 +55,17 @@ class TestSimulation(unittest.TestCase):
                 self.metric_2,
                 self.metric_3,
             ],
-        ).run(num_runs=5)
+            algorithm_types=[
+                AlgorithmType.RANDOM,
+                AlgorithmType.SOCIAL,
+                AlgorithmType.WEIGHT,
+                AlgorithmType.PRIORITY,
+                AlgorithmType.PRIORITY_NEW,
+            ],
+        )
+        simulation_outputs = sim.run(num_runs=5)
 
-        for algo_type in AlgorithmType:
+        for algo_type in sim.algorithm_types:
             run_output = simulation_outputs[algo_type]
             self.assertEqual(
                 len(run_output.keys()),
