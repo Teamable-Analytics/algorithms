@@ -8,6 +8,7 @@ class StudentProjectValue:
     def __init__(self, student: Student, project: Project):
         self.student = student
         self.project = project
+        # Calculate the value of this student for this project, will not calculate for dummy students (id < 0)
         self.value = (
             0 if student.id < 0 else calculate_value(student, project.requirements)
         )

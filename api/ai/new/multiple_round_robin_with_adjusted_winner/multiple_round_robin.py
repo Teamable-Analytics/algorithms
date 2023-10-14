@@ -65,15 +65,15 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
 
         This run in O(N * H)
         """
-        # (project_id, student_id) -> value
+        # Each project will have its own heap, showing how effective each student to that project
         values_heap: Dict[int, List[StudentProjectValue]] = {
             team.project.id: [] for team in teams
         }
         for team in teams:
             project = team.project
             for student in students:
-                new_node = StudentProjectValue(student, project)
-                heappush(values_heap[project.id], new_node)
+                new_value = StudentProjectValue(student, project)
+                heappush(values_heap[project.id], new_value)
 
         return values_heap
 
@@ -101,7 +101,7 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         project_student_values: Dict[int, List[StudentProjectValue]]
     ) -> bool:
         """
-        Check if there is a student with positive value to any project
+        Check if has dummy students
 
         This run in O(N)
         """
