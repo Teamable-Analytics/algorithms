@@ -61,7 +61,7 @@ class TestSimulation(unittest.TestCase):
                 AlgorithmType.WEIGHT,
                 AlgorithmType.PRIORITY,
                 AlgorithmType.PRIORITY_NEW,
-            ]
+            ],
         )
         simulation_outputs = sim.run(num_runs=5)
 
