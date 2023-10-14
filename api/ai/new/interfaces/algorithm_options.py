@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from typing import List
 from schema import Schema, SchemaError
 from api.models.enums import RelationshipBehaviour
+from api.models.project import Project
 
 
 class AlgorithmOptions(ABC):
@@ -76,5 +77,7 @@ class PathGaspAlgorithmOptions(AlgorithmOptions):
 
 @dataclass
 class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
+    projects: List[Project]
+
     def validate(self):
         super().validate()

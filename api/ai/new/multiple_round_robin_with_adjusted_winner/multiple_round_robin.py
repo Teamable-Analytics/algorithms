@@ -38,7 +38,7 @@ from api.ai.new.multiple_round_robin_with_adjusted_winner.custom_models import (
     StudentProjectValue,
 )
 from api.ai.new.multiple_round_robin_with_adjusted_winner.utils import (
-    is_oef1,
+    is_ordered_envy_freeness_up_to_one_item,
     calculate_value,
 )
 from api.models.project import Project
@@ -51,14 +51,12 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         self,
         algorithm_options: MultipleRoundRobinAlgorithmOptions,
         team_generation_options: TeamGenerationOptions,
-        projects: List[Project],
     ):
         super().__init__(algorithm_options, team_generation_options)
-        self.projects = projects
+        self.projects = algorithm_options.projects
 
-    @staticmethod
     def _get_values_heap(
-        students: List[Student], teams: List[TeamWithValues]
+        self, students: List[Student], teams: List[TeamWithValues]
     ) -> Dict[int, List[StudentProjectValue]]:
         """
         Calculate each student values to each project and push them into a heap
@@ -77,9 +75,8 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
 
         return values_heap
 
-    @staticmethod
     def _has_student_with_positive_value(
-        project_student_values: Dict[int, List[StudentProjectValue]]
+        self, project_student_values: Dict[int, List[StudentProjectValue]]
     ) -> bool:
         """
         Check if there is a student with positive value to any project
@@ -96,9 +93,8 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
 
         return False
 
-    @staticmethod
     def _has_dummy_student(
-        project_student_values: Dict[int, List[StudentProjectValue]]
+        self, project_student_values: Dict[int, List[StudentProjectValue]]
     ) -> bool:
         """
         Check if has dummy students
@@ -114,8 +110,7 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
 
         return False
 
-    @staticmethod
-    def _get_dummy_students(num_dummy_students: int) -> List[Student]:
+    def _get_dummy_students(self, num_dummy_students: int) -> List[Student]:
         return [Student(_id=-index - 1) for index in range(num_dummy_students)]
 
     def _find_allocation_with_mrr(self, students: List[Student]) -> TeamSet:
@@ -178,8 +173,7 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
 
         return TeamSet(teams=teams)
 
-    @staticmethod
-    def _adjust_allocation_with_adjusted_winner(team_set: TeamSet) -> TeamSet:
+    def _adjust_allocation_with_adjusted_winner(self, team_set: TeamSet) -> TeamSet:
         """
         This run in O(N * N * H * H)
         """
@@ -187,7 +181,7 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
             for team_j in team_set.teams:
                 if team_i is team_j:
                     continue
-                if is_oef1(team_i, team_j):
+                if is_ordered_envy_freeness_up_to_one_item(team_i, team_j):
                     continue
 
                 for student in team_j.students:
