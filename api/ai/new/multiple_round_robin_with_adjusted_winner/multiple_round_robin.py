@@ -41,7 +41,6 @@ from api.ai.new.multiple_round_robin_with_adjusted_winner.utils import (
     is_ordered_envy_freeness_up_to_one_item,
     calculate_value,
 )
-from api.models.project import Project
 from api.models.student import Student
 from api.models.team_set import TeamSet
 

@@ -23,9 +23,9 @@ def is_ordered_envy_freeness_up_to_one_item(
     if team_i.value >= team_j.value:
         return False
 
-    for student in team_j.students:
-        student_value_to_team_j = calculate_value(student, team_j.project.requirements)
-        if team_i.value >= team_j.value - student_value_to_team_j:
+    for student in team_i.students:
+        student_value_to_team_i = calculate_value(student, team_i.project.requirements)
+        if team_i.value - student_value_to_team_i >= team_j.value:
             return True
 
     return False
