@@ -1,7 +1,7 @@
 from typing import List, Dict
 
-from api.ai.new.priority_algorithm.interfaces import Priority
-from api.ai.new.priority_algorithm.priority_teamset import PriorityTeam
+from api.ai.new.priority_algorithm.priority.interfaces import Priority
+from api.ai.new.priority_algorithm.custom_models import PriorityTeam
 from api.ai.new.priority_algorithm.scoring import (
     get_multipliers,
     get_priority_satisfaction_array,

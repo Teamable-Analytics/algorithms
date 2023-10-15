@@ -19,7 +19,9 @@ class Algorithm(ABC):
         self.algorithm_options: AlgorithmOptions = algorithm_options
         self.team_generation_options: TeamGenerationOptions = team_generation_options
         self.algorithm_config: AlgorithmConfig = algorithm_config
-        self.teams: List[Team] = []
+        self.teams: List[Team] = Algorithm.create_initial_teams(
+            self.team_generation_options
+        )
 
     @abstractmethod
     def generate(self, students: List[Student]) -> TeamSet:
@@ -48,14 +50,30 @@ class Algorithm(ABC):
         """Can be overridden in Algorithms to support custom rules for whether a student can be added to a team"""
         return True
 
-    def save_students_to_team(self, team: Team, student_list: List[Student]):
-        for student in student_list:
-            team_added_student = team.add_student(student)
-            student_added_team = student.add_team(team)
-            if not team_added_student or not student_added_team:
-                raise ValueError(
-                    "Cannot add student to team or team cannot add student."
-                )
+    @staticmethod
+    def create_initial_teams(
+        team_generation_options: TeamGenerationOptions,
+    ) -> List[Team]:
+        initial_teams: List[Team] = []
+        if team_generation_options.initial_teams:
+            initial_teams.extend(
+                [
+                    Team.from_shell(shell)
+                    for shell in team_generation_options.initial_teams
+                ]
+            )
+
+        # Create the remaining teams with unique names
+        counter = 1
+        while len(initial_teams) < team_generation_options.total_teams:
+            name = f"Team {counter}"
+            # todo: do this better, it loops through all names every time
+            if name not in map(lambda t: t.name, initial_teams):
+                # todo: unique id must be ensured now
+                initial_teams.append(Team(_id=-1, name=name))
+            counter += 1
+
+        return initial_teams
 
 
 class ChooseAlgorithm(Algorithm):

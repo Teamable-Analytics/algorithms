@@ -208,7 +208,7 @@ class TeamGenerator:
         """
 
         teams = initial_teams
-        for team_option in self.options.team_options:
+        for team_option in self.options.initial_teams:
             for team in initial_teams:
                 if team.id == team_option["id"]:
                     break

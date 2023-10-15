@@ -1,6 +1,6 @@
 import random
 
-from api.ai.new.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from api.ai.new.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
 
 
 def swap_student_between_teams(
