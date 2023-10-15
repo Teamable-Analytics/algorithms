@@ -48,6 +48,15 @@ class Algorithm(ABC):
         """Can be overridden in Algorithms to support custom rules for whether a student can be added to a team"""
         return True
 
+    def save_students_to_team(self, team: Team, student_list: List[Student]):
+        for student in student_list:
+            team_added_student = team.add_student(student)
+            student_added_team = student.add_team(team)
+            if not team_added_student or not student_added_team:
+                raise ValueError(
+                    "Cannot add student to team or team cannot add student."
+                )
+
 
 class ChooseAlgorithm(Algorithm):
     @abstractmethod
