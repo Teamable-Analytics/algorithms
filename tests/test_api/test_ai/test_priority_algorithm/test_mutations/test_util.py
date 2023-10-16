@@ -40,7 +40,6 @@ class TestUtil(unittest.TestCase):
     def test_score__returns_correct_score(self):
         # Neither Team satisfies priority
         for team in self.priority_team_set.priority_teams:
-            print(team)
             self.assertEqual(0, score(team, self.priorities, self.student_dict))
         # Make both teams satisfy priority
         for student in self.students:
