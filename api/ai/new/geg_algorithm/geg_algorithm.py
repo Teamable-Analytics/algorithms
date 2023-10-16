@@ -1,8 +1,25 @@
+"""
+Generalized Envy Graph Algorithm
+
+Initialize an allocation pi where all teams are empty
+for each student s ∈ S:
+    pos_projects = projects with positive utilities for s
+    if pos_projects is not empty:
+        Choose a "source" project i_star from the graph G(pi) induced bt pos_projects
+    else:
+        Choose a "sink" project i_star from the graph G(pi)
+
+    Add s to team i_star
+
+    While G(pi) contains directed cycle C do
+        allocation_C = pi(i) if i not in C else pi(i_j+1) if i == i_j in C
+"""
 import math
 import random
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Set
 
 from api.ai.new.geg_algorithm.envy_graph import EnvyGraph
+from api.ai.new.geg_algorithm.utils import calculate_value
 from api.ai.new.interfaces.algorithm import Algorithm
 from api.ai.new.interfaces.algorithm_options import GeneralizedEnvyGraphAlgorithmOptions
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
@@ -11,6 +28,7 @@ from api.models.enums import (
     ScenarioAttribute,
     Gender,
     Race,
+    RequirementOperator,
 )
 from api.models.project import Project, ProjectRequirement
 from api.models.student import Student
@@ -34,28 +52,35 @@ class GEGAlgorithm(Algorithm):
     algorithm_run_time: float
 
     def __init__(
-            self,
-            algorithm_options: GeneralizedEnvyGraphAlgorithmOptions,
-            team_generation_options: TeamGenerationOptions,
+        self,
+        algorithm_options: GeneralizedEnvyGraphAlgorithmOptions,
+        team_generation_options: TeamGenerationOptions,
     ):
         super().__init__(algorithm_options, team_generation_options)
 
         self.allocation: Dict[int, List[int]] = {}
         self.utilities: Dict[Tuple[int, int], int] = {}
         self.projects: List[Project] = algorithm_options.projects
+        self.project_ids_to_projects = {
+            project.id: project for project in self.projects
+        }
 
-    def _randomize_utilities(
-            self, students: List[Student]
+    def _calculate_utilities(
+        self, students: List[Student]
     ) -> Dict[Tuple[int, int], int]:
         utilities: Dict[Tuple[int, int], int] = {}
 
         for project in self.projects:
             for student in students:
-                utilities[(project.id, student.id)] = random.randint(-5, 5)
+                utilities[(project.id, student.id)] = calculate_value(
+                    student, project.requirements
+                )
 
         return utilities
 
-    def _get_N_plus(self, projects: List[Project], student: Student) -> List[Project]:
+    def _get_projects_with_positive_utilities(
+        self, projects: List[Project], student: Student
+    ) -> List[Project]:
         """
         This run in O(N)
         """
@@ -77,6 +102,7 @@ class GEGAlgorithm(Algorithm):
                 students=[
                     self.trace_dictionary.get(student_id) for student_id in student_ids
                 ],
+                requirements=self.project_ids_to_projects.get(project_id).requirements,
             )
             new_team_set.teams.append(new_team)
 
@@ -84,7 +110,7 @@ class GEGAlgorithm(Algorithm):
 
     def generate(self, students: List[Student]) -> TeamSet:
         self.envy_graph = EnvyGraph(students)
-        self.utilities = self._randomize_utilities(students)
+        self.utilities = self._calculate_utilities(students)
         self.allocation: Dict[int, List[int]] = {
             project.id: [] for project in self.projects
         }
@@ -92,7 +118,9 @@ class GEGAlgorithm(Algorithm):
 
         i_star: int = -1
         for student in students:
-            positive_utilities = self._get_N_plus(self.projects, student)
+            positive_utilities = self._get_projects_with_positive_utilities(
+                self.projects, student
+            )
             if len(positive_utilities) != 0:
                 for project in positive_utilities:
                     if self.envy_graph.is_source(project.id):
@@ -112,11 +140,9 @@ class GEGAlgorithm(Algorithm):
                 i_star, self.utilities.get((i_star, student.id))
             )
 
-            # While G(pi) contains directed cycle C do
-            # allocation_C = pi(i) if i not in C else pi(i_j+1) if i == i_j in C
-            C = self.envy_graph.get_all_cycles()
-            while len(C) > 0:
-                for cycle in C:
+            all_directed_cycles = self.envy_graph.get_all_directed_cycles()
+            while len(all_directed_cycles) > 0:
+                for cycle in all_directed_cycles:
                     allocation_C = []
                     for i in cycle:
                         if i in self.allocation:
@@ -134,82 +160,3 @@ class GEGAlgorithm(Algorithm):
                     # Find the student with the lowest utility in the cycle
 
         return self.construct_team_from_allocation()
-
-
-if __name__ == "__main__":
-    CLASS_SIZES = [i for i in range(8, 1201, 4)]
-    TEAM_SIZE = 4
-    MAX_NUM_PROJECT_PREFERENCES = 3
-
-    # Graph variables
-    graph_data_dict: Dict[AlgorithmType, GraphData] = {}
-
-    for class_size in CLASS_SIZES:
-        print(f"Class size: {class_size}")
-
-        number_of_teams = math.ceil(class_size / 4)
-        ratio_of_female_students = 0.5
-
-        mock_num_projects = math.ceil(
-            number_of_teams * 1.5
-        )  # number of project should be more than number of teams
-        mock_project_list = [i + 1 for i in range(mock_num_projects)]
-
-        student_provider_settings = MockStudentProviderSettings(
-            number_of_students=class_size,
-            num_values_per_attribute={
-                ScenarioAttribute.PROJECT_PREFERENCES.value: MAX_NUM_PROJECT_PREFERENCES,
-            },
-            attribute_ranges={
-                ScenarioAttribute.AGE.value: list(range(20, 24)),
-                ScenarioAttribute.GENDER.value: [
-                    (Gender.MALE, 1 - ratio_of_female_students),
-                    (Gender.FEMALE, ratio_of_female_students),
-                ],
-                ScenarioAttribute.GPA.value: list(range(60, 100)),
-                ScenarioAttribute.RACE.value: list(range(len(Race))),
-                ScenarioAttribute.MAJOR.value: list(range(1, 4)),
-                ScenarioAttribute.YEAR_LEVEL.value: list(range(3, 5)),
-                ScenarioAttribute.PROJECT_PREFERENCES.value: mock_project_list,
-            },
-        )
-
-        student_provider = MockStudentProvider(student_provider_settings)
-
-        projects = []
-        for proj_id in mock_project_list:
-            proj_requirements = []
-            random_attributes = random.sample(range(1, 7), 4)
-            for attribute in random_attributes:
-                if attribute == ScenarioAttribute.PROJECT_PREFERENCES:
-                    continue
-
-                attribute_range = student_provider_settings.attribute_ranges[attribute]
-                random_attribute_values = random.sample(
-                    attribute_range,
-                    MAX_NUM_PROJECT_PREFERENCES
-                    if len(attribute_range) > MAX_NUM_PROJECT_PREFERENCES
-                    else 1,
-                )
-                random_operator = random.choice(["exactly", "less than", "more than"])
-
-                proj_requirements.append(
-                    ProjectRequirement(
-                        attribute, random_operator, random_attribute_values
-                    )
-                )
-
-            projects.append(Project(proj_id, requirements=proj_requirements))
-
-        geg_algorithm = GEGAlgorithm(
-            GeneralizedEnvyGraphAlgorithmOptions(projects=projects), None
-        )
-        team_set = geg_algorithm.generate(student_provider.get())
-
-        # Print team set
-        for team in team_set.teams:
-            team_str = ""
-            for people in team.students:
-                team_str += f"{people.id} "
-            print(team_str)
-            print("-----")

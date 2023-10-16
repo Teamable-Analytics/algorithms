@@ -6,7 +6,7 @@ from api.models.student import Student
 class EnvyGraph:
     def __init__(self, students: List[Student]) -> None:
         """
-        Initalize an envy graph
+        Initialize an envy graph
 
         This run in O(N)
         """
@@ -80,7 +80,7 @@ class EnvyGraph:
                 self.remove_edge(project_id, other_project_id)
                 self.remove_edge(other_project_id, project_id)
 
-    def get_all_cycles(self) -> List[List[int]]:
+    def get_all_directed_cycles(self) -> List[List[int]]:
         visited = set([])
         cycles = []
 
@@ -91,7 +91,7 @@ class EnvyGraph:
 
     def _dfs(self, node: int, visited: Set[int], path: List[int]) -> List[int]:
         if node in path:
-            return path[path.index(node):]
+            return path[path.index(node) :]
 
         if node not in visited:
             visited.add(node)
