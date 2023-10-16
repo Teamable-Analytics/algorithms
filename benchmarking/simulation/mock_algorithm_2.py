@@ -26,7 +26,6 @@ from benchmarking.evaluations.goals import (
 )
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.simulation.goal_to_priority import (
-    goals_to_priorities,
     goal_to_priority,
 )
 from utils.dictionaries import prune_dictionary_keys

@@ -24,7 +24,7 @@ DEFAULT_ALGORITHM_TYPES = [
 ]
 
 
-class Simulation2:
+class BasicSimulationSet2:
     """
     Represents running a Simulation num_runs times and returning the metrics from each of those runs.
     """
@@ -71,7 +71,9 @@ class Simulation2:
             self.run_outputs[algorithm_type] = {
                 metric.name: [] for metric in self.metrics
             }
-            self.run_outputs[algorithm_type].update({Simulation2.KEY_RUNTIMES: []})
+            self.run_outputs[algorithm_type].update(
+                {BasicSimulationSet2.KEY_RUNTIMES: []}
+            )
 
     def run(self, num_runs: int) -> RunOutput:
         initial_teams = (
@@ -97,9 +99,9 @@ class Simulation2:
                 team_set = runner.generate(copy.deepcopy(students))
                 end_time = time.time()
 
-                self.run_outputs[algorithm_type][Simulation2.KEY_RUNTIMES].append(
-                    end_time - start_time
-                )
+                self.run_outputs[algorithm_type][
+                    BasicSimulationSet2.KEY_RUNTIMES
+                ].append(end_time - start_time)
                 for metric in self.metrics:
                     self.run_outputs[algorithm_type][metric.name].append(
                         metric.calculate(team_set)

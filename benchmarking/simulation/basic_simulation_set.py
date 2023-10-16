@@ -17,7 +17,7 @@ from old.team_formation.app.team_generator.algorithm.algorithms import Algorithm
 RunOutput = Dict[AlgorithmType, Dict[str, List[float]]]
 
 
-class Simulation:
+class BasicSimulationSet:
     """
     Represents running a Simulation num_runs times and returning the metrics from each of those runs.
     """
@@ -62,7 +62,9 @@ class Simulation:
             self.run_outputs[algorithm_type] = {
                 metric.name: [] for metric in self.metrics
             }
-            self.run_outputs[algorithm_type].update({Simulation.KEY_RUNTIMES: []})
+            self.run_outputs[algorithm_type].update(
+                {BasicSimulationSet.KEY_RUNTIMES: []}
+            )
 
     def run(self, num_runs: int) -> RunOutput:
         initial_teams = (
@@ -89,9 +91,9 @@ class Simulation:
                 team_set = mock_algorithm.generate(copy.deepcopy(algorithm_students))
                 end_time = time.time()
 
-                self.run_outputs[algorithm_type][Simulation.KEY_RUNTIMES].append(
-                    end_time - start_time
-                )
+                self.run_outputs[algorithm_type][
+                    BasicSimulationSet.KEY_RUNTIMES
+                ].append(end_time - start_time)
                 for metric in self.metrics:
                     self.run_outputs[algorithm_type][metric.name].append(
                         metric.calculate(team_set)

@@ -8,7 +8,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 )
 from benchmarking.evaluations.goals import DiversityGoal
 from benchmarking.evaluations.interfaces import TeamSetMetric, Scenario
-from benchmarking.simulation.simulation import Simulation
+from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
 
 
 class TestMetric(TeamSetMetric):
@@ -34,7 +34,7 @@ class TestScenario(Scenario):
         ]
 
 
-class TestSimulation(unittest.TestCase):
+class TestBasicSimulationSet(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.scenario = TestScenario()
@@ -46,7 +46,7 @@ class TestSimulation(unittest.TestCase):
         )
 
     def test_run__run_outputs_match_given_metrics_and_trials(self):
-        sim = Simulation(
+        sim = BasicSimulationSet(
             num_teams=2,
             scenario=self.scenario,
             student_provider=self.student_provider,
@@ -79,10 +79,10 @@ class TestSimulation(unittest.TestCase):
                     5,
                     msg="Incorrect number of trials for metric.",
                 )
-            self.assertTrue(Simulation.KEY_RUNTIMES in run_output)
+            self.assertTrue(BasicSimulationSet.KEY_RUNTIMES in run_output)
 
     def test_run__only_simulates_specified_algorithms_when_specified(self):
-        simulation_outputs = Simulation(
+        simulation_outputs = BasicSimulationSet(
             algorithm_types=[AlgorithmType.SOCIAL, AlgorithmType.WEIGHT],
             num_teams=2,
             scenario=self.scenario,
