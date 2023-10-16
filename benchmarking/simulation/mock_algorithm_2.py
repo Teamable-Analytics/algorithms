@@ -59,8 +59,6 @@ class MockAlgorithm2:
             return PriorityAlgorithmOptions
         if algorithm_type == AlgorithmType.PRIORITY_NEW:
             return PriorityAlgorithmOptions
-        if algorithm_type == AlgorithmType.PRIORITY_NEW:
-            return PriorityAlgorithmOptions
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinAlgorithmOptions
 
