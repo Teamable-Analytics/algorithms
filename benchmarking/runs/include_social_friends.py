@@ -55,7 +55,9 @@ def include_social_friends(num_trials: int = 10):
             ],
         ).run(num_runs=num_trials)
 
-        average_runtimes = BasicSimulationSet.average_metric(simulation_outputs, "runtimes")
+        average_runtimes = BasicSimulationSet.average_metric(
+            simulation_outputs, "runtimes"
+        )
 
         # Data processing for graph
         for algorithm_type, average_runtime in average_runtimes.items():
