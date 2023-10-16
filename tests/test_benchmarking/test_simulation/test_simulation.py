@@ -1,5 +1,6 @@
 import unittest
 
+from api.ai.new.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.models.enums import AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
@@ -58,3 +59,24 @@ class TestSimulation(unittest.TestCase):
                 algorithm_type=algorithm_type,
                 settings=self.settings,
             ).run(num_runs=5)
+
+    def test_run__works_with_configs(self):
+        # fixme: probably some cool way to do this with python mocks
+        tracker = {"is_called": False}
+
+        def return_val(val):
+            tracker["is_called"] = True
+            return val
+
+        Simulation(
+            algorithm_type=AlgorithmType.PRIORITY,
+            config=PriorityAlgorithmConfig(
+                MAX_KEEP=return_val(1),
+                MAX_SPREAD=1,
+                MAX_TIME=1,
+                MAX_ITERATE=1,
+            ),
+            settings=self.settings,
+        ).run(num_runs=5)
+
+        self.assertTrue(tracker["is_called"])
