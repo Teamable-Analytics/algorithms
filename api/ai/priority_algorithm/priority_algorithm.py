@@ -1,6 +1,7 @@
 import time
 from typing import Dict, List, Literal
 
+from api.ai.new.utils import save_students_to_team
 from api.ai.priority_algorithm.interfaces import Priority
 from api.ai.priority_algorithm.mutations.local_max import mutate_local_max
 from api.ai.priority_algorithm.mutations.random_swap import mutate_random_swap
@@ -145,7 +146,7 @@ class PriorityAlgorithm(WeightAlgorithm):
                 self.student_dict[student_id]
                 for student_id in priority_team.student_ids
             ]
-            self.save_students_to_team(priority_team.team, students)
+            save_students_to_team(priority_team.team, students)
             teams.append(priority_team.team)
         return teams
 

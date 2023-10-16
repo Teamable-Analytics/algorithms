@@ -23,7 +23,7 @@ from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
     DiversifyGenderMin2Female,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
-from benchmarking.simulation.simulation import Simulation
+from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
 
 
 def diversify_gender_min_2(num_trials: int = 10):
@@ -78,26 +78,26 @@ def diversify_gender_min_2(num_trials: int = 10):
             },
         )
 
-        simulation_outputs = Simulation(
+        simulation_outputs = BasicSimulationSet(
             num_teams=number_of_teams,
             scenario=scenario,
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=list(metrics.values()),
         ).run(num_runs=num_trials)
 
-        average_ginis = Simulation.average_metric(
+        average_ginis = BasicSimulationSet.average_metric(
             simulation_outputs, "AverageGiniIndex"
         )
-        maximum_ginis = Simulation.average_metric(
+        maximum_ginis = BasicSimulationSet.average_metric(
             simulation_outputs, "MaximumGiniIndex"
         )
-        minimum_ginis = Simulation.average_metric(
+        minimum_ginis = BasicSimulationSet.average_metric(
             simulation_outputs, "MinimumGiniIndex"
         )
-        average_runtimes = Simulation.average_metric(
-            simulation_outputs, Simulation.KEY_RUNTIMES
+        average_runtimes = BasicSimulationSet.average_metric(
+            simulation_outputs, BasicSimulationSet.KEY_RUNTIMES
         )
-        satisfied_priorities = Simulation.average_metric(
+        satisfied_priorities = BasicSimulationSet.average_metric(
             simulation_outputs, "PrioritySatisfaction"
         )
         metric_values = [

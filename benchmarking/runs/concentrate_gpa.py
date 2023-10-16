@@ -15,7 +15,7 @@ from benchmarking.evaluations.metrics.average_gini_index import AverageGiniIndex
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from benchmarking.evaluations.scenarios.concentrate_gpa import ConcentrateGPA
-from benchmarking.simulation.simulation import Simulation
+from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
 from api.models.enums import ScenarioAttribute, Gpa
 
 
@@ -64,24 +64,24 @@ def concentrate_gpa(num_trials: int = 10):
             },
         )
 
-        simulation_outputs = Simulation(
+        simulation_outputs = BasicSimulationSet(
             num_teams=number_of_teams,
             scenario=ConcentrateGPA(),
             student_provider=MockStudentProvider(student_provider_settings),
             metrics=list(metrics.values()),
         ).run(num_runs=num_trials)
 
-        average_ginis = Simulation.average_metric(
+        average_ginis = BasicSimulationSet.average_metric(
             simulation_outputs, "AverageGiniIndex"
         )
-        maximum_ginis = Simulation.average_metric(
+        maximum_ginis = BasicSimulationSet.average_metric(
             simulation_outputs, "MaximumGiniIndex"
         )
-        minimum_ginis = Simulation.average_metric(
+        minimum_ginis = BasicSimulationSet.average_metric(
             simulation_outputs, "MinimumGiniIndex"
         )
-        average_runtimes = Simulation.average_metric(
-            simulation_outputs, Simulation.KEY_RUNTIMES
+        average_runtimes = BasicSimulationSet.average_metric(
+            simulation_outputs, BasicSimulationSet.KEY_RUNTIMES
         )
         metric_values = [average_runtimes, average_ginis, minimum_ginis, maximum_ginis]
 

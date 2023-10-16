@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Union
+
 from schema import Schema, SchemaError
 
-from api.ai.new.priority_algorithm.interfaces import Priority
+from api.ai.new.priority_algorithm.priority.interfaces import Priority
 from api.models.enums import RelationshipBehaviour
 from api.models.project import Project
 
@@ -30,13 +31,13 @@ class RandomAlgorithmOptions(AlgorithmOptions):
 
 @dataclass
 class WeightAlgorithmOptions(AlgorithmOptions):
-    requirement_weight: int
-    social_weight: int
-    diversity_weight: int
-    preference_weight: int
     max_project_preferences: int
-    friend_behaviour: RelationshipBehaviour
-    enemy_behaviour: RelationshipBehaviour
+    requirement_weight: int = 0
+    social_weight: int = 0
+    diversity_weight: int = 0
+    preference_weight: int = 0
+    friend_behaviour: RelationshipBehaviour = RelationshipBehaviour.ENFORCE
+    enemy_behaviour: RelationshipBehaviour = RelationshipBehaviour.ENFORCE
     attributes_to_diversify: List[int] = field(default_factory=list)
     attributes_to_concentrate: List[int] = field(default_factory=list)
 
@@ -82,10 +83,9 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
 
     def validate(self):
         super().validate()
-
         Schema([Project]).validate(self.projects)
         if len(self.projects) == 0:
-            raise SchemaError("Project list cannot be empty")
+            raise SchemaError("Project list cannot be empty.")
 
 
 @dataclass
@@ -98,3 +98,14 @@ class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
         Schema([Project]).validate(self.projects)
         if len(self.projects) == 0:
             raise SchemaError("Project list cannot be empty")
+
+
+AnyAlgorithmOptions = Union[
+    RandomAlgorithmOptions,
+    WeightAlgorithmOptions,
+    SocialAlgorithmOptions,
+    PriorityAlgorithmOptions,
+    PathGaspAlgorithmOptions,
+    MultipleRoundRobinAlgorithmOptions,
+    GeneralizedEnvyGraphAlgorithmOptions,
+]

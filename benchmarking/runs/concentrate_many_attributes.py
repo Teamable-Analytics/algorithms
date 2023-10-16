@@ -17,7 +17,7 @@ from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import 
 from benchmarking.evaluations.scenarios.concentrate_multiple_attributes import (
     ConcentrateMultipleAttributes,
 )
-from benchmarking.simulation.simulation import Simulation
+from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
 from api.models.enums import ScenarioAttribute, Gender, Race
 
 
@@ -71,7 +71,7 @@ def concentrate_many_attributes(num_trials: int = 10):
             },
         )
 
-        simulation_outputs = Simulation(
+        simulation_outputs = BasicSimulationSet(
             num_teams=number_of_teams,
             scenario=ConcentrateMultipleAttributes(
                 [
@@ -87,12 +87,12 @@ def concentrate_many_attributes(num_trials: int = 10):
             metrics=list(metrics.values()),
         ).run(num_runs=num_trials)
 
-        average_gini = Simulation.average_metric(
+        average_gini = BasicSimulationSet.average_metric(
             simulation_outputs, "AverageGiniIndexMultiAttribute"
         )
 
-        average_runtimes = Simulation.average_metric(
-            simulation_outputs, Simulation.KEY_RUNTIMES
+        average_runtimes = BasicSimulationSet.average_metric(
+            simulation_outputs, BasicSimulationSet.KEY_RUNTIMES
         )
 
         metric_values = [average_runtimes, average_gini]

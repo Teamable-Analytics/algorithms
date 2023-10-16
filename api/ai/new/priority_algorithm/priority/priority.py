@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from api.ai.new.priority_algorithm.interfaces import Priority
+from api.ai.new.priority_algorithm.priority.interfaces import Priority
 from api.models.enums import DiversifyType, TokenizationConstraintDirection
 from api.models.student import Student
 

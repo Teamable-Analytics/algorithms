@@ -32,16 +32,25 @@ class Team(TeamShell):
     def size(self) -> int:
         return len(self.students)
 
+    @classmethod
+    def from_shell(cls, shell: TeamShell) -> "Team":
+        return cls(
+            _id=shell.id,
+            name=shell.name,
+            project_id=shell.project_id,
+            requirements=shell.requirements,
+            is_locked=shell.is_locked,
+        )
+
     def empty(self):
         for student in self.students:
             student.team = None
         self.students = []
 
     def add_student(self, student: "Student"):
-        if self.is_locked or student.team is not None:
-            return False
+        if self.is_locked:
+            raise ValueError(f"Cannot add student ({student.id}) to team {self.id}.")
         self.students.append(student)
-        return True
 
     def num_requirements_met_by_student(self, student: "Student") -> int:
         return sum(
@@ -50,3 +59,9 @@ class Team(TeamShell):
                 for requirement in self.requirements
             ]
         )
+
+    def lock(self):
+        self.is_locked = True
+
+    def unlock(self):
+        self.is_locked = False
