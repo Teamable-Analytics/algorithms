@@ -1,37 +1,12 @@
 import unittest
-from typing import List
 
-from api.models.enums import DiversifyType, AlgorithmType
+from api.models.enums import AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
-from benchmarking.evaluations.goals import DiversityGoal
-from benchmarking.evaluations.interfaces import TeamSetMetric, Scenario
 from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
-
-
-class TestMetric(TeamSetMetric):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def calculate(self, team_set: "TeamSet") -> float:
-        return 1
-
-
-class TestScenario(Scenario):
-    @property
-    def name(self) -> str:
-        return "Test Scenario"
-
-    @property
-    def goals(self) -> List["Goal"]:
-        return [
-            DiversityGoal(
-                strategy=DiversifyType.DIVERSIFY,
-                attribute=1,
-            )
-        ]
+from tests.test_benchmarking.test_simulation._data import TestScenario, TestMetric
 
 
 class TestBasicSimulationSet(unittest.TestCase):

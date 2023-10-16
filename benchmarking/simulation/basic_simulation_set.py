@@ -16,6 +16,13 @@ from old.team_formation.app.team_generator.algorithm.algorithms import Algorithm
 
 RunOutput = Dict[AlgorithmType, Dict[str, List[float]]]
 
+DEFAULT_ALGORITHM_TYPES = [
+    AlgorithmType.RANDOM,
+    AlgorithmType.WEIGHT,
+    AlgorithmType.SOCIAL,
+    AlgorithmType.PRIORITY,
+]
+
 
 class BasicSimulationSet:
     """
@@ -39,7 +46,7 @@ class BasicSimulationSet:
 
         self.num_teams = num_teams
         self.initial_teams_provider = initial_teams_provider
-        self.algorithm_types = algorithm_types or [_ for _ in AlgorithmType]
+        self.algorithm_types = algorithm_types or DEFAULT_ALGORITHM_TYPES
 
         if not self.algorithm_types:
             raise ValueError(
