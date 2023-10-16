@@ -48,8 +48,8 @@ class SocialNetwork:
         return social_network
 
     def _balance_network(
-        self, network: Dict[int : Dict[int, int]]
-    ) -> Dict[int : Dict[int, int]]:
+        self, network: Dict[int, Dict[int, int]]
+    ) -> Dict[int, Dict[int, int]]:
         """
         Balances the weights in a social network graph. Each edge will have the same weight in both directions,
         and this weight is calculated by the sum of the weights in either direction between any given pair of students
@@ -81,7 +81,7 @@ def _normalize_weight(combined_weight: int) -> float:
     return normalized_weight
 
 
-def _calculate_network_diameter(network: Dict[int : Dict[int, int]]) -> float:
+def _calculate_network_diameter(network: Dict[int, Dict[int, int]]) -> float:
     """
     Calculates the diameter of this network.
 
@@ -110,8 +110,8 @@ def _calculate_network_diameter(network: Dict[int : Dict[int, int]]) -> float:
 def _shortest_path_cost(
     src: int,
     dest: int,
-    network: Dict[int : Dict[int, int]],
-    distances: Dict[int : Dict[int, float]],
+    network: Dict[int, Dict[int, int]],
+    distances: Dict[int, Dict[int, float]],
 ) -> float:
     """
     Calculates and/or returns the minimum path cost to traverse from src to dest in the network graph.

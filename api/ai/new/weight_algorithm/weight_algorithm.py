@@ -2,7 +2,9 @@ from typing import List, Tuple, Optional, cast
 
 from api.ai.new.interfaces.algorithm import ChooseAlgorithm
 from api.ai.new.interfaces.algorithm_config import WeightAlgorithmConfig
-from api.ai.new.interfaces.algorithm_options import WeightAlgorithmOptions
+from api.ai.new.interfaces.algorithm_options import (
+    WeightAlgorithmOptions,
+)
 from api.ai.new.utils import generate_with_choose
 from api.ai.new.weight_algorithm.utility import (
     get_requirement_utility,
@@ -48,14 +50,19 @@ class WeightAlgorithm(ChooseAlgorithm):
         greatest_utility = 0
         greatest_utility_student = None
         for student in students:
-            utility = self._get_utility(smallest_team, student)
+            utility = WeightAlgorithm.get_utility(
+                self.algorithm_options, smallest_team, student
+            )
             if greatest_utility_student is None or utility > greatest_utility:
                 greatest_utility = utility
                 greatest_utility_student = student
 
         return smallest_team, greatest_utility_student
 
-    def _get_utility(self, team: Team, student: Student):
+    @staticmethod
+    def get_utility(
+        algorithm_options: WeightAlgorithmOptions, team: Team, student: Student
+    ) -> float:
         """
         Get the utility for each of the four weights, requirement/social/diversity/preference.
         Then combine each of the normalized weights. Each utility is modified based on the options.
@@ -65,25 +72,25 @@ class WeightAlgorithm(ChooseAlgorithm):
 
         requirement_utility = (
             get_requirement_utility(team, student)
-            * self.algorithm_options.requirement_weight
+            * algorithm_options.requirement_weight
         )
         social_utility = (
-            get_social_utility(team, [student]) * self.algorithm_options.social_weight
+            get_social_utility(team, [student]) * algorithm_options.social_weight
         )
         diversity_utility = (
             get_diversity_utility(
                 team,
                 student,
-                self.algorithm_options.attributes_to_diversify,
-                self.algorithm_options.attributes_to_concentrate,
+                algorithm_options.attributes_to_diversify,
+                algorithm_options.attributes_to_concentrate,
             )
-            * self.algorithm_options.diversity_weight
+            * algorithm_options.diversity_weight
         )
         preference_utility = (
             get_preference_utility(
-                team, student, self.algorithm_options.max_project_preferences
+                team, student, algorithm_options.max_project_preferences
             )
-            * self.algorithm_options.preference_weight
+            * algorithm_options.preference_weight
         )
 
         return (

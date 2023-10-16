@@ -3,15 +3,16 @@ from typing import List
 from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
 from api.ai.new.interfaces.algorithm_options import AlgorithmOptions
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
+from api.ai.new.multiple_round_robin_with_adjusted_winner.multiple_round_robin import (
+    MultipleRoundRobinWithAdjustedWinnerAlgorithm,
+)
 from api.ai.new.priority_algorithm.priority_algorithm import PriorityAlgorithm
 from api.ai.new.random_algorithm.random_algorithm import RandomAlgorithm
+from api.ai.new.social_algorithm.social_algorithm import SocialAlgorithm
 from api.ai.new.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.models.enums import AlgorithmType
 from api.models.student import Student
 from api.models.team_set import TeamSet
-from old.team_formation.app.team_generator.algorithm.social_algorithm.social_algorithm import (
-    SocialAlgorithm,
-)
 
 
 class AlgorithmRunner:
@@ -44,3 +45,12 @@ class AlgorithmRunner:
             return SocialAlgorithm
         if algorithm_type == AlgorithmType.PRIORITY:
             return PriorityAlgorithm
+        # todo: fix to use old priority way
+        if algorithm_type == AlgorithmType.PRIORITY_NEW:
+            return PriorityAlgorithm
+        if algorithm_type == AlgorithmType.MRR:
+            return MultipleRoundRobinWithAdjustedWinnerAlgorithm
+
+        raise NotImplementedError(
+            f"Algorithm type {algorithm_type} is not associated with an algorithm class!"
+        )

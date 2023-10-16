@@ -20,9 +20,10 @@ class Student:
 
     def add_team(self, team: "Team"):
         if self.team:
-            return False
+            raise ValueError(
+                f"Cannot add student ({self.id}) to team ({team.name}). Student already has a team ({self.team.name})"
+            )
         self.team = team
-        return True
 
     def meets_requirement(self, requirement: ProjectRequirement) -> bool:
         is_met = False

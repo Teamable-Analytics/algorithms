@@ -1,6 +1,7 @@
 import unittest
 from typing import List
 
+from api.models.enums import DiversifyType, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -8,7 +9,6 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 from benchmarking.evaluations.goals import DiversityGoal
 from benchmarking.evaluations.interfaces import TeamSetMetric, Scenario
 from benchmarking.simulation.simulation import Simulation
-from api.models.enums import DiversifyType, AlgorithmType
 
 
 class TestMetric(TeamSetMetric):

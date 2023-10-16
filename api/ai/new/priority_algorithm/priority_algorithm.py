@@ -7,13 +7,14 @@ from api.ai.new.interfaces.algorithm_options import (
     PriorityAlgorithmOptions,
     WeightAlgorithmOptions,
 )
+from api.ai.new.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
 from api.ai.new.priority_algorithm.mutations.local_max import mutate_local_max
 from api.ai.new.priority_algorithm.mutations.random_swap import mutate_random_swap
 from api.ai.new.priority_algorithm.mutations.robinhood import (
     mutate_robinhood,
     mutate_robinhood_holistic,
 )
-from api.ai.new.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from api.ai.new.utils import save_students_to_team
 from api.ai.new.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.models.student import Student
 from api.models.team import Team
@@ -53,6 +54,9 @@ class PriorityAlgorithm(Algorithm):
             ),
             team_generation_options=self.team_generation_options,
         ).generate(students)
+
+        # keep internal self.teams accurate
+        self.teams = team_set.teams
 
         return PriorityTeamSet(
             priority_teams=[
@@ -140,12 +144,16 @@ class PriorityAlgorithm(Algorithm):
         for priority_team in priority_team_set.priority_teams:
             priority_team.team.empty()
 
+        # students will be assigned a .team from the generate_initial_teams(), this must be removed
+        for student in self.student_dict.values():
+            student.team = None
+
         for priority_team in priority_team_set.priority_teams:
             students = [
                 self.student_dict[student_id]
                 for student_id in priority_team.student_ids
             ]
-            self.save_students_to_team(priority_team.team, students)
+            save_students_to_team(priority_team.team, students)
             teams.append(priority_team.team)
 
         return TeamSet(teams=teams)
@@ -169,6 +177,6 @@ def weight_options_from_priority_options(
         max_project_preferences=options.max_project_preferences,
         friend_behaviour=options.friend_behaviour,
         enemy_behaviour=options.enemy_behaviour,
-        diversify_options=options.diversify_options,
-        concentrate_options=options.concentrate_options,
+        attributes_to_diversify=options.attributes_to_diversify,
+        attributes_to_concentrate=options.attributes_to_concentrate,
     )

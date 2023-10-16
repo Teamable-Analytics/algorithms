@@ -9,10 +9,8 @@ from api.models.team_set import TeamSet
 def save_students_to_team(team: Team, students: List[Student]):
     for student in students:
         # todo: should undo any adds if either fail, like a db transaction
-        team_added_student = team.add_student(student)
-        student_added_team = student.add_team(team)
-        if not team_added_student or not student_added_team:
-            raise ValueError("Cannot add student to team or team cannot add student.")
+        team.add_student(student)
+        student.add_team(team)
 
 
 def generate_with_choose(
