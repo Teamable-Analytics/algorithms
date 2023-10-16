@@ -2,7 +2,7 @@ from typing import List, cast
 
 from api.ai.new.interfaces.algorithm import Algorithm
 from api.ai.new.interfaces.algorithm_options import PathGaspAlgorithmOptions
-from api.models.student import Student
+from api.models.student.student import Student
 from api.models.team_set import TeamSet
 
 

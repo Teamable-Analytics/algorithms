@@ -16,7 +16,7 @@ from api.ai.new.priority_algorithm.mutations.robinhood import (
 )
 from api.ai.new.utils import save_students_to_team
 from api.ai.new.weight_algorithm.weight_algorithm import WeightAlgorithm
-from api.models.student import Student
+from api.models.student.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
 

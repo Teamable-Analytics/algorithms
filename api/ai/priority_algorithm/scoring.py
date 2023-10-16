@@ -2,7 +2,7 @@ from math import floor
 from typing import List, Dict, TYPE_CHECKING
 
 from api.ai.priority_algorithm.interfaces import Priority
-from api.models.student import Student
+from api.models.student.student import Student
 
 if TYPE_CHECKING:
     from ai.priority_algorithm.priority_teamset import PriorityTeam

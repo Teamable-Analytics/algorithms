@@ -1,6 +1,6 @@
 import unittest
 
-from api.models.student import Student
+from api.models.student.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction

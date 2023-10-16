@@ -2,7 +2,7 @@ from itertools import combinations
 from typing import Tuple, List, Dict
 
 from api.models.enums import Relationship
-from api.models.student import Student
+from api.models.student.student import Student
 
 
 class SocialGraph:

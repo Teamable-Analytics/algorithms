@@ -2,7 +2,7 @@ from typing import List
 
 from api.ai.new.weight_algorithm.utility.social_network import SocialNetwork
 from api.models.enums import Weight
-from api.models.student import Student
+from api.models.student.student import Student
 from api.models.team import Team
 
 

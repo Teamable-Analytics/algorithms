@@ -1,7 +1,7 @@
 from typing import List
 
 from api.models.project import ProjectRequirement
-from api.models.student import Student
+from api.models.student.student import Student
 
 
 def calculate_value(student: Student, requirements: List[ProjectRequirement]) -> int:

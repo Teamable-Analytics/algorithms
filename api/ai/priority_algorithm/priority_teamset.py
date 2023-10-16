@@ -7,7 +7,7 @@ from api.ai.priority_algorithm.scoring import (
     get_priority_satisfaction_array,
     get_multipliers,
 )
-from api.models.student import Student
+from api.models.student.student import Student
 from api.models.team import Team
 
 """

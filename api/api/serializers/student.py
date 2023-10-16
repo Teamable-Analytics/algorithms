@@ -1,6 +1,6 @@
 from typing import Dict, Any
 
-from api.models.student import Student
+from api.models.student.student import Student
 
 
 class StudentSerializer:

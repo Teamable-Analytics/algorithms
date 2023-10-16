@@ -1,6 +1,6 @@
 import unittest
 
-from api.models.student import Student
+from api.models.student.student import Student
 from utils.validation import is_unique
 
 

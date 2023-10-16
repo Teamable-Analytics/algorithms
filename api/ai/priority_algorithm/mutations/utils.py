@@ -6,7 +6,7 @@ from api.ai.priority_algorithm.scoring import (
     get_multipliers,
     get_priority_satisfaction_array,
 )
-from api.models.student import Student
+from api.models.student.student import Student
 
 
 def score(

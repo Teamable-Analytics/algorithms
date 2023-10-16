@@ -24,7 +24,7 @@ from api.ai.new.weight_algorithm.utility import (
 )
 from api.ai.new.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.models.enums import Relationship
-from api.models.student import Student
+from api.models.student.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
 

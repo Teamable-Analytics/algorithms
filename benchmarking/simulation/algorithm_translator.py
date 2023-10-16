@@ -8,7 +8,7 @@ from api.models.enums import (
     TokenizationConstraintDirection,
 )
 from api.models.project import ProjectRequirement
-from api.models.student import Student
+from api.models.student.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
 from old.team_formation.app.team_generator.algorithm.consts import (
