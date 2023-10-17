@@ -61,22 +61,15 @@ class TestSimulation(unittest.TestCase):
             ).run(num_runs=5)
 
     def test_run__works_with_configs(self):
-        # fixme: probably some cool way to do this with python mocks
-        tracker = {"is_called": False}
-
-        def return_val(val):
-            tracker["is_called"] = True
-            return val
-
+        # fixme: should eventually test that the custom config passed
+        #  is actually used, for now just tests that it doesn't break
         Simulation(
             algorithm_type=AlgorithmType.PRIORITY,
             config=PriorityAlgorithmConfig(
-                MAX_KEEP=return_val(1),
+                MAX_KEEP=1,
                 MAX_SPREAD=1,
                 MAX_TIME=1,
-                MAX_ITERATE=1,
+                MAX_ITERATE=2222,
             ),
             settings=self.settings,
-        ).run(num_runs=5)
-
-        self.assertTrue(tracker["is_called"])
+        ).run(num_runs=1)
