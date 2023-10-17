@@ -5,6 +5,7 @@ from collections import defaultdict
 from typing import List, Dict
 
 from api.ai.algorithm_runner import AlgorithmRunner
+from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
 from api.models.enums import AlgorithmType
 from benchmarking.simulation.mock_algorithm_2 import MockAlgorithm2
 from benchmarking.simulation.simulation_settings import SimulationSettings
@@ -23,9 +24,11 @@ class Simulation:
         self,
         algorithm_type: AlgorithmType,
         settings: SimulationSettings,
+        config: AlgorithmConfig = None,
     ):
         self.algorithm_type = algorithm_type
         self.settings = settings
+        self.config = config
         self.run_outputs = defaultdict(dict)
         self.simulation_outputs = {metric.name: [] for metric in self.settings.metrics}
         self.simulation_outputs.update({Simulation.KEY_RUNTIMES: []})
@@ -52,6 +55,7 @@ class Simulation:
             algorithm_type=self.algorithm_type,
             team_generation_options=team_generation_options,
             algorithm_options=algorithm_options,
+            algorithm_config=self.config,
         )
 
         for _ in range(0, num_runs):

@@ -1,5 +1,6 @@
 import unittest
 
+from api.ai.new.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.models.enums import AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
@@ -58,3 +59,17 @@ class TestSimulation(unittest.TestCase):
                 algorithm_type=algorithm_type,
                 settings=self.settings,
             ).run(num_runs=5)
+
+    def test_run__works_with_configs(self):
+        # fixme: should eventually test that the custom config passed
+        #  is actually used, for now just tests that it doesn't break
+        Simulation(
+            algorithm_type=AlgorithmType.PRIORITY,
+            config=PriorityAlgorithmConfig(
+                MAX_KEEP=1,
+                MAX_SPREAD=1,
+                MAX_TIME=1,
+                MAX_ITERATE=2222,
+            ),
+            settings=self.settings,
+        ).run(num_runs=1)
