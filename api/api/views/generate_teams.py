@@ -1,6 +1,5 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.renderers import JSONRenderer
 
 from api.api.serializers.team_set import TeamSetSerializer
 from api.api.utils.generate_teams import generate_teams
@@ -34,12 +33,12 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
 
         # validate data schema
         GenerateTeamsValidator(request_data).validate()
+        print(request_data)
         input_data = GenerateTeamsDataLoader(request_data).load()
         team_set = generate_teams(input_data)
 
-        serialized_team_set = JSONRenderer().render(TeamSetSerializer(team_set).data)
+        serialized_team_set = TeamSetSerializer(team_set).data
 
-        print(request_data)
         return ResponseWithMetadata(
             data_label="teams", data=serialized_team_set, status=200
         )

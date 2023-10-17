@@ -3,6 +3,7 @@ from typing import Tuple, List, Dict
 
 from api.models.enums import Relationship
 from api.models.student import Student
+from api.api.utils.relationship import get_relationship_value
 
 
 class SocialGraph:
@@ -20,11 +21,11 @@ class SocialGraph:
         levelled_social_graph = {}
         for student, other in combinations(self.students, 2):
             total_relationship = (
-                self._raw_social_graph[(student.id, other.id)]
-                + self._raw_social_graph[(other.id, student.id)]
+                    self._raw_social_graph[(student.id, other.id)]
+                    + self._raw_social_graph[(other.id, student.id)]
             )
             if (
-                total_relationship <= level
+                    total_relationship <= level
             ):  # being at this level or better means having a lighter or the same weight
                 levelled_social_graph[(student.id, other.id)] = levelled_social_graph[
                     (other.id, student.id)
@@ -56,5 +57,5 @@ def create_social_graph(students: List[Student]):
             social_graph[(student.id, other.id)] = Relationship.DEFAULT.value
             if other.id in student.relationships:
                 # update to real relationship value if one exists
-                social_graph[(student.id, other.id)] = student.relationships[other.id]
+                social_graph[(student.id, other.id)] = get_relationship_value(student.relationships[other.id])
     return social_graph
