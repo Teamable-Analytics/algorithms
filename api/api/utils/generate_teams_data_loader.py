@@ -43,8 +43,9 @@ class GenerateTeamsDataLoader:
                 name=student.get("name"),
                 relationships=student.get("relationships"),
                 attributes=student.get("attributes"),
-                project_preferences=student.get("project_preferences")
-            ) for student in students
+                project_preferences=student.get("project_preferences"),
+            )
+            for student in students
         ]
 
     def _get_algorithm_options(self) -> AlgorithmOptions:
@@ -53,7 +54,9 @@ class GenerateTeamsDataLoader:
         algorithm_option_class = get_algorithm_option_class(algorithm_type)
         return algorithm_option_class.parse_json(algorithm_options)
 
-    def _validate_team_generation_options(self, team_generation_options: Optional[Dict[str, Any]]):
+    def _validate_team_generation_options(
+        self, team_generation_options: Optional[Dict[str, Any]]
+    ):
         if team_generation_options is None:
             raise ValueError("team_generation_options is required")
         Schema(int).validate(team_generation_options.get("total_teams"))

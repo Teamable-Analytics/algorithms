@@ -1,5 +1,10 @@
-from api.ai.new.interfaces.algorithm_options import RandomAlgorithmOptions, WeightAlgorithmOptions,\
-    SocialAlgorithmOptions, PriorityAlgorithmOptions, MultipleRoundRobinAlgorithmOptions
+from api.ai.new.interfaces.algorithm_options import (
+    RandomAlgorithmOptions,
+    WeightAlgorithmOptions,
+    SocialAlgorithmOptions,
+    PriorityAlgorithmOptions,
+    MultipleRoundRobinAlgorithmOptions,
+)
 from api.models.enums import AlgorithmType
 
 

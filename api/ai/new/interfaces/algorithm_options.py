@@ -71,7 +71,9 @@ class WeightAlgorithmOptions(AlgorithmOptions):
         social_weight = json.get("social_weight", 0)
         diversity_weight = json.get("diversity_weight", 0)
         preference_weight = json.get("preference_weight", 0)
-        friend_behaviour = RelationshipBehaviour(json.get("friend_behaviour", "enforce"))
+        friend_behaviour = RelationshipBehaviour(
+            json.get("friend_behaviour", "enforce")
+        )
         enemy_behaviour = RelationshipBehaviour(json.get("enemy_behaviour", "enforce"))
         attributes_to_diversify = json.get("attributes_to_diversify", [])
         attributes_to_concentrate = json.get("attributes_to_concentrate", [])
@@ -104,7 +106,9 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
         social_weight = json.get("social_weight", 0)
         diversity_weight = json.get("diversity_weight", 0)
         preference_weight = json.get("preference_weight", 0)
-        friend_behaviour = RelationshipBehaviour(json.get("friend_behaviour", "enforce"))
+        friend_behaviour = RelationshipBehaviour(
+            json.get("friend_behaviour", "enforce")
+        )
         enemy_behaviour = RelationshipBehaviour(json.get("enemy_behaviour", "enforce"))
         attributes_to_diversify = json.get("attributes_to_diversify", [])
         attributes_to_concentrate = json.get("attributes_to_concentrate", [])
@@ -142,7 +146,9 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
 
     @staticmethod
     def parse_json(_: Dict[str, Any]):
-        raise AttributeError("MultipleRoundRobinAlgorithmOptions does not support parsing from json.")
+        raise AttributeError(
+            "MultipleRoundRobinAlgorithmOptions does not support parsing from json."
+        )
 
 
 AnyAlgorithmOptions = Union[
