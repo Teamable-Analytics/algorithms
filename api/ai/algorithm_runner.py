@@ -33,12 +33,10 @@ class AlgorithmRunner:
         )
 
     def generate(self, students: List[Student]) -> TeamSet:
-        print("ALGO " + str(self.algorithm))
         return self.algorithm.generate(students)
 
     @staticmethod
     def get_algorithm_from_type(algorithm_type: AlgorithmType):
-        print("ALGO TYPE " + str(algorithm_type))
         if algorithm_type == AlgorithmType.RANDOM:
             return RandomAlgorithm
         if algorithm_type == AlgorithmType.WEIGHT:
