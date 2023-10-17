@@ -30,7 +30,7 @@ class MockStudentProviderSettings:
         self.validate()
 
     def validate(self):
-        #todo: add validation for attribute_ranges vs num_values_per_attribute
+        # todo: add validation for attribute_ranges vs num_values_per_attribute
         if not is_non_negative_integer(self.number_of_students):
             raise ValueError(
                 f"number_of_students ({self.number_of_students}) must be a non-negative integer."
@@ -44,8 +44,8 @@ class MockStudentProviderSettings:
                 f"number_of_enemies ({self.number_of_enemies}) must be a non-negative integer."
             )
         if (
-                len(self.project_preference_options)
-                < self.num_project_preferences_per_student
+            len(self.project_preference_options)
+            < self.num_project_preferences_per_student
         ):
             raise ValueError(
                 f"num_project_preferences_per_student ({self.num_project_preferences_per_student}) cannot "
@@ -91,14 +91,14 @@ class MockStudentProvider(StudentProvider):
 
 
 def create_mock_students(
-        number_of_students: int,
-        number_of_friends: int,
-        number_of_enemies: int,
-        friend_distribution: Literal["cluster", "random"],
-        attribute_ranges: Dict[int, AttributeRangeConfig],
-        num_values_per_attribute: Dict[int, NumValuesConfig],
-        project_preference_options: List[int],
-        num_project_preferences_per_student: int,
+    number_of_students: int,
+    number_of_friends: int,
+    number_of_enemies: int,
+    friend_distribution: Literal["cluster", "random"],
+    attribute_ranges: Dict[int, AttributeRangeConfig],
+    num_values_per_attribute: Dict[int, NumValuesConfig],
+    project_preference_options: List[int],
+    num_project_preferences_per_student: int,
 ) -> List[Student]:
     students = []
     n = number_of_students
@@ -156,7 +156,7 @@ def num_values_for_attribute(num_values_config: NumValuesConfig) -> int:
 
 
 def random_choice(
-        possible_values: List, size=None, replace=False, weights=None
+    possible_values: List, size=None, replace=False, weights=None
 ) -> List[int]:
     """
     Uses np.random.choice() but always returns a list of int
@@ -170,7 +170,7 @@ def random_choice(
 
 
 def attribute_values_from_range(
-        range_config: AttributeRangeConfig, num_values: Optional[int] = 1
+    range_config: AttributeRangeConfig, num_values: Optional[int] = 1
 ) -> List[int]:
     if isinstance(range_config[0], (int, AttributeValueEnum)):
         if isinstance(range_config[0], int):

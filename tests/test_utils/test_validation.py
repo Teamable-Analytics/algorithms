@@ -2,8 +2,10 @@ import unittest
 
 from api.models.project import Project
 from api.models.student import Student
-from benchmarking.data.simulated_data.mock_initial_teams_provider import MockInitialTeamsProviderSettings, \
-    MockInitialTeamsProvider
+from benchmarking.data.simulated_data.mock_initial_teams_provider import (
+    MockInitialTeamsProviderSettings,
+    MockInitialTeamsProvider,
+)
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -47,15 +49,31 @@ class TestValidationHelpers(unittest.TestCase):
         )
         assert_can_exist_together(
             MockStudentProvider(MockStudentProviderSettings(number_of_students=10)),
-            MockInitialTeamsProvider(MockInitialTeamsProviderSettings(projects=projects)),
+            MockInitialTeamsProvider(
+                MockInitialTeamsProviderSettings(projects=projects)
+            ),
         )
         assert_can_exist_together(
-            MockStudentProvider(MockStudentProviderSettings(number_of_students=10, project_preference_options=[1,2])),
-            MockInitialTeamsProvider(MockInitialTeamsProviderSettings(projects=projects)),
+            MockStudentProvider(
+                MockStudentProviderSettings(
+                    number_of_students=10, project_preference_options=[1, 2]
+                )
+            ),
+            MockInitialTeamsProvider(
+                MockInitialTeamsProviderSettings(projects=projects)
+            ),
         )
         assert_can_exist_together(
-            MockStudentProvider(MockStudentProviderSettings(number_of_students=10, project_preference_options=[1, 2], num_project_preferences_per_student=2)),
-            MockInitialTeamsProvider(MockInitialTeamsProviderSettings(projects=projects)),
+            MockStudentProvider(
+                MockStudentProviderSettings(
+                    number_of_students=10,
+                    project_preference_options=[1, 2],
+                    num_project_preferences_per_student=2,
+                )
+            ),
+            MockInitialTeamsProvider(
+                MockInitialTeamsProviderSettings(projects=projects)
+            ),
         )
 
     def test_assert_can_exist_together__failure(self):
@@ -65,18 +83,36 @@ class TestValidationHelpers(unittest.TestCase):
         ]
         with self.assertRaises(ValueError):
             assert_can_exist_together(
-                MockStudentProvider(MockStudentProviderSettings(number_of_students=10, project_preference_options=[1, 3])),
-                MockInitialTeamsProvider(MockInitialTeamsProviderSettings(projects=projects)),
+                MockStudentProvider(
+                    MockStudentProviderSettings(
+                        number_of_students=10, project_preference_options=[1, 3]
+                    )
+                ),
+                MockInitialTeamsProvider(
+                    MockInitialTeamsProviderSettings(projects=projects)
+                ),
             )
 
         with self.assertRaises(ValueError):
             assert_can_exist_together(
-                MockStudentProvider(MockStudentProviderSettings(number_of_students=10, project_preference_options=[1, 2], num_project_preferences_per_student=3)),
-                MockInitialTeamsProvider(MockInitialTeamsProviderSettings(projects=projects)),
+                MockStudentProvider(
+                    MockStudentProviderSettings(
+                        number_of_students=10,
+                        project_preference_options=[1, 2],
+                        num_project_preferences_per_student=3,
+                    )
+                ),
+                MockInitialTeamsProvider(
+                    MockInitialTeamsProviderSettings(projects=projects)
+                ),
             )
 
         with self.assertRaises(ValueError):
             assert_can_exist_together(
-                MockStudentProvider(MockStudentProviderSettings(number_of_students=10, project_preference_options=[1, 2])),
+                MockStudentProvider(
+                    MockStudentProviderSettings(
+                        number_of_students=10, project_preference_options=[1, 2]
+                    )
+                ),
                 None,
             )
