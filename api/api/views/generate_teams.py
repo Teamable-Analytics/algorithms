@@ -33,7 +33,6 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
 
         # validate data schema
         GenerateTeamsValidator(request_data).validate()
-        print(request_data)
         input_data = GenerateTeamsDataLoader(request_data).load()
         team_set = generate_teams(input_data)
 
