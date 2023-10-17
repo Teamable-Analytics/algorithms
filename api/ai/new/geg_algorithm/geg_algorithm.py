@@ -90,7 +90,7 @@ class GEGAlgorithm(Algorithm):
             if self.utilities.get((project.id, student.id)) >= 0
         ]
 
-    def construct_team_from_allocation(self) -> TeamSet:
+    def _construct_team_from_allocation(self) -> TeamSet:
         """
         This run in O(N*M)
         """
@@ -157,6 +157,4 @@ class GEGAlgorithm(Algorithm):
                                 i_j + 1, self.utilities.get((i_j + 1, student.id))
                             )
 
-                    # Find the student with the lowest utility in the cycle
-
-        return self.construct_team_from_allocation()
+        return self._construct_team_from_allocation()
