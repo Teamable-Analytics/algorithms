@@ -51,7 +51,7 @@ class GenerateTeamsDataLoader:
         algorithm_options = self.data.get("algorithm_options")
         algorithm_type = AlgorithmType(algorithm_options.pop("algorithm_type"))
         algorithm_option_class = get_algorithm_option_class(algorithm_type)
-        return algorithm_option_class(**algorithm_options)
+        return algorithm_option_class.parse_json(algorithm_options)
 
     def _validate_team_generation_options(self, team_generation_options: Optional[Dict[str, Any]]):
         if team_generation_options is None:

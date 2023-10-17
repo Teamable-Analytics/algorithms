@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import List, Union
+from typing import List, Union, Dict, Any
 
 from schema import Schema, SchemaError
 
@@ -22,11 +22,20 @@ class AlgorithmOptions(ABC):
     def validate(self):
         pass
 
+    @staticmethod
+    @abstractmethod
+    def parse_json(json: Dict[str, Any]):
+        raise NotImplementedError("parse_json is not implemented.")
+
 
 @dataclass
 class RandomAlgorithmOptions(AlgorithmOptions):
     def validate(self):
         super().validate()
+
+    @staticmethod
+    def parse_json(_: Dict[str, Any]) -> "RandomAlgorithmOptions":
+        return RandomAlgorithmOptions()
 
 
 @dataclass
@@ -56,6 +65,30 @@ class WeightAlgorithmOptions(AlgorithmOptions):
         except SchemaError as error:
             raise ValueError(f"Error while validating WeightAlgorithmOptions \n{error}")
 
+    @staticmethod
+    def parse_json(json: Dict[str, Any]) -> "WeightAlgorithmOptions":
+        requirement_weight = json.get("requirement_weight", 0)
+        social_weight = json.get("social_weight", 0)
+        diversity_weight = json.get("diversity_weight", 0)
+        preference_weight = json.get("preference_weight", 0)
+        friend_behaviour = RelationshipBehaviour(json.get("friend_behaviour", "enforce"))
+        enemy_behaviour = RelationshipBehaviour(json.get("enemy_behaviour", "enforce"))
+        attributes_to_diversify = json.get("attributes_to_diversify", [])
+        attributes_to_concentrate = json.get("attributes_to_concentrate", [])
+        max_project_preferences = json.get("max_project_preferences")
+
+        return WeightAlgorithmOptions(
+            requirement_weight=requirement_weight,
+            social_weight=social_weight,
+            diversity_weight=diversity_weight,
+            preference_weight=preference_weight,
+            friend_behaviour=friend_behaviour,
+            enemy_behaviour=enemy_behaviour,
+            attributes_to_diversify=attributes_to_diversify,
+            attributes_to_concentrate=attributes_to_concentrate,
+            max_project_preferences=max_project_preferences,
+        )
+
 
 @dataclass
 class PriorityAlgorithmOptions(WeightAlgorithmOptions):
@@ -64,15 +97,35 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
     def validate(self):
         super().validate()
 
+    @staticmethod
+    def parse_json(json: Dict[str, Any]) -> "PriorityAlgorithmOptions":
+        priorities = json.get("priorities", [])
+        requirement_weight = json.get("requirement_weight", 0)
+        social_weight = json.get("social_weight", 0)
+        diversity_weight = json.get("diversity_weight", 0)
+        preference_weight = json.get("preference_weight", 0)
+        friend_behaviour = RelationshipBehaviour(json.get("friend_behaviour", "enforce"))
+        enemy_behaviour = RelationshipBehaviour(json.get("enemy_behaviour", "enforce"))
+        attributes_to_diversify = json.get("attributes_to_diversify", [])
+        attributes_to_concentrate = json.get("attributes_to_concentrate", [])
+        max_project_preferences = json.get("max_project_preferences")
+
+        return PriorityAlgorithmOptions(
+            priorities=priorities,
+            requirement_weight=requirement_weight,
+            social_weight=social_weight,
+            diversity_weight=diversity_weight,
+            preference_weight=preference_weight,
+            friend_behaviour=friend_behaviour,
+            enemy_behaviour=enemy_behaviour,
+            attributes_to_diversify=attributes_to_diversify,
+            attributes_to_concentrate=attributes_to_concentrate,
+            max_project_preferences=max_project_preferences,
+        )
+
 
 @dataclass
 class SocialAlgorithmOptions(WeightAlgorithmOptions):
-    def validate(self):
-        super().validate()
-
-
-@dataclass
-class PathGaspAlgorithmOptions(AlgorithmOptions):
     def validate(self):
         super().validate()
 
@@ -87,12 +140,15 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
         if len(self.projects) == 0:
             raise SchemaError("Project list cannot be empty.")
 
+    @staticmethod
+    def parse_json(_: Dict[str, Any]):
+        raise AttributeError("MultipleRoundRobinAlgorithmOptions does not support parsing from json.")
+
 
 AnyAlgorithmOptions = Union[
     RandomAlgorithmOptions,
     WeightAlgorithmOptions,
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
-    PathGaspAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
 ]
