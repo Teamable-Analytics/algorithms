@@ -24,6 +24,9 @@ class TestValidationHelpers(unittest.TestCase):
         self.assertTrue(is_unique(["A", "B"]))
         self.assertFalse(is_unique(["A", "A"]))
 
+        with self.assertRaises(ValueError):
+            is_unique([1, 2, "string"])
+
     def test_is_unique__works_with_dictionaries(self):
         self.assertTrue(is_unique([{"id": 1}, {"id": 2}, {"id": 3}], attr="id"))
         self.assertFalse(is_unique([{"id": 1}, {"id": 1}, {"id": 1}], attr="id"))
