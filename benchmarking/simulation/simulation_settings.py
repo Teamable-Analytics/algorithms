@@ -3,6 +3,7 @@ from typing import List
 
 from benchmarking.data.interfaces import StudentProvider, InitialTeamsProvider
 from benchmarking.evaluations.interfaces import Scenario, TeamSetMetric
+from utils.validation import assert_can_exist_together
 
 
 @dataclass
@@ -28,3 +29,5 @@ class SimulationSettings:
             )
         if not self.metrics:
             raise ValueError("At least one metric must be specified for a simulation.")
+
+        assert_can_exist_together(self.student_provider, self.initial_teams_provider)

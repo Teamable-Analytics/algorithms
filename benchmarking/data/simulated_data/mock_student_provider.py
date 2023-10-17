@@ -11,6 +11,7 @@ from benchmarking.data.interfaces import (
     AttributeRangeConfig,
     NumValuesConfig,
 )
+from utils.validation import is_non_negative_integer, is_unique
 
 
 @dataclass
@@ -18,9 +19,45 @@ class MockStudentProviderSettings:
     number_of_students: int
     attribute_ranges: Dict[int, AttributeRangeConfig] = field(default_factory=dict)
     num_values_per_attribute: Dict[int, NumValuesConfig] = field(default_factory=dict)
+    # ids of projects that can be selected as a preference by students
+    project_preference_options: List[int] = field(default_factory=list)
+    num_project_preferences_per_student: int = 0
     number_of_friends: int = 0
     number_of_enemies: int = 0
     friend_distribution: Literal["cluster", "random"] = "random"
+
+    def __post_init__(self):
+        self.validate()
+
+    def validate(self):
+        #todo: add validation for attribute_ranges vs num_values_per_attribute
+        if not is_non_negative_integer(self.number_of_students):
+            raise ValueError(
+                f"number_of_students ({self.number_of_students}) must be a non-negative integer."
+            )
+        if not is_non_negative_integer(self.number_of_friends):
+            raise ValueError(
+                f"number_of_friends ({self.number_of_friends}) must be a non-negative integer."
+            )
+        if not is_non_negative_integer(self.number_of_enemies):
+            raise ValueError(
+                f"number_of_enemies ({self.number_of_enemies}) must be a non-negative integer."
+            )
+        if (
+                len(self.project_preference_options)
+                < self.num_project_preferences_per_student
+        ):
+            raise ValueError(
+                f"num_project_preferences_per_student ({self.num_project_preferences_per_student}) cannot "
+                "be > the number of project options."
+            )
+        if not is_non_negative_integer(self.num_project_preferences_per_student):
+            raise ValueError(
+                f"num_project_preferences_per_student ({self.num_project_preferences_per_student}) must be a "
+                f"non-negative integer."
+            )
+        if not is_unique(self.project_preference_options):
+            raise ValueError(f"project_preference_options must be unique if specified.")
 
 
 class MockStudentProvider(StudentProvider):
@@ -35,6 +72,8 @@ class MockStudentProvider(StudentProvider):
             self.settings.friend_distribution,
             self.settings.attribute_ranges,
             self.settings.num_values_per_attribute,
+            self.settings.project_preference_options,
+            self.settings.num_project_preferences_per_student,
         )
         # the students must be shuffled here because certain algorithms
         #   perform better/worse based on the ordering of students.
@@ -48,27 +87,18 @@ class MockStudentProvider(StudentProvider):
 
     @property
     def max_project_preferences_per_student(self) -> int:
-        num_values_config: NumValuesConfig = self.settings.num_values_per_attribute.get(
-            ScenarioAttribute.PROJECT_PREFERENCES.value,
-            None,
-        )
-
-        if isinstance(num_values_config, int):
-            return num_values_config
-
-        if isinstance(num_values_config, tuple):
-            return num_values_config[1]
-
-        return 0
+        return self.settings.num_project_preferences_per_student
 
 
 def create_mock_students(
-    number_of_students: int,
-    number_of_friends: int,
-    number_of_enemies: int,
-    friend_distribution: Literal["cluster", "random"],
-    attribute_ranges: Dict[int, AttributeRangeConfig],
-    num_values_per_attribute: Dict[int, NumValuesConfig],
+        number_of_students: int,
+        number_of_friends: int,
+        number_of_enemies: int,
+        friend_distribution: Literal["cluster", "random"],
+        attribute_ranges: Dict[int, AttributeRangeConfig],
+        num_values_per_attribute: Dict[int, NumValuesConfig],
+        project_preference_options: List[int],
+        num_project_preferences_per_student: int,
 ) -> List[Student]:
     students = []
     n = number_of_students
@@ -100,11 +130,18 @@ def create_mock_students(
                 attribute_range_config, num_values
             )
 
+        project_preferences = None
+        if project_preference_options and num_project_preferences_per_student:
+            project_preferences = random_choice(
+                project_preference_options, num_project_preferences_per_student
+            )
+
         students.append(
             Student(
                 i,
                 relationships=relationships,
                 attributes=attributes,
+                project_preferences=project_preferences or [],
             )
         )
     return students
@@ -119,7 +156,7 @@ def num_values_for_attribute(num_values_config: NumValuesConfig) -> int:
 
 
 def random_choice(
-    possible_values: List, size=None, replace=False, weights=None
+        possible_values: List, size=None, replace=False, weights=None
 ) -> List[int]:
     """
     Uses np.random.choice() but always returns a list of int
@@ -133,7 +170,7 @@ def random_choice(
 
 
 def attribute_values_from_range(
-    range_config: AttributeRangeConfig, num_values: Optional[int] = 1
+        range_config: AttributeRangeConfig, num_values: Optional[int] = 1
 ) -> List[int]:
     if isinstance(range_config[0], (int, AttributeValueEnum)):
         if isinstance(range_config[0], int):

@@ -13,6 +13,7 @@ from benchmarking.data.interfaces import (
 )
 from benchmarking.evaluations.interfaces import Scenario, TeamSetMetric
 from benchmarking.simulation.mock_algorithm_2 import MockAlgorithm2
+from benchmarking.simulation.simulation_settings import SimulationSettings
 
 RunOutput = Dict[AlgorithmType, Dict[str, List[float]]]
 
@@ -52,16 +53,15 @@ class BasicSimulationSet2:
             raise ValueError(
                 "If you override algorithm_types, you must specify at least 1 algorithm type to run a simulation."
             )
-        if self.num_teams and self.initial_teams_provider:
-            raise ValueError(
-                "Either specify num_teams OR give a project initial_teams_provider, not both."
-            )
-        if not self.num_teams and not self.initial_teams_provider:
-            raise ValueError(
-                "Either num_teams OR a project initial_teams_provider must be specified."
-            )
-        if not self.metrics:
-            raise ValueError("At least one metric must be specified for a simulation.")
+
+        # fixme: temporary: creates this object so we get all the validations there for free
+        SimulationSettings(
+            num_teams=num_teams,
+            student_provider=student_provider,
+            metrics=metrics,
+            initial_teams_provider=initial_teams_provider,
+            scenario=scenario,
+        )
 
         self.run_outputs = defaultdict(dict)
         self.algorithm_options: Dict[

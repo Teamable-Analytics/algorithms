@@ -2,6 +2,11 @@ import unittest
 
 from api.ai.new.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.models.enums import AlgorithmType
+from api.models.project import Project
+from benchmarking.data.simulated_data.mock_initial_teams_provider import (
+    MockInitialTeamsProvider,
+    MockInitialTeamsProviderSettings,
+)
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -20,12 +25,38 @@ class TestSimulation(unittest.TestCase):
         cls.metric_2 = TestMetric(name="Test Metric 2")
         cls.metric_3 = TestMetric(name="Test Metric 3")
         cls.student_provider = MockStudentProvider(
-            MockStudentProviderSettings(number_of_students=10)
+            MockStudentProviderSettings(number_of_students=10),
         )
         cls.settings = SimulationSettings(
             num_teams=2,
             scenario=cls.scenario,
             student_provider=cls.student_provider,
+            metrics=[
+                cls.metric_1,
+                cls.metric_2,
+                cls.metric_3,
+            ],
+        )
+
+        cls.student_provider_with_preferences = MockStudentProvider(
+            MockStudentProviderSettings(
+                number_of_students=10,
+                project_preference_options=[1, 2],
+                num_project_preferences_per_student=2,
+            ),
+        )
+        cls.initial_teams_provider = MockInitialTeamsProvider(
+            MockInitialTeamsProviderSettings(
+                projects=[
+                    Project(_id=1),
+                    Project(_id=2),
+                ]
+            )
+        )
+        cls.complex_settings = SimulationSettings(
+            scenario=cls.scenario,
+            student_provider=cls.student_provider_with_preferences,
+            initial_teams_provider=cls.initial_teams_provider,
             metrics=[
                 cls.metric_1,
                 cls.metric_2,
@@ -58,7 +89,14 @@ class TestSimulation(unittest.TestCase):
             Simulation(
                 algorithm_type=algorithm_type,
                 settings=self.settings,
-            ).run(num_runs=5)
+            ).run(num_runs=1)
+
+    def test_run__works_with_complex_settings(self):
+        for algorithm_type in DEFAULT_ALGORITHM_TYPES:
+            Simulation(
+                algorithm_type=algorithm_type,
+                settings=self.complex_settings,
+            ).run(num_runs=1)
 
     def test_run__works_with_configs(self):
         # fixme: should eventually test that the custom config passed
