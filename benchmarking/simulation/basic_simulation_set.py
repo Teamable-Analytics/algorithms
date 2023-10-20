@@ -4,15 +4,15 @@ import time
 from collections import defaultdict
 from typing import List, Dict, Union
 
-from api.ai.algorithm_runner import AlgorithmRunner
-from api.ai.new.interfaces.algorithm_options import AnyAlgorithmOptions
+from benchmarking.simulation.mock_algorithm import MockAlgorithm
 from api.models.enums import AlgorithmType
 from benchmarking.data.interfaces import (
     StudentProvider,
     InitialTeamsProvider,
 )
 from benchmarking.evaluations.interfaces import Scenario, TeamSetMetric
-from benchmarking.simulation.mock_algorithm_2 import MockAlgorithm2
+from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
+from old.team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions
 
 RunOutput = Dict[AlgorithmType, Dict[str, List[float]]]
 
@@ -24,7 +24,7 @@ DEFAULT_ALGORITHM_TYPES = [
 ]
 
 
-class Simulation2:
+class BasicSimulationSet:
     """
     Represents running a Simulation num_runs times and returning the metrics from each of those runs.
     """
@@ -64,42 +64,43 @@ class Simulation2:
             raise ValueError("At least one metric must be specified for a simulation.")
 
         self.run_outputs = defaultdict(dict)
-        self.algorithm_options: Dict[
-            AlgorithmType, Union[None, AnyAlgorithmOptions]
-        ] = {}
+        self.algorithm_options: Dict[AlgorithmType, Union[None, AlgorithmOptions]] = {}
         for algorithm_type in self.algorithm_types:
             self.run_outputs[algorithm_type] = {
                 metric.name: [] for metric in self.metrics
             }
-            self.run_outputs[algorithm_type].update({Simulation2.KEY_RUNTIMES: []})
+            self.run_outputs[algorithm_type].update(
+                {BasicSimulationSet.KEY_RUNTIMES: []}
+            )
 
     def run(self, num_runs: int) -> RunOutput:
         initial_teams = (
             self.initial_teams_provider.get() if self.initial_teams_provider else None
         )
-        team_generation_options = MockAlgorithm2.get_team_generation_options(
+        team_generation_options = MockAlgorithm.get_team_generation_options(
             num_students=self.student_provider.num_students,
             num_teams=self.num_teams,
             initial_teams=initial_teams,
         )
 
         for _ in range(0, num_runs):
-            students = self.student_provider.get()
-
+            algorithm_students = AlgorithmTranslator.students_to_algorithm_students(
+                self.student_provider.get()
+            )
             for algorithm_type in self.algorithm_types:
-                runner = AlgorithmRunner(
+                mock_algorithm = MockAlgorithm(
                     algorithm_type=algorithm_type,
                     team_generation_options=team_generation_options,
                     algorithm_options=self._algorithm_options(algorithm_type),
                 )
 
                 start_time = time.time()
-                team_set = runner.generate(copy.deepcopy(students))
+                team_set = mock_algorithm.generate(copy.deepcopy(algorithm_students))
                 end_time = time.time()
 
-                self.run_outputs[algorithm_type][Simulation2.KEY_RUNTIMES].append(
-                    end_time - start_time
-                )
+                self.run_outputs[algorithm_type][
+                    BasicSimulationSet.KEY_RUNTIMES
+                ].append(end_time - start_time)
                 for metric in self.metrics:
                     self.run_outputs[algorithm_type][metric.name].append(
                         metric.calculate(team_set)
@@ -109,7 +110,7 @@ class Simulation2:
 
     def _algorithm_options(self, algorithm_type: AlgorithmType):
         if algorithm_type not in self.algorithm_options:
-            algorithm_options = MockAlgorithm2.algorithm_options_from_scenario(
+            algorithm_options = MockAlgorithm.algorithm_options_from_scenario(
                 algorithm_type=algorithm_type,
                 scenario=self.scenario,
                 max_project_preferences=self.student_provider.max_project_preferences_per_student,

@@ -23,7 +23,7 @@ from benchmarking.evaluations.scenarios.three_tokenization_constraints import (
 )
 
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
-from benchmarking.simulation.simulation import Simulation
+from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
 
 
 def three_tokenization_constraints(
@@ -97,7 +97,7 @@ def three_tokenization_constraints(
             value_of_race=Race.Middle_Eastern.value,
         )
 
-        simulation_outputs = Simulation(
+        simulation_outputs = BasicSimulationSet(
             num_teams=number_of_teams,
             scenario=scenario,
             student_provider=MockStudentProvider(student_provider_settings),
@@ -122,13 +122,13 @@ def three_tokenization_constraints(
             ],
         ).run(num_runs=num_trials)
 
-        average_ginis = Simulation.average_metric(
+        average_ginis = BasicSimulationSet.average_metric(
             simulation_outputs, "AverageGiniIndexMultiAttribute"
         )
-        average_runtimes = Simulation.average_metric(
-            simulation_outputs, Simulation.KEY_RUNTIMES
+        average_runtimes = BasicSimulationSet.average_metric(
+            simulation_outputs, BasicSimulationSet.KEY_RUNTIMES
         )
-        satisfied_priorities = Simulation.average_metric(
+        satisfied_priorities = BasicSimulationSet.average_metric(
             simulation_outputs, "PrioritySatisfaction"
         )
         metrics = [
