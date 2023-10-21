@@ -1,4 +1,4 @@
-from models.team_set import TeamSet
+from api.models.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
 

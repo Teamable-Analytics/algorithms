@@ -1,4 +1,6 @@
-from models.team_set import TeamSet
+from typing import List
+
+from api.models.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.utils.team_calculations import (
     team_gini_index,
@@ -10,8 +12,8 @@ class AverageGiniIndexMultiAttribute(TeamSetMetric):
     Calculate the gini index for the given attributes for each team and average the results
     """
 
-    def __init__(self, attributes: list[int], *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, attributes: List[int], *args, **kwargs):
+        super().__init__(theoretical_range=(0, 1), *args, **kwargs)
         if attributes is None or len(attributes) == 0:
             raise ValueError("Must have at least one attribute")
         self.attributes = attributes
