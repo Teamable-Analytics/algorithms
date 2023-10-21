@@ -37,15 +37,6 @@ class AlgorithmType(Enum):
     PRIORITY = "priority"
     PRIORITY_NEW = "priority_new"
     MRR = "multiple_round_robin_with_adjusted_winner"
-
-    # These are the algorithms that does not use the resources we have
-    # If add more algorithms that needs overriding the run method, must add to OverrideAlgorithm
-    PATH_GASP = "path_gasp"
-    RAREST_FIRST = "rarest_first"
-
-
-class OverrideAlgorithm(Enum):
-    PATH_GASP = "path_gasp"
     RAREST_FIRST = "rarest_first"
 
 
