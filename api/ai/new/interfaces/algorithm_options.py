@@ -99,4 +99,5 @@ AnyAlgorithmOptions = Union[
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
+    DoubleRoundRobinAlgorithmOptions,
 ]

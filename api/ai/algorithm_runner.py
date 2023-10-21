@@ -1,5 +1,6 @@
 from typing import List
 
+from api.ai.new.double_round_robin_algorithm.double_round_robin_algorithm import DoubleRoundRobinAlgorithm
 from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
 from api.ai.new.interfaces.algorithm_options import AlgorithmOptions
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
@@ -50,6 +51,8 @@ class AlgorithmRunner:
             return PriorityAlgorithm
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinWithAdjustedWinnerAlgorithm
+        if algorithm_type == AlgorithmType.DRR:
+            return DoubleRoundRobinAlgorithm
 
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm class!"

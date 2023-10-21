@@ -37,7 +37,7 @@ class AlgorithmType(Enum):
     PRIORITY = "priority"
     PRIORITY_NEW = "priority_new"
     MRR = "multiple_round_robin_with_adjusted_winner"
-    DDR = "double_round_robin"
+    DRR = "double_round_robin"
 
 
 class TokenizationConstraintDirection(Enum):
