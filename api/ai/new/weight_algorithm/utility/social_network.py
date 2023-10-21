@@ -2,7 +2,6 @@ from typing import List, Dict
 
 from api.models.enums import Relationship, Weight
 from api.models.student import Student
-from api.api.utils.relationship import get_relationship_value
 
 
 class SocialNetwork:
@@ -42,9 +41,7 @@ class SocialNetwork:
             student_network = {}
             for other in students:
                 if other.id in student.relationships:
-                    student_network[other.id] = get_relationship_value(
-                        student.relationships[other.id]
-                    )
+                    student_network[other.id] = student.relationships[other.id].value
                 else:
                     student_network[other.id] = Relationship.DEFAULT.value
             social_network[student.id] = student_network

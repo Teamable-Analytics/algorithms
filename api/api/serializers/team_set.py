@@ -15,5 +15,6 @@ class TeamSetSerializer:
     def data(self) -> Dict[str, Any]:
         return {
             "num_teams": self.team_set.num_teams,
+            # TODO: Update todict to serializer
             "teams": [team.todict() for team in self.team_set.teams],
         }

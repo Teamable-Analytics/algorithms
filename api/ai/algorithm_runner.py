@@ -1,7 +1,8 @@
 from typing import List
 
 from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
-from api.ai.new.interfaces.algorithm_options import AlgorithmOptions
+from api.ai.new.interfaces.algorithm_options import AlgorithmOptions, RandomAlgorithmOptions, WeightAlgorithmOptions, \
+    SocialAlgorithmOptions, PriorityAlgorithmOptions, MultipleRoundRobinAlgorithmOptions
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.new.multiple_round_robin_with_adjusted_winner.multiple_round_robin import (
     MultipleRoundRobinWithAdjustedWinnerAlgorithm,
@@ -17,11 +18,11 @@ from api.models.team_set import TeamSet
 
 class AlgorithmRunner:
     def __init__(
-        self,
-        algorithm_type: AlgorithmType,
-        team_generation_options: TeamGenerationOptions,
-        algorithm_options: AlgorithmOptions,
-        algorithm_config: AlgorithmConfig = None,
+            self,
+            algorithm_type: AlgorithmType,
+            team_generation_options: TeamGenerationOptions,
+            algorithm_options: AlgorithmOptions,
+            algorithm_config: AlgorithmConfig = None,
     ):
         self.algorithm_cls = AlgorithmRunner.get_algorithm_from_type(algorithm_type)
         self.team_generation_options = team_generation_options
@@ -50,6 +51,25 @@ class AlgorithmRunner:
             return PriorityAlgorithm
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinWithAdjustedWinnerAlgorithm
+
+        raise NotImplementedError(
+            f"Algorithm type {algorithm_type} is not associated with an algorithm class!"
+        )
+
+    @staticmethod
+    def get_algorithm_option_class(algorithm_type: AlgorithmType):
+        if algorithm_type == AlgorithmType.RANDOM:
+            return RandomAlgorithmOptions
+        if algorithm_type == AlgorithmType.WEIGHT:
+            return WeightAlgorithmOptions
+        if algorithm_type == AlgorithmType.SOCIAL:
+            return SocialAlgorithmOptions
+        if algorithm_type == AlgorithmType.PRIORITY:
+            return PriorityAlgorithmOptions
+        if algorithm_type == AlgorithmType.PRIORITY_NEW:
+            return PriorityAlgorithmOptions
+        if algorithm_type == AlgorithmType.MRR:
+            return MultipleRoundRobinAlgorithmOptions
 
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm class!"

@@ -67,13 +67,9 @@ class Team(TeamShell):
         self.is_locked = False
 
     def todict(self) -> Dict:
-        base_dict = {
+        return {
             "id": self.id,
             "name": self.name,
             "student_ids": [student.id for student in self.students],
+            "project_id": self.project_id,
         }
-
-        if self.project_id is not None:
-            base_dict["project_id"] = self.project_id
-
-        return base_dict
