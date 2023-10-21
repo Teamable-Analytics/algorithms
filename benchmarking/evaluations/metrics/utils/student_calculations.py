@@ -1,5 +1,5 @@
 from api.models.enums import Relationship, RequirementOperator
-from api.models.project import ProjectRequirement
+from api.models.project.project import ProjectRequirement
 from api.models.student import Student
 
 

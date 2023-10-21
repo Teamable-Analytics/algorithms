@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import List, Dict
 
 from api.models.enums import Relationship, RequirementOperator
-from api.models.project import ProjectRequirement
+from api.models.project.project import ProjectRequirement
 
 
 @dataclass
