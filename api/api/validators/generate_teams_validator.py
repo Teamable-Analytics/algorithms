@@ -28,12 +28,16 @@ class GenerateTeamsValidator(Validator):
         try:
             AlgorithmType(algorithm_type)
         except ValueError:
-            raise SchemaError(f"Algorithm type {algorithm_type} is not a valid algorithm type.")
+            raise SchemaError(
+                f"Algorithm type {algorithm_type} is not a valid algorithm type."
+            )
 
     def validate_algorithm_options(self):
         algorithm_option = dict.copy(self.data.get("algorithm_options"))
         algorithm_type = AlgorithmType(algorithm_option.pop("algorithm_type"))
-        algorithm_option_cls = AlgorithmRunner.get_algorithm_option_class(algorithm_type)
+        algorithm_option_cls = AlgorithmRunner.get_algorithm_option_class(
+            algorithm_type
+        )
 
         algorithm_option_cls(**algorithm_option).validate()
 

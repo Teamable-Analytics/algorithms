@@ -54,7 +54,9 @@ class GenerateTeamsDataLoader:
     def _get_algorithm_options(self) -> AlgorithmOptions:
         algorithm_options = self.data.get("algorithm_options")
         algorithm_type = AlgorithmType(algorithm_options.pop("algorithm_type"))
-        algorithm_option_class = AlgorithmRunner.get_algorithm_option_class(algorithm_type)
+        algorithm_option_class = AlgorithmRunner.get_algorithm_option_class(
+            algorithm_type
+        )
 
         return algorithm_option_class.parse_json(algorithm_options)
 
@@ -63,7 +65,9 @@ class GenerateTeamsDataLoader:
 
         return TeamGenerationOptions(
             total_teams=team_generation_options.get("total_teams"),
-            initial_teams=[TeamShell(team) for team in team_generation_options.get("initial_teams")],
+            initial_teams=[
+                TeamShell(team) for team in team_generation_options.get("initial_teams")
+            ],
             max_team_size=team_generation_options.get("max_team_size"),
             min_team_size=team_generation_options.get("min_team_size"),
         )

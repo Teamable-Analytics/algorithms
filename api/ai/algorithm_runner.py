@@ -1,8 +1,14 @@
 from typing import List
 
 from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
-from api.ai.new.interfaces.algorithm_options import AlgorithmOptions, RandomAlgorithmOptions, WeightAlgorithmOptions, \
-    SocialAlgorithmOptions, PriorityAlgorithmOptions, MultipleRoundRobinAlgorithmOptions
+from api.ai.new.interfaces.algorithm_options import (
+    AlgorithmOptions,
+    RandomAlgorithmOptions,
+    WeightAlgorithmOptions,
+    SocialAlgorithmOptions,
+    PriorityAlgorithmOptions,
+    MultipleRoundRobinAlgorithmOptions,
+)
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.new.multiple_round_robin_with_adjusted_winner.multiple_round_robin import (
     MultipleRoundRobinWithAdjustedWinnerAlgorithm,
@@ -18,11 +24,11 @@ from api.models.team_set import TeamSet
 
 class AlgorithmRunner:
     def __init__(
-            self,
-            algorithm_type: AlgorithmType,
-            team_generation_options: TeamGenerationOptions,
-            algorithm_options: AlgorithmOptions,
-            algorithm_config: AlgorithmConfig = None,
+        self,
+        algorithm_type: AlgorithmType,
+        team_generation_options: TeamGenerationOptions,
+        algorithm_options: AlgorithmOptions,
+        algorithm_config: AlgorithmConfig = None,
     ):
         self.algorithm_cls = AlgorithmRunner.get_algorithm_from_type(algorithm_type)
         self.team_generation_options = team_generation_options

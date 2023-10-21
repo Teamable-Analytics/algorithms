@@ -20,11 +20,11 @@ class SocialGraph:
         levelled_social_graph = {}
         for student, other in combinations(self.students, 2):
             total_relationship = (
-                    self._raw_social_graph[(student.id, other.id)]
-                    + self._raw_social_graph[(other.id, student.id)]
+                self._raw_social_graph[(student.id, other.id)]
+                + self._raw_social_graph[(other.id, student.id)]
             )
             if (
-                    total_relationship <= level
+                total_relationship <= level
             ):  # being at this level or better means having a lighter or the same weight
                 levelled_social_graph[(student.id, other.id)] = levelled_social_graph[
                     (other.id, student.id)
@@ -56,5 +56,7 @@ def create_social_graph(students: List[Student]):
             social_graph[(student.id, other.id)] = Relationship.DEFAULT.value
             if other.id in student.relationships:
                 # update to real relationship value if one exists
-                social_graph[(student.id, other.id)] = student.relationships[other.id].value
+                social_graph[(student.id, other.id)] = student.relationships[
+                    other.id
+                ].value
     return social_graph
