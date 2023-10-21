@@ -1,6 +1,7 @@
 from typing import List
 
-from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
+from api.ai.new.interfaces.algorithm_config import AlgorithmConfig, RandomAlgorithmConfig, WeightAlgorithmConfig, \
+    SocialAlgorithmConfig, PriorityAlgorithmConfig
 from api.ai.new.interfaces.algorithm_options import (
     AlgorithmOptions,
     RandomAlgorithmOptions,
@@ -76,6 +77,25 @@ class AlgorithmRunner:
             return PriorityAlgorithmOptions
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinAlgorithmOptions
+
+        raise NotImplementedError(
+            f"Algorithm type {algorithm_type} is not associated with an algorithm class!"
+        )
+
+    @staticmethod
+    def get_algorithm_config_class(algorithm_type: AlgorithmType):
+        if algorithm_type == AlgorithmType.RANDOM:
+            return RandomAlgorithmConfig
+        if algorithm_type == AlgorithmType.WEIGHT:
+            return WeightAlgorithmConfig
+        if algorithm_type == AlgorithmType.SOCIAL:
+            return SocialAlgorithmConfig
+        if algorithm_type == AlgorithmType.PRIORITY:
+            return PriorityAlgorithmConfig
+        if algorithm_type == AlgorithmType.PRIORITY_NEW:
+            return PriorityAlgorithmConfig
+        if algorithm_type == AlgorithmType.MRR:
+            return None
 
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm class!"
