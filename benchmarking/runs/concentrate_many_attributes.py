@@ -1,22 +1,24 @@
 import math
+from typing import Dict
 
 import typer
 
-from benchmarking.data.interfaces import MockStudentProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
+    MockStudentProviderSettings,
 )
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
+from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import (
     AverageGiniIndexMultiAttribute,
 )
 from benchmarking.evaluations.scenarios.concentrate_multiple_attributes import (
     ConcentrateMultipleAttributes,
 )
-from benchmarking.simulation.simulation import Simulation
-from models.enums import ScenarioAttribute, Gender, Race
+from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
+from api.models.enums import ScenarioAttribute, Gender, Race
 
 
 def concentrate_many_attributes(num_trials: int = 10):
@@ -34,6 +36,19 @@ def concentrate_many_attributes(num_trials: int = 10):
         graph_runtime_dict,
         graph_avg_gini_dict,
     ]
+
+    metrics: Dict[str, TeamSetMetric] = {
+        "AverageGiniIndexMulti": AverageGiniIndexMultiAttribute(
+            attributes=[
+                ScenarioAttribute.AGE.value,
+                ScenarioAttribute.GENDER.value,
+                ScenarioAttribute.GPA.value,
+                ScenarioAttribute.RACE.value,
+                ScenarioAttribute.MAJOR.value,
+                ScenarioAttribute.YEAR_LEVEL.value,
+            ]
+        ),
+    }
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -56,7 +71,7 @@ def concentrate_many_attributes(num_trials: int = 10):
             },
         )
 
-        simulation_outputs = Simulation(
+        simulation_outputs = BasicSimulationSet(
             num_teams=number_of_teams,
             scenario=ConcentrateMultipleAttributes(
                 [
@@ -69,31 +84,20 @@ def concentrate_many_attributes(num_trials: int = 10):
                 ]
             ),
             student_provider=MockStudentProvider(student_provider_settings),
-            metrics=[
-                AverageGiniIndexMultiAttribute(
-                    attributes=[
-                        ScenarioAttribute.AGE.value,
-                        ScenarioAttribute.GENDER.value,
-                        ScenarioAttribute.GPA.value,
-                        ScenarioAttribute.RACE.value,
-                        ScenarioAttribute.MAJOR.value,
-                        ScenarioAttribute.YEAR_LEVEL.value,
-                    ]
-                ),
-            ],
+            metrics=list(metrics.values()),
         ).run(num_runs=num_trials)
 
-        average_gini = Simulation.average_metric(
+        average_gini = BasicSimulationSet.average_metric(
             simulation_outputs, "AverageGiniIndexMultiAttribute"
         )
 
-        average_runtimes = Simulation.average_metric(
-            simulation_outputs, Simulation.KEY_RUNTIMES
+        average_runtimes = BasicSimulationSet.average_metric(
+            simulation_outputs, BasicSimulationSet.KEY_RUNTIMES
         )
 
-        metrics = [average_runtimes, average_gini]
+        metric_values = [average_runtimes, average_gini]
 
-        for i, metric in enumerate(metrics):
+        for i, metric in enumerate(metric_values):
             for algorithm_type, data in metric.items():
                 if algorithm_type not in graph_dicts[i]:
                     graph_dicts[i][algorithm_type] = GraphData(
@@ -114,6 +118,7 @@ def concentrate_many_attributes(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 
@@ -124,8 +129,9 @@ def concentrate_many_attributes(num_trials: int = 10):
             title="Concentrate Many Attributes Average Gini Index",
             data=list(graph_avg_gini_dict.values()),
             description=None,
-            y_lim=GraphAxisRange(0, 1),
+            y_lim=GraphAxisRange(*metrics["AverageGiniIndexMulti"].theoretical_range),
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 

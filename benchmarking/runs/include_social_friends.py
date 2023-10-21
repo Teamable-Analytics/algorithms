@@ -2,8 +2,10 @@ import math
 
 import typer
 
-from benchmarking.data.interfaces import MockStudentProviderSettings
-from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
+from benchmarking.data.simulated_data.mock_student_provider import (
+    MockStudentProvider,
+    MockStudentProviderSettings,
+)
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
@@ -16,7 +18,7 @@ from benchmarking.evaluations.metrics.utils.team_calculations import (
 from benchmarking.evaluations.scenarios.include_social_friends import (
     IncludeSocialFriends,
 )
-from benchmarking.simulation.simulation import Simulation
+from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
 
 
 def include_social_friends(num_trials: int = 10):
@@ -44,7 +46,7 @@ def include_social_friends(num_trials: int = 10):
             friend_distribution="cluster",
         )
 
-        simulation_outputs = Simulation(
+        simulation_outputs = BasicSimulationSet(
             num_teams=number_of_teams,
             scenario=IncludeSocialFriends(),
             student_provider=MockStudentProvider(student_provider_settings),
@@ -53,7 +55,9 @@ def include_social_friends(num_trials: int = 10):
             ],
         ).run(num_runs=num_trials)
 
-        average_runtimes = Simulation.average_metric(simulation_outputs, "runtimes")
+        average_runtimes = BasicSimulationSet.average_metric(
+            simulation_outputs, "runtimes"
+        )
 
         # Data processing for graph
         for algorithm_type, average_runtime in average_runtimes.items():
@@ -76,6 +80,7 @@ def include_social_friends(num_trials: int = 10):
             description=None,
             y_lim=None,
             x_lim=None,
+            num_minor_ticks=None,
         )
     )
 

@@ -1,16 +1,16 @@
 from typing import List, Union
 
 from benchmarking.evaluations.goals import DiversityGoal
-from models.enums import (
+from api.models.enums import (
     RequirementOperator,
     Relationship,
     DiversifyType,
     TokenizationConstraintDirection,
 )
-from models.project import ProjectRequirement
-from models.student import Student
-from models.team import Team
-from models.team_set import TeamSet
+from api.models.project import ProjectRequirement
+from api.models.student import Student
+from api.models.team import Team
+from api.models.team_set import TeamSet
 from old.team_formation.app.team_generator.algorithm.consts import (
     FRIEND,
     ENEMY,
@@ -175,7 +175,7 @@ class AlgorithmTranslator:
                 )
                 for s_id, relationship in algorithm_student.relationships.items()
             },
-            preferences=[
+            project_preferences=[
                 project_id
                 for _, project_id in sorted(
                     algorithm_student.preferences.items(), key=lambda item: item[0]
@@ -196,7 +196,7 @@ class AlgorithmTranslator:
             },
             preferences={
                 index: project_id
-                for index, project_id in enumerate(student.preferences)
+                for index, project_id in enumerate(student.project_preferences)
             },
         )
 

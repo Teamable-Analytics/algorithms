@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import List
+from typing import List, Tuple, Optional
 
-from models.enums import TokenizationConstraintDirection
-from models.team_set import TeamSet
+from api.models.team_set import TeamSet
 
 
 class Goal(ABC):
@@ -23,12 +21,25 @@ class Scenario(ABC):
 
 
 class TeamSetMetric(ABC):
-    def __init__(self, name: str = None, *args, **kwargs):
+    def __init__(
+        self,
+        theoretical_range: Tuple[float, float] = None,
+        name: str = None,
+        *args,
+        **kwargs
+    ):
         self._name = name
+        self._theoretical_range = theoretical_range
 
     @abstractmethod
     def calculate(self, team_set: TeamSet) -> float:
         raise NotImplementedError
+
+    @property
+    def theoretical_range(self) -> Optional[Tuple[float, float]]:
+        if self._theoretical_range:
+            return self._theoretical_range
+        return None
 
     @property
     def name(self) -> str:
