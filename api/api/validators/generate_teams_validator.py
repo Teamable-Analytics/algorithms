@@ -43,9 +43,13 @@ class GenerateTeamsValidator(Validator):
         algorithm_option_cls(**algorithm_option).validate()
 
     def validate_algorithm_configs(self):
-        algorithm_type = AlgorithmType(self.data.get("algorithm_options").get("algorithm_type"))
+        algorithm_type = AlgorithmType(
+            self.data.get("algorithm_options").get("algorithm_type")
+        )
         algorithm_config = self.data.get("algorithm_config")
-        algorithm_config_cls = AlgorithmRunner.get_algorithm_config_class(algorithm_type)
+        algorithm_config_cls = AlgorithmRunner.get_algorithm_config_class(
+            algorithm_type
+        )
 
         algorithm_config_cls(**algorithm_config).validate()
 

@@ -77,6 +77,8 @@ class GenerateTeamsDataLoader:
 
     def _get_algorithm_config(self) -> AlgorithmConfig:
         algorithm_type = self._get_algorithm_type()
-        algorithm_config_cls = AlgorithmRunner.get_algorithm_config_class(algorithm_type)
+        algorithm_config_cls = AlgorithmRunner.get_algorithm_config_class(
+            algorithm_type
+        )
 
         return algorithm_config_cls(**self.data.get("algorithm_config"))

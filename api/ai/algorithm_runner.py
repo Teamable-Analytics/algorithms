@@ -1,7 +1,12 @@
 from typing import List
 
-from api.ai.new.interfaces.algorithm_config import AlgorithmConfig, RandomAlgorithmConfig, WeightAlgorithmConfig, \
-    SocialAlgorithmConfig, PriorityAlgorithmConfig
+from api.ai.new.interfaces.algorithm_config import (
+    AlgorithmConfig,
+    RandomAlgorithmConfig,
+    WeightAlgorithmConfig,
+    SocialAlgorithmConfig,
+    PriorityAlgorithmConfig,
+)
 from api.ai.new.interfaces.algorithm_options import (
     AlgorithmOptions,
     RandomAlgorithmOptions,
