@@ -11,6 +11,7 @@ class RawSocialGraph:
 
     def __init__(self, students: List[Student]):
         self.students = students
+        self.student_id_trace = {student.id: student for student in students}
         self.social_graph = self._create_social_graph()
         self.distances = self._find_distances()
 
@@ -34,10 +35,25 @@ class RawSocialGraph:
         for student, other in combinations(self.students, 2):
             if student.id == other.id:  # self-edges are not allowed
                 continue
+
+            if student.id not in social_graph:
+                social_graph[student.id] = {}
             social_graph[student.id][other.id] = Relationship.DEFAULT.value
             if other.id in student.relationships:
                 # update to real relationship value if one exists
-                social_graph[student.id][other.id] = student.relationships[other.id]
+                social_graph[student.id][other.id] = student.relationships[other.id].value
+            # Dijkstra's algorithm requires all edges to be positive
+            social_graph[student.id][other.id] += Relationship.FRIEND.value
+
+            if other.id not in social_graph:
+                social_graph[other.id] = {}
+            social_graph[other.id][student.id] = Relationship.DEFAULT.value
+            if student.id in other.relationships:
+                # update to real relationship value if one exists
+                social_graph[other.id][student.id] = other.relationships[student.id].value
+            # Dijkstra's algorithm requires all edges to be positive
+            social_graph[other.id][student.id] += Relationship.FRIEND.value
+
         return social_graph
 
     def _find_distances(self) -> Dict[int, Dict[int, float]]:
@@ -60,6 +76,8 @@ class RawSocialGraph:
 
         while True:
             for neighbour in self.students:
+                if neighbour.id == current.id:
+                    continue
                 distance = self.social_graph[current.id][neighbour.id]
                 if neighbour.id not in unvisited:
                     continue
@@ -70,13 +88,20 @@ class RawSocialGraph:
 
             visited[current.id] = current_distance
             del unvisited[current.id]
-            if not unvisited:
+            if len(unvisited) == 0:
                 break
 
             candidates = [node for node in unvisited.items() if node[1]]
-            current, currentDistance = sorted(candidates, key=lambda x: x[1])[0]
+
+            if len(candidates) == 0:
+                break
+            current_id, currentDistance = sorted(candidates, key=lambda x: x[1])[0]
+            current = self.student_id_trace[current_id]
 
         return visited
 
     def get_shortest_distance(self, start_student: Student, end_student: Student) -> float:
-        return self.distances[start_student.id][end_student.id]
+        try:
+            return self.distances[start_student.id][end_student.id]
+        except KeyError:
+            return float('inf')

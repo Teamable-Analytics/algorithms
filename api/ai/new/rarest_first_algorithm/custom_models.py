@@ -4,7 +4,7 @@ from api.models.student import Student
 
 
 class SupportGroup:
-    def __init__(self, attribute_id: str, students: List[Student]):
+    def __init__(self, attribute_id: int, students: List[Student]):
         """
         Args:
             attribute_id: The attribute id of the support group

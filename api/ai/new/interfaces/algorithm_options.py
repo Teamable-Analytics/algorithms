@@ -5,7 +5,7 @@ from typing import List, Union
 from schema import Schema, SchemaError
 
 from api.ai.new.priority_algorithm.priority.interfaces import Priority
-from api.models.enums import RelationshipBehaviour, ScenarioAttribute
+from api.models.enums import RelationshipBehaviour
 from api.models.project import Project
 
 
@@ -84,7 +84,8 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
 
 @dataclass
 class RarestFirstAlgorithmOptions(AlgorithmOptions):
-    attributes: List[str] = field(default_factory=ScenarioAttribute)
+    attributes: List[int] = field(default_factory=list)
+
     def validate(self):
         super().validate()
 

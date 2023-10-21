@@ -114,7 +114,7 @@ def create_mock_students(
                 i,
                 relationships=relationships,
                 attributes=attributes,
-                preferences=preferences,
+                # preferences=preferences,
             )
         )
     return students
