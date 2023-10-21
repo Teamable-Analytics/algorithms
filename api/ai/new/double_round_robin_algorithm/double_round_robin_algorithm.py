@@ -54,8 +54,8 @@ class DoubleRoundRobinAlgorithm(Algorithm):
         utilities: Dict[int, List[Utility]],
         num_students: int,
         allocation: Dict[int, List[Student]],
+        selected_students: Set[int],
     ) -> Dict[int, List[Student]]:
-        selected_students: Set[int] = set()
         while len(selected_students) < num_students:
             for project in self.projects:
                 while (
@@ -95,14 +95,21 @@ class DoubleRoundRobinAlgorithm(Algorithm):
                     heappush(negative_utilities[project.id], curr_utility)
                     negative_utility_students.add(student.id)
 
+        selected_students: Set[int] = set()
         allocation: Dict[int, List[Student]] = {
             project.id: [] for project in self.projects
         }
         self._round_robin(
-            negative_utilities, len(negative_utility_students), allocation
+            negative_utilities,
+            len(negative_utility_students),
+            allocation,
+            selected_students,
         )
         self._round_robin(
-            positive_utilities, len(positive_utility_students), allocation
+            positive_utilities,
+            len(positive_utility_students),
+            allocation,
+            selected_students,
         )
 
         team_list: List[Team] = []
