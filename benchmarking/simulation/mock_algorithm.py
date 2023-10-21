@@ -70,10 +70,6 @@ class MockAlgorithm:
         if algorithm_type == AlgorithmType.PRIORITY_NEW:
             return PriorityAlgorithmNew(algorithm_options)
 
-        # The implementation of this algorithm must override the run method
-        if algorithm_type == AlgorithmType.RAREST_FIRST:
-            return None
-
     @staticmethod
     def get_team_generation_options(
         num_students: int, num_teams: int, initial_teams: List[Team] = None

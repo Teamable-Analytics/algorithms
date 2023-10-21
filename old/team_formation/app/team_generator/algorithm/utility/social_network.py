@@ -47,7 +47,7 @@ class SocialNetwork:
             student_network = {}
             for other in students:
                 if other.id in student.relationships:
-                    student_network[other.id] = student.relationships[other.id].value
+                    student_network[other.id] = student.relationships[other.id]
                 else:
                     student_network[other.id] = DEFAULT
             social_network[student.id] = student_network
