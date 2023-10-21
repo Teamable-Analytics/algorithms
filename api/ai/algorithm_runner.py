@@ -8,7 +8,9 @@ from api.ai.new.multiple_round_robin_with_adjusted_winner.multiple_round_robin i
 )
 from api.ai.new.priority_algorithm.priority_algorithm import PriorityAlgorithm
 from api.ai.new.random_algorithm.random_algorithm import RandomAlgorithm
-from api.ai.new.rarest_first_algorithm.rarest_first_algorithm import RarestFirstAlgorithm
+from api.ai.new.rarest_first_algorithm.rarest_first_algorithm import (
+    RarestFirstAlgorithm,
+)
 from api.ai.new.social_algorithm.social_algorithm import SocialAlgorithm
 from api.ai.new.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.models.enums import AlgorithmType
