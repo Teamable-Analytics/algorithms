@@ -5,7 +5,7 @@ from typing import List, Union
 from schema import Schema, SchemaError
 
 from api.ai.new.priority_algorithm.priority.interfaces import Priority
-from api.models.enums import RelationshipBehaviour
+from api.models.enums import RelationshipBehaviour, ScenarioAttribute
 from api.models.project import Project
 
 
@@ -82,10 +82,18 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
             raise SchemaError("Project list cannot be empty.")
 
 
+@dataclass
+class RarestFirstAlgorithmOptions(AlgorithmOptions):
+    attributes: List[str] = field(default_factory=ScenarioAttribute)
+    def validate(self):
+        super().validate()
+
+
 AnyAlgorithmOptions = Union[
     RandomAlgorithmOptions,
     WeightAlgorithmOptions,
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
+    RarestFirstAlgorithmOptions,
 ]
