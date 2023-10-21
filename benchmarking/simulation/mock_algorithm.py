@@ -38,10 +38,10 @@ from old.team_formation.app.team_generator.team_generator import (
 
 class MockAlgorithm:
     def __init__(
-        self,
-        algorithm_type: AlgorithmType,
-        team_generation_options: TeamGenerationOption,
-        algorithm_options: AlgorithmOptions,
+            self,
+            algorithm_type: AlgorithmType,
+            team_generation_options: TeamGenerationOption,
+            algorithm_options: AlgorithmOptions,
     ):
         self.algorithm = MockAlgorithm.get_algorithm_from_type(
             algorithm_type, algorithm_options
@@ -57,7 +57,7 @@ class MockAlgorithm:
 
     @staticmethod
     def get_algorithm_from_type(
-        algorithm_type: AlgorithmType, algorithm_options: AlgorithmOptions
+            algorithm_type: AlgorithmType, algorithm_options: AlgorithmOptions
     ):
         if algorithm_type == AlgorithmType.RANDOM:
             return RandomAlgorithm(algorithm_options)
@@ -69,13 +69,10 @@ class MockAlgorithm:
             return PriorityAlgorithm(algorithm_options)
         if algorithm_type == AlgorithmType.PRIORITY_NEW:
             return PriorityAlgorithmNew(algorithm_options)
-        # The implementation of this algorithm must override the run method
-        if algorithm_type == AlgorithmType.PATH_GASP:
-            return None
 
     @staticmethod
     def get_team_generation_options(
-        num_students: int, num_teams: int, initial_teams: List[Team] = None
+            num_students: int, num_teams: int, initial_teams: List[Team] = None
     ) -> TeamGenerationOption:
         if initial_teams:
             return AlgorithmTranslator.initial_teams_to_team_generation_options(
@@ -93,7 +90,7 @@ class MockAlgorithm:
 
     @staticmethod
     def algorithm_options_from_scenario(
-        algorithm_type: AlgorithmType, scenario: Scenario, max_project_preferences: int
+            algorithm_type: AlgorithmType, scenario: Scenario, max_project_preferences: int
     ) -> AlgorithmOptions:
         kwargs = {}
         diversify_options = []

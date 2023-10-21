@@ -72,12 +72,6 @@ class SocialAlgorithmOptions(WeightAlgorithmOptions):
 
 
 @dataclass
-class PathGaspAlgorithmOptions(AlgorithmOptions):
-    def validate(self):
-        super().validate()
-
-
-@dataclass
 class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
     projects: List[Project]
 
@@ -93,6 +87,5 @@ AnyAlgorithmOptions = Union[
     WeightAlgorithmOptions,
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
-    PathGaspAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
 ]
