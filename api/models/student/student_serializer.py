@@ -19,12 +19,12 @@ class StudentSerializer(json.JSONEncoder, json.JSONDecoder):
             "project_preferences": student.project_preferences,
         }
 
-    def decode(self, json_string, _w=...) -> Student:
-        data = json.loads(json_string)
+    def decode(self, s, _w=...) -> Student:
+        data = json.loads(s)
         return Student(
             _id=data["_id"],
             name=data["name"],
-            attributes=data["attributes"],
+            attributes={int(key): value for key, value in data["attributes"].items()},
             relationships={
                 int(key): Relationship(value)
                 for key, value in data["relationships"].items()
