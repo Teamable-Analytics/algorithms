@@ -41,7 +41,9 @@ class RawSocialGraph:
             social_graph[student.id][other.id] = Relationship.DEFAULT.value
             if other.id in student.relationships:
                 # update to real relationship value if one exists
-                social_graph[student.id][other.id] = student.relationships[other.id].value
+                social_graph[student.id][other.id] = student.relationships[
+                    other.id
+                ].value
             # Dijkstra's algorithm requires all edges to be positive
             social_graph[student.id][other.id] += Relationship.FRIEND.value
 
@@ -50,7 +52,9 @@ class RawSocialGraph:
             social_graph[other.id][student.id] = Relationship.DEFAULT.value
             if student.id in other.relationships:
                 # update to real relationship value if one exists
-                social_graph[other.id][student.id] = other.relationships[student.id].value
+                social_graph[other.id][student.id] = other.relationships[
+                    student.id
+                ].value
             # Dijkstra's algorithm requires all edges to be positive
             social_graph[other.id][student.id] += Relationship.FRIEND.value
 
@@ -83,7 +87,10 @@ class RawSocialGraph:
                     continue
 
                 new_distance = current_distance + distance
-                if unvisited[neighbour.id] is None or unvisited[neighbour.id] > new_distance:
+                if (
+                    unvisited[neighbour.id] is None
+                    or unvisited[neighbour.id] > new_distance
+                ):
                     unvisited[neighbour.id] = new_distance
 
             visited[current.id] = current_distance
@@ -100,8 +107,10 @@ class RawSocialGraph:
 
         return visited
 
-    def get_shortest_distance(self, start_student: Student, end_student: Student) -> float:
+    def get_shortest_distance(
+        self, start_student: Student, end_student: Student
+    ) -> float:
         try:
             return self.distances[start_student.id][end_student.id]
         except KeyError:
-            return float('inf')
+            return float("inf")

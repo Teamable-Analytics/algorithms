@@ -16,7 +16,9 @@ class SupportGroup:
 
 
 class Distance:
-    def __init__(self, value: float, start_student: Student = None, end_student: Student = None):
+    def __init__(
+        self, value: float, start_student: Student = None, end_student: Student = None
+    ):
         self.value = value
         self.start_student = start_student
         self.end_student = end_student
