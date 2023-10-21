@@ -1,12 +1,15 @@
 import json
 import string
+from typing import Dict, Union, List
 
 from api.models.enums import Relationship
 from api.models.student.student import Student
 
 
 class StudentSerializer(json.JSONEncoder, json.JSONDecoder):
-    def default(self, student: Student) -> string:
+    def default(
+        self, student: Student
+    ) -> Dict[str, Union[str, List[int], dict, Dict[int, List[int]], int]]:
         if not isinstance(student, Student):
             raise TypeError("Object is not a student instance.")
         return {
