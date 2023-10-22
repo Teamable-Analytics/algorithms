@@ -1,12 +1,12 @@
+from json import JSONEncoder, JSONDecoder
 import json
-import string
 from typing import Dict, Union, List
 
 from api.models.enums import Relationship
 from api.models.student import Student
 
 
-class StudentSerializer(json.JSONEncoder, json.JSONDecoder):
+class StudentSerializer(JSONEncoder, JSONDecoder):
     def default(
         self, student: Student
     ) -> Dict[
