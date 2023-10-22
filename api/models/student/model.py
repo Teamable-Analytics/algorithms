@@ -9,7 +9,7 @@ from api.models.project import ProjectRequirement
 class Student:
     _id: int
     name: str = None
-    attributes: Dict[int, List[any]] = field(default_factory=dict)
+    attributes: Dict[int, List[int]] = field(default_factory=dict)
     relationships: Dict[int, Relationship] = field(default_factory=dict)
     project_preferences: List[int] = field(default_factory=list)
     team: "Team" = None
