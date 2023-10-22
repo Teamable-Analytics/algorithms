@@ -9,7 +9,7 @@ from api.models.student.student import Student
 class StudentSerializer(json.JSONEncoder, json.JSONDecoder):
     def default(
         self, student: Student
-    ) -> Dict[str, Union[str, List[int], dict, Dict[int, List[int]], int]]:
+    ) -> Dict[str, Union[str, List[int], Dict[int, Relationship], Dict[int, List[int]], int]]:
         if not isinstance(student, Student):
             raise TypeError("Object is not a student instance.")
         return {
@@ -17,7 +17,7 @@ class StudentSerializer(json.JSONEncoder, json.JSONDecoder):
             "name": student.name,
             "attributes": student.attributes,
             "relationships": {
-                f"{x}": y.value for x, y in student.relationships.items()
+                str(x): y.value for x, y in student.relationships.items()
             },
             "project_preferences": student.project_preferences,
         }
