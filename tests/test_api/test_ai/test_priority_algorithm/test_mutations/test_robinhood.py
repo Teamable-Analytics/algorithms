@@ -9,7 +9,7 @@ from api.ai.priority_algorithm.mutations.robinhood import (
     mutate_robinhood_holistic,
 )
 from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
-from api.models.student.student import Student
+from api.models.student import Student
 from api.models.team import Team
 
 

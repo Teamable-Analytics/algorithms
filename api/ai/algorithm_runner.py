@@ -11,7 +11,7 @@ from api.ai.new.random_algorithm.random_algorithm import RandomAlgorithm
 from api.ai.new.social_algorithm.social_algorithm import SocialAlgorithm
 from api.ai.new.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.models.enums import AlgorithmType
-from api.models.student.student import Student
+from api.models.student import Student
 from api.models.team_set import TeamSet
 
 

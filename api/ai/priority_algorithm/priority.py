@@ -3,7 +3,7 @@ from typing import List
 
 from api.ai.priority_algorithm.interfaces import Priority
 from api.models.enums import DiversifyType, TokenizationConstraintDirection
-from api.models.student.student import Student
+from api.models.student import Student
 
 
 @dataclass

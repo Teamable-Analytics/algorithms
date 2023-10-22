@@ -5,7 +5,7 @@ from typing import Literal, List, Dict, Optional
 import numpy as np
 
 from api.models.enums import Relationship, AttributeValueEnum, ScenarioAttribute
-from api.models.student.student import Student
+from api.models.student import Student
 from benchmarking.data.interfaces import (
     StudentProvider,
     AttributeRangeConfig,

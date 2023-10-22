@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Union, Tuple
 
 from api.models.enums import AttributeValueEnum
-from api.models.student.student import Student
+from api.models.student import Student
 from api.models.team import Team
 
 AttributeRangeConfig = Union[

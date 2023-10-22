@@ -13,7 +13,7 @@ from api.ai.priority_algorithm.priority import TokenizationPriority
 from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
 from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
 from api.models.enums import DiversifyType, TokenizationConstraintDirection
-from api.models.student.student import Student
+from api.models.student import Student
 from api.models.team import Team
 from old.team_formation.app.team_generator.algorithm.algorithms import WeightAlgorithm
 from old.team_formation.app.team_generator.student import Student as AlgorithmStudent

@@ -5,7 +5,7 @@ from api.ai.new.interfaces.algorithm_options import AlgorithmOptions
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
 from api.models.enums import AlgorithmType
 from api.models.project import Project
-from api.models.student.student import Student
+from api.models.student import Student
 
 
 @dataclass

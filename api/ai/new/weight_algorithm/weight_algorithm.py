@@ -12,7 +12,7 @@ from api.ai.new.weight_algorithm.utility import (
     get_diversity_utility,
     get_preference_utility,
 )
-from api.models.student.student import Student
+from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
 

@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from api.models.enums import Relationship, Weight
-from api.models.student.student import Student
+from api.models.student import Student
 
 
 class SocialNetwork:

@@ -1,7 +1,7 @@
 import unittest
 
 from api.models.enums import Gpa, ScenarioAttribute, Relationship
-from api.models.student.student import Student
+from api.models.student import Student
 from benchmarking.data.simulated_data.mock_student_provider import (
     attribute_values_from_range,
     create_mock_students,

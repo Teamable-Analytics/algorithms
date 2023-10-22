@@ -2,7 +2,7 @@ from typing import List, Tuple, Dict
 
 from api.ai.new.social_algorithm.custom_models import TeamWithCliques
 from api.models.enums import Relationship
-from api.models.student.student import Student
+from api.models.student import Student
 
 UNREGISTERED_STUDENT_ID = -1
 

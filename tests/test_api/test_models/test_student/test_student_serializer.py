@@ -2,9 +2,7 @@ import json
 import unittest
 
 from api.models.enums import Relationship
-from api.models.student.student import Student
-from api.models.student.student_serializer import StudentSerializer
-from api.models.team import Team
+from api.models.student import Student, StudentSerializer
 
 
 class TestStudentSerializer(unittest.TestCase):
@@ -30,10 +28,6 @@ class TestStudentSerializer(unittest.TestCase):
             '{"_id": 1, "name": "Harry", "attributes": {"4": [2, 56, 1], "11": [2], "234": [-1, 0]}, "relationships": {"2": -1}, "project_preferences": [6, 1]}',
             '{"_id": 2, "name": "Jane", "attributes": {"4": [31, 2], "11": [], "234": [1, -1]}, "relationships": {"1": -1}, "project_preferences": [3, 2]}',
         ]
-
-    def test_student_serializer__encode_returns_string(self):
-        encoded_student = json.dumps(self.students[0], cls=StudentSerializer)
-        self.assertIsInstance(encoded_student, str)
 
     def test_student_serializer__encodes_students_correctly(self):
         encoded_students = [

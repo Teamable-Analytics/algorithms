@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from api.models.student.student import Student
+from api.models.student import Student
 from api.models.team import Team
 
 
