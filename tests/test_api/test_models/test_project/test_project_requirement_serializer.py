@@ -1,8 +1,8 @@
 import unittest
 
 from api.models.enums import RequirementOperator
-from api.models.project.project import ProjectRequirement
-from api.models.project.project_requirement_serializer import ProjectRequirementSerializer
+from api.models.project import ProjectRequirement
+from api.models.project import ProjectRequirementSerializer
 
 
 class TestProjectRequirementSerializer(unittest.TestCase):

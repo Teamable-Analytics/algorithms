@@ -3,7 +3,7 @@ from json import JSONEncoder, JSONDecoder
 from typing import Dict, Union
 
 from api.models.enums import RequirementOperator
-from api.models.project.project import ProjectRequirement
+from api.models.project import ProjectRequirement
 
 
 class ProjectRequirementSerializer(JSONEncoder, JSONDecoder):

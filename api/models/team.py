@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from api.models.project.project import ProjectRequirement
+from api.models.project import ProjectRequirement
 from api.models.student import Student
 
 

@@ -7,7 +7,7 @@ from api.models.enums import (
     DiversifyType,
     TokenizationConstraintDirection,
 )
-from api.models.project.project import ProjectRequirement
+from api.models.project import ProjectRequirement
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
