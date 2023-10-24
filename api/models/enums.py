@@ -59,7 +59,6 @@ class ScenarioAttribute(Enum):
     MAJOR = 5
     YEAR_LEVEL = 6
     TIMESLOT_AVAILABILITY = 7
-    PROJECT_PREFERENCES = 8
 
 
 class AttributeValueEnum(Enum):
