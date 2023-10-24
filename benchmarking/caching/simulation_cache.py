@@ -68,7 +68,8 @@ class SimulationCache:
         """
         Clears the cache.
         """
-        pass
+        if self.exists():
+            os.remove(self._get_file())
 
     def _get_file(self) -> str:
         """
