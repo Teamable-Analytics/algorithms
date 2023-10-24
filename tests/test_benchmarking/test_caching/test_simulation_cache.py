@@ -64,7 +64,7 @@ class TestSimulationCache(unittest.TestCase):
         # I'm paranoid about these tests modifying the cache, so move the cache to a different location as a precaution
         # This also ensures no leftover files from running the tests
         cache_dir = path.abspath(
-            path.join(path.dirname(__file__), "..", "..", "..", "cache")
+            path.join(path.dirname(__file__), "..", "..", "..", "run_cache")
         )
         backup_dir = path.abspath(
             path.join(path.dirname(__file__), "..", "..", "..", "cache_backup")
@@ -78,7 +78,7 @@ class TestSimulationCache(unittest.TestCase):
     def tearDownClass(cls):
         # Move the cache back to its original location
         cache_dir = path.abspath(
-            path.join(path.dirname(__file__), "..", "..", "..", "cache")
+            path.join(path.dirname(__file__), "..", "..", "..", "run_cache")
         )
         backup_dir = path.abspath(
             path.join(path.dirname(__file__), "..", "..", "..", "cache_backup")
@@ -94,7 +94,7 @@ class TestSimulationCache(unittest.TestCase):
 
         # Get the absolute path of the directory and the file
         cache_dir = path.abspath(
-            path.join(path.dirname(__file__), "..", "..", "..", "cache")
+            path.join(path.dirname(__file__), "..", "..", "..", "run_cache")
         )
         file_path = path.abspath(cache._get_file())
 

@@ -88,7 +88,7 @@ class SimulationCache:
 
         # Get cache directory
         current_dir = path.dirname(__file__)
-        cache_dir = path.abspath(path.join(current_dir, "..", "..", "cache"))
+        cache_dir = path.abspath(path.join(current_dir, "..", "..", "run_cache"))
 
         # Create cache directory if it doesn't exist
         if not path.exists(cache_dir):
