@@ -1,6 +1,7 @@
 import json
 import os
 import shutil
+from datetime import datetime
 from os import path
 import unittest
 from typing import List
@@ -186,8 +187,6 @@ class TestSimulationCache(unittest.TestCase):
         self.assertEqual(len(file_contents["team_sets"]), len(mock_simulation_result))
         self.assertEqual(mock_simulation_result, file_contents["team_sets"])
 
-        cache.clear()
-
     def test_clear__deletes_cache_file(self):
         cache_key = "test_cache_key"
         cache = SimulationCache(cache_key)
@@ -201,3 +200,39 @@ class TestSimulationCache(unittest.TestCase):
 
         # Check to make sure file doesn't exist
         self.assertFalse(cache.exists())
+
+    def test_get_teams__returns_correct_teams(self):
+        cache_key = "test_cache_key"
+        cache = SimulationCache(cache_key)
+        cache.save(mock_simulation_result)
+
+        # Get teams
+        teams = cache.get_teams()
+
+        # Check to make sure teams are correct
+        self.assertEqual(mock_simulation_result, teams)
+
+    def test_get_metadata__returns_correct_metadata(self):
+        cache_key = "test_cache_key"
+        cache = SimulationCache(cache_key)
+        cache.save([])
+
+        # Get metadata
+        metadata = cache.get_metadata()
+
+        # Check to make sure metadata is correct
+        self.assertEqual(2, len(metadata))
+        self.assertIn("timestamp", metadata)
+        self.assertIn("commit_hash", metadata)
+
+        cache.clear()
+        cache.save([], {"foo": "bar", "num": 1})
+
+        # Get metadata
+        metadata = cache.get_metadata()
+
+        # Check to make sure metadata is correct
+        self.assertEqual("bar", metadata["foo"])
+        self.assertEqual(1, metadata["num"])
+        self.assertEqual(int, type(metadata["num"]))
+        self.assertEqual(datetime, type(metadata["timestamp"]))

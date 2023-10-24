@@ -80,6 +80,7 @@ class SimulationCache:
         """
         if self.exists():
             os.remove(self._get_file())
+        self._data = None
 
     def _get_file(self) -> str:
         """
@@ -106,6 +107,9 @@ class SimulationCache:
             with open(self._get_file(), "r") as f:
                 json_data = json.load(f)
 
-            # Parse json data
-            # TODO: Parse json_data using Seth's code
-            self._data: Dict[str, Any] = {}
+            # Convert timestamp to datetime
+            json_data["metadata"]["timestamp"] = datetime.fromisoformat(json_data["metadata"]["timestamp"])
+
+            # TODO: Parse team_sets into actual TeamSets using Seth's code
+
+            self._data: Dict[str, Any] = json_data
