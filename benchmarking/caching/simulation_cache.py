@@ -1,11 +1,9 @@
-from datetime import datetime
 import json
 import os
+from datetime import datetime
 from os import path
 from typing import List, Dict, Any
-
 import git
-
 from api.models.team_set import TeamSet
 
 
@@ -18,6 +16,14 @@ class SimulationCache:
 
     def __init__(self, cache_key: str) -> None:
         self.cache_key = cache_key
+        self._data = None
+        """
+        Dict in the form of:
+        {
+            "metadata": Dict[str, Any],  # Contains at least "timestamp" and "commit_hash"
+            "team_sets": List[TeamSet],
+        }
+        """
 
     def exists(self) -> bool:
         """
@@ -29,13 +35,17 @@ class SimulationCache:
         """
         Gets the simulation results from the cache.
         """
-        pass
+        self._load_data()
+
+        return self._data["team_sets"]
 
     def get_metadata(self) -> Dict[str, Any]:
         """
         Gets the metadata associated with the simulation results from the cache.
         """
-        pass
+        self._load_data()
+
+        return self._data["metadata"]
 
     def save(
         self, simulation_results: List[TeamSet], metadata: Dict[str, Any] = None
@@ -86,3 +96,16 @@ class SimulationCache:
 
         # Get file
         return path.join(cache_dir, self.cache_key + ".json")
+
+    def _load_data(self) -> None:
+        if self._data is None:
+            if not self.exists():
+                raise FileNotFoundError("Cache doesn't exist")
+
+            # Load json data
+            with open(self._get_file(), "r") as f:
+                json_data = json.load(f)
+
+            # Parse json data
+            # TODO: Parse json_data using Seth's code
+            self._data: Dict[str, Any] = {}
