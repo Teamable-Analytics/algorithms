@@ -26,7 +26,9 @@ class TeamSerializer(JSONEncoder, JsonDecoder):
     def decode(self, json_dict: Dict[str, Any]) -> Team:
         requirement_serializer = ProjectRequirementSerializer()
         student_serializer = StudentSerializer()
-        students = [student_serializer.decode(student) for student in json_dict["students"]]
+        students = [
+            student_serializer.decode(student) for student in json_dict["students"]
+        ]
         requirements = [
             requirement_serializer.decode(req) for req in json_dict["requirements"]
         ]
