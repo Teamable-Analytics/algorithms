@@ -1,12 +1,12 @@
-from json import JSONEncoder, JSONDecoder
-import json
-from typing import Dict, Union, List
+from json import JSONEncoder
+from typing import Dict, Union, List, Any
 
 from api.models.enums import Relationship
+from api.models.serializer import JsonDecoder
 from api.models.student import Student
 
 
-class StudentSerializer(JSONEncoder, JSONDecoder):
+class StudentSerializer(JSONEncoder, JsonDecoder):
     def default(
         self, student: Student
     ) -> Dict[
@@ -24,15 +24,16 @@ class StudentSerializer(JSONEncoder, JSONDecoder):
             "project_preferences": student.project_preferences,
         }
 
-    def decode(self, s, _w=...) -> Student:
-        data = json.loads(s)
+    def decode(self, json_dict: Dict[str, Any]) -> Student:
         return Student(
-            _id=data["_id"],
-            name=data["name"],
-            attributes={int(key): value for key, value in data["attributes"].items()},
+            _id=json_dict["_id"],
+            name=json_dict["name"],
+            attributes={
+                int(key): value for key, value in json_dict["attributes"].items()
+            },
             relationships={
                 int(key): Relationship(value)
-                for key, value in data["relationships"].items()
+                for key, value in json_dict["relationships"].items()
             },
-            project_preferences=data["project_preferences"],
+            project_preferences=json_dict["project_preferences"],
         )

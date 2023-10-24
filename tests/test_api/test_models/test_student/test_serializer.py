@@ -37,10 +37,13 @@ class TestStudentSerializer(unittest.TestCase):
 
     def test_student_serializer__decode_returns_student(self):
         decoder = StudentSerializer()
-        decoded_student = decoder.decode(s=self.json_students[0])
+        json_dict = json.loads(self.json_students[0])
+        decoded_student = decoder.decode(json_dict)
         self.assertIsInstance(decoded_student, cls=Student)
 
     def test_student_serializer__decodes_students_correctly(self):
         decoder = StudentSerializer()
-        decoded_students = [decoder.decode(s=student) for student in self.json_students]
-        self.assertEqual(self.students, decoded_students)
+        for i, student in enumerate(self.json_students):
+            json_dict = json.loads(student)
+            decoded_student = decoder.decode(json_dict)
+            self.assertEqual(self.students[i], decoded_student)
