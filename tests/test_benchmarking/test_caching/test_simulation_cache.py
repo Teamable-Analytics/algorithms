@@ -57,6 +57,10 @@ mock_simulation_result: List[TeamSet] = [
         ],
     ),
 ]
+mock_runtimes: List[float] = [
+    1.8,
+    2.0,
+]
 
 
 class TestSimulationCache(unittest.TestCase):
@@ -87,7 +91,8 @@ class TestSimulationCache(unittest.TestCase):
         if path.exists(cache_dir):
             # Only contains files that were created by this test, so it's safe to delete
             shutil.rmtree(cache_dir)
-        os.rename(backup_dir, cache_dir)
+        if path.exists(backup_dir):
+            os.rename(backup_dir, cache_dir)
 
     def test_get_file__path_in_cache_dir(self):
         cache_key = "test_cache_key"
@@ -112,7 +117,7 @@ class TestSimulationCache(unittest.TestCase):
         cache.clear()
 
         # Save
-        cache.save([])
+        cache.save([], [])
 
         # Check to make sure file exists
         self.assertTrue(path.exists(cache._get_file()))
@@ -122,14 +127,14 @@ class TestSimulationCache(unittest.TestCase):
         cache = SimulationCache(cache_key)
 
         # Save
-        cache.save([])
+        cache.save([], [])
 
         # Read file contents
         with open(cache._get_file(), "r") as file:
             file_contents = file.read()
 
         # Save again with different contents
-        cache.save(mock_simulation_result)
+        cache.save(mock_simulation_result, mock_runtimes)
 
         # Read file contents again
         with open(cache._get_file(), "r") as file:
@@ -143,7 +148,7 @@ class TestSimulationCache(unittest.TestCase):
         cache = SimulationCache(cache_key)
 
         # Save
-        cache.save([])
+        cache.save([], [])
 
         # Read file contents
         with open(cache._get_file(), "r") as file:
@@ -160,7 +165,7 @@ class TestSimulationCache(unittest.TestCase):
         cache = SimulationCache(cache_key)
 
         # Save
-        cache.save([])
+        cache.save([], [])
 
         # Read file contents
         with open(cache._get_file(), "r") as file:
@@ -171,12 +176,12 @@ class TestSimulationCache(unittest.TestCase):
         self.assertIn("timestamp", file_contents["metadata"])
         self.assertIn("commit_hash", file_contents["metadata"])
 
-    def test_save__saves_team_sets(self):
+    def test_save__saves_team_sets_and_runtimes(self):
         cache_key = "test_cache_key"
         cache = SimulationCache(cache_key)
 
         # Save
-        cache.save(mock_simulation_result)
+        cache.save(mock_simulation_result, mock_runtimes)
 
         # Read file contents
         with open(cache._get_file(), "r") as file:
@@ -186,11 +191,14 @@ class TestSimulationCache(unittest.TestCase):
         self.assertIn("team_sets", file_contents)
         self.assertEqual(len(file_contents["team_sets"]), len(mock_simulation_result))
         self.assertEqual(mock_simulation_result, file_contents["team_sets"])
+        self.assertIn("runtimes", file_contents)
+        self.assertEqual(len(file_contents["runtimes"]), len(mock_runtimes))
+        self.assertEqual(mock_runtimes, file_contents["runtimes"])
 
     def test_clear__deletes_cache_file(self):
         cache_key = "test_cache_key"
         cache = SimulationCache(cache_key)
-        cache.save([])
+        cache.save([], [])
 
         # Check to make sure file exists
         self.assertTrue(cache.exists())
@@ -204,7 +212,7 @@ class TestSimulationCache(unittest.TestCase):
     def test_get_teams__returns_correct_teams(self):
         cache_key = "test_cache_key"
         cache = SimulationCache(cache_key)
-        cache.save(mock_simulation_result)
+        cache.save(mock_simulation_result, mock_runtimes)
 
         # Get teams
         teams = cache.get_teams()
@@ -212,10 +220,21 @@ class TestSimulationCache(unittest.TestCase):
         # Check to make sure teams are correct
         self.assertEqual(mock_simulation_result, teams)
 
+    def test_get_runtimes__returns_correct_runtimes(self):
+        cache_key = "test_cache_key"
+        cache = SimulationCache(cache_key)
+        cache.save([], mock_runtimes)
+
+        # Get runtimes
+        runtimes = cache.get_runtimes()
+
+        # Check to make sure runtimes are correct
+        self.assertEqual(mock_runtimes, runtimes)
+
     def test_get_metadata__returns_correct_metadata(self):
         cache_key = "test_cache_key"
         cache = SimulationCache(cache_key)
-        cache.save([])
+        cache.save([], [])
 
         # Get metadata
         metadata = cache.get_metadata()
@@ -226,7 +245,7 @@ class TestSimulationCache(unittest.TestCase):
         self.assertIn("commit_hash", metadata)
 
         cache.clear()
-        cache.save([], {"foo": "bar", "num": 1})
+        cache.save([], [], {"foo": "bar", "num": 1})
 
         # Get metadata
         metadata = cache.get_metadata()
