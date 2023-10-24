@@ -48,7 +48,7 @@ class SimulationCache:
         # Get metadata
         metadata = metadata or {}
         metadata["timestamp"] = datetime.now().isoformat()
-        # Get latest commit hash from main. This is so that we can track which commit generated the cache and go back to the code that generated it if needed. Assumes that this code is run from main. Would then be accessible at https://github.com/Teamable-Analytics/algorithms/commit/<commit_hash>
+        # Get latest commit hash. This is so that we can track which commit generated the cache and go back to the code that generated it if needed. Would then be accessible at https://github.com/Teamable-Analytics/algorithms/commit/<commit_hash>
         metadata["commit_hash"] = git.Repo(
             search_parent_directories=True
         ).head.object.hexsha
@@ -57,12 +57,12 @@ class SimulationCache:
         # TODO: Once Seth's code is merged
         stripped_team_sets = []
 
-        # Convert to JSON
-        json_team_sets = json.dumps(stripped_team_sets)
+        # Make dict that will be stored
+        cache_dict = {"metadata": metadata, "team_sets": stripped_team_sets}
 
-        # Write to file
+        # Write to json file
         with open(self._get_file(), "w+") as file:
-            file.write(json_team_sets)
+            json.dump(cache_dict, file)
 
     def clear(self) -> None:
         """
