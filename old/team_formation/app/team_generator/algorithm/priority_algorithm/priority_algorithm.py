@@ -19,9 +19,9 @@ class PriorityAlgorithm(WeightAlgorithm):
     """Class used to select teams using a priority algorithm."""
 
     MAX_KEEP: int = 3  # nodes
-    MAX_SPREAD: int = 3  # nodes
-    MAX_ITERATE: int = 15  # times
-    MAX_TIME: int = 30  # seconds
+    MAX_SPREAD: int = 1  # nodes
+    MAX_ITERATE: int = 1  # times
+    MAX_TIME: int = 1  # seconds
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
