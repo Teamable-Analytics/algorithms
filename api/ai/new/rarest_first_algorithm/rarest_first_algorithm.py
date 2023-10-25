@@ -161,9 +161,9 @@ class RarestFirstAlgorithm(Algorithm):
             if distance_from_i_star and distance_from_i_star.is_updated:
                 result.add(distance_from_i_star.end_student.id)
 
-        team = Team(
-            name="Subgraph",
-            students=list(student_id_trace.get(student_id) for student_id in result),
-            _id=0,
-        )
-        return TeamSet(teams=[team])
+        # The algorithm only returns one team
+        self.teams[0].students = [
+            student_id_trace.get(student_id) for student_id in result
+        ]
+
+        return TeamSet(teams=self.teams)
