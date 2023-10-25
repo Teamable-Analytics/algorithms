@@ -1,7 +1,33 @@
 """
 Rarest First Algorithm
+This algorithm aims to generate a team of friends with all the attributes satisfied the requirement of a project.
 
-TODO: Write up the algorithm steps here
+Assumptions:
+- We have a social network of students with node is a student and edge is the relationship between two students:
+    - If a student is a friend of another student, the edge has negative weight (we use -1)
+    - If a student is not a friend of another student, the edge has positive weight (we use 1.1)
+    - If they are neither friend nor not friend, the edge has neutral weight (we use 0)
+- We know the shortest distance between a student i with a support group of attribute a (we call it d(i, a)). This means
+we know who is the closest to student i having attribute a.
+
+Algorithm:
+For each attribute a in project_requirement:
+    Find the support group of attribute a (we call it S(a))
+
+Compute the shortest distance between each student i and each S(a) with all a in project_requirement (we call it d(i, a))
+
+Find the attribute a_rare, meaning S(a_rare) is smallest
+
+For each student i in S(a_rare):
+    For each attribute a in project_requirement that is not a_rare:
+        R(i, a) = d(i, a)
+    Find R(i) = max(R(i, a)) with all a in project_requirement that is not a_rare
+
+Find i_star = min(R(i)) with all i in S(a_rare)
+
+The team is:
+    - i_star
+    - Path from i_star to each closest student in S(a) with all a in project_requirement that is not a_rare
 """
 from typing import List, Dict, Set
 
