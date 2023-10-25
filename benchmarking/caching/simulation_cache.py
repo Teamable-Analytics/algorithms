@@ -15,8 +15,8 @@ class SimulationCache:
     """
 
     def __init__(self, cache_key: str) -> None:
-        self.cache_key = cache_key
-        self._data = None
+        self.cache_key: str = cache_key
+        self._data: Dict[str, Any] = {}
         """
         Dict in the form of:
         {
@@ -96,7 +96,7 @@ class SimulationCache:
         """
         if self.exists():
             os.remove(self._get_file())
-        self._data = None
+        self._data = {}
 
     def _get_file(self) -> str:
         """
@@ -115,7 +115,7 @@ class SimulationCache:
         return path.join(cache_dir, self.cache_key + ".json")
 
     def _load_data(self) -> None:
-        if self._data is None:
+        if not self._data:
             if not self.exists():
                 raise FileNotFoundError("Cache doesn't exist")
 
