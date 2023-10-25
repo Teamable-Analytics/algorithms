@@ -9,6 +9,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     random_choice,
     MockStudentProviderSettings,
 )
+from utils.validation import is_unique
 
 
 class TestMockStudentProvider(unittest.TestCase):
@@ -20,34 +21,16 @@ class TestMockStudentProvider(unittest.TestCase):
         for student in students:
             self.assertIsInstance(student, Student)
 
-    def test_max_project_preferences_are_correctly_inferred(self):
+    def test_max_project_preferences__are_correctly_inferred(self):
         max_project_preferences_1 = MockStudentProvider(
             MockStudentProviderSettings(
                 number_of_students=10,
-                attribute_ranges={
-                    ScenarioAttribute.PROJECT_PREFERENCES.value: [1, 2, 3, 4],
-                },
-                num_values_per_attribute={
-                    ScenarioAttribute.PROJECT_PREFERENCES.value: 3,
-                },
+                project_preference_options=[1, 2, 3],
+                num_project_preferences_per_student=3,
             )
         ).max_project_preferences_per_student
 
         self.assertEqual(max_project_preferences_1, 3)
-
-        max_project_preferences_2 = MockStudentProvider(
-            MockStudentProviderSettings(
-                number_of_students=10,
-                attribute_ranges={
-                    ScenarioAttribute.PROJECT_PREFERENCES.value: [1, 2, 3, 4],
-                },
-                num_values_per_attribute={
-                    ScenarioAttribute.PROJECT_PREFERENCES.value: (1, 4),
-                },
-            )
-        ).max_project_preferences_per_student
-
-        self.assertEqual(max_project_preferences_2, 4)
 
 
 class TestMockStudentProviderHelpers(unittest.TestCase):
@@ -67,12 +50,30 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 2: 2,
                 3: 1,
             },
+            project_preference_options=[],
+            num_project_preferences_per_student=0,
         )
 
         student = students[0]
         self.assertEqual(len(student.attributes[1]), 3)
         self.assertEqual(len(student.attributes[2]), 2)
         self.assertEqual(len(student.attributes[3]), 1)
+
+    def test_create_mock_students__students_have_correct_project_preferences(self):
+        students = create_mock_students(
+            number_of_students=1,
+            number_of_friends=0,
+            number_of_enemies=0,
+            friend_distribution="random",
+            attribute_ranges={},
+            num_values_per_attribute={},
+            project_preference_options=[1, 2, 3],
+            num_project_preferences_per_student=3,
+        )
+
+        student = students[0]
+        self.assertEqual(len(student.project_preferences), 3)
+        self.assertTrue(is_unique(student.project_preferences))
 
     def test_create_mock_students__student_has_num_values_for_attribute_within_range(
         self,
@@ -92,6 +93,8 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 2: (1, 3),
                 3: (3, 4),
             },
+            project_preference_options=[],
+            num_project_preferences_per_student=0,
         )
 
         for student in students:
@@ -108,6 +111,8 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 friend_distribution="random",
                 attribute_ranges={},
                 num_values_per_attribute={},
+                project_preference_options=[],
+                num_project_preferences_per_student=0,
             )
             for student in students:
                 self.assertGreaterEqual(
