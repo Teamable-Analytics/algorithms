@@ -113,10 +113,6 @@ class DoubleRoundRobinAlgorithm(Algorithm):
             selected_students,
         )
 
-        for team_idx, (project_id, students) in enumerate(allocation.items()):
-            self.teams[team_idx].students = students
-            self.teams[team_idx].is_locked = True
-
         for project_id, students in allocation.items():
             team_idx = self.project_ids_tracer[project_id]
             self.teams[team_idx].students = students
