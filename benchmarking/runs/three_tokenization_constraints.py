@@ -2,7 +2,7 @@ import math
 
 import typer
 
-from api.models.enums import ScenarioAttribute, Gender, Gpa, Age, Race
+from api.models.enums import ScenarioAttribute, Gpa, Age, Race
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
     MockStudentProvider,
@@ -11,19 +11,15 @@ from benchmarking.evaluations.goals import DiversityGoal
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.metrics.average_gini_index import AverageGiniIndex
 from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import (
     AverageGiniIndexMultiAttribute,
 )
-from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
-from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.three_tokenization_constraints import (
     ThreeTokenizationConstraints,
 )
-
-from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
+from benchmarking.simulation.goal_to_priority import goals_to_priorities
 
 
 def three_tokenization_constraints(
