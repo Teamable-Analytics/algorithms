@@ -10,6 +10,7 @@ from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
 from benchmarking.caching.simulation_cache import SimulationCache
+from benchmarking.simulation.simulation import SimulationArtifact
 
 mock_simulation_result: List[TeamSet] = [
     TeamSet(
@@ -209,27 +210,18 @@ class TestSimulationCache(unittest.TestCase):
         # Check to make sure file doesn't exist
         self.assertFalse(cache.exists())
 
-    def test_get_teams__returns_correct_teams(self):
+    def test_get_simulation_artifact__returns_correct_teams(self):
         cache_key = "test_cache_key"
         cache = SimulationCache(cache_key)
         cache.save(mock_simulation_result, mock_runtimes)
 
         # Get teams
-        teams = cache.get_teams()
+        artifact: SimulationArtifact = cache.get_simulation_artifact()
 
         # Check to make sure teams are correct
-        self.assertEqual(mock_simulation_result, teams)
-
-    def test_get_runtimes__returns_correct_runtimes(self):
-        cache_key = "test_cache_key"
-        cache = SimulationCache(cache_key)
-        cache.save(mock_simulation_result, mock_runtimes)
-
-        # Get runtimes
-        runtimes = cache.get_runtimes()
-
+        self.assertEqual(mock_simulation_result, artifact[0])
         # Check to make sure runtimes are correct
-        self.assertEqual(mock_runtimes, runtimes)
+        self.assertEqual(mock_runtimes, artifact[1])
 
     def test_get_metadata__returns_correct_metadata(self):
         cache_key = "test_cache_key"
@@ -254,4 +246,4 @@ class TestSimulationCache(unittest.TestCase):
         self.assertEqual("bar", metadata["foo"])
         self.assertEqual(1, metadata["num"])
         self.assertIsInstance(metadata["num"], int)
-        self.assertIsInstance(metadata["timestamp"], datetime)
+        self.assertIsInstance(metadata["timestamp"], float)

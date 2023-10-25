@@ -2,9 +2,12 @@ import json
 import os
 from datetime import datetime
 from os import path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple, TYPE_CHECKING
 import git
 from api.models.team_set import TeamSet
+
+if TYPE_CHECKING:
+    from benchmarking.simulation.simulation import SimulationArtifact
 
 
 class SimulationCache:
@@ -32,21 +35,13 @@ class SimulationCache:
         """
         return path.exists(self._get_file())
 
-    def get_teams(self) -> List[TeamSet]:
+    def get_simulation_artifact(self) -> "SimulationArtifact":
         """
         Gets the simulation results from the cache.
         """
         self._load_data()
 
-        return self._data["team_sets"]
-
-    def get_runtimes(self) -> List[float]:
-        """
-        Gets the runtimes for the simulation results from the cache.
-        """
-        self._load_data()
-
-        return self._data["runtimes"]
+        return self._data["team_sets"], self._data["runtimes"]
 
     def get_metadata(self) -> Dict[str, Any]:
         """
@@ -75,7 +70,8 @@ class SimulationCache:
 
         # Get metadata
         metadata = metadata or {}
-        metadata["timestamp"] = datetime.now().isoformat()
+        # Epoch time, num seconds since 1970, no timezone (utc)
+        metadata["timestamp"] = datetime.utcnow().timestamp()
         # Get latest commit hash. This is so that we can track which commit generated the cache and go back to the code that generated it if needed. Would then be accessible at https://github.com/Teamable-Analytics/algorithms/commit/<commit_hash>
         metadata["commit_hash"] = git.Repo(
             search_parent_directories=True
@@ -128,11 +124,6 @@ class SimulationCache:
             # Load json data
             with open(self._get_file(), "r") as f:
                 json_data = json.load(f)
-
-            # Convert timestamp to datetime
-            json_data["metadata"]["timestamp"] = datetime.fromisoformat(
-                json_data["metadata"]["timestamp"]
-            )
 
             # TODO: Parse team_sets into actual TeamSets using Seth's code
 
