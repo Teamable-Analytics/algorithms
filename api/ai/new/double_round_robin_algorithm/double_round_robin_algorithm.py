@@ -34,6 +34,7 @@ from api.ai.new.interfaces.algorithm import Algorithm
 from api.ai.new.interfaces.algorithm_options import DoubleRoundRobinAlgorithmOptions
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.new.double_round_robin_algorithm.utils import calculate_utilities
+from api.models.project import Project
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
@@ -41,26 +42,27 @@ from api.models.team_set import TeamSet
 
 class DoubleRoundRobinAlgorithm(Algorithm):
     def __init__(
-        self,
-        algorithm_options: DoubleRoundRobinAlgorithmOptions,
-        team_generation_options: TeamGenerationOptions,
+            self,
+            algorithm_options: DoubleRoundRobinAlgorithmOptions,
+            team_generation_options: TeamGenerationOptions,
     ):
         super().__init__(algorithm_options, team_generation_options)
 
         self.projects = algorithm_options.projects
+        self.project_ids_tracer = {project.id: project for project in self.projects}
 
     def _round_robin(
-        self,
-        utilities: Dict[int, List[Utility]],
-        num_students: int,
-        allocation: Dict[int, List[Student]],
-        selected_students: Set[int],
+            self,
+            utilities: Dict[int, List[Utility]],
+            num_students: int,
+            allocation: Dict[int, List[Student]],
+            selected_students: Set[int],
     ) -> Dict[int, List[Student]]:
         while len(selected_students) < num_students:
             for project in self.projects:
                 while (
-                    len(utilities[project.id]) > 0
-                    and utilities[project.id][0].student.id in selected_students
+                        len(utilities[project.id]) > 0
+                        and utilities[project.id][0].student.id in selected_students
                 ):
                     utilities[project.id].pop(0)
 
@@ -112,17 +114,10 @@ class DoubleRoundRobinAlgorithm(Algorithm):
             selected_students,
         )
 
-        team_list: List[Team] = []
-        idx = 0
-        for project_id, students in allocation.items():
-            team = Team(
-                _id=idx,
-                name="Team " + str(idx),
-                students=students,
-                project_id=project_id,
-            )
+        for team_idx, (project_id, students) in enumerate(allocation.items()):
+            self.teams[team_idx].students = students
+            self.teams[team_idx].project_id = project_id
+            self.teams[team_idx].requirements = self.project_ids_tracer[project_id].requirements
+            self.teams[team_idx].is_locked = True
 
-            team_list.append(team)
-            idx += 1
-
-        return TeamSet(teams=team_list)
+        return TeamSet(teams=self.teams)
