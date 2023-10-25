@@ -223,7 +223,7 @@ class TestSimulationCache(unittest.TestCase):
     def test_get_runtimes__returns_correct_runtimes(self):
         cache_key = "test_cache_key"
         cache = SimulationCache(cache_key)
-        cache.save([], mock_runtimes)
+        cache.save(mock_simulation_result, mock_runtimes)
 
         # Get runtimes
         runtimes = cache.get_runtimes()
@@ -253,5 +253,5 @@ class TestSimulationCache(unittest.TestCase):
         # Check to make sure metadata is correct
         self.assertEqual("bar", metadata["foo"])
         self.assertEqual(1, metadata["num"])
-        self.assertEqual(int, type(metadata["num"]))
-        self.assertEqual(datetime, type(metadata["timestamp"]))
+        self.assertIsInstance(metadata["num"], int)
+        self.assertIsInstance(metadata["timestamp"], datetime)

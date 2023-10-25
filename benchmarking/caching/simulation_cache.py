@@ -67,6 +67,12 @@ class SimulationCache:
         Overwrites any existing cache with the same cache_key.
         """
 
+        if len(team_sets) != len(runtimes):
+            raise ValueError(
+                "The number of team_sets and runtimes must be the same. "
+                f"Got {len(team_sets)} team_sets and {len(runtimes)} runtimes."
+            )
+
         # Get metadata
         metadata = metadata or {}
         metadata["timestamp"] = datetime.now().isoformat()
@@ -80,7 +86,7 @@ class SimulationCache:
         stripped_team_sets = []
 
         # Make dict that will be stored
-        cache_dict = {
+        self._data = {
             "metadata": metadata,
             "team_sets": stripped_team_sets,
             "runtimes": runtimes,
@@ -88,7 +94,7 @@ class SimulationCache:
 
         # Write to json file
         with open(self._get_file(), "w+") as file:
-            json.dump(cache_dict, file)
+            json.dump(self._data, file)
 
     def clear(self) -> None:
         """

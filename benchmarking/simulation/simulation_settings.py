@@ -11,6 +11,7 @@ class SimulationSettings:
     student_provider: StudentProvider
     num_teams: int = None
     initial_teams_provider: InitialTeamsProvider = None
+    cache_key: str = None
 
     def __post_init__(self):
         self.validate()
