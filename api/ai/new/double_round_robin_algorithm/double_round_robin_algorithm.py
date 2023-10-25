@@ -34,9 +34,7 @@ from api.ai.new.interfaces.algorithm import Algorithm
 from api.ai.new.interfaces.algorithm_options import DoubleRoundRobinAlgorithmOptions
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.new.double_round_robin_algorithm.utils import calculate_utilities
-from api.models.project import Project
 from api.models.student import Student
-from api.models.team import Team
 from api.models.team_set import TeamSet
 
 
@@ -48,8 +46,9 @@ class DoubleRoundRobinAlgorithm(Algorithm):
     ):
         super().__init__(algorithm_options, team_generation_options)
 
-        self.projects = algorithm_options.projects
-        self.project_ids_tracer = {project.id: project for project in self.projects}
+        self.project_ids_tracer = {
+            team.project_id: team_idx for team_idx, team in enumerate(self.teams)
+        }
 
     def _round_robin(
         self,
@@ -59,47 +58,47 @@ class DoubleRoundRobinAlgorithm(Algorithm):
         selected_students: Set[int],
     ) -> Dict[int, List[Student]]:
         while len(selected_students) < num_students:
-            for project in self.projects:
+            for team in self.teams:
                 while (
-                    len(utilities[project.id]) > 0
-                    and utilities[project.id][0].student.id in selected_students
+                    len(utilities[team.project_id]) > 0
+                    and utilities[team.project_id][0].student.id in selected_students
                 ):
-                    utilities[project.id].pop(0)
+                    utilities[team.project_id].pop(0)
 
-                if len(utilities[project.id]) == 0:
+                if len(utilities[team.project_id]) == 0:
                     continue
 
-                curr_utility = utilities[project.id].pop(0)
-                allocation[project.id].append(curr_utility.student)
+                curr_utility = utilities[team.project_id].pop(0)
+                allocation[team.project_id].append(curr_utility.student)
                 selected_students.add(curr_utility.student.id)
 
         return allocation
 
     def generate(self, students: List[Student]) -> TeamSet:
-        utilities = calculate_utilities(self.projects, students)
+        utilities = calculate_utilities(self.teams, students)
 
         positive_utilities: Dict[int, List[Utility]] = {
-            project.id: [] for project in self.projects
+            team.project_id: [] for team in self.teams
         }
         positive_utility_students: Set[int] = set()
         negative_utilities: Dict[int, List[Utility]] = {
-            project.id: [] for project in self.projects
+            team.project_id: [] for team in self.teams
         }
         negative_utility_students: Set[int] = set()
 
-        for project in self.projects:
+        for team in self.teams:
             for student in students:
-                curr_utility = utilities[project.id][student.id]
+                curr_utility = utilities[team.project_id][student.id]
                 if curr_utility.value > 0:
-                    heappush(positive_utilities[project.id], curr_utility)
+                    heappush(positive_utilities[team.project_id], curr_utility)
                     positive_utility_students.add(student.id)
                 else:
-                    heappush(negative_utilities[project.id], curr_utility)
+                    heappush(negative_utilities[team.project_id], curr_utility)
                     negative_utility_students.add(student.id)
 
         selected_students: Set[int] = set()
         allocation: Dict[int, List[Student]] = {
-            project.id: [] for project in self.projects
+            team.project_id: [] for team in self.teams
         }
         self._round_robin(
             negative_utilities,
@@ -116,10 +115,11 @@ class DoubleRoundRobinAlgorithm(Algorithm):
 
         for team_idx, (project_id, students) in enumerate(allocation.items()):
             self.teams[team_idx].students = students
-            self.teams[team_idx].project_id = project_id
-            self.teams[team_idx].requirements = self.project_ids_tracer[
-                project_id
-            ].requirements
+            self.teams[team_idx].is_locked = True
+
+        for project_id, students in allocation.items():
+            team_idx = self.project_ids_tracer[project_id]
+            self.teams[team_idx].students = students
             self.teams[team_idx].is_locked = True
 
         return TeamSet(teams=self.teams)

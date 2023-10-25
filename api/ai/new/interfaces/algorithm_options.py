@@ -84,13 +84,8 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
 
 @dataclass
 class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
-    projects: List[Project]
-
     def validate(self):
         super().validate()
-        Schema([Project]).validate(self.projects)
-        if len(self.projects) == 0:
-            raise SchemaError("Project list cannot be empty.")
 
 
 AnyAlgorithmOptions = Union[

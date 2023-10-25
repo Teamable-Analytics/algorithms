@@ -2,8 +2,9 @@ from typing import List, Dict
 
 from api.ai.new.double_round_robin_algorithm.custom_models import Utility
 from api.models.enums import RequirementOperator
-from api.models.project import Project, ProjectRequirement
+from api.models.project import ProjectRequirement
 from api.models.student import Student
+from api.models.team import Team
 
 
 def requirement_met_by_student(requirement: ProjectRequirement, student: Student):
@@ -19,21 +20,21 @@ def requirement_met_by_student(requirement: ProjectRequirement, student: Student
 
 
 def calculate_utilities(
-    projects: List[Project], students: List[Student]
+    teams: List[Team], students: List[Student]
 ) -> Dict[int, Dict[int, Utility]]:
-    utilities: Dict[int, Dict[int, Utility]] = {project.id: {} for project in projects}
+    utilities: Dict[int, Dict[int, Utility]] = {team.project_id: {} for team in teams}
 
-    for project in projects:
+    for team in teams:
         for student in students:
             student_utilities = sum(
                 [
                     requirement_met_by_student(requirement, student)
-                    for requirement in project.requirements
+                    for requirement in team.requirements
                 ]
             )
 
-            utilities[project.id][student.id] = Utility(
-                student_utilities, student, project
+            utilities[team.project_id][student.id] = Utility(
+                student_utilities, student, team.project_id
             )
 
     return utilities

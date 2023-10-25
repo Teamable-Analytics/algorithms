@@ -1,12 +1,11 @@
-from api.models.project import Project
 from api.models.student import Student
 
 
 class Utility:
-    def __init__(self, value: int, student: Student, project: Project):
+    def __init__(self, value: int, student: Student, project_id: int):
         self.value = value
         self.student = student
-        self.project = project
+        self.project_id = project_id
 
     def __lt__(self, other):
         # Reverse the order so that the highest utility is at the top of the heap
