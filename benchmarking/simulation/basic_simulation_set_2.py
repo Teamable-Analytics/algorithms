@@ -36,6 +36,8 @@ class BasicSimulationSet2:
 
     def run(self, num_runs: int) -> BasicSimulationSetArtifact:
         for algorithm_type in self.algorithm_types:
+            # todo: Simulation calculates team gen options and algo options internally, might be wise to not have
+            #  that be done N times, but not a huge performance bottleneck currently
             self.basic_simulation_set_artifact[algorithm_type] = Simulation(
                 algorithm_type=algorithm_type,
                 settings=self.base_settings,
