@@ -126,7 +126,7 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
                     strategy=DiversifyType(p.get("strategy")),
                     direction=TokenizationConstraintDirection(p.get("direction")),
                     threshold=p.get("threshold"),
-                    value=p.get("value"),
+                    value=p.get("value"),x
                 )
                 for p in priorities
             ],
