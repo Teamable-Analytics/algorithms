@@ -1,12 +1,12 @@
 from json import JSONEncoder
 from typing import Dict, Any
 
-from api.models.serializer import JsonDecoder
+from api.models.interfaces import ModelDecoder
 from api.models.team import TeamSerializer
 from api.models.team_set import TeamSet
 
 
-class TeamSetSerializer(JSONEncoder, JsonDecoder):
+class TeamSetSerializer(JSONEncoder, ModelDecoder):
     def default(self, team_set: TeamSet) -> Dict[str, Any]:
         team_serializer = TeamSerializer()
         teams = [team_serializer.default(team) for team in team_set.teams]
