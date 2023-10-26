@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict
 
 from api.models.project import ProjectRequirement
 from api.models.student import Student
@@ -65,3 +65,11 @@ class Team(TeamShell):
 
     def unlock(self):
         self.is_locked = False
+
+    def todict(self) -> Dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "student_ids": [student.id for student in self.students],
+            "project_id": self.project_id,
+        }

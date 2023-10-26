@@ -3,10 +3,10 @@ from typing import Dict, Union, Any
 
 from api.models.enums import RequirementOperator
 from api.models.project import ProjectRequirement
-from api.models.serializer import JsonDecoder
+from api.models.interfaces import ModelDecoder
 
 
-class ProjectRequirementSerializer(JSONEncoder, JsonDecoder):
+class ProjectRequirementSerializer(JSONEncoder, ModelDecoder):
     def default(
         self, project_requirement: ProjectRequirement
     ) -> Dict[str, Union[int, str]]:

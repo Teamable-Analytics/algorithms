@@ -9,8 +9,12 @@ class TeamSetSerializer:
     """
 
     def __init__(self, team_set: TeamSet):
-        pass
+        self.team_set = team_set
 
     @property
     def data(self) -> Dict[str, Any]:
-        pass
+        return {
+            "num_teams": self.team_set.num_teams,
+            # TODO: Update todict to serializer
+            "teams": [team.todict() for team in self.team_set.teams],
+        }

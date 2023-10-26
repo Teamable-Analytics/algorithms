@@ -73,17 +73,17 @@ class TestTeamSerializer(unittest.TestCase):
             % (json_requirements_team_2, json_students_team_2),
         ]
 
-    def test_team_serializer__encodes_team_correctly(self):
+    def test_team_serializer__encodes_team_correctly_to_json(self):
         encoded_teams = [json.dumps(team, cls=TeamSerializer) for team in self.teams]
         self.assertEqual(self.json_teams, encoded_teams)
 
-    def test_team_serializer__decode_returns_team(self):
+    def test_decode__returns_team(self):
         decoder = TeamSerializer()
         json_dict = json.loads(self.json_teams[0])
         decoded_team = decoder.decode(json_dict)
         self.assertIsInstance(decoded_team, cls=Team)
 
-    def test_team_serializer__decodes_teams_correctly(self):
+    def test_team_serializer__decodes_teams_correctly_from_json(self):
         decoder = TeamSerializer()
         for i, team in enumerate(self.json_teams):
             json_dict = json.loads(team)

@@ -36,11 +36,12 @@ class MockAlgorithm2:
     def get_team_generation_options(
         num_students: int, num_teams: int, initial_teams: List[TeamShell] = None
     ) -> TeamGenerationOptions:
-        min_team_size = num_students // num_teams
+        _num_teams = len(initial_teams) if initial_teams else num_teams
+        min_team_size = num_students // _num_teams
         return TeamGenerationOptions(
             max_team_size=min_team_size + 1,
             min_team_size=min_team_size,
-            total_teams=num_teams,
+            total_teams=_num_teams,
             initial_teams=initial_teams,
         )
 

@@ -29,19 +29,19 @@ class TestStudentSerializer(unittest.TestCase):
             '{"_id": 2, "name": "Jane", "attributes": {"4": [31, 2], "11": [], "234": [1, -1]}, "relationships": {"1": -1}, "project_preferences": [3, 2]}',
         ]
 
-    def test_student_serializer__encodes_students_correctly(self):
+    def test_encode__encodes_student_correctly_to_json(self):
         encoded_students = [
             json.dumps(student, cls=StudentSerializer) for student in self.students
         ]
         self.assertEqual(self.json_students, encoded_students)
 
-    def test_student_serializer__decode_returns_student(self):
+    def test_decode__returns_student(self):
         decoder = StudentSerializer()
         json_dict = json.loads(self.json_students[0])
         decoded_student = decoder.decode(json_dict)
         self.assertIsInstance(decoded_student, cls=Student)
 
-    def test_student_serializer__decodes_students_correctly(self):
+    def test_decode__decodes_student_correctly_from_json(self):
         decoder = StudentSerializer()
         for i, student in enumerate(self.json_students):
             json_dict = json.loads(student)
