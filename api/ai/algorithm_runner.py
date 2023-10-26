@@ -84,7 +84,7 @@ class AlgorithmRunner:
             return MultipleRoundRobinAlgorithmOptions
 
         raise NotImplementedError(
-            f"Algorithm type {algorithm_type} is not associated with an algorithm class!"
+            f"Algorithm type {algorithm_type} is not associated with an algorithm options class!"
         )
 
     @staticmethod
@@ -103,5 +103,5 @@ class AlgorithmRunner:
             return None
 
         raise NotImplementedError(
-            f"Algorithm type {algorithm_type} is not associated with an algorithm class!"
+            f"Algorithm type {algorithm_type} is not associated with an algorithm config class!"
         )

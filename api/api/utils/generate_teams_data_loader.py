@@ -69,7 +69,8 @@ class GenerateTeamsDataLoader:
         return TeamGenerationOptions(
             total_teams=team_generation_options.get("total_teams"),
             initial_teams=[
-                TeamShell(**team) for team in team_generation_options.get("initial_teams")
+                TeamShell(**team)
+                for team in team_generation_options.get("initial_teams")
             ],
             max_team_size=team_generation_options.get("max_team_size"),
             min_team_size=team_generation_options.get("min_team_size"),

@@ -16,6 +16,7 @@ class GenerateTeamsValidator(Validator):
             dataclasses are placed within that dataclasses, but validations that require
             outside context or compatability with other objects are placed here.
     """
+
     def validate(self):
         self._validate_schema()
 
