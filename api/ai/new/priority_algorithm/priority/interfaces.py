@@ -7,7 +7,7 @@ from api.models.student import Student
 class Priority(ABC):
     @abstractmethod
     def validate(self):
-        raise NotImplementedError
+        pass
 
     @abstractmethod
     def satisfied_by(self, students: List[Student]) -> bool:

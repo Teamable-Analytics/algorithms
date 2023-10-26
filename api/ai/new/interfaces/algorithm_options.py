@@ -5,7 +5,8 @@ from typing import List, Union, Dict, Any
 from schema import Schema, SchemaError
 
 from api.ai.new.priority_algorithm.priority.interfaces import Priority
-from api.models.enums import RelationshipBehaviour
+from api.ai.new.priority_algorithm.priority.priority import TokenizationPriority
+from api.models.enums import RelationshipBehaviour, DiversifyType, TokenizationConstraintDirection
 from api.models.project import Project
 
 
@@ -115,7 +116,15 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
         max_project_preferences = json.get("max_project_preferences")
 
         return PriorityAlgorithmOptions(
-            priorities=priorities,
+            priorities=[
+                TokenizationPriority(
+                    attribute_id=p.get("attribute_id"),
+                    strategy=DiversifyType(p.get("strategy")),
+                    direction=TokenizationConstraintDirection(p.get("direction")),
+                    threshold=p.get("threshold"),
+                    value=p.get("value")
+                ) for p in priorities
+            ],
             requirement_weight=requirement_weight,
             social_weight=social_weight,
             diversity_weight=diversity_weight,
