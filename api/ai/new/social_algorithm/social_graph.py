@@ -56,5 +56,7 @@ def create_social_graph(students: List[Student]):
             social_graph[(student.id, other.id)] = Relationship.DEFAULT.value
             if other.id in student.relationships:
                 # update to real relationship value if one exists
-                social_graph[(student.id, other.id)] = student.relationships[other.id]
+                social_graph[(student.id, other.id)] = student.relationships[
+                    other.id
+                ].value
     return social_graph

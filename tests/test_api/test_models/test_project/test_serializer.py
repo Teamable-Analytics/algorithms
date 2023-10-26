@@ -22,7 +22,7 @@ class TestProjectRequirementSerializer(unittest.TestCase):
             '{"attribute": 1, "operator": "less than", "value": 2}',
         ]
 
-    def test_project_requirement_serializer__encodes_project_requirement_correctly(
+    def test_encode__encodes_project_requirement_correctly_to_json(
         self,
     ):
         encoded_project_requirements = [
@@ -31,16 +31,17 @@ class TestProjectRequirementSerializer(unittest.TestCase):
         ]
         self.assertEqual(self.json_project_requirements, encoded_project_requirements)
 
-    def test_project_requirement_serializer__decode_returns_project_requirement(self):
+    def test_decode__returns_project_requirement(self):
         decoder = ProjectRequirementSerializer()
-        decoded_project_requirement = decoder.decode(self.json_project_requirements[0])
+        json_dict = json.loads(self.json_project_requirements[0])
+        decoded_project_requirement = decoder.decode(json_dict)
         self.assertIsInstance(decoded_project_requirement, cls=ProjectRequirement)
 
-    def test_project_requirement_serializer__decodes_project_requirements_correctly(
+    def test_decode__decodes_student_correctly_from_json(
         self,
     ):
         decoder = ProjectRequirementSerializer()
-        decoded_project_requirements = [
-            decoder.decode(pr) for pr in self.json_project_requirements
-        ]
-        self.assertEqual(self.project_requirements, decoded_project_requirements)
+        for i, pr in enumerate(self.json_project_requirements):
+            json_dict = json.loads(pr)
+            decoded_pr = decoder.decode(json_dict)
+            self.assertEqual(self.project_requirements[i], decoded_pr)
