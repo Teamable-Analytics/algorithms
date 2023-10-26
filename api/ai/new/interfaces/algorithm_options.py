@@ -6,7 +6,11 @@ from schema import Schema, SchemaError
 
 from api.ai.new.priority_algorithm.priority.interfaces import Priority
 from api.ai.new.priority_algorithm.priority.priority import TokenizationPriority
-from api.models.enums import RelationshipBehaviour, DiversifyType, TokenizationConstraintDirection
+from api.models.enums import (
+    RelationshipBehaviour,
+    DiversifyType,
+    TokenizationConstraintDirection,
+)
 from api.models.project import Project
 
 
@@ -122,8 +126,9 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
                     strategy=DiversifyType(p.get("strategy")),
                     direction=TokenizationConstraintDirection(p.get("direction")),
                     threshold=p.get("threshold"),
-                    value=p.get("value")
-                ) for p in priorities
+                    value=p.get("value"),
+                )
+                for p in priorities
             ],
             requirement_weight=requirement_weight,
             social_weight=social_weight,
