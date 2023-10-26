@@ -16,7 +16,6 @@ class GenerateTeamsInputData:
     students: List[Student]
     algorithm_type: AlgorithmType
     algorithm_options: AlgorithmOptions
-    algorithm_config: AlgorithmConfig
     team_generation_options: TeamGenerationOptions
 
 
@@ -30,7 +29,6 @@ class GenerateTeamsDataLoader:
             team_generation_options=self._get_team_generation_options(),
             algorithm_type=self._get_algorithm_type(),
             algorithm_options=self._get_algorithm_options(),
-            algorithm_config=self._get_algorithm_config(),
         )
 
     def _get_algorithm_type(self) -> AlgorithmType:
@@ -75,11 +73,3 @@ class GenerateTeamsDataLoader:
             max_team_size=team_generation_options.get("max_team_size"),
             min_team_size=team_generation_options.get("min_team_size"),
         )
-
-    def _get_algorithm_config(self) -> AlgorithmConfig:
-        algorithm_type = self._get_algorithm_type()
-        algorithm_config_cls = AlgorithmRunner.get_algorithm_config_class(
-            algorithm_type
-        )
-
-        return algorithm_config_cls(**self.data.get("algorithm_config"))

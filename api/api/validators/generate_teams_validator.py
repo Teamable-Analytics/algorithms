@@ -24,7 +24,6 @@ class GenerateTeamsValidator(Validator):
         self.validate_algorithm_type()
         self.validate_team_options()
         self.validate_algorithm_options()
-        self.validate_algorithm_configs()
         self.validate_students()
 
     def _validate_schema(self):
@@ -47,9 +46,6 @@ class GenerateTeamsValidator(Validator):
         #   so attributes_to_concentrate is a list of attribute ids, ideally these exist on each student
 
         # todo: if a max_project_preferences is given, then students can't have more project preferences than that
-        pass
-
-    def validate_algorithm_configs(self):
         pass
 
     def validate_students(self):
