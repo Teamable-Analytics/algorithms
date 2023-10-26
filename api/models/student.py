@@ -1,8 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
 
-from schema import Schema
-
 from api.models.enums import Relationship, RequirementOperator
 from api.models.project import ProjectRequirement
 
@@ -38,14 +36,3 @@ class Student:
             else:  # default case is RequirementOperator.EXACTLY
                 is_met |= value == requirement.value
         return is_met
-
-    def validate(self):
-        Schema(int).validate(self.id)
-        if self.name:
-            Schema(str).validate(self.name)
-        Schema(dict).validate(self.relationships)
-        for student_id, relationship in self.relationships.items():
-            Schema(str).validate(student_id)
-            Schema(Relationship).validate(relationship)
-        Schema(dict).validate(self.attributes)
-        Schema(list).validate(self.project_preferences)

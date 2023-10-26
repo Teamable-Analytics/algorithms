@@ -5,7 +5,7 @@ from api.ai.algorithm_runner import AlgorithmRunner
 from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
 from api.ai.new.interfaces.algorithm_options import AlgorithmOptions
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
-from api.models.enums import AlgorithmType, Relationship
+from api.models.enums import AlgorithmType
 from api.models.student import Student
 from api.api.utils.relationship import get_relationship
 from api.models.team import TeamShell
@@ -55,7 +55,7 @@ class GenerateTeamsDataLoader:
         ]
 
     def _get_algorithm_options(self) -> AlgorithmOptions:
-        algorithm_options = self.data.get("algorithm_options")
+        algorithm_options = {**self.data.get("algorithm_options")}
         algorithm_type = AlgorithmType(algorithm_options.pop("algorithm_type"))
         algorithm_option_class = AlgorithmRunner.get_algorithm_option_class(
             algorithm_type
@@ -69,7 +69,7 @@ class GenerateTeamsDataLoader:
         return TeamGenerationOptions(
             total_teams=team_generation_options.get("total_teams"),
             initial_teams=[
-                TeamShell(team) for team in team_generation_options.get("initial_teams")
+                TeamShell(**team) for team in team_generation_options.get("initial_teams")
             ],
             max_team_size=team_generation_options.get("max_team_size"),
             min_team_size=team_generation_options.get("min_team_size"),
