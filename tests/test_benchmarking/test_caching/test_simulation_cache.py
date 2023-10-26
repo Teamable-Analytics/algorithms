@@ -1,14 +1,14 @@
 import json
 import os
 import shutil
-from datetime import datetime
-from os import path
 import unittest
+from os import path
 from typing import List
 
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
+from api.models.team_set.serializer import TeamSetSerializer
 from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.simulation.simulation import SimulationArtifact
 
@@ -191,7 +191,10 @@ class TestSimulationCache(unittest.TestCase):
         # Check to make sure team_sets is in file contents
         self.assertIn("team_sets", file_contents)
         self.assertEqual(len(file_contents["team_sets"]), len(mock_simulation_result))
-        self.assertEqual(mock_simulation_result, file_contents["team_sets"])
+        json_team_sets = [
+            TeamSetSerializer().default(team_set) for team_set in mock_simulation_result
+        ]
+        self.assertEqual(json_team_sets, file_contents["team_sets"])
         self.assertIn("runtimes", file_contents)
         self.assertEqual(len(file_contents["runtimes"]), len(mock_runtimes))
         self.assertEqual(mock_runtimes, file_contents["runtimes"])
@@ -219,8 +222,12 @@ class TestSimulationCache(unittest.TestCase):
         artifact: SimulationArtifact = cache.get_simulation_artifact()
 
         # Check to make sure teams are correct
+        self.assertIsInstance(artifact[0], List)
+        self.assertIsInstance(artifact[0][0], TeamSet)
         self.assertEqual(mock_simulation_result, artifact[0])
         # Check to make sure runtimes are correct
+        self.assertIsInstance(artifact[1], List)
+        self.assertIsInstance(artifact[1][0], float)
         self.assertEqual(mock_runtimes, artifact[1])
 
     def test_get_metadata__returns_correct_metadata(self):

@@ -2,9 +2,12 @@ import json
 import os
 from datetime import datetime
 from os import path
-from typing import List, Dict, Any, Tuple, TYPE_CHECKING
+from typing import List, Dict, Any, TYPE_CHECKING
+
 import git
+
 from api.models.team_set import TeamSet
+from api.models.team_set.serializer import TeamSetSerializer
 
 if TYPE_CHECKING:
     from benchmarking.simulation.simulation import SimulationArtifact
@@ -78,11 +81,12 @@ class SimulationCache:
         ).head.object.hexsha
 
         # Get stripped down version of TeamSets
-        # TODO: Once Seth's code is merged
-        stripped_team_sets = []
+        stripped_team_sets = [
+            TeamSetSerializer().default(team_set) for team_set in team_sets
+        ]
 
         # Make dict that will be stored
-        self._data = {
+        cached_data = {
             "metadata": metadata,
             "team_sets": stripped_team_sets,
             "runtimes": runtimes,
@@ -90,7 +94,10 @@ class SimulationCache:
 
         # Write to json file
         with open(self._get_file(), "w+") as file:
-            json.dump(self._data, file)
+            json.dump(cached_data, file)
+
+        # Invalidate the in memory cache now that the data has changed
+        self._data = {}
 
     def clear(self) -> None:
         """
@@ -124,7 +131,18 @@ class SimulationCache:
             # Load json data
             with open(self._get_file(), "r") as f:
                 json_data = json.load(f)
+            if not json_data:
+                raise ValueError(
+                    f'No json could be loaded from the "{self.cache_key}" cache'
+                )
 
-            # TODO: Parse team_sets into actual TeamSets using Seth's code
+            # Init data to be the loaded json
+            self._data = json_data
+
+            # Convert json team sets to actual TeamSets
+            self._data["team_sets"] = [
+                TeamSetSerializer().decode(team_set)
+                for team_set in json_data["team_sets"]
+            ]
 
             self._data: Dict[str, Any] = json_data
