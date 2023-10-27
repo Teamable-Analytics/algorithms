@@ -94,6 +94,23 @@ class SimulationCache:
         # Update the in memory cache now that the data has changed
         self._data = cached_data
 
+    def add_run(self, team_set: TeamSet, runtime: float) -> None:
+        """
+        Adds a run to the cache.
+        """
+        if not self.exists():
+            self.save([team_set], [runtime])
+
+        self._load_data()
+
+        # Add run to data
+        self._data["team_sets"].append(team_set)
+        self._data["runtimes"].append(runtime)
+
+        # Write to json file
+        with open(self._get_file(), "w+") as f:
+            json.dump(self._data, f, cls=TeamSetSerializer)
+
     def clear(self) -> None:
         """
         Clears the cache.
