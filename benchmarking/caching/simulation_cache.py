@@ -80,24 +80,19 @@ class SimulationCache:
             search_parent_directories=True
         ).head.object.hexsha
 
-        # Get stripped down version of TeamSets
-        stripped_team_sets = [
-            TeamSetSerializer().default(team_set) for team_set in team_sets
-        ]
-
         # Make dict that will be stored
         cached_data = {
             "metadata": metadata,
-            "team_sets": stripped_team_sets,
+            "team_sets": team_sets,
             "runtimes": runtimes,
         }
 
         # Write to json file
         with open(self._get_file(), "w+") as file:
-            json.dump(cached_data, file)
+            json.dump(cached_data, file, cls=TeamSetSerializer)
 
-        # Invalidate the in memory cache now that the data has changed
-        self._data = {}
+        # Update the in memory cache now that the data has changed
+        self._data = cached_data
 
     def clear(self) -> None:
         """
