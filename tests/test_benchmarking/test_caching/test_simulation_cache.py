@@ -202,6 +202,7 @@ class TestSimulationCache(unittest.TestCase):
     def test_add_run__correctly_adds_run(self):
         cache_key = "test_cache_key"
         cache = SimulationCache(cache_key)
+        cache.clear()
         cache.save(mock_simulation_result[:1], mock_runtimes[:1])
 
         self.assertEqual(1, len(cache.get_simulation_artifact()[0]))
@@ -209,6 +210,27 @@ class TestSimulationCache(unittest.TestCase):
 
         # Add run
         cache.add_run(mock_simulation_result[0], mock_runtimes[0])
+
+        self.assertEqual(2, len(cache.get_simulation_artifact()[0]))
+        self.assertEqual(2, len(cache.get_simulation_artifact()[1]))
+
+        # Check file contents
+        with open(cache._get_file(), "r") as file:
+            file_contents = json.load(file)
+
+        self.assertEqual(2, len(file_contents["team_sets"]))
+        self.assertEqual(2, len(file_contents["runtimes"]))
+
+    def test_add_run__correctly_adds_run_no_save(self):
+        cache_key = "test_cache_key"
+        cache = SimulationCache(cache_key)
+        cache.clear()
+        cache.add_run(mock_simulation_result[0], mock_runtimes[0])
+
+        self.assertEqual(1, len(cache.get_simulation_artifact()[0]))
+        self.assertEqual(1, len(cache.get_simulation_artifact()[1]))
+
+        cache.add_run(mock_simulation_result[1], mock_runtimes[1])
 
         self.assertEqual(2, len(cache.get_simulation_artifact()[0]))
         self.assertEqual(2, len(cache.get_simulation_artifact()[1]))

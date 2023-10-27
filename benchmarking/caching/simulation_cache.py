@@ -99,7 +99,7 @@ class SimulationCache:
         Adds a run to the cache.
         """
         if not self.exists():
-            self.save([team_set], [runtime])
+            return self.save([team_set], [runtime])
 
         self._load_data()
 

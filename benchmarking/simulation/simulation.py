@@ -79,6 +79,6 @@ class Simulation:
             # Save result to cache. Do this inside the loop so that if the program crashes, we still have the results from the previous runs.
             if self.settings.cache_key:
                 cache = SimulationCache(self.settings.cache_key)
-                cache.save(self.team_sets, self.run_times)
+                cache.add_run(team_set, self.run_times[-1])
 
         return self.team_sets, self.run_times
