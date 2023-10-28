@@ -67,10 +67,8 @@ class TestTeamSerializer(unittest.TestCase):
             '[{"attribute": 2, "operator": "more than", "value": 6}]'
         )
         cls.json_teams = [
-            '{"_id": 1, "name": "Team 1", "project_id": 6, "requirements": %s, "students": %s}'
-            % (json_requirements_team_1, json_students_team_1),
-            '{"_id": 4, "name": "Team Rocket", "project_id": 4, "requirements": %s, "students": %s}'
-            % (json_requirements_team_2, json_students_team_2),
+            f'{{"_id": 1, "name": "Team 1", "project_id": 6, "requirements": {json_requirements_team_1}, "students": {json_students_team_1}}}',
+            f'{{"_id": 4, "name": "Team Rocket", "project_id": 4, "requirements": {json_requirements_team_2}, "students": {json_students_team_2}}}',
         ]
 
     def test_team_serializer__encodes_team_correctly_to_json(self):
