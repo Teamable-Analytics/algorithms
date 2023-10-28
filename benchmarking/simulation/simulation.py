@@ -34,13 +34,17 @@ class Simulation:
         self.team_sets = []
 
     def run(self, num_runs: int) -> SimulationArtifact:
+        cache = None
         if self.settings.cache_key:
             cache = SimulationCache(self.settings.cache_key)
             if cache.exists():
-                self.team_sets = cache.get_teams()
-                self.run_times = cache.get_runtimes()
-                # TODO: If len(self.team_sets) < num_runs, run the remaining runs
-                return self.team_sets, self.run_times
+                sa: SimulationArtifact = cache.get_simulation_artifact()
+                self.team_sets = sa[0].copy()
+                self.run_times = sa[1].copy()
+                if len(self.team_sets) >= num_runs:
+                    return self.team_sets, self.run_times
+                else:
+                    num_runs -= len(self.team_sets)
 
         custom_initial_teams = (
             self.settings.initial_teams_provider.get()
@@ -77,8 +81,7 @@ class Simulation:
             self.team_sets.append(team_set)
 
             # Save result to cache. Do this inside the loop so that if the program crashes, we still have the results from the previous runs.
-            if self.settings.cache_key:
-                cache = SimulationCache(self.settings.cache_key)
-                cache.add_run(team_set, self.run_times[-1])
+            if cache is not None:
+                cache.add_run(team_set, end_time - start_time)
 
         return self.team_sets, self.run_times
