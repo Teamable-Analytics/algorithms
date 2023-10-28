@@ -6,6 +6,7 @@ from api.ai.algorithm_runner import AlgorithmRunner
 from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
 from api.models.enums import AlgorithmType
 from api.models.team_set import TeamSet
+from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.simulation.mock_algorithm_2 import MockAlgorithm2
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
@@ -33,6 +34,14 @@ class Simulation:
         self.team_sets = []
 
     def run(self, num_runs: int) -> SimulationArtifact:
+        if self.settings.cache_key:
+            cache = SimulationCache(self.settings.cache_key)
+            if cache.exists():
+                self.team_sets = cache.get_teams()
+                self.run_times = cache.get_runtimes()
+                # TODO: If len(self.team_sets) < num_runs, run the remaining runs
+                return self.team_sets, self.run_times
+
         custom_initial_teams = (
             self.settings.initial_teams_provider.get()
             if self.settings.initial_teams_provider
@@ -66,5 +75,10 @@ class Simulation:
 
             self.run_times.append(end_time - start_time)
             self.team_sets.append(team_set)
+
+            # Save result to cache. Do this inside the loop so that if the program crashes, we still have the results from the previous runs.
+            if self.settings.cache_key:
+                cache = SimulationCache(self.settings.cache_key)
+                cache.add_run(team_set, self.run_times[-1])
 
         return self.team_sets, self.run_times
