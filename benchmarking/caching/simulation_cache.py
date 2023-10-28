@@ -125,15 +125,20 @@ class SimulationCache:
         """
 
         # Get cache directory
-        current_dir = path.dirname(__file__)
-        cache_dir = path.abspath(path.join(current_dir, "..", "..", "simulation_cache"))
+        cache_dir = path.abspath(
+            path.join(path.dirname(__file__), "..", "..", "simulation_cache")
+        )
 
         # Create cache directory if it doesn't exist
-        if not path.exists(cache_dir):
-            os.makedirs(cache_dir)
+        cache_key_dirs = path.normpath(self.cache_key).split(os.sep)
+        filename = str(cache_key_dirs[-1]) + ".json"
+        cache_key_dirs = cache_key_dirs[:-1]
+        full_cache_dir = path.join(cache_dir, *cache_key_dirs)
+        if not path.exists(full_cache_dir):
+            os.makedirs(full_cache_dir)
 
         # Get file
-        return path.join(cache_dir, self.cache_key + ".json")
+        return path.join(full_cache_dir, filename)
 
     def _load_data(self) -> None:
         if not self._data:
