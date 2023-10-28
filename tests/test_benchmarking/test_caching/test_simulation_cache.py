@@ -4,6 +4,7 @@ import shutil
 import unittest
 from os import path
 from typing import List
+from unittest.mock import patch
 
 from api.models.student import Student
 from api.models.team import Team
@@ -65,37 +66,43 @@ mock_runtimes: List[float] = [
 
 
 class TestSimulationCache(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        # I'm paranoid about these tests modifying the cache, so move the cache to a different location as a precaution
-        # This also ensures no leftover files from running the tests
-        cache_dir = path.abspath(
-            path.join(path.dirname(__file__), "..", "..", "..", "simulation_cache")
-        )
-        backup_dir = path.abspath(
-            path.join(path.dirname(__file__), "..", "..", "..", "cache_backup")
-        )
-        if path.exists(cache_dir):
-            if path.exists(backup_dir):
-                os.rmdir(backup_dir)
-            os.rename(cache_dir, backup_dir)
+    def setUp(self):
+        # Mock the cache directory
+        self.real_dirname = path.dirname
 
-    @classmethod
-    def tearDownClass(cls):
-        # Move the cache back to its original location
+        def mock_dirname(path_str):
+            root_dir = path.abspath(
+                path.join(self.real_dirname(__file__), "..", "..", "..")
+            )
+            cache_dir = path.join(root_dir, "simulation_cache")
+            file_name = path.abspath(path_str)
+            target_dir = path.join(
+                root_dir, "benchmarking", "caching", "simulation_cache.py"
+            )
+            # If the dirname request is from simulation_cache.py, return a directory that will cause the file to be written to the test cache directory
+            if file_name == target_dir:
+                return path.join(root_dir, "test_simulation_cache", "_", "_")
+            return self.real_dirname(path_str)
+
+        self.mock_dirname = mock_dirname
+        self.patcher = patch("os.path.dirname", self.mock_dirname)
+        self.patcher.start()
+
+    def tearDown(self):
+        self.patcher.stop()
+        # Delete the cache directory
         cache_dir = path.abspath(
-            path.join(path.dirname(__file__), "..", "..", "..", "simulation_cache")
-        )
-        backup_dir = path.abspath(
-            path.join(path.dirname(__file__), "..", "..", "..", "cache_backup")
+            path.join(
+                self.real_dirname(__file__), "..", "..", "..", "test_simulation_cache"
+            )
         )
         if path.exists(cache_dir):
-            # Only contains files that were created by this test, so it's safe to delete
             shutil.rmtree(cache_dir)
-        if path.exists(backup_dir):
-            os.rename(backup_dir, cache_dir)
 
     def test_get_file__path_in_cache_dir(self):
+        # Don't mock the dirname function for this test
+        self.patcher.stop()
+
         cache_key = "test_cache_key"
         cache = SimulationCache(cache_key)
 
