@@ -35,7 +35,9 @@ class TestTeamSetSerializer(unittest.TestCase):
         json_student_1 = '{"_id": 1, "name": "Steven", "attributes": {}, "relationships": {}, "project_preferences": []}'
         json_student_2 = '{"_id": 2, "name": "Hailey", "attributes": {}, "relationships": {}, "project_preferences": []}'
         json_student_3 = '{"_id": 3, "name": "Teamy Boi", "attributes": {}, "relationships": {}, "project_preferences": []}'
-        json_project_requirement_team_2 = '{"attribute": 1, "operator": "less than", "value": 1}'
+        json_project_requirement_team_2 = (
+            '{"attribute": 1, "operator": "less than", "value": 1}'
+        )
 
         json_team_1 = f'{{"_id": 5, "name": "Team Numero 5", "project_id": null, "requirements": [], "students": [{json_student_1}, {json_student_2}]}}'
         json_team_2 = f'{{"_id": 2, "name": "Goosed", "project_id": 11, "requirements": [{json_project_requirement_team_2}], "students": [{json_student_3}]}}'
