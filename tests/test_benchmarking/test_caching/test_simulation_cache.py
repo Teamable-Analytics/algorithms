@@ -74,7 +74,6 @@ class TestSimulationCache(unittest.TestCase):
             root_dir = path.abspath(
                 path.join(self.real_dirname(__file__), "..", "..", "..")
             )
-            cache_dir = path.join(root_dir, "simulation_cache")
             file_name = path.abspath(path_str)
             target_dir = path.join(
                 root_dir, "benchmarking", "caching", "simulation_cache.py"
@@ -304,3 +303,31 @@ class TestSimulationCache(unittest.TestCase):
         self.assertEqual(1, metadata["num"])
         self.assertIsInstance(metadata["num"], int)
         self.assertIsInstance(metadata["timestamp"], float)
+
+    def test_save__cache_key_with_slashes(self):
+        cache_key = "test_cache_key/with/slashes"
+        cache = SimulationCache(cache_key)
+
+        # Save
+        cache.save([], [])
+
+        # Check to make sure folders were created
+        expected_cache_location = path.abspath(
+            path.join(
+                self.real_dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "test_simulation_cache",
+                "simulation_cache",
+                "test_cache_key",
+                "with",
+                "slashes.json",
+            )
+        )
+        self.assertTrue(path.exists(expected_cache_location))
+        try:
+            with open(expected_cache_location, "r") as f:
+                json.load(f)
+        except ValueError:
+            self.fail("File contents are not JSON")
