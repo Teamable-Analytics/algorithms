@@ -42,7 +42,7 @@ class Simulation:
                 self.team_sets = sa[0].copy()
                 self.run_times = sa[1].copy()
                 if len(self.team_sets) >= num_runs:
-                    return self.team_sets, self.run_times
+                    return self.team_sets[:num_runs], self.run_times[:num_runs]
                 else:
                     num_runs -= len(self.team_sets)
 

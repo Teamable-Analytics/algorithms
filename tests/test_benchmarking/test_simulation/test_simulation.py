@@ -233,6 +233,32 @@ class TestSimulation(unittest.TestCase):
 
         self.patcher.stop()
 
+    def test_run__return_only_num_runs_number_of_run_outputs(self):
+        self.mock_out_cache_location()
+
+        cache_key = "test_cache_key"
+        settings = SimulationSettings(
+            num_teams=2,
+            scenario=self.scenario,
+            student_provider=self.student_provider,
+            cache_key=cache_key,
+        )
+
+        # Run simulation
+        simulation_result: SimulationArtifact = Simulation(
+            algorithm_type=AlgorithmType.RANDOM,
+            settings=settings,
+        ).run(num_runs=5)
+
+        # Run simulation again
+        new_simulation_result = Simulation(
+            algorithm_type=AlgorithmType.RANDOM,
+            settings=settings,
+        ).run(num_runs=2)
+
+        self.assertEqual(2, len(new_simulation_result[0]))
+        self.assertEqual(2, len(new_simulation_result[1]))
+
 
 def simplify_simulation_result(
     simulation_result: SimulationArtifact,
