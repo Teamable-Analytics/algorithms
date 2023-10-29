@@ -34,9 +34,10 @@ class Team(TeamShell):
 
     @classmethod
     def from_shell(cls, shell: TeamShell) -> "Team":
+        name = shell.name or f"Team {shell.id}"
         return cls(
             _id=shell.id,
-            name=shell.name,
+            name=name,
             project_id=shell.project_id,
             requirements=shell.requirements,
             is_locked=shell.is_locked,
