@@ -64,7 +64,7 @@ class Algorithm(ABC):
             )
 
         largest_existing_id = max([t.id for t in initial_teams]) if initial_teams else 0
-        team_names = [t.name for t in initial_teams]
+        team_names = set([t.name for t in initial_teams])
 
         # Create the remaining teams with unique names
         new_team_id = largest_existing_id + 1
@@ -73,7 +73,7 @@ class Algorithm(ABC):
             if name not in team_names:
                 new_team = Team(_id=new_team_id, name=name)
                 initial_teams.append(new_team)
-                team_names.append(new_team.name)
+                team_names.add(new_team.name)
             new_team_id += 1
 
         return initial_teams
