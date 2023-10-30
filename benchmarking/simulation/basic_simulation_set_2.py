@@ -32,6 +32,7 @@ class BasicSimulationSet2:
                 "If you override algorithm_types, you must specify at least 1 algorithm type to run a simulation."
             )
         self.base_settings = settings
+        self.base_cache_key = self.base_settings.cache_key
         self.basic_simulation_set_artifact: BasicSimulationSetArtifact = {}
 
     def run(self, num_runs: int) -> BasicSimulationSetArtifact:
@@ -40,10 +41,26 @@ class BasicSimulationSet2:
             #  that be done N times, but not a huge performance bottleneck currently
             self.basic_simulation_set_artifact[algorithm_type] = Simulation(
                 algorithm_type=algorithm_type,
-                settings=self.base_settings,
+                settings=self.get_simulation_settings_from_base(algorithm_type),
             ).run(num_runs)
 
         return self.basic_simulation_set_artifact
+
+    def get_simulation_settings_from_base(
+        self, algorithm_type: AlgorithmType
+    ) -> SimulationSettings:
+        cache_key = (
+            f"{self.base_settings.cache_key}/{str(algorithm_type)}"
+            if self.base_settings.cache_key
+            else None
+        )
+        return SimulationSettings(
+            scenario=self.base_settings.scenario,
+            student_provider=self.base_settings.student_provider,
+            initial_teams_provider=self.base_settings.initial_teams_provider,
+            num_teams=self.base_settings.num_teams,
+            cache_key=cache_key,
+        )
 
     @staticmethod
     def get_artifact(
