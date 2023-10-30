@@ -5,7 +5,6 @@ import api.ai.new.priority_algorithm.mutations  # done this way to mutation func
 from api.ai.new.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.ai.new.interfaces.algorithm_options import PriorityAlgorithmOptions
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
-from api.ai.new.priority_algorithm.custom_models import PriorityTeamSet
 from api.ai.new.priority_algorithm.priority_algorithm import PriorityAlgorithm
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
