@@ -13,18 +13,6 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 )
 
 
-def do_nothing_mutation(
-    priority_team_set: PriorityTeamSet, *args, **kwargs
-) -> PriorityTeamSet:
-    return priority_team_set
-
-
-def do_nothing_mutation_2(
-    priority_team_set: PriorityTeamSet, *args, **kwargs
-) -> PriorityTeamSet:
-    return priority_team_set
-
-
 class TestPriorityAlgorithm(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
