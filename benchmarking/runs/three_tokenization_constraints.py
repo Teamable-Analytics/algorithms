@@ -1,8 +1,9 @@
 import math
+from typing import Dict, List
 
 import typer
 
-from api.models.enums import ScenarioAttribute, Gpa, Age, Race
+from api.models.enums import ScenarioAttribute, Gpa, Age, Race, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
     MockStudentProvider,
@@ -11,6 +12,7 @@ from benchmarking.evaluations.goals import DiversityGoal
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
+from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import (
     AverageGiniIndexMultiAttribute,
 )
@@ -18,13 +20,13 @@ from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatis
 from benchmarking.evaluations.scenarios.three_tokenization_constraints import (
     ThreeTokenizationConstraints,
 )
-from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
+from benchmarking.simulation.basic_simulation_set_2 import BasicSimulationSet2
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
+from benchmarking.simulation.insight import Insight
+from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-def three_tokenization_constraints(
-    num_trials: int = 10,
-):
+def three_tokenization_constraints(num_trials: int = 10, generate_graphs: bool = False):
     """
     Goal: Run a scenario with three tokenization constraints:
     concentrate GPA max three, diversify race min two, and concentrate age max three.
@@ -58,6 +60,28 @@ def three_tokenization_constraints(
         graph_priority_dict,
     ]
 
+    scenario = ThreeTokenizationConstraints(
+        value_of_age=Age._20.value,
+        value_of_gpa=Gpa.B.value,
+        value_of_race=Race.Middle_Eastern.value,
+    )
+
+    metrics: Dict[str, TeamSetMetric] = {
+        "AverageGiniIndexMultiAttribute": AverageGiniIndexMultiAttribute(
+            attributes=[
+                ScenarioAttribute.RACE.value,
+                ScenarioAttribute.GPA.value,
+                ScenarioAttribute.AGE.value,
+            ]
+        ),
+        "PrioritySatisfaction": PrioritySatisfaction(
+            goals_to_priorities(
+                [goal for goal in scenario.goals if isinstance(goal, DiversityGoal)]
+            ),
+            False,
+        ),
+    }
+
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
 
@@ -87,100 +111,85 @@ def three_tokenization_constraints(
             },
         )
 
-        scenario = ThreeTokenizationConstraints(
-            value_of_age=Age._20.value,
-            value_of_gpa=Gpa.B.value,
-            value_of_race=Race.Middle_Eastern.value,
-        )
-
-        simulation_outputs = BasicSimulationSet(
-            num_teams=number_of_teams,
-            scenario=scenario,
-            student_provider=MockStudentProvider(student_provider_settings),
-            metrics=[
-                AverageGiniIndexMultiAttribute(
-                    attributes=[
-                        ScenarioAttribute.RACE.value,
-                        ScenarioAttribute.GPA.value,
-                        ScenarioAttribute.AGE.value,
-                    ]
-                ),
-                PrioritySatisfaction(
-                    goals_to_priorities(
-                        [
-                            goal
-                            for goal in scenario.goals
-                            if isinstance(goal, DiversityGoal)
-                        ]
-                    ),
-                    False,
-                ),
-            ],
+        simulation_set_artifact = BasicSimulationSet2(
+            settings=SimulationSettings(
+                num_teams=number_of_teams,
+                scenario=scenario,
+                student_provider=MockStudentProvider(student_provider_settings),
+                cache_key=f"three_tokenization_constraints_{number_of_teams}",
+            )
         ).run(num_runs=num_trials)
 
-        average_ginis = BasicSimulationSet.average_metric(
-            simulation_outputs, "AverageGiniIndexMultiAttribute"
-        )
-        average_runtimes = BasicSimulationSet.average_metric(
-            simulation_outputs, BasicSimulationSet.KEY_RUNTIMES
-        )
-        satisfied_priorities = BasicSimulationSet.average_metric(
-            simulation_outputs, "PrioritySatisfaction"
-        )
-        metrics = [
-            average_runtimes,
-            average_ginis,
-            satisfied_priorities,
-        ]
+        if generate_graphs:
+            insight_set: Dict[
+                AlgorithmType, Dict[str, List[float]]
+            ] = Insight.get_output_set(
+                artifact=simulation_set_artifact, metrics=list(metrics.values())
+            )
 
-        # Data processing for graph
-        for i, metric in enumerate(metrics):
-            for algorithm_type, data in metric.items():
-                if algorithm_type not in graph_dicts[i]:
-                    graph_dicts[i][algorithm_type] = GraphData(
-                        x_data=[class_size],
-                        y_data=[data],
-                        name=algorithm_type.value,
-                    )
-                else:
-                    graph_dicts[i][algorithm_type].x_data.append(class_size)
-                    graph_dicts[i][algorithm_type].y_data.append(data)
+            average_ginis = Insight.average_metric(
+                insight_set, "AverageGiniIndexMultiAttribute"
+            )
+            average_runtimes = Insight.average_metric(insight_set, Insight.KEY_RUNTIMES)
+            satisfied_priorities = Insight.average_metric(
+                insight_set, "PrioritySatisfaction"
+            )
 
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Run time (seconds)",
-            title="Three Tokenization Constraints Runtimes",
-            data=list(graph_runtime_dict.values()),
-            description=None,
-            y_lim=None,
-            x_lim=None,
-        )
-    )
+            metric_values = [
+                average_runtimes,
+                average_ginis,
+                satisfied_priorities,
+            ]
 
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Average Gini Index",
-            title="Three Tokenization Constraints Average Gini Index",
-            data=list(graph_avg_gini_dict.values()),
-            description=None,
-            y_lim=None,
-            x_lim=None,
-        )
-    )
+            # Data processing for graph
+            for i, metric in enumerate(metric_values):
+                for algorithm_type, data in metric.items():
+                    if algorithm_type not in graph_dicts[i]:
+                        graph_dicts[i][algorithm_type] = GraphData(
+                            x_data=[class_size],
+                            y_data=[data],
+                            name=algorithm_type.value,
+                        )
+                    else:
+                        graph_dicts[i][algorithm_type].x_data.append(class_size)
+                        graph_dicts[i][algorithm_type].y_data.append(data)
 
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Priorities Satisfied",
-            title="Three Tokenization Constraints Satisfied Priorities",
-            data=list(graph_priority_dict.values()),
-            description=None,
-            y_lim=None,
-            x_lim=None,
+    if generate_graphs:
+        line_graph(
+            LineGraphMetadata(
+                x_label="Class size",
+                y_label="Run time (seconds)",
+                title="Three Tokenization Constraints Runtimes",
+                data=list(graph_runtime_dict.values()),
+                description=None,
+                y_lim=None,
+                x_lim=None,
+            )
         )
-    )
+
+        line_graph(
+            LineGraphMetadata(
+                x_label="Class size",
+                y_label="Average Gini Index",
+                title="Three Tokenization Constraints Average Gini Index",
+                data=list(graph_avg_gini_dict.values()),
+                description=None,
+                y_lim=None,
+                x_lim=None,
+            )
+        )
+
+        line_graph(
+            LineGraphMetadata(
+                x_label="Class size",
+                y_label="Priorities Satisfied",
+                title="Three Tokenization Constraints Satisfied Priorities",
+                data=list(graph_priority_dict.values()),
+                description=None,
+                y_lim=None,
+                x_lim=None,
+            )
+        )
 
 
 if __name__ == "__main__":

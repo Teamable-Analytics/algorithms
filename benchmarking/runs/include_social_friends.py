@@ -1,7 +1,9 @@
 import math
+from typing import Dict, List
 
 import typer
 
+from api.models.enums import AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -18,10 +20,12 @@ from benchmarking.evaluations.metrics.utils.team_calculations import (
 from benchmarking.evaluations.scenarios.include_social_friends import (
     IncludeSocialFriends,
 )
-from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
+from benchmarking.simulation.basic_simulation_set_2 import BasicSimulationSet2
+from benchmarking.simulation.insight import Insight
+from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-def include_social_friends(num_trials: int = 10):
+def include_social_friends(num_trials: int = 10, generate_graphs: bool = False):
     """
     Goal: Run including social friends, measure average social satisfied team
     (a team socially satisfied when all member is happy)
@@ -31,7 +35,9 @@ def include_social_friends(num_trials: int = 10):
     class_sizes = [100, 150, 200, 250, 300]
 
     # Graph variables
-    graph_data_dict = {}
+    graph_runtime_dict = {}
+    graph_average_social_satisfaction = {}
+    graph_dicts = [graph_runtime_dict, graph_average_social_satisfaction]
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -46,43 +52,71 @@ def include_social_friends(num_trials: int = 10):
             friend_distribution="cluster",
         )
 
-        simulation_outputs = BasicSimulationSet(
-            num_teams=number_of_teams,
-            scenario=IncludeSocialFriends(),
-            student_provider=MockStudentProvider(student_provider_settings),
-            metrics=[
-                AverageSocialSatisfaction(metric_function=is_happy_team_allhp_friend),
-            ],
+        metrics = [
+            AverageSocialSatisfaction(metric_function=is_happy_team_allhp_friend)
+        ]
+
+        simulation_set_artifact = BasicSimulationSet2(
+            settings=SimulationSettings(
+                num_teams=number_of_teams,
+                scenario=IncludeSocialFriends(),
+                student_provider=MockStudentProvider(student_provider_settings),
+                cache_key=f"include_social_friends_{number_of_teams}",
+            )
         ).run(num_runs=num_trials)
 
-        average_runtimes = BasicSimulationSet.average_metric(
-            simulation_outputs, "runtimes"
+        if generate_graphs:
+            insight_set: Dict[
+                AlgorithmType, Dict[str, List[float]]
+            ] = Insight.get_output_set(
+                artifact=simulation_set_artifact, metrics=list(metrics)
+            )
+
+            average_runtimes = Insight.average_metric(insight_set, Insight.KEY_RUNTIMES)
+            average_social_satisfaction = Insight.average_metric(
+                insight_set, "AverageSocialSatisfaction"
+            )
+            metric_values = [average_runtimes, average_social_satisfaction]
+
+            # Data processing for graph
+            for i, metric in enumerate(metric_values):
+                for algorithm_type, data in metric.items():
+                    if algorithm_type not in graph_dicts[i]:
+                        graph_dicts[i][algorithm_type] = GraphData(
+                            x_data=[class_size],
+                            y_data=[data],
+                            name=algorithm_type.value,
+                        )
+                    else:
+                        graph_dicts[i][algorithm_type].x_data.append(class_size)
+                        graph_dicts[i][algorithm_type].y_data.append(data)
+
+    if generate_graphs:
+        line_graph(
+            LineGraphMetadata(
+                x_label="Class size",
+                y_label="Run time (seconds)",
+                title="Simulate including friends",
+                data=list(graph_runtime_dict.values()),
+                description=None,
+                y_lim=None,
+                x_lim=None,
+                num_minor_ticks=None,
+            )
         )
 
-        # Data processing for graph
-        for algorithm_type, average_runtime in average_runtimes.items():
-            if algorithm_type not in graph_data_dict:
-                graph_data_dict[algorithm_type] = GraphData(
-                    x_data=[class_size],
-                    y_data=[average_runtime],
-                    name=algorithm_type.value,
-                )
-            else:
-                graph_data_dict[algorithm_type].x_data.append(class_size)
-                graph_data_dict[algorithm_type].y_data.append(average_runtime)
-
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Run time (seconds)",
-            title="Simulate including friends",
-            data=list(graph_data_dict.values()),
-            description=None,
-            y_lim=None,
-            x_lim=None,
-            num_minor_ticks=None,
+        line_graph(
+            LineGraphMetadata(
+                x_label="Class size",
+                y_label="Average Social Satisfaction",
+                title="Simulate including friends",
+                data=list(graph_average_social_satisfaction.values()),
+                description=None,
+                y_lim=None,
+                x_lim=None,
+                num_minor_ticks=None,
+            )
         )
-    )
 
 
 if __name__ == "__main__":

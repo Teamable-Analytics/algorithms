@@ -1,5 +1,5 @@
 import math
-from typing import Dict
+from typing import Dict, List
 
 import typer
 
@@ -15,11 +15,13 @@ from benchmarking.evaluations.metrics.average_gini_index import AverageGiniIndex
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from benchmarking.evaluations.scenarios.concentrate_gpa import ConcentrateGPA
-from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
-from api.models.enums import ScenarioAttribute, Gpa
+from api.models.enums import ScenarioAttribute, Gpa, AlgorithmType
+from benchmarking.simulation.basic_simulation_set_2 import BasicSimulationSet2
+from benchmarking.simulation.insight import Insight
+from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-def concentrate_gpa(num_trials: int = 10):
+def concentrate_gpa(num_trials: int = 10, generate_graphs: bool = False):
     """
     Goal: Run concentrate GPA scenario, and measure the average, maximum, and minimum gini scores for gpa
     """
@@ -64,91 +66,98 @@ def concentrate_gpa(num_trials: int = 10):
             },
         )
 
-        simulation_outputs = BasicSimulationSet(
-            num_teams=number_of_teams,
-            scenario=ConcentrateGPA(),
-            student_provider=MockStudentProvider(student_provider_settings),
-            metrics=list(metrics.values()),
+        simulation_set_artifact = BasicSimulationSet2(
+            settings=SimulationSettings(
+                num_teams=number_of_teams,
+                scenario=ConcentrateGPA(),
+                student_provider=MockStudentProvider(student_provider_settings),
+                cache_key=f"concentrate_gpa_{number_of_teams}",
+            )
         ).run(num_runs=num_trials)
 
-        average_ginis = BasicSimulationSet.average_metric(
-            simulation_outputs, "AverageGiniIndex"
-        )
-        maximum_ginis = BasicSimulationSet.average_metric(
-            simulation_outputs, "MaximumGiniIndex"
-        )
-        minimum_ginis = BasicSimulationSet.average_metric(
-            simulation_outputs, "MinimumGiniIndex"
-        )
-        average_runtimes = BasicSimulationSet.average_metric(
-            simulation_outputs, BasicSimulationSet.KEY_RUNTIMES
-        )
-        metric_values = [average_runtimes, average_ginis, minimum_ginis, maximum_ginis]
+        if generate_graphs:
+            insight_set: Dict[
+                AlgorithmType, Dict[str, List[float]]
+            ] = Insight.get_output_set(
+                artifact=simulation_set_artifact, metrics=list(metrics.values())
+            )
 
-        # Data processing for graph
-        for i, metric in enumerate(metric_values):
-            for algorithm_type, data in metric.items():
-                if algorithm_type not in graph_dicts[i]:
-                    graph_dicts[i][algorithm_type] = GraphData(
-                        x_data=[class_size],
-                        y_data=[data],
-                        name=algorithm_type.value,
-                    )
-                else:
-                    graph_dicts[i][algorithm_type].x_data.append(class_size)
-                    graph_dicts[i][algorithm_type].y_data.append(data)
+            average_ginis = Insight.average_metric(insight_set, "AverageGiniIndex")
+            maximum_ginis = Insight.average_metric(insight_set, "MaximumGiniIndex")
+            minimum_ginis = Insight.average_metric(insight_set, "MinimumGiniIndex")
+            average_runtimes = Insight.average_metric(insight_set, Insight.KEY_RUNTIMES)
+            metric_values = [
+                average_runtimes,
+                average_ginis,
+                minimum_ginis,
+                maximum_ginis,
+            ]
 
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Run time (seconds)",
-            title="Concentrate GPA Runtimes",
-            data=list(graph_runtime_dict.values()),
-            description=None,
-            y_lim=None,
-            x_lim=None,
-            num_minor_ticks=None,
-        )
-    )
+            # Data processing for graph
+            for i, metric in enumerate(metric_values):
+                for algorithm_type, data in metric.items():
+                    if algorithm_type not in graph_dicts[i]:
+                        graph_dicts[i][algorithm_type] = GraphData(
+                            x_data=[class_size],
+                            y_data=[data],
+                            name=algorithm_type.value,
+                        )
+                    else:
+                        graph_dicts[i][algorithm_type].x_data.append(class_size)
+                        graph_dicts[i][algorithm_type].y_data.append(data)
 
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Average Gini Index",
-            title="Concentrate GPA Average Gini Index",
-            data=list(graph_avg_gini_dict.values()),
-            description=None,
-            y_lim=GraphAxisRange(*metrics["AverageGiniIndex"].theoretical_range),
-            x_lim=None,
-            num_minor_ticks=None,
+    if generate_graphs:
+        line_graph(
+            LineGraphMetadata(
+                x_label="Class size",
+                y_label="Run time (seconds)",
+                title="Concentrate GPA Runtimes",
+                data=list(graph_runtime_dict.values()),
+                description=None,
+                y_lim=None,
+                x_lim=None,
+                num_minor_ticks=None,
+            )
         )
-    )
 
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Minimum Gini Index",
-            title="Concentrate GPA Minimum Gini",
-            data=list(graph_min_gini_dict.values()),
-            description=None,
-            y_lim=GraphAxisRange(*metrics["MinGiniIndex"].theoretical_range),
-            x_lim=None,
-            num_minor_ticks=None,
+        line_graph(
+            LineGraphMetadata(
+                x_label="Class size",
+                y_label="Average Gini Index",
+                title="Concentrate GPA Average Gini Index",
+                data=list(graph_avg_gini_dict.values()),
+                description=None,
+                y_lim=GraphAxisRange(*metrics["AverageGiniIndex"].theoretical_range),
+                x_lim=None,
+                num_minor_ticks=None,
+            )
         )
-    )
 
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Maximum Gini Index",
-            title="Concentrate GPA Max Gini",
-            data=list(graph_max_gini_dict.values()),
-            description=None,
-            y_lim=GraphAxisRange(*metrics["MaxGiniIndex"].theoretical_range),
-            x_lim=None,
-            num_minor_ticks=None,
+        line_graph(
+            LineGraphMetadata(
+                x_label="Class size",
+                y_label="Minimum Gini Index",
+                title="Concentrate GPA Minimum Gini",
+                data=list(graph_min_gini_dict.values()),
+                description=None,
+                y_lim=GraphAxisRange(*metrics["MinGiniIndex"].theoretical_range),
+                x_lim=None,
+                num_minor_ticks=None,
+            )
         )
-    )
+
+        line_graph(
+            LineGraphMetadata(
+                x_label="Class size",
+                y_label="Maximum Gini Index",
+                title="Concentrate GPA Max Gini",
+                data=list(graph_max_gini_dict.values()),
+                description=None,
+                y_lim=GraphAxisRange(*metrics["MaxGiniIndex"].theoretical_range),
+                x_lim=None,
+                num_minor_ticks=None,
+            )
+        )
 
 
 if __name__ == "__main__":
