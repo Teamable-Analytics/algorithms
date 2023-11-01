@@ -80,12 +80,6 @@ def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
             },
         )
 
-        # simulation_outputs = BasicSimulationSet(
-        #     num_teams=number_of_teams,
-        #     scenario=scenario,
-        #     student_provider=MockStudentProvider(student_provider_settings),
-        #     metrics=list(metrics.values()),
-        # ).run(num_runs=num_trials)
         simulation_set_artifact = BasicSimulationSet2(
             settings=SimulationSettings(
                 num_teams=number_of_teams,

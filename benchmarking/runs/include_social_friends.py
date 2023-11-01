@@ -11,6 +11,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
+from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,
 )
@@ -36,8 +37,8 @@ def include_social_friends(num_trials: int = 10, generate_graphs: bool = False):
 
     # Graph variables
     graph_runtime_dict = {}
-    graph_average_social_satisfaction = {}
-    graph_dicts = [graph_runtime_dict, graph_average_social_satisfaction]
+    graph_social_sat_dict = {}
+    graph_dicts = [graph_runtime_dict, graph_social_sat_dict]
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -52,9 +53,11 @@ def include_social_friends(num_trials: int = 10, generate_graphs: bool = False):
             friend_distribution="cluster",
         )
 
-        metrics = [
-            AverageSocialSatisfaction(metric_function=is_happy_team_allhp_friend)
-        ]
+        metrics: Dict[str:TeamSetMetric] = {
+            "AverageSocialSatisfaction": AverageSocialSatisfaction(
+                metric_function=is_happy_team_allhp_friend
+            )
+        }
 
         simulation_set_artifact = BasicSimulationSet2(
             settings=SimulationSettings(
@@ -69,7 +72,7 @@ def include_social_friends(num_trials: int = 10, generate_graphs: bool = False):
             insight_set: Dict[
                 AlgorithmType, Dict[str, List[float]]
             ] = Insight.get_output_set(
-                artifact=simulation_set_artifact, metrics=list(metrics)
+                artifact=simulation_set_artifact, metrics=list(metrics.values())
             )
 
             average_runtimes = Insight.average_metric(insight_set, Insight.KEY_RUNTIMES)
@@ -110,7 +113,7 @@ def include_social_friends(num_trials: int = 10, generate_graphs: bool = False):
                 x_label="Class size",
                 y_label="Average Social Satisfaction",
                 title="Simulate including friends",
-                data=list(graph_average_social_satisfaction.values()),
+                data=list(graph_social_sat_dict.values()),
                 description=None,
                 y_lim=None,
                 x_lim=None,
