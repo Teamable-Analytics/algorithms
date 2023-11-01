@@ -18,7 +18,10 @@ from benchmarking.evaluations.scenarios.concentrate_multiple_attributes import (
     ConcentrateMultipleAttributes,
 )
 from api.models.enums import ScenarioAttribute, Gender, Race, AlgorithmType
-from benchmarking.simulation.basic_simulation_set_2 import BasicSimulationSet2
+from benchmarking.simulation.basic_simulation_set_2 import (
+    BasicSimulationSet2,
+    BasicSimulationSetArtifact,
+)
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
@@ -51,6 +54,7 @@ def concentrate_many_attributes(num_trials: int = 10, generate_graphs: bool = Fa
             ]
         ),
     }
+    artifacts: Dict[int, BasicSimulationSetArtifact] = {}
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -90,20 +94,20 @@ def concentrate_many_attributes(num_trials: int = 10, generate_graphs: bool = Fa
                 cache_key=f"concentrate_many_attributes_{number_of_teams}",
             )
         ).run(num_runs=num_trials)
+        artifacts[class_size] = simulation_set_artifact
 
-        if generate_graphs:
+    if generate_graphs:
+        for class_size, artifact in artifacts.items():
             insight_set: Dict[
                 AlgorithmType, Dict[str, List[float]]
             ] = Insight.get_output_set(
-                artifact=simulation_set_artifact, metrics=list(metrics.values())
+                artifact=artifact, metrics=list(metrics.values())
             )
-
             average_gini = Insight.average_metric(
                 insight_set, "AverageGiniIndexMultiAttribute"
             )
             average_runtimes = Insight.average_metric(insight_set, Insight.KEY_RUNTIMES)
             metric_values = [average_runtimes, average_gini]
-
             for i, metric in enumerate(metric_values):
                 for algorithm_type, data in metric.items():
                     if algorithm_type not in graph_dicts[i]:
@@ -116,17 +120,12 @@ def concentrate_many_attributes(num_trials: int = 10, generate_graphs: bool = Fa
                         graph_dicts[i][algorithm_type].x_data.append(class_size)
                         graph_dicts[i][algorithm_type].y_data.append(data)
 
-    if generate_graphs:
         line_graph(
             LineGraphMetadata(
                 x_label="Class size",
                 y_label="Run time (seconds)",
                 title="Concentrate Many Attributes Runtimes",
                 data=list(graph_runtime_dict.values()),
-                description=None,
-                y_lim=None,
-                x_lim=None,
-                num_minor_ticks=None,
             )
         )
 
@@ -136,12 +135,9 @@ def concentrate_many_attributes(num_trials: int = 10, generate_graphs: bool = Fa
                 y_label="Average Gini Index",
                 title="Concentrate Many Attributes Average Gini Index",
                 data=list(graph_avg_gini_dict.values()),
-                description=None,
                 y_lim=GraphAxisRange(
                     *metrics["AverageGiniIndexMulti"].theoretical_range
                 ),
-                x_lim=None,
-                num_minor_ticks=None,
             )
         )
 

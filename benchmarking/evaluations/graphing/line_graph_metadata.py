@@ -10,7 +10,7 @@ class LineGraphMetadata:
     data: List[GraphData]
     x_label: str
     y_label: str
-    description: Optional[str]
-    x_lim: Optional[GraphAxisRange]
-    y_lim: Optional[GraphAxisRange]
-    num_minor_ticks: Optional[int]
+    description: Optional[str] = None
+    x_lim: Optional[GraphAxisRange] = None
+    y_lim: Optional[GraphAxisRange] = None
+    num_minor_ticks: Optional[int] = None

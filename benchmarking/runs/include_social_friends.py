@@ -21,7 +21,10 @@ from benchmarking.evaluations.metrics.utils.team_calculations import (
 from benchmarking.evaluations.scenarios.include_social_friends import (
     IncludeSocialFriends,
 )
-from benchmarking.simulation.basic_simulation_set_2 import BasicSimulationSet2
+from benchmarking.simulation.basic_simulation_set_2 import (
+    BasicSimulationSet2,
+    BasicSimulationSetArtifact,
+)
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
@@ -33,12 +36,21 @@ def include_social_friends(num_trials: int = 10, generate_graphs: bool = False):
     """
 
     # Defining our changing x-values (in the graph sense)
-    class_sizes = [100, 150, 200, 250, 300]
+    # class_sizes = [100, 150, 200, 250, 300]
+    class_sizes = [50, 100]
 
     # Graph variables
     graph_runtime_dict = {}
     graph_social_sat_dict = {}
     graph_dicts = [graph_runtime_dict, graph_social_sat_dict]
+
+    metrics: Dict[str:TeamSetMetric] = {
+        "AverageSocialSatisfaction": AverageSocialSatisfaction(
+            metric_function=is_happy_team_allhp_friend
+        )
+    }
+
+    artifacts: Dict[int, BasicSimulationSetArtifact] = {}
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -53,12 +65,6 @@ def include_social_friends(num_trials: int = 10, generate_graphs: bool = False):
             friend_distribution="cluster",
         )
 
-        metrics: Dict[str:TeamSetMetric] = {
-            "AverageSocialSatisfaction": AverageSocialSatisfaction(
-                metric_function=is_happy_team_allhp_friend
-            )
-        }
-
         simulation_set_artifact = BasicSimulationSet2(
             settings=SimulationSettings(
                 num_teams=number_of_teams,
@@ -67,12 +73,14 @@ def include_social_friends(num_trials: int = 10, generate_graphs: bool = False):
                 cache_key=f"include_social_friends_{number_of_teams}",
             )
         ).run(num_runs=num_trials)
+        artifacts[class_size] = simulation_set_artifact
 
-        if generate_graphs:
+    if generate_graphs:
+        for class_size, artifact in artifacts.items():
             insight_set: Dict[
                 AlgorithmType, Dict[str, List[float]]
             ] = Insight.get_output_set(
-                artifact=simulation_set_artifact, metrics=list(metrics.values())
+                artifact=artifact, metrics=list(metrics.values())
             )
 
             average_runtimes = Insight.average_metric(insight_set, Insight.KEY_RUNTIMES)
@@ -94,30 +102,21 @@ def include_social_friends(num_trials: int = 10, generate_graphs: bool = False):
                         graph_dicts[i][algorithm_type].x_data.append(class_size)
                         graph_dicts[i][algorithm_type].y_data.append(data)
 
-    if generate_graphs:
         line_graph(
             LineGraphMetadata(
                 x_label="Class size",
                 y_label="Run time (seconds)",
                 title="Simulate including friends",
                 data=list(graph_runtime_dict.values()),
-                description=None,
-                y_lim=None,
-                x_lim=None,
-                num_minor_ticks=None,
             )
         )
 
         line_graph(
             LineGraphMetadata(
                 x_label="Class size",
-                y_label="Average Social Satisfaction",
+                y_label="Happy Team - Each Member Has One Friend On Team",
                 title="Simulate including friends",
                 data=list(graph_social_sat_dict.values()),
-                description=None,
-                y_lim=None,
-                x_lim=None,
-                num_minor_ticks=None,
             )
         )
 
