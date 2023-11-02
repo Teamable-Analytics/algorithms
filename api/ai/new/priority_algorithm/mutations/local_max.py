@@ -4,7 +4,7 @@ from typing import List, Dict
 
 from api.ai.new.priority_algorithm.priority.interfaces import Priority
 from api.ai.new.priority_algorithm.mutations.utils import score
-from api.ai.new.priority_algorithm.custom_models import PriorityTeamSet
+from api.ai.new.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
 from api.models.student import Student
 
 
