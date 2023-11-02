@@ -28,6 +28,15 @@ class TeamShell:
 class Team(TeamShell):
     students: List[Student] = field(default_factory=list)
 
+    def __post_init__(self):
+        # if this team is initialized with students, all students have their .team assigned properly
+        for s in self.students:
+            s.team = self
+
+    def __eq__(self, other):
+        from utils.testing import teams_are_equal
+        return teams_are_equal(self, other)
+
     @property
     def size(self) -> int:
         return len(self.students)

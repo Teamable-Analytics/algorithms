@@ -5,24 +5,7 @@ from api.models.enums import RequirementOperator, Relationship
 from api.models.project import ProjectRequirement
 from api.models.student import Student
 from api.models.team import Team, TeamSerializer
-
-
-def are_students_equal_ignoring_team(s1: Student, s2: Student):
-    for field_name in Student.__dataclass_fields__.keys():
-        if field_name == "team":
-            continue
-        if s1.__getattribute__(field_name) != s2.__getattribute__(field_name):
-            return False
-    return True
-
-
-def are_teams_equal_ignoring_students(t1: Team, t2: Team):
-    for field_name in Team.__dataclass_fields__.keys():
-        if field_name == "students":
-            continue
-        if t1.__getattribute__(field_name) != t2.__getattribute__(field_name):
-            return False
-    return True
+from utils.testing import teams_are_equal
 
 
 class TestTeamSerializer(unittest.TestCase):
@@ -79,10 +62,6 @@ class TestTeamSerializer(unittest.TestCase):
             ),
         ]
 
-        for team in cls.teams:
-            for student in team.students:
-                student.team = team
-
         json_students_team_1 = '[{"_id": 4, "name": "Teresa", "attributes": {"7": [2]}, "relationships": {"1": -1, "45": 1.1}, "project_preferences": [6]}, {"_id": 1, "name": "Sam", "attributes": {"1": [4, 5, 6]}, "relationships": {"100": 1.1, "45": 1.1, "1": 1.1}, "project_preferences": [4, 6]}]'
         json_requirements_team_1 = '[{"attribute": 4, "operator": "exactly", "value": 3}, {"attribute": 1, "operator": "less than", "value": 1}]'
         json_students_team_2 = '[{"_id": 45, "name": "James", "attributes": {}, "relationships": {}, "project_preferences": []}, {"_id": 46, "name": "Jessie", "attributes": {}, "relationships": {}, "project_preferences": []}, {"_id": 100, "name": "Meowth", "attributes": {}, "relationships": {}, "project_preferences": []}]'
@@ -119,10 +98,4 @@ class TestTeamSerializer(unittest.TestCase):
             json_dict = json.loads(team)
             decoded_team = decoder.decode(json_dict)
 
-            # soft equality to avoid recursion depth error
-            self.assertEqual(str(self.teams[i]), str(decoded_team))
-
-            # a delicate approach to checking for deeper equality without causing the recursion depth error
-            for s1, s2 in zip(decoded_team.students, self.teams[i].students):
-                self.assertTrue(are_students_equal_ignoring_team(s1, s2))
-                self.assertTrue(are_teams_equal_ignoring_students(s1.team, s2.team))
+            self.assertTrue(teams_are_equal(decoded_team, self.teams[i]))
