@@ -1,5 +1,5 @@
 import statistics
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
@@ -12,16 +12,26 @@ from benchmarking.simulation.simulation import SimulationArtifact
 
 def graph_caches(
     cache_keys: List[List[str]],
-    graph_names: List[str],
-    line_names: List[str],
     metrics: List[TeamSetMetric],
-    x_values: List[float],
+    graph_titles: List[str],
     y_labels: List[str],
+    line_names: List[str],
+    x_values: List[float],
     x_label: str,
     num_runs: int,
-    *args,
     **kwargs,
 ):
+    """
+    Generates graphs given a 2D array of cache keys where each inner array is for one line in a graph (i.e. for one algorithm).
+    Each element of one of the inner arrays would vary only by the number of students in the TeamSet (or by whatever you want on the x-axis).
+
+    Also supplied is a list of metrics, each of which will produce a graph. Along with each metric should be a graph title and a y-axis label.
+
+    Lastly, supply a list of x-values with length equal to that of the length of one of the inner arrays in cache_keys as well as a label to describe the x-values.
+
+    You can also pass any argument that LineGraphMetadata also takes as a kwarg.
+    """
+
     # Check lengths are all compatible
     if len(cache_keys) != len(line_names):
         raise ValueError("You must have the same number of line names as lines")
@@ -29,7 +39,7 @@ def graph_caches(
         raise ValueError("All lines must have the same number of points")
     if len(cache_keys[0]) != len(x_values):
         raise ValueError("The length of a line must be the as the number of y values")
-    if len(metrics) != len(y_labels) or len(metrics) != len(graph_names):
+    if len(metrics) != len(y_labels) or len(metrics) != len(graph_titles):
         raise ValueError("You need a y-label and title for each metric being graphed")
 
     line_caches: Dict[str, List[SimulationCache]] = {
@@ -67,7 +77,7 @@ def graph_caches(
         line: [insight.generate() for insight in insights[line]] for line in line_names
     }
 
-    for metric, y_label, graph_name in zip(metrics, y_labels, graph_names):
+    for metric, y_label, graph_name in zip(metrics, y_labels, graph_titles):
         # Each value of this dict is a list of y values for the points
         y_points: Dict[str, List[float]] = {
             line: [
@@ -92,7 +102,6 @@ def graph_caches(
                 data=list(graph_data.values()),
                 x_label=x_label,
                 y_label=y_label,
-                *args,
                 **kwargs,
             )
         )
