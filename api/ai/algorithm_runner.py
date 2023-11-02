@@ -13,7 +13,7 @@ from api.ai.new.interfaces.algorithm_options import (
     WeightAlgorithmOptions,
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
-    MultipleRoundRobinAlgorithmOptions,
+    MultipleRoundRobinAlgorithmOptions, RarestFirstAlgorithmOptions,
 )
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.new.multiple_round_robin_with_adjusted_winner.multiple_round_robin import (
@@ -87,6 +87,8 @@ class AlgorithmRunner:
             return PriorityAlgorithmOptions
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinAlgorithmOptions
+        if algorithm_type == AlgorithmType.RAREST_FIRST:
+            return RarestFirstAlgorithmOptions
 
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm options class!"
@@ -105,6 +107,8 @@ class AlgorithmRunner:
         if algorithm_type == AlgorithmType.PRIORITY_NEW:
             return PriorityAlgorithmConfig
         if algorithm_type == AlgorithmType.MRR:
+            return None
+        if algorithm_type == AlgorithmType.RAREST_FIRST:
             return None
 
         raise NotImplementedError(
