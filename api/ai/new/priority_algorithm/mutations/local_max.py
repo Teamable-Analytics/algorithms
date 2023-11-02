@@ -2,9 +2,9 @@ import itertools
 import random
 from typing import List, Dict
 
-from api.ai.priority_algorithm.interfaces import Priority
-from api.ai.priority_algorithm.mutations.utils import score
-from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from api.ai.new.priority_algorithm.priority.interfaces import Priority
+from api.ai.new.priority_algorithm.mutations.utils import score
+from api.ai.new.priority_algorithm.custom_models import PriorityTeamSet
 from api.models.student import Student
 
 

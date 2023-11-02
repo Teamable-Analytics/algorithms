@@ -2,10 +2,12 @@ import unittest
 from dataclasses import dataclass
 from typing import List
 
-from api.ai.new.priority_algorithm.mutations.local_max import mutate_local_max_random
-from api.ai.priority_algorithm.interfaces import Priority
-from api.ai.priority_algorithm.mutations.local_max import mutate_local_max
-from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from api.ai.new.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
+from api.ai.new.priority_algorithm.mutations.local_max import (
+    mutate_local_max_random,
+    mutate_local_max,
+)
+from api.ai.new.priority_algorithm.priority.interfaces import Priority
 from api.models.student import Student
 from api.models.team import Team
 
