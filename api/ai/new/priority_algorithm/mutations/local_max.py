@@ -65,10 +65,9 @@ def mutate_local_max_random(
             available_priority_teams,
             key=(lambda team: score(team, priorities, student_dict)),
         )
-        team_1 = available_priority_teams[0]
         team_2 = team_1
         while team_2 == team_1:
-            team_2 = random.sample(available_priority_teams, 1)
+            team_2 = random.sample(available_priority_teams, 1)[0]
         local_max(team_1, team_2, priorities, student_dict)
 
     except ValueError:
