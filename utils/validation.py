@@ -46,6 +46,7 @@ def assert_can_exist_together(
             "[WARNING]: No validation performed on harmony between student and initial teams providers when mock "
             "providers are not being used. Proceed with caution."
         )
+        return
 
     if not student_provider.settings.project_preference_options:
         return
