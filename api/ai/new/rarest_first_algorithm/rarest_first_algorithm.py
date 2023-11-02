@@ -44,9 +44,9 @@ from api.models.team_set import TeamSet
 
 class RarestFirstAlgorithm(Algorithm):
     def __init__(
-            self,
-            algorithm_options: RarestFirstAlgorithmOptions,
-            team_generation_options: TeamGenerationOptions,
+        self,
+        algorithm_options: RarestFirstAlgorithmOptions,
+        team_generation_options: TeamGenerationOptions,
     ):
         super().__init__(algorithm_options, team_generation_options)
         # This algorithm needs custom validation because of it is not a team generation algorithm
@@ -69,7 +69,7 @@ class RarestFirstAlgorithm(Algorithm):
             )
 
     def _get_students_with_attribute(
-            self, students: List[Student], requirement: ProjectRequirement
+        self, students: List[Student], requirement: ProjectRequirement
     ) -> SupportGroup:
         """
         Get support group for a given attribute
@@ -80,7 +80,7 @@ class RarestFirstAlgorithm(Algorithm):
         return SupportGroup(requirement, students_in_group)
 
     def _get_students_for_all_attributes(
-            self, students: List[Student]
+        self, students: List[Student]
     ) -> Dict[int, SupportGroup]:
         """
         Get support groups for all attributes
@@ -99,7 +99,7 @@ class RarestFirstAlgorithm(Algorithm):
         return students_for_all_attributes
 
     def _get_least_supported_group(
-            self, support_groups: Dict[int, SupportGroup]
+        self, support_groups: Dict[int, SupportGroup]
     ) -> SupportGroup:
         """
         Get the group with the least number of students
@@ -107,10 +107,10 @@ class RarestFirstAlgorithm(Algorithm):
         return min(support_groups.values(), key=lambda group: group.value)
 
     def _get_max_distances(
-            self,
-            least_supported_group: SupportGroup,
-            social_graph: RawSocialGraph,
-            all_support_groups: Dict[int, SupportGroup],
+        self,
+        least_supported_group: SupportGroup,
+        social_graph: RawSocialGraph,
+        all_support_groups: Dict[int, SupportGroup],
     ):
         max_distance_of_each_student: Dict[int, Distance] = {}
         for student_lsg in least_supported_group.students:
@@ -145,10 +145,10 @@ class RarestFirstAlgorithm(Algorithm):
         return max_distance_of_each_student
 
     def _build_shortest_distance_to_attribute_look_up(
-            self,
-            students: List[Student],
-            support_groups: Dict[int, SupportGroup],
-            social_graph: RawSocialGraph,
+        self,
+        students: List[Student],
+        support_groups: Dict[int, SupportGroup],
+        social_graph: RawSocialGraph,
     ):
         distances: Dict[int, Dict[int, Distance]] = {
             student.id: {} for student in students
