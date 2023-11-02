@@ -12,6 +12,7 @@ class AlgorithmConfig(ABC):
 
     i.e. The maximum amount of time an algorithm is allowed to run for is a config choice, not an options choice.
     """
+
     def __init__(self, name: str = None):
         self.name = name
 

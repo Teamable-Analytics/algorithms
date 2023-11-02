@@ -84,7 +84,10 @@ class TestConfigSimulationSet(unittest.TestCase):
             )
 
     def test_get_simulation_settings_from_base__creates_unique_cache_keys(self):
-        algorithm_configs = [RandomAlgorithmConfig("another"), RandomAlgorithmConfig("one")]
+        algorithm_configs = [
+            RandomAlgorithmConfig("another"),
+            RandomAlgorithmConfig("one"),
+        ]
         simulation_set = ConfigSimulationSet(
             settings=SimulationSettings(
                 num_teams=2,
