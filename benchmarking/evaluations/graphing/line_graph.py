@@ -107,4 +107,7 @@ def line_graph(graph_data: LineGraphMetadata):
     make_space_above(ax)
 
     plt.tight_layout()
-    plt.show()
+    if graph_data.save_graph:
+        plt.savefig(graph_data.file_name or graph_data.title)
+    else:
+        plt.show()
