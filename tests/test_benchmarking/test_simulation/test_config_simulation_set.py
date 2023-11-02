@@ -81,10 +81,18 @@ class TestConfigSimulationSet(unittest.TestCase):
             )
 
     def test_get_simulation_settings_from_base__creates_unique_cache_keys(self):
-        algorithm_configs = [
+        weight_configs = [
             WeightAlgorithmConfig("another"),
             WeightAlgorithmConfig("one"),
         ]
+        priority_configs = [
+            PriorityAlgorithmConfig(),
+            PriorityAlgorithmConfig(name="Just Get Good")
+        ]
+        algorithm_set = {
+            AlgorithmType.WEIGHT: weight_configs,
+            AlgorithmType.PRIORITY: priority_configs
+        }
         simulation_set = ConfigSimulationSet(
             settings=SimulationSettings(
                 num_teams=2,
@@ -92,14 +100,15 @@ class TestConfigSimulationSet(unittest.TestCase):
                 student_provider=self.student_provider,
                 cache_key="test_cache_key",
             ),
-            algorithm_set={AlgorithmType.WEIGHT: algorithm_configs},
+            algorithm_set=algorithm_set
         )
 
         generated_keys = [
-            simulation_set.get_simulation_settings_from_base(
-                AlgorithmType.WEIGHT, config.name
-            ).cache_key
-            for config in algorithm_configs
+            for algorithm in list(algorithm_set.keys()):
+                simulation_set.get_simulation_settings_from_base(
+                    AlgorithmType.WEIGHT, config.name
+                ).cache_key
+                for config in algorithm_configs
         ]
         self.assertGreater(len(generated_keys), 0)
         self.assertTrue(is_unique(generated_keys))
