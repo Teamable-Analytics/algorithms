@@ -9,7 +9,7 @@ from api.models.team import Team, TeamSerializer
 
 def are_students_equal_ignoring_team(s1: Student, s2: Student):
     for field_name in Student.__dataclass_fields__.keys():
-        if field_name == 'team':
+        if field_name == "team":
             continue
         if s1.__getattribute__(field_name) != s2.__getattribute__(field_name):
             return False
@@ -18,12 +18,11 @@ def are_students_equal_ignoring_team(s1: Student, s2: Student):
 
 def are_teams_equal_ignoring_students(t1: Team, t2: Team):
     for field_name in Team.__dataclass_fields__.keys():
-        if field_name == 'students':
+        if field_name == "students":
             continue
         if t1.__getattribute__(field_name) != t2.__getattribute__(field_name):
             return False
     return True
-
 
 
 class TestTeamSerializer(unittest.TestCase):
