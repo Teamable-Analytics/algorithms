@@ -7,6 +7,7 @@ if TYPE_CHECKING:
 
 def are_students_equal_ignoring_team(s1: "Student", s2: "Student"):
     from api.models.student import Student
+
     for field_name in Student.__dataclass_fields__.keys():
         if field_name == "team":
             continue
@@ -17,6 +18,7 @@ def are_students_equal_ignoring_team(s1: "Student", s2: "Student"):
 
 def are_teams_equal_ignoring_students(t1: "Team", t2: "Team"):
     from api.models.team import Team
+
     for field_name in Team.__dataclass_fields__.keys():
         if field_name == "students":
             continue
@@ -40,7 +42,9 @@ def teams_are_equal(t1: "Team", t2: "Team") -> bool:
         return False
 
     # a delicate approach to checking for deeper equality without causing the recursion depth error
-    for s1, s2 in zip(sorted(t1.students, key=lambda s: s.id), sorted(t2.students, key=lambda s: s.id)):
+    for s1, s2 in zip(
+        sorted(t1.students, key=lambda s: s.id), sorted(t2.students, key=lambda s: s.id)
+    ):
         if not are_students_equal_ignoring_team(s1, s2):
             return False
         if not are_teams_equal_ignoring_students(s1.team, s2.team):

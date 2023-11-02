@@ -35,6 +35,7 @@ class Team(TeamShell):
 
     def __eq__(self, other):
         from utils.testing import teams_are_equal
+
         return teams_are_equal(self, other)
 
     @property
