@@ -13,7 +13,8 @@ from api.ai.new.interfaces.algorithm_options import (
     WeightAlgorithmOptions,
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
-    MultipleRoundRobinAlgorithmOptions, RarestFirstAlgorithmOptions,
+    MultipleRoundRobinAlgorithmOptions,
+    RarestFirstAlgorithmOptions,
 )
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.new.multiple_round_robin_with_adjusted_winner.multiple_round_robin import (
