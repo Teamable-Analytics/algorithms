@@ -110,7 +110,6 @@ class TestMutations(unittest.TestCase):
         for team in priority_team_set.priority_teams:
             self.assertIsInstance(team, PriorityTeam)
 
-
     def test_mutate_local_max_random__improves_score(self):
         self.priorities.append(JohnPriority())
         score_before = self.priority_team_set.calculate_score(
