@@ -17,15 +17,23 @@ class ConfigSimulationSet:
     def __init__(
         self,
         settings: SimulationSettings,
-        algorithm_type: AlgorithmType,
-        algorithm_configs: List[AlgorithmConfig],
+        algorithm_types: List[AlgorithmType],
+        algorithm_configs: Dict[AlgorithmType, List[AlgorithmConfig]],
     ):
-        self.algorithm_type = algorithm_type
+        if not is_unique(algorithm_types):
+            raise ValueError("Each algorithm can only be specified once")
+        self.algorithm_type = algorithm_types
         self.base_settings = settings
         self.base_cache_key = self.base_settings.cache_key
-        names = [_.name for _ in algorithm_configs]
-        if any(item is None for item in names) or not is_unique(names):
-            raise ValueError("Each algorithm config must have a unique name")
+        # Need to check that default is not specified, and that all names are unique
+        for configs in algorithm_configs.values():
+            names = [_.name for _ in configs]
+            if [item.lower() for item in names].count("default") > 0:
+                raise ValueError("Default is a reserved name for algorithm configs.")
+            if len([item for item in names if item is None]) > 1:
+                raise ValueError("Only one config can use the default")
+            if not is_unique(names):
+                raise ValueError("Each algorithm config must have a unique name")
         self.algorithm_configs = algorithm_configs
         self.basic_simulation_set_artifact: ConfigSimulationSetArtifact = {}
 

@@ -5,6 +5,7 @@ from typing import Callable, Tuple, List
 from api.ai.new.priority_algorithm.mutations.random_swap import mutate_random_swap
 
 
+@dataclass
 class AlgorithmConfig(ABC):
     """
     An algorithm config is semantically different from AlgorithmOptions.
@@ -13,8 +14,7 @@ class AlgorithmConfig(ABC):
     i.e. The maximum amount of time an algorithm is allowed to run for is a config choice, not an options choice.
     """
 
-    def __init__(self, name: str = None):
-        self.name = name
+    name: str = None
 
     def __post_init__(self):
         self.validate()
@@ -41,10 +41,10 @@ class SocialAlgorithmConfig(AlgorithmConfig):
 
 @dataclass
 class PriorityAlgorithmConfig(AlgorithmConfig):
-    MAX_KEEP: int  # nodes
-    MAX_SPREAD: int  # nodes
-    MAX_ITERATE: int  # iterations
-    MAX_TIME: int  # seconds
+    MAX_KEEP: int = 3  # nodes
+    MAX_SPREAD: int = 3  # nodes
+    MAX_ITERATE: int = 1  # iterations
+    MAX_TIME: int = 1  # seconds
 
     """
     Specifies the mutations as a list of [mutation_function, number_team_sets_generated_this_way]
