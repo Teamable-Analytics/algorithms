@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict
 
 from api.models.project import ProjectRequirement
 from api.models.student import Student
@@ -28,15 +28,26 @@ class TeamShell:
 class Team(TeamShell):
     students: List[Student] = field(default_factory=list)
 
+    def __post_init__(self):
+        # if this team is initialized with students, all students have their .team assigned properly
+        for s in self.students:
+            s.team = self
+
+    def __eq__(self, other):
+        from utils.testing import teams_are_equal
+
+        return teams_are_equal(self, other)
+
     @property
     def size(self) -> int:
         return len(self.students)
 
     @classmethod
     def from_shell(cls, shell: TeamShell) -> "Team":
+        name = shell.name or f"Team {shell.id}"
         return cls(
             _id=shell.id,
-            name=shell.name,
+            name=name,
             project_id=shell.project_id,
             requirements=shell.requirements,
             is_locked=shell.is_locked,
@@ -65,3 +76,11 @@ class Team(TeamShell):
 
     def unlock(self):
         self.is_locked = False
+
+    def todict(self) -> Dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "student_ids": [student.id for student in self.students],
+            "project_id": self.project_id,
+        }
