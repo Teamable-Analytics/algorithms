@@ -1,17 +1,18 @@
 from typing import List
 
+from api.models.project import ProjectRequirement
 from api.models.student import Student
 
 
 class SupportGroup:
-    def __init__(self, attribute_id: int, students: List[Student]):
+    def __init__(self, requirement: ProjectRequirement, students: List[Student]):
         """
         Args:
             attribute_id: The attribute id of the support group
             students: The students in the support group
         """
         self.students = students
-        self.attribute_id = attribute_id
+        self.requirement = requirement
         self.value = len(students)
 
 

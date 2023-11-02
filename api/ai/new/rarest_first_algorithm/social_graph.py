@@ -1,4 +1,3 @@
-from itertools import combinations
 from typing import List, Tuple, Dict
 
 from api.models.enums import Relationship
@@ -32,31 +31,33 @@ class RawSocialGraph:
         Raw Social Graph (directed) -> {(from_id, to_id): relationship} : Dict[Tuple[int, int], float]
         """
         social_graph: Dict[int, Dict[int, float]] = {}
-        for student, other in combinations(self.students, 2):
-            if student.id == other.id:  # self-edges are not allowed
-                continue
+        for student in self.students:
+            for other in self.students:
+                if student.id == other.id:  # self-edges are not allowed
+                    continue
 
-            if student.id not in social_graph:
-                social_graph[student.id] = {}
-            social_graph[student.id][other.id] = Relationship.DEFAULT.value
-            if other.id in student.relationships:
-                # update to real relationship value if one exists
-                social_graph[student.id][other.id] = student.relationships[
-                    other.id
-                ].value
-            # Dijkstra's algorithm requires all edges to be positive
-            social_graph[student.id][other.id] += Relationship.FRIEND.value
+                if student.id not in social_graph:
+                    social_graph[student.id] = {}
+                social_graph[student.id][other.id] = Relationship.DEFAULT.value
+                if other.id in student.relationships:
+                    # update to real relationship value if one exists
+                    social_graph[student.id][other.id] = student.relationships[
+                        other.id
+                    ].value
 
-            if other.id not in social_graph:
-                social_graph[other.id] = {}
-            social_graph[other.id][student.id] = Relationship.DEFAULT.value
-            if student.id in other.relationships:
-                # update to real relationship value if one exists
-                social_graph[other.id][student.id] = other.relationships[
-                    student.id
-                ].value
-            # Dijkstra's algorithm requires all edges to be positive
-            social_graph[other.id][student.id] += Relationship.FRIEND.value
+                # Dijkstra's algorithm requires all edges to be positive
+                social_graph[student.id][other.id] += abs(Relationship.FRIEND.value)
+
+                if other.id not in social_graph:
+                    social_graph[other.id] = {}
+                social_graph[other.id][student.id] = Relationship.DEFAULT.value
+                if student.id in other.relationships:
+                    # update to real relationship value if one exists
+                    social_graph[other.id][student.id] = other.relationships[
+                        student.id
+                    ].value
+                # Dijkstra's algorithm requires all edges to be positive
+                social_graph[other.id][student.id] += abs(Relationship.FRIEND.value)
 
         return social_graph
 
@@ -113,4 +114,4 @@ class RawSocialGraph:
         try:
             return self.distances[start_student.id][end_student.id]
         except KeyError:
-            return float("inf")
+            return Relationship.DEFAULT.value

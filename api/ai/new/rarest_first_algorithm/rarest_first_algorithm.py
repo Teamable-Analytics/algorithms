@@ -7,6 +7,7 @@ Assumptions:
     - If a student is a friend of another student, the edge has negative weight (we use -1)
     - If a student is not a friend of another student, the edge has positive weight (we use 1.1)
     - If they are neither friend nor not friend, the edge has neutral weight (we use 0)
+- Because Dijkstra's algorithm requires all edges to be positive, we add the value of 1 to all edges
 - We know the shortest distance between a student i with a support group of attribute a (we call it d(i, a)). This means
 we know who is the closest to student i having attribute a.
 
@@ -33,52 +34,72 @@ from typing import List, Dict, Set
 
 from api.ai.new.interfaces.algorithm import Algorithm
 from api.ai.new.interfaces.algorithm_options import RarestFirstAlgorithmOptions
+from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.new.rarest_first_algorithm.custom_models import SupportGroup, Distance
 from api.ai.new.rarest_first_algorithm.social_graph import RawSocialGraph
+from api.models.project import ProjectRequirement
 from api.models.student import Student
-from api.models.team import Team
 from api.models.team_set import TeamSet
 
 
 class RarestFirstAlgorithm(Algorithm):
     def __init__(
-        self, algorithm_options: RarestFirstAlgorithmOptions, team_generation_options
+            self,
+            algorithm_options: RarestFirstAlgorithmOptions,
+            team_generation_options: TeamGenerationOptions,
     ):
         super().__init__(algorithm_options, team_generation_options)
+        # This algorithm needs custom validation because of it is not a team generation algorithm
+        self._validate()
 
-        self.attributes = algorithm_options.attributes
+        self.requirements = team_generation_options.initial_teams[0].requirements
+
+    def _validate(self):
+        if self.team_generation_options.total_teams != 1:
+            raise ValueError(
+                f"RarestFirstAlgorithm only supports total_teams = 1, got {self.team_generation_options.total_teams}"
+            )
+        if self.team_generation_options.initial_teams is None:
+            raise ValueError(
+                f"RarestFirstAlgorithm requires initial_teams to be passed in, got None"
+            )
+        if self.team_generation_options.initial_teams[0].requirements is None:
+            raise ValueError(
+                f"RarestFirstAlgorithm requires initial_teams[0].requirements to be passed in, got None"
+            )
 
     def _get_students_with_attribute(
-        self, students: List[Student], attribute_id: int
+            self, students: List[Student], requirement: ProjectRequirement
     ) -> SupportGroup:
         """
         Get support group for a given attribute
         """
         students_in_group = [
-            student for student in students if attribute_id in student.attributes
+            student for student in students if student.meets_requirement(requirement)
         ]
-        return SupportGroup(attribute_id, students_in_group)
+        return SupportGroup(requirement, students_in_group)
 
     def _get_students_for_all_attributes(
-        self, students: List[Student]
+            self, students: List[Student]
     ) -> Dict[int, SupportGroup]:
         """
         Get support groups for all attributes
         """
         students_for_all_attributes: Dict[int, SupportGroup] = {}
-        for attribute_id in self.attributes:
+        requirements = self.teams[0].requirements
+        for requirement in requirements:
             students_with_attribute = self._get_students_with_attribute(
-                students, attribute_id
+                students, requirement
             )
             if students_with_attribute.value > 0:
                 students_for_all_attributes[
-                    attribute_id
-                ] = self._get_students_with_attribute(students, attribute_id)
+                    requirement.attribute
+                ] = students_with_attribute
 
         return students_for_all_attributes
 
     def _get_least_supported_group(
-        self, support_groups: Dict[int, SupportGroup]
+            self, support_groups: Dict[int, SupportGroup]
     ) -> SupportGroup:
         """
         Get the group with the least number of students
@@ -86,10 +107,10 @@ class RarestFirstAlgorithm(Algorithm):
         return min(support_groups.values(), key=lambda group: group.value)
 
     def _get_max_distances(
-        self,
-        least_supported_group: SupportGroup,
-        social_graph: RawSocialGraph,
-        all_support_groups: Dict[int, SupportGroup],
+            self,
+            least_supported_group: SupportGroup,
+            social_graph: RawSocialGraph,
+            all_support_groups: Dict[int, SupportGroup],
     ):
         max_distance_of_each_student: Dict[int, Distance] = {}
         for student_lsg in least_supported_group.students:
@@ -97,11 +118,11 @@ class RarestFirstAlgorithm(Algorithm):
 
             max_distance = Distance(float("-inf"))
 
-            for attribute_id in self.attributes:
-                if attribute_id == least_supported_group.attribute_id:
+            for requirement in self.requirements:
+                if requirement.attribute == least_supported_group.requirement.attribute:
                     continue
 
-                current_support_group = all_support_groups.get(attribute_id)
+                current_support_group = all_support_groups.get(requirement.attribute)
                 if not current_support_group:
                     continue
 
@@ -124,17 +145,17 @@ class RarestFirstAlgorithm(Algorithm):
         return max_distance_of_each_student
 
     def _build_shortest_distance_to_attribute_look_up(
-        self,
-        students: List[Student],
-        support_groups: Dict[int, SupportGroup],
-        social_graph: RawSocialGraph,
+            self,
+            students: List[Student],
+            support_groups: Dict[int, SupportGroup],
+            social_graph: RawSocialGraph,
     ):
         distances: Dict[int, Dict[int, Distance]] = {
             student.id: {} for student in students
         }
         for student in students:
-            for attribute_id in self.attributes:
-                current_support_group = support_groups.get(attribute_id)
+            for requirement in self.requirements:
+                current_support_group = support_groups.get(requirement.attribute)
                 if not current_support_group:
                     continue
 
@@ -153,7 +174,7 @@ class RarestFirstAlgorithm(Algorithm):
                         min_distance.is_updated = True
 
                 if min_distance.is_updated:
-                    distances[student.id][attribute_id] = min_distance
+                    distances[student.id][requirement.attribute] = min_distance
 
         return distances
 
@@ -180,10 +201,10 @@ class RarestFirstAlgorithm(Algorithm):
                 min_distance = current_distance
 
         result: Set[int] = {min_distance.start_student.id}
-        for attribute_id in self.attributes:
+        for requirement in self.requirements:
             distance_from_i_star = shortest_distance_to_attribute[
                 min_distance.start_student.id
-            ].get(attribute_id)
+            ].get(requirement.attribute)
             if distance_from_i_star and distance_from_i_star.is_updated:
                 result.add(distance_from_i_star.end_student.id)
 

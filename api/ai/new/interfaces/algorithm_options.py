@@ -84,8 +84,6 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
 
 @dataclass
 class RarestFirstAlgorithmOptions(AlgorithmOptions):
-    attributes: List[int] = field(default_factory=list)
-
     def validate(self):
         super().validate()
 
