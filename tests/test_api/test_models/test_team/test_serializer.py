@@ -104,7 +104,7 @@ class TestTeamSerializer(unittest.TestCase):
         decoded_team = decoder.decode(json_dict)
         self.assertIsInstance(decoded_team, cls=Team)
 
-    def test_decode__students_returned_are_within_team(self):
+    def test_decode__students_returned_have_team(self):
         decoder = TeamSerializer()
         json_dict = json.loads(self.json_teams[0])
         decoded_team = decoder.decode(json_dict)
