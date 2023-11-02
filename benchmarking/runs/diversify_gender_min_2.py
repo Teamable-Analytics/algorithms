@@ -113,7 +113,7 @@ def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
                     MAX_TIME=1,
                     MAX_ITERATE=1000,
                     MUTATIONS=[(mutate_random_swap, 4), (mutate_local_max, 1)],
-                    name="AlgorithmType.PRIORITY.RANDOM_SWAP_4.MUTATE_LOCAL_MAX_1"
+                    name="AlgorithmType.PRIORITY.RANDOM_SWAP_4.MUTATE_LOCAL_MAX_1",
                 )
             ],
         ).run(num_runs=num_trials)

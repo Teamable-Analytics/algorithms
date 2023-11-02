@@ -18,6 +18,11 @@ class AlgorithmConfig(ABC):
 
     def __post_init__(self):
         self.validate()
+        if self.name.lower() == "default":
+            raise ValueError(
+                "The name default is reserved for the default configuration"
+            )
+        self.name = self.name or "default"
 
     @abstractmethod
     def validate(self):

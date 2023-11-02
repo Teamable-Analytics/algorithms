@@ -17,39 +17,37 @@ class ConfigSimulationSet:
     def __init__(
         self,
         settings: SimulationSettings,
-        algorithm_types: List[AlgorithmType],
-        algorithm_configs: Dict[AlgorithmType, List[AlgorithmConfig]],
+        algorithm_set: Dict[AlgorithmType, List[AlgorithmConfig]],
     ):
-        if not is_unique(algorithm_types):
-            raise ValueError("Each algorithm can only be specified once")
-        self.algorithm_type = algorithm_types
+        self.algorithm_set = algorithm_set
         self.base_settings = settings
         self.base_cache_key = self.base_settings.cache_key
+        self.algorithm_types = list(algorithm_set.keys())
         # Need to check that default is not specified, and that all names are unique
-        for configs in algorithm_configs.values():
+        for configs in algorithm_set.values():
             names = [_.name for _ in configs]
-            if [item.lower() for item in names].count("default") > 0:
-                raise ValueError("Default is a reserved name for algorithm configs.")
-            if len([item for item in names if item is None]) > 1:
-                raise ValueError("Only one config can use the default")
             if not is_unique(names):
-                raise ValueError("Each algorithm config must have a unique name")
-        self.algorithm_configs = algorithm_configs
+                raise ValueError("For each algorithm, the config names must be unique!")
         self.basic_simulation_set_artifact: ConfigSimulationSetArtifact = {}
 
     def run(self, num_runs: int) -> ConfigSimulationSetArtifact:
-        for config in self.algorithm_configs:
-            self.basic_simulation_set_artifact[config.name] = Simulation(
-                algorithm_type=self.algorithm_type,
-                settings=self.get_simulation_settings_from_base(name=config.name),
-                config=config,
-            ).run(num_runs)
+        for algorithm in self.algorithm_types:
+            for config in self.algorithm_set[algorithm]:
+                self.basic_simulation_set_artifact[config.name] = Simulation(
+                    algorithm_type=algorithm,
+                    settings=self.get_simulation_settings_from_base(
+                        algorithm, name=config.name
+                    ),
+                    config=config,
+                ).run(num_runs)
 
         return self.basic_simulation_set_artifact
 
-    def get_simulation_settings_from_base(self, name: str) -> SimulationSettings:
+    def get_simulation_settings_from_base(
+        self, algorithm_type: AlgorithmType, name: str
+    ) -> SimulationSettings:
         cache_key = (
-            f"{self.base_settings.cache_key}/{name}"
+            f"{self.base_settings.cache_key}/{str(algorithm_type)}-{name}"
             if self.base_settings.cache_key
             else None
         )
