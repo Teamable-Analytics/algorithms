@@ -170,6 +170,12 @@ class RarestFirstAlgorithmOptions(AlgorithmOptions):
     def validate(self):
         super().validate()
 
+    @staticmethod
+    def parse_json(_: Dict[str, Any]):
+        raise AttributeError(
+            "RarestFirstAlgorithmOptions does not support parsing from json."
+        )
+
 
 AnyAlgorithmOptions = Union[
     RandomAlgorithmOptions,

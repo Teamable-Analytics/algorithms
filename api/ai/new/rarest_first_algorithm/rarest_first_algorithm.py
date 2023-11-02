@@ -202,6 +202,8 @@ class RarestFirstAlgorithm(Algorithm):
 
         result: Set[int] = {min_distance.start_student.id}
         for requirement in self.requirements:
+            if requirement.attribute == least_supported_group.requirement.attribute:
+                continue
             distance_from_i_star = shortest_distance_to_attribute[
                 min_distance.start_student.id
             ].get(requirement.attribute)
