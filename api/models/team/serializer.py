@@ -32,10 +32,14 @@ class TeamSerializer(JSONEncoder, ModelDecoder):
         requirements = [
             requirement_serializer.decode(req) for req in json_dict["requirements"]
         ]
-        return Team(
+        team = Team(
             _id=json_dict["_id"],
             name=json_dict["name"],
             project_id=json_dict["project_id"],
             requirements=requirements,
             students=students,
         )
+
+        for student in students:
+            student.team = team
+        return team

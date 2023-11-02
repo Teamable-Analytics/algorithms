@@ -5,6 +5,7 @@ from api.models.enums import RequirementOperator, Relationship
 from api.models.project import ProjectRequirement
 from api.models.student import Student
 from api.models.team import Team, TeamSerializer
+from utils.testing import teams_are_equal
 
 
 class TestTeamSerializer(unittest.TestCase):
@@ -60,6 +61,7 @@ class TestTeamSerializer(unittest.TestCase):
                 ],
             ),
         ]
+
         json_students_team_1 = '[{"_id": 4, "name": "Teresa", "attributes": {"7": [2]}, "relationships": {"1": -1, "45": 1.1}, "project_preferences": [6]}, {"_id": 1, "name": "Sam", "attributes": {"1": [4, 5, 6]}, "relationships": {"100": 1.1, "45": 1.1, "1": 1.1}, "project_preferences": [4, 6]}]'
         json_requirements_team_1 = '[{"attribute": 4, "operator": "exactly", "value": 3}, {"attribute": 1, "operator": "less than", "value": 1}]'
         json_students_team_2 = '[{"_id": 45, "name": "James", "attributes": {}, "relationships": {}, "project_preferences": []}, {"_id": 46, "name": "Jessie", "attributes": {}, "relationships": {}, "project_preferences": []}, {"_id": 100, "name": "Meowth", "attributes": {}, "relationships": {}, "project_preferences": []}]'
@@ -81,9 +83,19 @@ class TestTeamSerializer(unittest.TestCase):
         decoded_team = decoder.decode(json_dict)
         self.assertIsInstance(decoded_team, cls=Team)
 
+    def test_decode__students_returned_have_team(self):
+        decoder = TeamSerializer()
+        json_dict = json.loads(self.json_teams[0])
+        decoded_team = decoder.decode(json_dict)
+
+        for student in decoded_team.students:
+            self.assertIsNotNone(student.team)
+            self.assertIsInstance(student.team, Team)
+
     def test_team_serializer__decodes_teams_correctly_from_json(self):
         decoder = TeamSerializer()
         for i, team in enumerate(self.json_teams):
             json_dict = json.loads(team)
             decoded_team = decoder.decode(json_dict)
-            self.assertEqual(self.teams[i], decoded_team)
+
+            self.assertTrue(teams_are_equal(decoded_team, self.teams[i]))
