@@ -38,7 +38,7 @@ from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetA
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = True):
+def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
     """
     Goal: Run diversify gender scenario, measure average, min, and max gini index
     """
