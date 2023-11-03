@@ -3,6 +3,16 @@ from typing import Dict, List
 
 import typer
 
+from api.ai.new.interfaces.algorithm_config import (
+    PriorityAlgorithmConfig,
+    RandomAlgorithmConfig,
+    SocialAlgorithmConfig,
+    WeightAlgorithmConfig,
+)
+from api.ai.new.priority_algorithm.mutations import (
+    mutate_local_max,
+    mutate_random_swap,
+)
 from benchmarking.evaluations.goals import DiversityGoal
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
@@ -22,12 +32,9 @@ from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatis
 from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
     DiversifyGenderMin2Female,
 )
-from benchmarking.simulation.basic_simulation_set_2 import (
-    BasicSimulationSet2,
-    BasicSimulationSetArtifact,
-)
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
+from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
@@ -67,7 +74,7 @@ def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
         ),
     }
 
-    artifacts: Dict[int, BasicSimulationSetArtifact] = {}
+    artifacts: Dict[int, SimulationSetArtifact] = {}
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -85,21 +92,31 @@ def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
             },
         )
 
-        simulation_set_artifact = BasicSimulationSet2(
+        simulation_set_artifact = SimulationSet(
             settings=SimulationSettings(
                 num_teams=number_of_teams,
                 scenario=scenario,
                 student_provider=MockStudentProvider(student_provider_settings),
                 cache_key=f"diversify_gender_min_2_{number_of_teams}",
-            )
+            ),
+            algorithm_set={
+                AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
+                AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
+                AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
+                AlgorithmType.PRIORITY_NEW: [
+                    PriorityAlgorithmConfig(),
+                    PriorityAlgorithmConfig(
+                        name="local_max",
+                        MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
+                    ),
+                ],
+            },
         ).run(num_runs=num_trials)
         artifacts[class_size] = simulation_set_artifact
 
     if generate_graphs:
         for class_size, artifact in artifacts.items():
-            insight_set: Dict[
-                AlgorithmType, Dict[str, List[float]]
-            ] = Insight.get_output_set(
+            insight_set: Dict[str, Dict[str, List[float]]] = Insight.get_output_set(
                 artifact=artifact, metrics=list(metrics.values())
             )
 
@@ -121,16 +138,16 @@ def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
 
             # Data processing for graph
             for i, metric in enumerate(metric_values):
-                for algorithm_type, data in metric.items():
-                    if algorithm_type not in graph_dicts[i]:
-                        graph_dicts[i][algorithm_type] = GraphData(
+                for name, data in metric.items():
+                    if name not in graph_dicts[i]:
+                        graph_dicts[i][name] = GraphData(
                             x_data=[class_size],
                             y_data=[data],
-                            name=algorithm_type.value,
+                            name=name,
                         )
                     else:
-                        graph_dicts[i][algorithm_type].x_data.append(class_size)
-                        graph_dicts[i][algorithm_type].y_data.append(data)
+                        graph_dicts[i][name].x_data.append(class_size)
+                        graph_dicts[i][name].y_data.append(data)
 
         line_graph(
             LineGraphMetadata(

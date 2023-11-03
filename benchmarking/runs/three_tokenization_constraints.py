@@ -3,6 +3,13 @@ from typing import Dict, List
 
 import typer
 
+from api.ai.new.interfaces.algorithm_config import (
+    RandomAlgorithmConfig,
+    SocialAlgorithmConfig,
+    WeightAlgorithmConfig,
+    PriorityAlgorithmConfig,
+)
+from api.ai.new.priority_algorithm.mutations import mutate_local_max, mutate_random_swap
 from api.models.enums import ScenarioAttribute, Gpa, Age, Race, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
@@ -20,16 +27,13 @@ from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatis
 from benchmarking.evaluations.scenarios.three_tokenization_constraints import (
     ThreeTokenizationConstraints,
 )
-from benchmarking.simulation.basic_simulation_set_2 import (
-    BasicSimulationSet2,
-    BasicSimulationSetArtifact,
-)
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
+from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-def three_tokenization_constraints(num_trials: int = 10, generate_graphs: bool = False):
+def three_tokenization_constraints(num_trials: int = 10, generate_graphs: bool = True):
     """
     Goal: Run a scenario with three tokenization constraints:
     concentrate GPA max three, diversify race min two, and concentrate age max three.
@@ -85,7 +89,7 @@ def three_tokenization_constraints(num_trials: int = 10, generate_graphs: bool =
         ),
     }
 
-    artifacts: Dict[int, BasicSimulationSetArtifact] = {}
+    artifacts: Dict[int, SimulationSetArtifact] = {}
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -116,21 +120,31 @@ def three_tokenization_constraints(num_trials: int = 10, generate_graphs: bool =
             },
         )
 
-        simulation_set_artifact = BasicSimulationSet2(
+        simulation_set_artifact = SimulationSet(
             settings=SimulationSettings(
                 num_teams=number_of_teams,
                 scenario=scenario,
                 student_provider=MockStudentProvider(student_provider_settings),
                 cache_key=f"three_tokenization_constraints_{number_of_teams}",
-            )
+            ),
+            algorithm_set={
+                AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
+                AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
+                AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
+                AlgorithmType.PRIORITY_NEW: [
+                    PriorityAlgorithmConfig(),
+                    PriorityAlgorithmConfig(
+                        name="local_max",
+                        MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
+                    ),
+                ],
+            },
         ).run(num_runs=num_trials)
         artifacts[class_size] = simulation_set_artifact
 
     if generate_graphs:
         for class_size, artifact in artifacts.items():
-            insight_set: Dict[
-                AlgorithmType, Dict[str, List[float]]
-            ] = Insight.get_output_set(
+            insight_set: Dict[str, Dict[str, List[float]]] = Insight.get_output_set(
                 artifact=artifact, metrics=list(metrics.values())
             )
 
@@ -150,16 +164,16 @@ def three_tokenization_constraints(num_trials: int = 10, generate_graphs: bool =
 
             # Data processing for graph
             for i, metric in enumerate(metric_values):
-                for algorithm_type, data in metric.items():
-                    if algorithm_type not in graph_dicts[i]:
-                        graph_dicts[i][algorithm_type] = GraphData(
+                for name, data in metric.items():
+                    if name not in graph_dicts[i]:
+                        graph_dicts[i][name] = GraphData(
                             x_data=[class_size],
                             y_data=[data],
-                            name=algorithm_type.value,
+                            name=name,
                         )
                     else:
-                        graph_dicts[i][algorithm_type].x_data.append(class_size)
-                        graph_dicts[i][algorithm_type].y_data.append(data)
+                        graph_dicts[i][name].x_data.append(class_size)
+                        graph_dicts[i][name].y_data.append(data)
 
         line_graph(
             LineGraphMetadata(
