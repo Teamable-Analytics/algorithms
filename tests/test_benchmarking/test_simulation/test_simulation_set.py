@@ -17,7 +17,7 @@ from tests.test_benchmarking.test_simulation._data import TestScenario
 from utils.validation import is_unique
 
 
-class TestConfigSimulationSet(unittest.TestCase):
+class TestSimulationSet(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.scenario = TestScenario()
