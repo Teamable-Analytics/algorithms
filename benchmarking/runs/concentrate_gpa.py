@@ -3,7 +3,6 @@ from typing import Dict, List
 
 import typer
 
-from api.ai.new.interfaces.algorithm_config import RandomAlgorithmConfig
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -21,7 +20,6 @@ from benchmarking.simulation.basic_simulation_set_2 import (
     BasicSimulationSet2,
     BasicSimulationSetArtifact,
 )
-from benchmarking.simulation.config_simulation_set import ConfigSimulationSet
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
@@ -73,16 +71,13 @@ def concentrate_gpa(num_trials: int = 10, generate_graphs: bool = False):
             },
         )
 
-        simulation_set_artifact = ConfigSimulationSet(
+        simulation_set_artifact = BasicSimulationSet2(
             settings=SimulationSettings(
                 num_teams=number_of_teams,
                 scenario=ConcentrateGPA(),
                 student_provider=MockStudentProvider(student_provider_settings),
                 cache_key=f"concentrate_gpa_{number_of_teams}",
-            ),
-            algorithm_set={
-                AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
-            }
+            )
         ).run(num_runs=num_trials)
         artifacts[class_size] = simulation_set_artifact
 

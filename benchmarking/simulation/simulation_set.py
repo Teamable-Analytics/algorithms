@@ -6,10 +6,10 @@ from benchmarking.simulation.simulation import SimulationArtifact, Simulation
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from utils.validation import is_unique
 
-ConfigSimulationSetArtifact = Dict[str, SimulationArtifact]
+SimulationSetArtifact = Dict[str, SimulationArtifact]
 
 
-class ConfigSimulationSet:
+class SimulationSet:
     """
     Represents a set of Simulation runs for when you want to run 1 algorithm with multiple configs
     """
@@ -28,12 +28,12 @@ class ConfigSimulationSet:
             names = [_.name for _ in configs]
             if not is_unique(names):
                 raise ValueError("For each algorithm, the config names must be unique!")
-        self.basic_simulation_set_artifact: ConfigSimulationSetArtifact = {}
+        self.basic_simulation_set_artifact: SimulationSetArtifact = {}
 
-    def run(self, num_runs: int) -> ConfigSimulationSetArtifact:
+    def run(self, num_runs: int) -> SimulationSetArtifact:
         for algorithm in self.algorithm_types:
             for config in self.algorithm_set[algorithm]:
-                self.basic_simulation_set_artifact[config.name] = Simulation(
+                self.basic_simulation_set_artifact[f"{str(algorithm)}-{config.name}"] = Simulation(
                     algorithm_type=algorithm,
                     settings=self.get_simulation_settings_from_base(
                         algorithm, name=config.name
@@ -61,7 +61,7 @@ class ConfigSimulationSet:
 
     @staticmethod
     def get_artifact(
-        config_simulation_set_artifact: ConfigSimulationSetArtifact,
+        config_simulation_set_artifact: SimulationSetArtifact,
         name: str,
     ) -> SimulationArtifact:
         return config_simulation_set_artifact.get(name, ([], []))

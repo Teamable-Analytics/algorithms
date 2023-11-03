@@ -3,8 +3,16 @@ from typing import Dict, List
 
 import typer
 
-from api.ai.new.interfaces.algorithm_config import PriorityAlgorithmConfig
-from api.ai.new.priority_algorithm.mutations import mutate_random_swap, mutate_local_max
+from api.ai.new.interfaces.algorithm_config import (
+    PriorityAlgorithmConfig,
+    RandomAlgorithmConfig,
+    SocialAlgorithmConfig,
+    WeightAlgorithmConfig,
+)
+from api.ai.new.priority_algorithm.mutations import (
+    mutate_local_max,
+    mutate_random_swap,
+)
 from benchmarking.evaluations.goals import DiversityGoal
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
@@ -24,13 +32,9 @@ from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatis
 from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
     DiversifyGenderMin2Female,
 )
-from benchmarking.simulation.basic_simulation_set_2 import (
-    BasicSimulationSet2,
-    BasicSimulationSetArtifact,
-)
-from benchmarking.simulation.config_simulation_set import ConfigSimulationSet
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
+from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
@@ -70,7 +74,7 @@ def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
         ),
     }
 
-    artifacts: Dict[int, BasicSimulationSetArtifact] = {}
+    artifacts: Dict[int, SimulationSetArtifact] = {}
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -88,35 +92,27 @@ def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
             },
         )
 
-        simulation_set_artifact = BasicSimulationSet2(
+        simulation_set_artifact = SimulationSet(
             settings=SimulationSettings(
                 num_teams=number_of_teams,
                 scenario=scenario,
                 student_provider=MockStudentProvider(student_provider_settings),
-                cache_key=f"diversify_gender_min_2_{number_of_teams}",
-            )
+                cache_key=f"concentrate_gpa_{number_of_teams}",
+            ),
+            algorithm_set={
+                AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
+                AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
+                AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
+                AlgorithmType.PRIORITY_NEW: [
+                    PriorityAlgorithmConfig(),
+                    PriorityAlgorithmConfig(
+                        name="local_max",
+                        MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
+                    ),
+                ],
+            },
         ).run(num_runs=num_trials)
         artifacts[class_size] = simulation_set_artifact
-
-        priority_artifact = ConfigSimulationSet(
-            settings=SimulationSettings(
-                num_teams=number_of_teams,
-                scenario=scenario,
-                student_provider=MockStudentProvider(student_provider_settings),
-                cache_key=f"diversify_gender_min_2_{number_of_teams}",
-            ),
-            algorithm_type=AlgorithmType.PRIORITY_NEW,
-            algorithm_configs=[
-                PriorityAlgorithmConfig(
-                    MAX_KEEP=3,
-                    MAX_SPREAD=5,
-                    MAX_TIME=1,
-                    MAX_ITERATE=1000,
-                    MUTATIONS=[(mutate_random_swap, 4), (mutate_local_max, 1)],
-                    name="AlgorithmType.PRIORITY.RANDOM_SWAP_4.MUTATE_LOCAL_MAX_1",
-                )
-            ],
-        ).run(num_runs=num_trials)
 
     if generate_graphs:
         for class_size, artifact in artifacts.items():

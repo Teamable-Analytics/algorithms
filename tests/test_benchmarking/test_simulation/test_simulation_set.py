@@ -11,7 +11,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
-from benchmarking.simulation.config_simulation_set import ConfigSimulationSet
+from benchmarking.simulation.simulation_set import SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from tests.test_benchmarking.test_simulation._data import TestScenario
 from utils.validation import is_unique
@@ -33,7 +33,7 @@ class TestConfigSimulationSet(unittest.TestCase):
             cache_key="test_cache_key",
         )
         with self.assertRaises(ValueError):
-            ConfigSimulationSet(
+            SimulationSet(
                 settings=base_settings,
                 algorithm_set={
                     AlgorithmType.SOCIAL: [
@@ -44,7 +44,7 @@ class TestConfigSimulationSet(unittest.TestCase):
                 },
             )
         with self.assertRaises(ValueError):
-            ConfigSimulationSet(
+            SimulationSet(
                 settings=base_settings,
                 algorithm_set={
                     AlgorithmType.RANDOM: [
@@ -64,7 +64,7 @@ class TestConfigSimulationSet(unittest.TestCase):
             student_provider=self.student_provider,
             cache_key="test_cache_key",
         )
-        simulation_set = ConfigSimulationSet(
+        simulation_set = SimulationSet(
             settings=base_settings,
             algorithm_set={AlgorithmType.SOCIAL: [SocialAlgorithmConfig("another")]},
         )
@@ -87,28 +87,28 @@ class TestConfigSimulationSet(unittest.TestCase):
         ]
         priority_configs = [
             PriorityAlgorithmConfig(),
-            PriorityAlgorithmConfig(name="Just Get Good")
+            PriorityAlgorithmConfig(name="Just Get Good"),
         ]
         algorithm_set = {
             AlgorithmType.WEIGHT: weight_configs,
-            AlgorithmType.PRIORITY: priority_configs
+            AlgorithmType.PRIORITY: priority_configs,
         }
-        simulation_set = ConfigSimulationSet(
+        simulation_set = SimulationSet(
             settings=SimulationSettings(
                 num_teams=2,
                 scenario=self.scenario,
                 student_provider=self.student_provider,
                 cache_key="test_cache_key",
             ),
-            algorithm_set=algorithm_set
+            algorithm_set=algorithm_set,
         )
 
         generated_keys = [
-            for algorithm in list(algorithm_set.keys()):
-                simulation_set.get_simulation_settings_from_base(
-                    AlgorithmType.WEIGHT, config.name
-                ).cache_key
-                for config in algorithm_configs
+            simulation_set.get_simulation_settings_from_base(
+                algorithm, config.name
+            ).cache_key
+            for config in weight_configs
+            for algorithm in algorithm_set.keys()
         ]
-        self.assertGreater(len(generated_keys), 0)
+        self.assertEqual(4, len(generated_keys))
         self.assertTrue(is_unique(generated_keys))
