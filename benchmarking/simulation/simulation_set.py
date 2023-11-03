@@ -11,7 +11,7 @@ SimulationSetArtifact = Dict[str, SimulationArtifact]
 
 class SimulationSet:
     """
-    Represents a set of Simulation runs for when you want to run 1 algorithm with multiple configs
+    Represents a set of Simulation runs for when you want to run algorithms with config files
     """
 
     def __init__(
@@ -33,13 +33,17 @@ class SimulationSet:
     def run(self, num_runs: int) -> SimulationSetArtifact:
         for algorithm in self.algorithm_types:
             for config in self.algorithm_set[algorithm]:
-                self.basic_simulation_set_artifact[f"{str(algorithm)}-{config.name}"] = Simulation(
+                self.basic_simulation_set_artifact[
+                    f"{str(algorithm)}-{config.name}"
+                ] = Simulation(
                     algorithm_type=algorithm,
                     settings=self.get_simulation_settings_from_base(
                         algorithm, name=config.name
                     ),
                     config=config,
-                ).run(num_runs)
+                ).run(
+                    num_runs
+                )
 
         return self.basic_simulation_set_artifact
 

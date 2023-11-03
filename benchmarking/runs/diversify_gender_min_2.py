@@ -38,7 +38,7 @@ from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetA
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
+def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = True):
     """
     Goal: Run diversify gender scenario, measure average, min, and max gini index
     """
@@ -116,9 +116,7 @@ def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
 
     if generate_graphs:
         for class_size, artifact in artifacts.items():
-            insight_set: Dict[
-                AlgorithmType, Dict[str, List[float]]
-            ] = Insight.get_output_set(
+            insight_set: Dict[str, Dict[str, List[float]]] = Insight.get_output_set(
                 artifact=artifact, metrics=list(metrics.values())
             )
 
@@ -140,16 +138,16 @@ def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
 
             # Data processing for graph
             for i, metric in enumerate(metric_values):
-                for algorithm_type, data in metric.items():
-                    if algorithm_type not in graph_dicts[i]:
-                        graph_dicts[i][algorithm_type] = GraphData(
+                for name, data in metric.items():
+                    if name not in graph_dicts[i]:
+                        graph_dicts[i][name] = GraphData(
                             x_data=[class_size],
                             y_data=[data],
-                            name=algorithm_type.value,
+                            name=name,
                         )
                     else:
-                        graph_dicts[i][algorithm_type].x_data.append(class_size)
-                        graph_dicts[i][algorithm_type].y_data.append(data)
+                        graph_dicts[i][name].x_data.append(class_size)
+                        graph_dicts[i][name].y_data.append(data)
 
         line_graph(
             LineGraphMetadata(
