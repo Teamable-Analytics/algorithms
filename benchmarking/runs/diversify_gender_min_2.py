@@ -97,7 +97,7 @@ def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
                 num_teams=number_of_teams,
                 scenario=scenario,
                 student_provider=MockStudentProvider(student_provider_settings),
-                cache_key=f"concentrate_gpa_{number_of_teams}",
+                cache_key=f"diversify_gender_min_2_{number_of_teams}",
             ),
             algorithm_set={
                 AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
