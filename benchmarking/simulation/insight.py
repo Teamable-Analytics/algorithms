@@ -5,7 +5,6 @@ from api.models.enums import AlgorithmType
 from api.models.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.simulation.basic_simulation_set_2 import BasicSimulationSetArtifact
-from benchmarking.simulation.simulation_set import SimulationSetArtifact
 from utils.validation import is_unique
 
 InsightOutput = Dict[str, List[float]]
@@ -48,28 +47,28 @@ class Insight:
 
     @staticmethod
     def average_metric(
-        insight_output_set: Dict[str, InsightOutput], metric_name: str
-    ) -> Dict[str, float]:
+        insight_output_set: Dict[AlgorithmType, InsightOutput], metric_name: str
+    ) -> Dict[AlgorithmType, float]:
         averages_output = {}
 
-        for item in insight_output_set.keys():
-            metric_values = insight_output_set[item][metric_name]
-            averages_output[item] = statistics.mean(metric_values)
+        for algorithm_type in insight_output_set.keys():
+            metric_values = insight_output_set[algorithm_type][metric_name]
+            averages_output[algorithm_type] = statistics.mean(metric_values)
 
         return averages_output
 
     @staticmethod
     def get_output_set(
-        artifact: SimulationSetArtifact, metrics: List[TeamSetMetric]
-    ) -> Dict[str, InsightOutput]:
+        artifact: BasicSimulationSetArtifact, metrics: List[TeamSetMetric]
+    ) -> Dict[AlgorithmType, InsightOutput]:
         # designed to work with BasicSimulationSet, just a shortcut/utility
-        insight_output_set: Dict[str, InsightOutput] = {}
+        insight_output_set: Dict[AlgorithmType, InsightOutput] = {}
 
-        for item in artifact.keys():
-            team_sets, run_times = artifact.get(item, ([], []))
+        for algorithm_type in artifact.keys():
+            team_sets, run_times = artifact.get(algorithm_type, ([], []))
             insight = Insight(
                 team_sets=team_sets, metrics=metrics, run_times=run_times
             ).generate()
-            insight_output_set[item] = insight
+            insight_output_set[algorithm_type] = insight
 
         return insight_output_set
