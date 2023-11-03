@@ -40,8 +40,7 @@ def three_tokenization_constraints(num_trials: int = 10, generate_graphs: bool =
     """
 
     # Defining our changing x-values (in the graph sense)
-    # class_sizes = list(range(50, 501, 50))
-    class_sizes = [50, 100]
+    class_sizes = list(range(50, 501, 50))
     ratio_of_european_students = 0.45
     ratio_of_middle_eastern_students = 0.25
     ratio_of_african_students = 0.15
