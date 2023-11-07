@@ -150,7 +150,9 @@ class TestGenerateTeamsValidator(unittest.TestCase):
         del missing_team_generation_options_data["team_generation_options"]
         cls.missing_team_generation_options_data = missing_team_generation_options_data
 
-        student_with_invalid_relationship_data = copy.deepcopy(valid_random_algorithm_data)
+        student_with_invalid_relationship_data = copy.deepcopy(
+            valid_random_algorithm_data
+        )
         student_with_invalid_relationship_data["students"][0]["relationships"] = {
             "-1": "enemy"
         }
@@ -162,13 +164,17 @@ class TestGenerateTeamsValidator(unittest.TestCase):
         student_with_extra_attribute_data["students"][0]["attributes"]["5"] = [1, 2, 3]
         cls.student_with_extra_attribute_data = student_with_extra_attribute_data
 
-        student_with_invalid_project_id_data = copy.deepcopy(valid_random_algorithm_data)
+        student_with_invalid_project_id_data = copy.deepcopy(
+            valid_random_algorithm_data
+        )
         student_with_invalid_project_id_data["students"][0][
             "project_preferences"
         ].append(-1)
         cls.student_with_invalid_project_id_data = student_with_invalid_project_id_data
 
-        team_generation_options_with_duplicate_ids_data = copy.deepcopy(valid_random_algorithm_data)
+        team_generation_options_with_duplicate_ids_data = copy.deepcopy(
+            valid_random_algorithm_data
+        )
         team_generation_options_with_duplicate_ids_data["team_generation_options"][
             "initial_teams"
         ] += [
@@ -205,7 +211,9 @@ class TestGenerateTeamsValidator(unittest.TestCase):
             validator = GenerateTeamsValidator(self.valid_priority_algorithm_data)
             validator.validate()
         except SchemaError as e:
-            self.fail("Valid data for Priority Algorithm raised SchemaError unexpectedly")
+            self.fail(
+                "Valid data for Priority Algorithm raised SchemaError unexpectedly"
+            )
 
     def test_errors__top_levels(self):
         with self.assertRaises(SchemaError) as e:
