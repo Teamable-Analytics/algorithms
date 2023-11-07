@@ -51,7 +51,7 @@ class GenerateTeamsValidator(Validator):
 
         # Validate schema
         algorithm_options_cls = AlgorithmRunner.get_algorithm_option_class(
-            algorithm_options.get("algorithm_type")
+            AlgorithmType(algorithm_options.get("algorithm_type"))
         )
         algorithm_options_schema = algorithm_options_cls.get_schema()
         algorithm_options_schema.validate(algorithm_options)

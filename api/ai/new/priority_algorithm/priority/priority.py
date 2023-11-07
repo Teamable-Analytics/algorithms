@@ -35,7 +35,8 @@ class TokenizationPriority(Priority):
     def satisfied_by(self, students: List[Student]) -> bool:
         count = 0
         for student in students:
-            count += self.value in student.attributes.get(self.attribute_id, [])
+            if student.attributes is not None:
+                count += self.value in student.attributes.get(self.attribute_id, [])
         return self.student_count_meets_threshold(count)
 
     def student_count_meets_threshold(self, count: int) -> bool:
