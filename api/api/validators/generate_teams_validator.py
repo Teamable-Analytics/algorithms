@@ -2,6 +2,7 @@ from typing import List
 
 from schema import Schema, SchemaError, Or, Optional
 
+from api.ai.algorithm_runner import AlgorithmRunner
 from api.api.validators.interface import Validator
 from api.api.utils.relationship import get_relationship_str
 from api.models.enums import AlgorithmType, Relationship
@@ -45,11 +46,13 @@ class GenerateTeamsValidator(Validator):
             )
 
     def validate_algorithm_options(self):
-        # todo: validate that anything that is an id is real (?)
-        #   so attributes_to_concentrate is a list of attribute ids, ideally these exist on each student
+        # TODO: Do not commit this
+        algorithm_options = self.data.get("algorithm_options")
 
-        # todo: if a max_project_preferences is given, then students can't have more project preferences than that
-        pass
+        # Validate schema
+        algorithm_options_cls = AlgorithmRunner.get_algorithm_option_class(algorithm_options.get("algorithm_type"))
+        algorithm_options_schema = algorithm_options_cls.get_schema()
+        algorithm_options_schema.validate(algorithm_options)
 
     def validate_students(self):
         students: List = self.data.get("students")
