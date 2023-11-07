@@ -79,7 +79,7 @@ class TestEqualityHelpers(unittest.TestCase):
                     attribute=2,
                     operator=RequirementOperator.EXACTLY,
                     value=1,
-                )
+                ),
             ],
         )
         team_clone = copy.deepcopy(team)
@@ -99,7 +99,7 @@ class TestEqualityHelpers(unittest.TestCase):
                     attribute=1,
                     operator=RequirementOperator.EXACTLY,
                     value=1,
-                )
+                ),
             ],
         )
         self.assertTrue(team, team_with_switched_requirements)
