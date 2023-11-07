@@ -33,3 +33,13 @@ class TeamGenerationOptions:
                 raise ValueError(
                     f"team_options size ({len(self.initial_teams)}) > total_teams ({self.total_teams})"
                 )
+        project_requirements = {}
+        for team in self.initial_teams:
+            if team.project_id in project_requirements:
+                if team.requirements != project_requirements[team.project_id]:
+                    raise ValueError(
+                        f"Teams with the same project id must have the same requirements!\n" +
+                        f"(Expect {project_requirements[team.project_id]}, got {team.requirements})"
+                    )
+            else:
+                project_requirements[team.project_id] = team.requirements
