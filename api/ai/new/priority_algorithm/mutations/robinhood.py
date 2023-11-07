@@ -151,7 +151,7 @@ def perform_local_max_portion_of_robinhood(
 
     # Generate all possible teams using the students from the two teams
     # Elements of this list are lists of student ids
-    possible_teams: List[List[int]] = list(
+    possible_teams: List[Tuple[int]] = list(
         itertools.combinations(students, len(selected_team_b.student_ids))
     )
 

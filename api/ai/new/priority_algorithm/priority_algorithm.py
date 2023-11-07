@@ -8,12 +8,6 @@ from api.ai.new.interfaces.algorithm_options import (
     WeightAlgorithmOptions,
 )
 from api.ai.new.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
-from api.ai.new.priority_algorithm.mutations.local_max import mutate_local_max
-from api.ai.new.priority_algorithm.mutations.random_swap import mutate_random_swap
-from api.ai.new.priority_algorithm.mutations.robinhood import (
-    mutate_robinhood,
-    mutate_robinhood_holistic,
-)
 from api.ai.new.utils import save_students_to_team
 from api.ai.new.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.models.student import Student
@@ -25,6 +19,7 @@ DEFAULT_PRIORITY_ALGORITHM_CONFIG = PriorityAlgorithmConfig(
     MAX_SPREAD=3,
     MAX_ITERATE=1500,
     MAX_TIME=1,
+    # NOTE: default value for mutations is within the PriorityAlgorithmConfig class
 )
 
 
@@ -48,7 +43,6 @@ class PriorityAlgorithm(Algorithm):
         students: List[Student],
     ) -> PriorityTeamSet:
         team_set = WeightAlgorithm(
-            # todo: implement proper conversion from priority algorithm options to weight algorithm options
             algorithm_options=weight_options_from_priority_options(
                 self.algorithm_options
             ),
@@ -97,45 +91,20 @@ class PriorityAlgorithm(Algorithm):
         """
         Mutate a single teamset into child teamsets
         """
-        algorithm = 1
-        cloned_team_sets = [
-            team_set.clone() for _ in range(self.algorithm_config.MAX_SPREAD)
-        ]
-        if algorithm == 1:
-            return [
-                mutate_random_swap(cloned_team_set)
-                for cloned_team_set in cloned_team_sets
-            ]
-        elif algorithm == 2:
-            return [
-                mutate_robinhood(
-                    cloned_team_set,
-                    self.algorithm_options.priorities,
-                    self.student_dict,
-                )
-                for cloned_team_set in cloned_team_sets
-            ]
-        elif algorithm == 3:
-            return [
-                mutate_robinhood_holistic(
-                    cloned_team_set,
-                    self.algorithm_options.priorities,
-                    self.student_dict,
-                )
-                for cloned_team_set in cloned_team_sets
-            ]
-        elif algorithm == 4:
-            return [
-                mutate_local_max(
-                    cloned_team_sets[0],
-                    self.algorithm_options.priorities,
-                    self.student_dict,
-                ),
-                *[
-                    mutate_random_swap(cloned_team_set)
-                    for cloned_team_set in cloned_team_sets[1:]
-                ],
-            ]
+        mutated_team_sets = []
+        for mutation_func, num_outputs in self.algorithm_config.MUTATIONS:
+            mutated_team_sets.extend(
+                [
+                    mutation_func(
+                        team_set.clone(),
+                        self.algorithm_options.priorities,
+                        self.student_dict,
+                    )
+                    for _ in range(num_outputs)
+                ]
+            )
+
+        return mutated_team_sets
 
     def _unpack_priority_team_set(self, priority_team_set: PriorityTeamSet) -> TeamSet:
         teams: List[Team] = []

@@ -2,9 +2,12 @@ import unittest
 from dataclasses import dataclass
 from typing import List
 
-from api.ai.priority_algorithm.interfaces import Priority
-from api.ai.priority_algorithm.mutations.local_max import mutate_local_max
-from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from api.ai.new.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
+from api.ai.new.priority_algorithm.mutations.local_max import (
+    mutate_local_max_random,
+    mutate_local_max,
+)
+from api.ai.new.priority_algorithm.priority.interfaces import Priority
 from api.models.student import Student
 from api.models.team import Team
 
@@ -93,6 +96,28 @@ class TestMutations(unittest.TestCase):
             self.priorities, self.student_dict
         )
         priority_team_set = mutate_local_max(
+            self.priority_team_set, self.priorities, self.student_dict
+        )
+        priority_team_set.score = None
+        score_after = priority_team_set.calculate_score(
+            self.priorities, self.student_dict
+        )
+        self.assertGreater(score_after, score_before)
+
+    def test_mutate_local_max_random__returns_priority_teams(self):
+        priority_team_set = mutate_local_max_random(
+            self.priority_team_set, self.priorities, self.student_dict
+        )
+        self.assertIsInstance(priority_team_set, PriorityTeamSet)
+        for team in priority_team_set.priority_teams:
+            self.assertIsInstance(team, PriorityTeam)
+
+    def test_mutate_local_max_random__improves_score(self):
+        self.priorities.append(JohnPriority())
+        score_before = self.priority_team_set.calculate_score(
+            self.priorities, self.student_dict
+        )
+        priority_team_set = mutate_local_max_random(
             self.priority_team_set, self.priorities, self.student_dict
         )
         priority_team_set.score = None

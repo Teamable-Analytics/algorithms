@@ -1,8 +1,15 @@
 import math
-from typing import Dict
+from typing import Dict, List
 
 import typer
 
+from api.ai.new.interfaces.algorithm_config import (
+    RandomAlgorithmConfig,
+    SocialAlgorithmConfig,
+    WeightAlgorithmConfig,
+    PriorityAlgorithmConfig,
+)
+from api.ai.new.priority_algorithm.mutations import mutate_local_max, mutate_random_swap
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -17,17 +24,19 @@ from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import 
 from benchmarking.evaluations.scenarios.concentrate_multiple_attributes import (
     ConcentrateMultipleAttributes,
 )
-from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
-from api.models.enums import ScenarioAttribute, Gender, Race
+from api.models.enums import ScenarioAttribute, Gender, Race, AlgorithmType
+from benchmarking.simulation.insight import Insight
+from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
+from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-def concentrate_many_attributes(num_trials: int = 10):
+def concentrate_many_attributes(num_trials: int = 10, generate_graphs: bool = True):
     """
     Goal: Run concentrate on many attributes scenario (6 attributes), measure average gini index across many attributes
     """
 
     # Defining our changing x-values (in the graph sense)
-    class_sizes = list(range(50, 601, 50))
+    class_sizes = list(range(50, 501, 50))
     ratio_of_female_students = 0.5
 
     graph_runtime_dict = {}
@@ -49,6 +58,7 @@ def concentrate_many_attributes(num_trials: int = 10):
             ]
         ),
     }
+    artifacts: Dict[int, SimulationSetArtifact] = {}
 
     for class_size in class_sizes:
         print("CLASS SIZE /", class_size)
@@ -71,69 +81,79 @@ def concentrate_many_attributes(num_trials: int = 10):
             },
         )
 
-        simulation_outputs = BasicSimulationSet(
-            num_teams=number_of_teams,
-            scenario=ConcentrateMultipleAttributes(
-                [
-                    ScenarioAttribute.AGE,
-                    ScenarioAttribute.GENDER,
-                    ScenarioAttribute.GPA,
-                    ScenarioAttribute.RACE,
-                    ScenarioAttribute.MAJOR,
-                    ScenarioAttribute.YEAR_LEVEL,
-                ]
+        simulation_set_artifact = SimulationSet(
+            settings=SimulationSettings(
+                num_teams=number_of_teams,
+                scenario=ConcentrateMultipleAttributes(
+                    [
+                        ScenarioAttribute.AGE,
+                        ScenarioAttribute.GENDER,
+                        ScenarioAttribute.GPA,
+                        ScenarioAttribute.RACE,
+                        ScenarioAttribute.MAJOR,
+                        ScenarioAttribute.YEAR_LEVEL,
+                    ]
+                ),
+                student_provider=MockStudentProvider(student_provider_settings),
+                cache_key=f"concentrate_many_attributes_{number_of_teams}",
             ),
-            student_provider=MockStudentProvider(student_provider_settings),
-            metrics=list(metrics.values()),
+            algorithm_set={
+                AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
+                AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
+                AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
+                AlgorithmType.PRIORITY_NEW: [
+                    PriorityAlgorithmConfig(),
+                    PriorityAlgorithmConfig(
+                        name="local_max",
+                        MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
+                    ),
+                ],
+            },
         ).run(num_runs=num_trials)
+        artifacts[class_size] = simulation_set_artifact
 
-        average_gini = BasicSimulationSet.average_metric(
-            simulation_outputs, "AverageGiniIndexMultiAttribute"
+    if generate_graphs:
+        for class_size, artifact in artifacts.items():
+            insight_set: Dict[str, Dict[str, List[float]]] = Insight.get_output_set(
+                artifact=artifact, metrics=list(metrics.values())
+            )
+            average_gini = Insight.average_metric(
+                insight_set, "AverageGiniIndexMultiAttribute"
+            )
+            average_runtimes = Insight.average_metric(insight_set, Insight.KEY_RUNTIMES)
+            metric_values = [average_runtimes, average_gini]
+            for i, metric in enumerate(metric_values):
+                for name, data in metric.items():
+                    if name not in graph_dicts[i]:
+                        graph_dicts[i][name] = GraphData(
+                            x_data=[class_size],
+                            y_data=[data],
+                            name=name,
+                        )
+                    else:
+                        graph_dicts[i][name].x_data.append(class_size)
+                        graph_dicts[i][name].y_data.append(data)
+
+        line_graph(
+            LineGraphMetadata(
+                x_label="Class size",
+                y_label="Run time (seconds)",
+                title="Concentrate Many Attributes Runtimes",
+                data=list(graph_runtime_dict.values()),
+            )
         )
 
-        average_runtimes = BasicSimulationSet.average_metric(
-            simulation_outputs, BasicSimulationSet.KEY_RUNTIMES
+        line_graph(
+            LineGraphMetadata(
+                x_label="Class size",
+                y_label="Average Gini Index",
+                title="Concentrate Many Attributes Average Gini Index",
+                data=list(graph_avg_gini_dict.values()),
+                y_lim=GraphAxisRange(
+                    *metrics["AverageGiniIndexMulti"].theoretical_range
+                ),
+            )
         )
-
-        metric_values = [average_runtimes, average_gini]
-
-        for i, metric in enumerate(metric_values):
-            for algorithm_type, data in metric.items():
-                if algorithm_type not in graph_dicts[i]:
-                    graph_dicts[i][algorithm_type] = GraphData(
-                        x_data=[class_size],
-                        y_data=[data],
-                        name=algorithm_type.value,
-                    )
-                else:
-                    graph_dicts[i][algorithm_type].x_data.append(class_size)
-                    graph_dicts[i][algorithm_type].y_data.append(data)
-
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Run time (seconds)",
-            title="Concentrate Many Attributes Runtimes",
-            data=list(graph_runtime_dict.values()),
-            description=None,
-            y_lim=None,
-            x_lim=None,
-            num_minor_ticks=None,
-        )
-    )
-
-    line_graph(
-        LineGraphMetadata(
-            x_label="Class size",
-            y_label="Average Gini Index",
-            title="Concentrate Many Attributes Average Gini Index",
-            data=list(graph_avg_gini_dict.values()),
-            description=None,
-            y_lim=GraphAxisRange(*metrics["AverageGiniIndexMulti"].theoretical_range),
-            x_lim=None,
-            num_minor_ticks=None,
-        )
-    )
 
 
 if __name__ == "__main__":

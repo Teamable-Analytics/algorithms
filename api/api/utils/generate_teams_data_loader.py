@@ -1,20 +1,22 @@
 from typing import Dict, Any, List
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
+from api.ai.algorithm_runner import AlgorithmRunner
+from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
 from api.ai.new.interfaces.algorithm_options import AlgorithmOptions
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
 from api.models.enums import AlgorithmType
-from api.models.project import Project
 from api.models.student import Student
+from api.api.utils.relationship import get_relationship
+from api.models.team import TeamShell
 
 
 @dataclass
 class GenerateTeamsInputData:
     students: List[Student]
     algorithm_type: AlgorithmType
-    algorithmOptions: AlgorithmOptions
+    algorithm_options: AlgorithmOptions
     team_generation_options: TeamGenerationOptions
-    projects: List[Project] = field(default_factory=list)
 
 
 class GenerateTeamsDataLoader:
@@ -22,19 +24,52 @@ class GenerateTeamsDataLoader:
         self.data = validated_data
 
     def load(self) -> GenerateTeamsInputData:
-        pass
+        return GenerateTeamsInputData(
+            students=self._get_students(),
+            team_generation_options=self._get_team_generation_options(),
+            algorithm_type=self._get_algorithm_type(),
+            algorithm_options=self._get_algorithm_options(),
+        )
 
     def _get_algorithm_type(self) -> AlgorithmType:
-        pass
+        algorithm_options = self.data.get("algorithm_options")
+        algorithm_type = algorithm_options.get("algorithm_type")
+        return AlgorithmType(algorithm_type)
 
     def _get_students(self) -> List[Student]:
-        pass
-
-    def _get_projects(self) -> List[Project]:
-        pass
+        students = self.data.get("students")
+        return [
+            Student(
+                _id=student.get("id"),
+                name=student.get("name"),
+                relationships={
+                    student_id: get_relationship(relationship)
+                    for student_id, relationship in student.get("relationships").items()
+                },
+                attributes=student.get("attributes"),
+                project_preferences=student.get("project_preferences"),
+            )
+            for student in students
+        ]
 
     def _get_algorithm_options(self) -> AlgorithmOptions:
-        pass
+        algorithm_options = {**self.data.get("algorithm_options")}
+        algorithm_type = AlgorithmType(algorithm_options.pop("algorithm_type"))
+        algorithm_option_class = AlgorithmRunner.get_algorithm_option_class(
+            algorithm_type
+        )
+
+        return algorithm_option_class.parse_json(algorithm_options)
 
     def _get_team_generation_options(self) -> TeamGenerationOptions:
-        pass
+        team_generation_options = self.data.get("team_generation_options")
+
+        return TeamGenerationOptions(
+            total_teams=team_generation_options.get("total_teams"),
+            initial_teams=[
+                TeamShell(**team)
+                for team in team_generation_options.get("initial_teams")
+            ],
+            max_team_size=team_generation_options.get("max_team_size"),
+            min_team_size=team_generation_options.get("min_team_size"),
+        )

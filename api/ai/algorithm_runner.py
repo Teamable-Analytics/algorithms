@@ -1,10 +1,21 @@
 from typing import List
 
-from api.ai.new.double_round_robin_algorithm.double_round_robin_algorithm import (
-    DoubleRoundRobinAlgorithm,
+from api.ai.new.double_round_robin_algorithm.double_round_robin_algorithm import DoubleRoundRobinAlgorithm
+from api.ai.new.interfaces.algorithm_config import (
+    AlgorithmConfig,
+    RandomAlgorithmConfig,
+    WeightAlgorithmConfig,
+    SocialAlgorithmConfig,
+    PriorityAlgorithmConfig,
 )
-from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
-from api.ai.new.interfaces.algorithm_options import AlgorithmOptions
+from api.ai.new.interfaces.algorithm_options import (
+    AlgorithmOptions,
+    RandomAlgorithmOptions,
+    WeightAlgorithmOptions,
+    SocialAlgorithmOptions,
+    PriorityAlgorithmOptions,
+    MultipleRoundRobinAlgorithmOptions, DoubleRoundRobinAlgorithmOptions,
+)
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.new.multiple_round_robin_with_adjusted_winner.multiple_round_robin import (
     MultipleRoundRobinWithAdjustedWinnerAlgorithm,
@@ -58,4 +69,46 @@ class AlgorithmRunner:
 
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm class!"
+        )
+
+    @staticmethod
+    def get_algorithm_option_class(algorithm_type: AlgorithmType):
+        if algorithm_type == AlgorithmType.RANDOM:
+            return RandomAlgorithmOptions
+        if algorithm_type == AlgorithmType.WEIGHT:
+            return WeightAlgorithmOptions
+        if algorithm_type == AlgorithmType.SOCIAL:
+            return SocialAlgorithmOptions
+        if algorithm_type == AlgorithmType.PRIORITY:
+            return PriorityAlgorithmOptions
+        if algorithm_type == AlgorithmType.PRIORITY_NEW:
+            return PriorityAlgorithmOptions
+        if algorithm_type == AlgorithmType.MRR:
+            return MultipleRoundRobinAlgorithmOptions
+        if algorithm_type == AlgorithmType.DRR:
+            return DoubleRoundRobinAlgorithmOptions
+
+        raise NotImplementedError(
+            f"Algorithm type {algorithm_type} is not associated with an algorithm options class!"
+        )
+
+    @staticmethod
+    def get_algorithm_config_class(algorithm_type: AlgorithmType):
+        if algorithm_type == AlgorithmType.RANDOM:
+            return RandomAlgorithmConfig
+        if algorithm_type == AlgorithmType.WEIGHT:
+            return WeightAlgorithmConfig
+        if algorithm_type == AlgorithmType.SOCIAL:
+            return SocialAlgorithmConfig
+        if algorithm_type == AlgorithmType.PRIORITY:
+            return PriorityAlgorithmConfig
+        if algorithm_type == AlgorithmType.PRIORITY_NEW:
+            return PriorityAlgorithmConfig
+        if algorithm_type == AlgorithmType.MRR:
+            return None
+        if algorithm_type == AlgorithmType.MRR:
+            return None
+
+        raise NotImplementedError(
+            f"Algorithm type {algorithm_type} is not associated with an algorithm config class!"
         )

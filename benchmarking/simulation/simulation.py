@@ -1,21 +1,22 @@
 import copy
-import statistics
 import time
-from collections import defaultdict
-from typing import List, Dict
+from typing import List, Tuple
 
 from api.ai.algorithm_runner import AlgorithmRunner
 from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
 from api.models.enums import AlgorithmType
+from api.models.team_set import TeamSet
+from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.simulation.mock_algorithm_2 import MockAlgorithm2
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
-SimulationOutput = Dict[str, List[float]]
+# list of floats tracks the runtime of each run
+SimulationArtifact = Tuple[List[TeamSet], List[float]]
 
 
 class Simulation:
     """
-    Represents running a Simulation num_runs times and returning the metrics from each of those runs.
+    Represents running a Simulation num_runs times and returning the team sets from each of those runs.
     """
 
     KEY_RUNTIMES = "runtimes"
@@ -29,12 +30,23 @@ class Simulation:
         self.algorithm_type = algorithm_type
         self.settings = settings
         self.config = config
-        self.run_outputs = defaultdict(dict)
-        self.simulation_outputs = {metric.name: [] for metric in self.settings.metrics}
-        self.simulation_outputs.update({Simulation.KEY_RUNTIMES: []})
+        self.run_times = []
+        self.team_sets = []
 
-    def run(self, num_runs: int) -> SimulationOutput:
-        initial_teams = (
+    def run(self, num_runs: int) -> SimulationArtifact:
+        cache = None
+        if self.settings.cache_key:
+            cache = SimulationCache(self.settings.cache_key)
+            if cache.exists():
+                sa: SimulationArtifact = cache.get_simulation_artifact()
+                self.team_sets = sa[0].copy()
+                self.run_times = sa[1].copy()
+                if len(self.team_sets) >= num_runs:
+                    return self.team_sets[:num_runs], self.run_times[:num_runs]
+                else:
+                    num_runs -= len(self.team_sets)
+
+        custom_initial_teams = (
             self.settings.initial_teams_provider.get()
             if self.settings.initial_teams_provider
             else None
@@ -42,7 +54,7 @@ class Simulation:
         team_generation_options = MockAlgorithm2.get_team_generation_options(
             num_students=self.settings.student_provider.num_students,
             num_teams=self.settings.num_teams,
-            initial_teams=initial_teams,
+            initial_teams=custom_initial_teams,
         )
 
         algorithm_options = MockAlgorithm2.algorithm_options_from_scenario(
@@ -65,15 +77,11 @@ class Simulation:
             team_set = runner.generate(copy.deepcopy(students))
             end_time = time.time()
 
-            self.simulation_outputs[Simulation.KEY_RUNTIMES].append(
-                end_time - start_time
-            )
-            for metric in self.settings.metrics:
-                self.simulation_outputs[metric.name].append(metric.calculate(team_set))
+            self.run_times.append(end_time - start_time)
+            self.team_sets.append(team_set)
 
-        return self.simulation_outputs
+            # Save result to cache. Do this inside the loop so that if the program crashes, we still have the results from the previous runs.
+            if cache is not None:
+                cache.add_run(team_set, end_time - start_time)
 
-    @staticmethod
-    def average_metric(simulation_output: SimulationOutput, metric_name: str) -> float:
-        metric_values = simulation_output[metric_name]
-        return statistics.mean(metric_values)
+        return self.team_sets, self.run_times
