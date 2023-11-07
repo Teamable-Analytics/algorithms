@@ -25,11 +25,13 @@ class GenerateTeamsValidator(Validator):
         self.validate_students()
 
     def _validate_schema(self):
-        Schema({
-            "algorithm_options": Dict,
-            "students": List[Dict],
-            "team_generation_options": Dict,
-        }).validate(self.data)
+        Schema(
+            {
+                "algorithm_options": Dict,
+                "students": List[Dict],
+                "team_generation_options": Dict,
+            }
+        ).validate(self.data)
 
     def validate_algorithm_type(self):
         algorithm_type = self.data.get("algorithm_options").get("algorithm_type")
@@ -50,19 +52,19 @@ class GenerateTeamsValidator(Validator):
 
     def validate_students(self):
         students: List = self.data.get("students")
-        Schema([
-            {
-                "id": int,
-                "name": Optional[str],
-                "attributes": {
-                    str: List[int]
-                },
-                "relationships": {
-                    str: Or(*[relationship.value for relationship in Relationship])
-                },
-                "project_preferences": List[int],
-            }
-        ]).validate(students)
+        Schema(
+            [
+                {
+                    "id": int,
+                    "name": Optional[str],
+                    "attributes": {str: List[int]},
+                    "relationships": {
+                        str: Or(*[relationship.value for relationship in Relationship])
+                    },
+                    "project_preferences": List[int],
+                }
+            ]
+        ).validate(students)
 
         student_ids = set()
         for student in students:
@@ -70,16 +72,23 @@ class GenerateTeamsValidator(Validator):
                 raise SchemaError("Student ids must be unique.")
             student_ids.add(student.get("_id"))
 
-        teams: List[TeamShell] = self.data.get("team_generation_options").get("initial_teams")
+        teams: List[TeamShell] = self.data.get("team_generation_options").get(
+            "initial_teams"
+        )
 
-        max_project_preferences = self.data.get("algorithm_options").get("max_project_preferences")
+        max_project_preferences = self.data.get("algorithm_options").get(
+            "max_project_preferences"
+        )
         if max_project_preferences is not None:
             for student in students:
                 student_project_preferences = student.get("project_preferences")
-                if student_project_preferences is not None and student_project_preferences > max_project_preferences:
+                if (
+                    student_project_preferences is not None
+                    and student_project_preferences > max_project_preferences
+                ):
                     raise SchemaError(
-                        f"Student {student.id} has {student_project_preferences} project preferences, " +
-                        f"but the maximum is {max_project_preferences}."
+                        f"Student {student.id} has {student_project_preferences} project preferences, "
+                        + f"but the maximum is {max_project_preferences}."
                     )
 
         all_projects = set([team.project_id for team in teams])
@@ -89,7 +98,9 @@ class GenerateTeamsValidator(Validator):
                 continue
 
             # Validate if project preferences are unique
-            if len(student_project_preferences) != len(set(student_project_preferences)):
+            if len(student_project_preferences) != len(
+                set(student_project_preferences)
+            ):
                 raise SchemaError(
                     f"Student {student.id} has duplicate project preferences."
                 )
@@ -102,7 +113,9 @@ class GenerateTeamsValidator(Validator):
 
         all_attributes = set()
         for team in teams:
-            all_attributes.update([requirement.attribute for requirement in team.requirements])
+            all_attributes.update(
+                [requirement.attribute for requirement in team.requirements]
+            )
         for student in students:
             attributes = student.get("attributes")
 
