@@ -9,7 +9,7 @@ from api.api.validators.generate_teams_validator import GenerateTeamsValidator
 class TestGenerateTeamsValidator(unittest.TestCase):
     @classmethod
     def setUp(cls):
-        valid_data = {
+        valid_random_algorithm_data = {
             "students": [
                 {
                     "id": 1,
@@ -73,8 +73,7 @@ class TestGenerateTeamsValidator(unittest.TestCase):
                 },
             ],
             "algorithm_options": {
-                # TODO: Change this when validate algorithm options
-                "algorithm_type": "social",
+                "algorithm_type": "random",
             },
             "team_generation_options": {
                 "initial_teams": [
@@ -115,21 +114,43 @@ class TestGenerateTeamsValidator(unittest.TestCase):
             },
         }
 
-        cls.valid_data = valid_data.copy()
+        valid_social_algorithm_data = copy.deepcopy(valid_random_algorithm_data)
+        cls.valid_random_algorithm_data = valid_random_algorithm_data.copy()
 
-        missing_students_data = valid_data.copy()
+        valid_weight_algorithm_data = copy.deepcopy(valid_random_algorithm_data)
+        valid_weight_algorithm_data["algorithm_options"] = {
+            "algorithm_type": "weight",
+            "max_project_preferences": 3,
+        }
+        cls.valid_weight_algorithm_data = valid_weight_algorithm_data
+
+        valid_social_algorithm_data["algorithm_options"] = {
+            "algorithm_type": "social",
+            "max_project_preferences": 3,
+        }
+        cls.valid_social_algorithm_data = valid_social_algorithm_data
+
+        valid_priority_algorithm_data = copy.deepcopy(valid_random_algorithm_data)
+        valid_priority_algorithm_data["algorithm_options"] = {
+            "algorithm_type": "priority_new",
+            "max_project_preferences": 3,
+            "priorities": [],
+        }
+        cls.valid_priority_algorithm_data = valid_priority_algorithm_data
+
+        missing_students_data = valid_random_algorithm_data.copy()
         del missing_students_data["students"]
         cls.missing_students_data = missing_students_data
 
-        missing_algorithm_options_data = valid_data.copy()
+        missing_algorithm_options_data = valid_random_algorithm_data.copy()
         del missing_algorithm_options_data["algorithm_options"]
         cls.missing_algorithm_options_data = missing_algorithm_options_data
 
-        missing_team_generation_options_data = valid_data.copy()
+        missing_team_generation_options_data = valid_random_algorithm_data.copy()
         del missing_team_generation_options_data["team_generation_options"]
         cls.missing_team_generation_options_data = missing_team_generation_options_data
 
-        student_with_invalid_relationship_data = copy.deepcopy(valid_data)
+        student_with_invalid_relationship_data = copy.deepcopy(valid_random_algorithm_data)
         student_with_invalid_relationship_data["students"][0]["relationships"] = {
             "-1": "enemy"
         }
@@ -137,17 +158,17 @@ class TestGenerateTeamsValidator(unittest.TestCase):
             student_with_invalid_relationship_data
         )
 
-        student_with_extra_attribute_data = copy.deepcopy(valid_data)
+        student_with_extra_attribute_data = copy.deepcopy(valid_random_algorithm_data)
         student_with_extra_attribute_data["students"][0]["attributes"]["5"] = [1, 2, 3]
         cls.student_with_extra_attribute_data = student_with_extra_attribute_data
 
-        student_with_invalid_project_id_data = copy.deepcopy(valid_data)
+        student_with_invalid_project_id_data = copy.deepcopy(valid_random_algorithm_data)
         student_with_invalid_project_id_data["students"][0][
             "project_preferences"
         ].append(-1)
         cls.student_with_invalid_project_id_data = student_with_invalid_project_id_data
 
-        team_generation_options_with_duplicate_ids_data = copy.deepcopy(valid_data)
+        team_generation_options_with_duplicate_ids_data = copy.deepcopy(valid_random_algorithm_data)
         team_generation_options_with_duplicate_ids_data["team_generation_options"][
             "initial_teams"
         ] += [
@@ -158,12 +179,33 @@ class TestGenerateTeamsValidator(unittest.TestCase):
             team_generation_options_with_duplicate_ids_data
         )
 
-    def test_valid__happy_json(self):
+    def test_valid__random_algorithm(self):
         try:
-            validator = GenerateTeamsValidator(self.valid_data)
+            validator = GenerateTeamsValidator(self.valid_random_algorithm_data)
             validator.validate()
         except SchemaError as e:
-            self.fail("Valid data raised SchemaError unexpectedly")
+            self.fail("Valid data for Random Algorithm raised SchemaError unexpectedly")
+
+    def test_valid__weight_algorithm(self):
+        try:
+            validator = GenerateTeamsValidator(self.valid_weight_algorithm_data)
+            validator.validate()
+        except SchemaError as e:
+            self.fail("Valid data for Weight Algorithm raised SchemaError unexpectedly")
+
+    def test_valid__social_algorithm(self):
+        try:
+            validator = GenerateTeamsValidator(self.valid_social_algorithm_data)
+            validator.validate()
+        except SchemaError as e:
+            self.fail("Valid data for Social Algorithm raised SchemaError unexpectedly")
+
+    def test_valid__priority_algorithm(self):
+        try:
+            validator = GenerateTeamsValidator(self.valid_priority_algorithm_data)
+            validator.validate()
+        except SchemaError as e:
+            self.fail("Valid data for Priority Algorithm raised SchemaError unexpectedly")
 
     def test_errors__top_levels(self):
         with self.assertRaises(SchemaError) as e:
