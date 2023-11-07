@@ -60,7 +60,12 @@ class GenerateTeamsValidator(Validator):
                     Optional("name"): str,
                     Optional("attributes"): {str: [int]},
                     Optional("relationships"): {
-                        str: Or(*[get_relationship_str(relationship) for relationship in Relationship])
+                        str: Or(
+                            *[
+                                get_relationship_str(relationship)
+                                for relationship in Relationship
+                            ]
+                        )
                     },
                     Optional("project_preferences"): [int],
                 }
@@ -71,12 +76,12 @@ class GenerateTeamsValidator(Validator):
         for student in students:
             student_id = student.get("id")
             if student_id in student_ids:
-                raise SchemaError(f"Student ids must be unique. Student {student_id} is duplicated.")
+                raise SchemaError(
+                    f"Student ids must be unique. Student {student_id} is duplicated."
+                )
             student_ids.add(student_id)
 
-        teams = self.data.get("team_generation_options").get(
-            "initial_teams"
-        )
+        teams = self.data.get("team_generation_options").get("initial_teams")
 
         max_project_preferences = self.data.get("algorithm_options").get(
             "max_project_preferences"
@@ -85,8 +90,8 @@ class GenerateTeamsValidator(Validator):
             for student in students:
                 student_project_preferences = student.get("project_preferences")
                 if (
-                        student_project_preferences is not None
-                        and len(student_project_preferences) > max_project_preferences
+                    student_project_preferences is not None
+                    and len(student_project_preferences) > max_project_preferences
                 ):
                     raise SchemaError(
                         f"Student {student.get('id')} has {student_project_preferences} project preferences, "
@@ -101,7 +106,7 @@ class GenerateTeamsValidator(Validator):
 
             # Validate if project preferences are unique
             if len(student_project_preferences) != len(
-                    set(student_project_preferences)
+                set(student_project_preferences)
             ):
                 raise SchemaError(
                     f"Student {student.get('id')} has duplicate project preferences."
@@ -116,7 +121,12 @@ class GenerateTeamsValidator(Validator):
         all_attributes = set()
         for team in teams:
             all_attributes.update(
-                [requirement.get("attribute") for requirement in team.get("requirements")] if team.get("requirements") else []
+                [
+                    requirement.get("attribute")
+                    for requirement in team.get("requirements")
+                ]
+                if team.get("requirements")
+                else []
             )
         for student in students:
             attributes = student.get("attributes")
@@ -159,22 +169,28 @@ class GenerateTeamsValidator(Validator):
     def validate_team_options(self):
         team_options = self.data.get("team_generation_options")
 
-        Schema({
-            "initial_teams": [{
-                "id": int,
-                Optional("name"): str,
-                "project_id": int,
-                Optional("requirements"): [{
-                    "attribute": int,
-                    "operator": str,
-                    "value": int,
-                }],
-                Optional("is_locked"): bool,
-            }],
-            "max_team_size": int,
-            "min_team_size": int,
-            "total_teams": int,
-        }).validate(team_options)
+        Schema(
+            {
+                "initial_teams": [
+                    {
+                        "id": int,
+                        Optional("name"): str,
+                        "project_id": int,
+                        Optional("requirements"): [
+                            {
+                                "attribute": int,
+                                "operator": str,
+                                "value": int,
+                            }
+                        ],
+                        Optional("is_locked"): bool,
+                    }
+                ],
+                "max_team_size": int,
+                "min_team_size": int,
+                "total_teams": int,
+            }
+        ).validate(team_options)
 
         initial_teams = team_options.get("initial_teams")
         initial_teams_ids = [t.get("id") for t in initial_teams]
