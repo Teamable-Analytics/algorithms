@@ -116,7 +116,7 @@ class GenerateTeamsValidator(Validator):
         all_attributes = set()
         for team in teams:
             all_attributes.update(
-                [requirement.attribute for requirement in team.get("requirements")] if team.get("requirements") else []
+                [requirement.get("attribute") for requirement in team.get("requirements")] if team.get("requirements") else []
             )
         for student in students:
             attributes = student.get("attributes")
@@ -134,7 +134,7 @@ class GenerateTeamsValidator(Validator):
             # Validate if attribute keys exist
             if not all_attributes.issuperset(attribute_keys):
                 raise SchemaError(
-                    f"Student {student.get('id')} has attributes that do not exist"
+                    f"Student {student.get('id')} has attributes that do not exist."
                 )
 
         for student in students:
