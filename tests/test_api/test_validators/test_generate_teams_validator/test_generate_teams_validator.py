@@ -189,28 +189,28 @@ class TestGenerateTeamsValidator(unittest.TestCase):
         try:
             validator = GenerateTeamsValidator(self.valid_random_algorithm_data)
             validator.validate()
-        except SchemaError as e:
+        except SchemaError:
             self.fail("Valid data for Random Algorithm raised SchemaError unexpectedly")
 
     def test_valid__weight_algorithm(self):
         try:
             validator = GenerateTeamsValidator(self.valid_weight_algorithm_data)
             validator.validate()
-        except SchemaError as e:
+        except SchemaError:
             self.fail("Valid data for Weight Algorithm raised SchemaError unexpectedly")
 
     def test_valid__social_algorithm(self):
         try:
             validator = GenerateTeamsValidator(self.valid_social_algorithm_data)
             validator.validate()
-        except SchemaError as e:
+        except SchemaError:
             self.fail("Valid data for Social Algorithm raised SchemaError unexpectedly")
 
     def test_valid__priority_algorithm(self):
         try:
             validator = GenerateTeamsValidator(self.valid_priority_algorithm_data)
             validator.validate()
-        except SchemaError as e:
+        except SchemaError:
             self.fail(
                 "Valid data for Priority Algorithm raised SchemaError unexpectedly"
             )
@@ -267,3 +267,47 @@ class TestGenerateTeamsValidator(unittest.TestCase):
             )
             validator.validate()
         self.assertEqual(e.exception.code, "Team ids must be unique.")
+
+    def test_errors__algorithm_options__random_algorithm(self):
+        invalid_field_random_algorithm_data = copy.deepcopy(self.valid_random_algorithm_data)
+        invalid_field_random_algorithm_data["algorithm_options"]["max_project_preferences"] = 3
+        with self.assertRaises(SchemaError) as e:
+            validator = GenerateTeamsValidator(invalid_field_random_algorithm_data)
+            validator.validate()
+        self.assertIn(
+            "Wrong key 'max_project_preferences' in ",
+            e.exception.code
+        )
+
+    def test_errors__algorithm_options__weight_algorithm(self):
+        invalid_field_weight_algorithm_data = copy.deepcopy(self.valid_weight_algorithm_data)
+        invalid_field_weight_algorithm_data["algorithm_options"]["priority"] = []
+        with self.assertRaises(SchemaError) as e:
+            validator = GenerateTeamsValidator(invalid_field_weight_algorithm_data)
+            validator.validate()
+        self.assertIn(
+            "Wrong key 'priority' in ",
+            e.exception.code
+        )
+
+    def test_errors__algorithm_options__social_algorithm(self):
+        invalid_field_social_algorithm_data = copy.deepcopy(self.valid_social_algorithm_data)
+        invalid_field_social_algorithm_data["algorithm_options"]["priority"] = []
+        with self.assertRaises(SchemaError) as e:
+            validator = GenerateTeamsValidator(invalid_field_social_algorithm_data)
+            validator.validate()
+        self.assertIn(
+            "Wrong key 'priority' in ",
+            e.exception.code
+        )
+
+    def test_errors__algorithm_options__priority_algorithm(self):
+        invalid_field_priority_algorithm_data = copy.deepcopy(self.valid_priority_algorithm_data)
+        invalid_field_priority_algorithm_data["algorithm_options"]["random_field"] = []
+        with self.assertRaises(SchemaError) as e:
+            validator = GenerateTeamsValidator(invalid_field_priority_algorithm_data)
+            validator.validate()
+        self.assertIn(
+            "Wrong key 'random_field' in ",
+            e.exception.code
+        )
