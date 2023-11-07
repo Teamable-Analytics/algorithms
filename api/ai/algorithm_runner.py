@@ -109,7 +109,7 @@ class AlgorithmRunner:
             return PriorityAlgorithmConfig
         if algorithm_type == AlgorithmType.MRR:
             return None
-        if algorithm_type == AlgorithmType.MRR:
+        if algorithm_type == AlgorithmType.DRR:
             return None
 
         raise NotImplementedError(
