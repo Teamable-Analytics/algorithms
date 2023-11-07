@@ -26,7 +26,6 @@ Definition:
     - Remove all dummy student
     - Return the allocations
 """
-from heapq import heappush
 from typing import List, Dict, Set
 
 from api.ai.new.double_round_robin_algorithm.custom_models import Utility
@@ -56,21 +55,38 @@ class DoubleRoundRobinAlgorithm(Algorithm):
         num_students: int,
         allocation: Dict[int, List[Student]],
         selected_students: Set[int],
+        total_dummy_students: int = -1,
     ) -> Dict[int, List[Student]]:
+        dummy_student_counter = 1
+
         while len(selected_students) < num_students:
             for team in self.teams:
-                while (
-                    len(utilities[team.project_id]) > 0
-                    and utilities[team.project_id][0].student.id in selected_students
-                ):
-                    utilities[team.project_id].pop(0)
+                sorted_utilities_of_team = sorted(
+                    utilities[team.project_id], reverse=True
+                )
 
-                if len(utilities[team.project_id]) == 0:
+                while (
+                    len(sorted_utilities_of_team) > 0
+                    and sorted_utilities_of_team[0].student.id in selected_students
+                ):
+                    sorted_utilities_of_team.pop(0)
+                    if len(sorted_utilities_of_team) == 0:
+                        break
+
+                if len(sorted_utilities_of_team) == 0:
                     continue
 
-                curr_utility = utilities[team.project_id].pop(0)
-                allocation[team.project_id].append(curr_utility.student)
-                selected_students.add(curr_utility.student.id)
+                added_dummy_student = (
+                    sorted_utilities_of_team[0].value < 0
+                    and dummy_student_counter < total_dummy_students
+                )
+
+                if added_dummy_student:
+                    dummy_student_counter += 1
+                else:
+                    curr_utility = sorted_utilities_of_team.pop(0)
+                    allocation[team.project_id].append(curr_utility.student)
+                    selected_students.add(curr_utility.student.id)
 
         return allocation
 
@@ -90,22 +106,30 @@ class DoubleRoundRobinAlgorithm(Algorithm):
             for student in students:
                 curr_utility = utilities[team.project_id][student.id]
                 if curr_utility.value > 0:
-                    heappush(positive_utilities[team.project_id], curr_utility)
+                    positive_utilities[team.project_id].append(curr_utility)
                     positive_utility_students.add(student.id)
                 else:
-                    heappush(negative_utilities[team.project_id], curr_utility)
+                    negative_utilities[team.project_id].append(curr_utility)
                     negative_utility_students.add(student.id)
+
+        # Add dummy students to negative utilities
+        num_dummy_students = (
+            len(self.teams) - len(negative_utility_students) % len(self.teams)
+        ) % len(self.teams)
 
         selected_students: Set[int] = set()
         allocation: Dict[int, List[Student]] = {
             team.project_id: [] for team in self.teams
         }
+
         self._round_robin(
             negative_utilities,
             len(negative_utility_students),
             allocation,
             selected_students,
+            num_dummy_students,
         )
+
         self._round_robin(
             positive_utilities,
             len(positive_utility_students),
