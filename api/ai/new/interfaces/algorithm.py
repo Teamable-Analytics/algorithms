@@ -63,15 +63,18 @@ class Algorithm(ABC):
                 ]
             )
 
+        largest_existing_id = max([t.id for t in initial_teams]) if initial_teams else 0
+        team_names = set([t.name for t in initial_teams])
+
         # Create the remaining teams with unique names
-        counter = 1
+        new_team_id = largest_existing_id + 1
         while len(initial_teams) < team_generation_options.total_teams:
-            name = f"Team {counter}"
-            # todo: do this better, it loops through all names every time
-            if name not in map(lambda t: t.name, initial_teams):
-                # todo: unique id must be ensured now
-                initial_teams.append(Team(_id=-1, name=name))
-            counter += 1
+            name = f"Team {new_team_id}"
+            if name not in team_names:
+                new_team = Team(_id=new_team_id, name=name)
+                initial_teams.append(new_team)
+                team_names.add(new_team.name)
+            new_team_id += 1
 
         return initial_teams
 

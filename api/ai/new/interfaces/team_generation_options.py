@@ -4,6 +4,7 @@ from typing import List
 from schema import Schema
 
 from api.models.team import TeamShell
+from utils.validation import is_unique
 
 
 @dataclass
@@ -11,7 +12,6 @@ class TeamGenerationOptions:
     max_team_size: int
     min_team_size: int
     total_teams: int
-    # todo: add support for initial team options in new Algorithm structure
     initial_teams: List[TeamShell]
 
     def __post_init__(self):
@@ -27,7 +27,9 @@ class TeamGenerationOptions:
             )
         if self.initial_teams:
             Schema([TeamShell]).validate(self.initial_teams)
-            if len(self.initial_teams) != self.total_teams:
+            if not is_unique([t.id for t in self.initial_teams]):
+                raise ValueError(f"Ids of team shells must be unique!")
+            if len(self.initial_teams) > self.total_teams:
                 raise ValueError(
-                    f"team_options size ({len(self.initial_teams)}) != total_teams ({self.total_teams})"
+                    f"team_options size ({len(self.initial_teams)}) > total_teams ({self.total_teams})"
                 )

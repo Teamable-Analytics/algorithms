@@ -1,18 +1,17 @@
 from dataclasses import dataclass
-from typing import List
 
 from benchmarking.data.interfaces import StudentProvider, InitialTeamsProvider
-from benchmarking.evaluations.interfaces import Scenario, TeamSetMetric
+from benchmarking.evaluations.interfaces import Scenario
+from utils.validation import assert_can_exist_together
 
 
 @dataclass
 class SimulationSettings:
     scenario: Scenario
     student_provider: StudentProvider
-    # todo: needed for now, will be removed when we separate metrics out
-    metrics: List[TeamSetMetric]
     num_teams: int = None
     initial_teams_provider: InitialTeamsProvider = None
+    cache_key: str = None
 
     def __post_init__(self):
         self.validate()
@@ -26,5 +25,4 @@ class SimulationSettings:
             raise ValueError(
                 "Either num_teams OR a project initial_teams_provider must be specified."
             )
-        if not self.metrics:
-            raise ValueError("At least one metric must be specified for a simulation.")
+        assert_can_exist_together(self.student_provider, self.initial_teams_provider)
