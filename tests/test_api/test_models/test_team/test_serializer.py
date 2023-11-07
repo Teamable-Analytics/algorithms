@@ -5,7 +5,7 @@ from api.models.enums import RequirementOperator, Relationship
 from api.models.project import ProjectRequirement
 from api.models.student import Student
 from api.models.team import Team, TeamSerializer
-from utils.testing import teams_are_equal
+from utils.equality import teams_are_equal
 
 
 class TestTeamSerializer(unittest.TestCase):
