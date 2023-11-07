@@ -1,8 +1,9 @@
-from typing import List, Optional, Dict
+from typing import List
 
-from schema import Schema, SchemaError, Or
+from schema import Schema, SchemaError, Or, Optional
 
 from api.api.validators.interface import Validator
+from api.api.utils.relationship import get_relationship_str
 from api.models.enums import AlgorithmType, Relationship
 from api.models.team import TeamShell
 
@@ -27,9 +28,9 @@ class GenerateTeamsValidator(Validator):
     def _validate_schema(self):
         Schema(
             {
-                "algorithm_options": Dict,
-                "students": List[Dict],
-                "team_generation_options": Dict,
+                "algorithm_options": dict,
+                "students": [dict],
+                "team_generation_options": dict,
             }
         ).validate(self.data)
 
@@ -56,23 +57,24 @@ class GenerateTeamsValidator(Validator):
             [
                 {
                     "id": int,
-                    "name": Optional[str],
-                    "attributes": {str: List[int]},
-                    "relationships": {
-                        str: Or(*[relationship.value for relationship in Relationship])
+                    Optional("name"): str,
+                    Optional("attributes"): {str: [int]},
+                    Optional("relationships"): {
+                        str: Or(*[get_relationship_str(relationship) for relationship in Relationship])
                     },
-                    "project_preferences": List[int],
+                    Optional("project_preferences"): [int],
                 }
             ]
         ).validate(students)
 
         student_ids = set()
         for student in students:
-            if student.get("_id") in student_ids:
-                raise SchemaError("Student ids must be unique.")
-            student_ids.add(student.get("_id"))
+            student_id = student.get("id")
+            if student_id in student_ids:
+                raise SchemaError(f"Student ids must be unique. Student {student_id} is duplicated.")
+            student_ids.add(student_id)
 
-        teams: List[TeamShell] = self.data.get("team_generation_options").get(
+        teams = self.data.get("team_generation_options").get(
             "initial_teams"
         )
 
@@ -83,15 +85,15 @@ class GenerateTeamsValidator(Validator):
             for student in students:
                 student_project_preferences = student.get("project_preferences")
                 if (
-                    student_project_preferences is not None
-                    and student_project_preferences > max_project_preferences
+                        student_project_preferences is not None
+                        and len(student_project_preferences) > max_project_preferences
                 ):
                     raise SchemaError(
-                        f"Student {student.id} has {student_project_preferences} project preferences, "
+                        f"Student {student.get('id')} has {student_project_preferences} project preferences, "
                         + f"but the maximum is {max_project_preferences}."
                     )
 
-        all_projects = set([team.project_id for team in teams])
+        all_projects = set([team.get("project_id") for team in teams])
         for student in students:
             student_project_preferences = student.get("project_preferences")
             if student_project_preferences is None:
@@ -99,29 +101,29 @@ class GenerateTeamsValidator(Validator):
 
             # Validate if project preferences are unique
             if len(student_project_preferences) != len(
-                set(student_project_preferences)
+                    set(student_project_preferences)
             ):
                 raise SchemaError(
-                    f"Student {student.id} has duplicate project preferences."
+                    f"Student {student.get('id')} has duplicate project preferences."
                 )
 
             # Validate if projects under student.project_preferences exist
             if not all_projects.issuperset(student_project_preferences):
                 raise SchemaError(
-                    f"Student {student.id} has project preferences that do not exist in the project set."
+                    f"Student {student.get('id')} has project preferences that do not exist in the project set."
                 )
 
         all_attributes = set()
         for team in teams:
             all_attributes.update(
-                [requirement.attribute for requirement in team.requirements]
+                [requirement.attribute for requirement in team.get("requirements")] if team.get("requirements") else []
             )
         for student in students:
             attributes = student.get("attributes")
 
             # Validate if attribute keys integer string
             try:
-                attribute_keys = list(map(int, attributes.keys()))
+                attribute_keys = list(map(int, attributes.keys())) if attributes else []
             except ValueError:
                 raise SchemaError("Attribute keys must be integers.")
 
@@ -132,13 +134,50 @@ class GenerateTeamsValidator(Validator):
             # Validate if attribute keys exist
             if not all_attributes.issuperset(attribute_keys):
                 raise SchemaError(
-                    f"Student {student.id} has attributes that do not exist"
+                    f"Student {student.get('id')} has attributes that do not exist"
+                )
+
+        for student in students:
+            relationships = student.get("relationships")
+
+            # Validate if relationship keys integer string
+            try:
+                relationship_keys = list(map(int, relationships.keys()))
+            except ValueError:
+                raise SchemaError("Relationship keys must be integers.")
+
+            # Validate if relationship keys are unique
+            if len(relationship_keys) != len(set(relationship_keys)):
+                raise SchemaError("Relationship keys must be unique.")
+
+            # Validate if relationship keys exist
+            if not student_ids.issuperset(relationship_keys):
+                raise SchemaError(
+                    f"Student {student.get('id')} has relationships with unknown students."
                 )
 
     def validate_team_options(self):
         team_options = self.data.get("team_generation_options")
-        initial_teams: List[TeamShell] = team_options.get("initial_teams")
-        initial_teams_ids = [t.id for t in initial_teams]
+
+        Schema({
+            "initial_teams": [{
+                "id": int,
+                Optional("name"): str,
+                "project_id": int,
+                Optional("requirements"): [{
+                    "attribute": int,
+                    "operator": str,
+                    "value": int,
+                }],
+                Optional("is_locked"): bool,
+            }],
+            "max_team_size": int,
+            "min_team_size": int,
+            "total_teams": int,
+        }).validate(team_options)
+
+        initial_teams = team_options.get("initial_teams")
+        initial_teams_ids = [t.get("id") for t in initial_teams]
 
         if len(initial_teams_ids) != len(set(initial_teams_ids)):
             raise SchemaError("Team ids must be unique.")

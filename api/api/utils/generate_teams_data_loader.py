@@ -40,10 +40,10 @@ class GenerateTeamsDataLoader:
         students = self.data.get("students")
         return [
             Student(
-                _id=student.get("id"),
+                _id=int(student.get("id")),
                 name=student.get("name"),
                 relationships={
-                    student_id: get_relationship(relationship)
+                    int(student_id): get_relationship(relationship)
                     for student_id, relationship in student.get("relationships").items()
                 },
                 attributes=student.get("attributes"),
@@ -67,7 +67,12 @@ class GenerateTeamsDataLoader:
         return TeamGenerationOptions(
             total_teams=team_generation_options.get("total_teams"),
             initial_teams=[
-                TeamShell(**team)
+                TeamShell(
+                    _id=int(team.get("id")),
+                    name=team.get("name"),
+                    project_id=int(team.get("project_id")),
+                    requirements=team.get("requirements", []),
+                )
                 for team in team_generation_options.get("initial_teams")
             ],
             max_team_size=team_generation_options.get("max_team_size"),
