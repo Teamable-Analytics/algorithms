@@ -29,9 +29,9 @@ class Student:
         is_met = False
         # note that attributes are modelled as lists of integers
         for value in self.attributes.get(requirement.attribute, []):
-            if requirement.operator == RequirementOperator.LESS_THAN:
+            if requirement.operator == RequirementOperator.LESS_THAN.value:
                 is_met |= value < requirement.value
-            elif requirement.operator == RequirementOperator.MORE_THAN:
+            elif requirement.operator == RequirementOperator.MORE_THAN.value:
                 is_met |= value > requirement.value
             else:  # default case is RequirementOperator.EXACTLY
                 is_met |= value == requirement.value

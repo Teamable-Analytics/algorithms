@@ -176,6 +176,12 @@ class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
         if len(self.projects) == 0:
             raise SchemaError("Project list cannot be empty")
 
+    @staticmethod
+    def parse_json(_: Dict[str, Any]):
+        raise AttributeError(
+            "GeneralizedEnvyGraphAlgorithmOptions does not support parsing from json."
+        )
+
 
 AnyAlgorithmOptions = Union[
     RandomAlgorithmOptions,

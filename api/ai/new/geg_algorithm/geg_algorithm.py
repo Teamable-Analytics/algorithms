@@ -109,7 +109,7 @@ class GEGAlgorithm(Algorithm):
         return new_team_set
 
     def generate(self, students: List[Student]) -> TeamSet:
-        self.envy_graph = EnvyGraph(students)
+        self.envy_graph = EnvyGraph(self.projects, students)
         self.utilities = self._calculate_utilities(students)
         self.allocation: Dict[int, List[int]] = {
             project.id: [] for project in self.projects
@@ -136,25 +136,23 @@ class GEGAlgorithm(Algorithm):
                 raise ValueError("No i_star found")
 
             self.allocation[i_star].append(student.id)
-            self.envy_graph.update_envy_graph(
-                i_star, self.utilities.get((i_star, student.id))
-            )
+            self.envy_graph.update_envy_graph(i_star, self.allocation)
 
-            all_directed_cycles = self.envy_graph.get_all_directed_cycles()
-            while len(all_directed_cycles) > 0:
-                for cycle in all_directed_cycles:
-                    allocation_C = []
-                    for i in cycle:
-                        if i in self.allocation:
-                            allocation_C.append(self.allocation[i])
-                            self.envy_graph.update_envy_graph(
-                                i, self.utilities.get((i, student.id))
-                            )
-                        else:
-                            i_j = cycle.index(i)
-                            allocation_C.append(self.allocation[i_j + 1])
-                            self.envy_graph.update_envy_graph(
-                                i_j + 1, self.utilities.get((i_j + 1, student.id))
-                            )
+            while True:
+                all_directed_cycles = self.envy_graph.get_all_directed_cycles()
+                if len(all_directed_cycles) == 0:
+                    break
+
+                cycle = all_directed_cycles[0]
+                last_cycle_allocation = self.allocation[cycle[-1]]
+                for i in range(len(cycle)):
+                    project_id = cycle[i]
+                    if i < len(cycle) - 1:
+                        next_project_id_allocation = self.allocation[cycle[i + 1]]
+                    else:
+                        next_project_id_allocation = last_cycle_allocation
+
+                    self.allocation[project_id] = next_project_id_allocation
+                    self.envy_graph.update_envy_graph(project_id, self.allocation)
 
         return self._construct_team_from_allocation()
