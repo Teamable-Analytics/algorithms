@@ -2,6 +2,7 @@ import itertools
 import random
 from typing import List, Dict, Tuple
 
+from api.ai.new.priority_algorithm.mutations.utils import get_available_priority_teams
 from api.ai.new.priority_algorithm.priority.interfaces import Priority
 from api.ai.new.priority_algorithm.mutations import utils
 from api.ai.new.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
@@ -31,11 +32,7 @@ def mutate_robinhood(
             # We need to clone the priority_team_set because we will be modifying it in order to get the score of the whole TeamSet
             cloned_priority_team_set: PriorityTeamSet = priority_team_set.clone()
 
-            available_priority_teams = [
-                priority_team
-                for priority_team in cloned_priority_team_set.priority_teams
-                if not priority_team.team.is_locked
-            ]
+            available_priority_teams = get_available_priority_teams(priority_team_set)
 
             # Sort the teams into two lists: those that satisfy the priority and those that don't
             satisfied_teams: List[PriorityTeam] = []
@@ -97,11 +94,7 @@ def mutate_robinhood_holistic(
 
     cloned_priority_team_set: PriorityTeamSet = priority_team_set.clone()
 
-    available_priority_teams = [
-        priority_team
-        for priority_team in cloned_priority_team_set.priority_teams
-        if not priority_team.team.is_locked
-    ]
+    available_priority_teams = get_available_priority_teams(priority_team_set)
 
     # Calculate the score of each team in the team set
     team_scores: List[Tuple[PriorityTeam, int]] = []

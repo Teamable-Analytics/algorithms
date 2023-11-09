@@ -1,6 +1,7 @@
 import itertools
 from typing import List, Dict
 
+from api.ai.new.priority_algorithm.mutations.utils import get_available_priority_teams
 from api.ai.priority_algorithm.interfaces import Priority
 from api.ai.priority_algorithm.mutations.utils import score
 from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet
@@ -18,11 +19,7 @@ def mutate_local_max(
     students on the other team. This implementation does not account for if the second team's score increases or
     decreases.
     """
-    available_priority_teams = [
-        priority_team
-        for priority_team in priority_team_set.priority_teams
-        if not priority_team.team.is_locked
-    ]
+    available_priority_teams = get_available_priority_teams(priority_team_set)
     try:
         if len(available_priority_teams) < 2:
             return priority_team_set
