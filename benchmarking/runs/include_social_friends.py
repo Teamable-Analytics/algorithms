@@ -40,8 +40,7 @@ def include_social_friends(num_trials: int = 10, generate_graphs: bool = True):
     """
 
     # Defining our changing x-values (in the graph sense)
-    # class_sizes = [100, 150, 200, 250, 300]
-    class_sizes = [50, 100]
+    class_sizes = list(range(50, 501, 50))
 
     # Graph variables
     graph_runtime_dict = {}

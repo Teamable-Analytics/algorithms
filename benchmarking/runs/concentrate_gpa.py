@@ -28,13 +28,13 @@ from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetA
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-def concentrate_gpa(num_trials: int = 10, generate_graphs: bool = False):
+def concentrate_gpa(num_trials: int = 10, generate_graphs: bool = True):
     """
     Goal: Run concentrate GPA scenario, and measure the average, maximum, and minimum gini scores for gpa
     """
 
     # Define changing values
-    class_sizes = [50, 100, 150, 200, 250, 300, 350, 400]
+    class_sizes = list(range(50, 501, 50))
     ratio_of_a_students = 0.25
     ratio_of_b_students = 0.50
     ratio_of_c_students = 0.25
