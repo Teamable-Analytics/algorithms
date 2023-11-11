@@ -4,8 +4,8 @@ from typing import List, Union, Dict, Any
 
 from schema import Schema, SchemaError
 
-from api.ai.new.priority_algorithm.priority.interfaces import Priority
-from api.ai.new.priority_algorithm.priority.priority import TokenizationPriority
+from api.ai.priority_algorithm.priority.interfaces import Priority
+from api.ai.priority_algorithm.priority.priority import TokenizationPriority
 from api.models.enums import (
     RelationshipBehaviour,
     DiversifyType,

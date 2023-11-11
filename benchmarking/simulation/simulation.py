@@ -3,11 +3,11 @@ import time
 from typing import List, Tuple
 
 from api.ai.algorithm_runner import AlgorithmRunner
-from api.ai.new.interfaces.algorithm_config import AlgorithmConfig
+from api.ai.interfaces.algorithm_config import AlgorithmConfig
 from api.models.enums import AlgorithmType
 from api.models.team_set import TeamSet
 from benchmarking.caching.simulation_cache import SimulationCache
-from benchmarking.simulation.mock_algorithm_2 import MockAlgorithm2
+from benchmarking.simulation.mock_algorithm import MockAlgorithm
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 # list of floats tracks the runtime of each run
@@ -51,13 +51,13 @@ class Simulation:
             if self.settings.initial_teams_provider
             else None
         )
-        team_generation_options = MockAlgorithm2.get_team_generation_options(
+        team_generation_options = MockAlgorithm.get_team_generation_options(
             num_students=self.settings.student_provider.num_students,
             num_teams=self.settings.num_teams,
             initial_teams=custom_initial_teams,
         )
 
-        algorithm_options = MockAlgorithm2.algorithm_options_from_scenario(
+        algorithm_options = MockAlgorithm.algorithm_options_from_scenario(
             algorithm_type=self.algorithm_type,
             scenario=self.settings.scenario,
             max_project_preferences=self.settings.student_provider.max_project_preferences_per_student,

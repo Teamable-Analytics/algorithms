@@ -3,13 +3,13 @@ from typing import Dict, List
 
 import typer
 
-from api.ai.new.interfaces.algorithm_config import (
+from api.ai.interfaces.algorithm_config import (
     RandomAlgorithmConfig,
     SocialAlgorithmConfig,
     WeightAlgorithmConfig,
     PriorityAlgorithmConfig,
 )
-from api.ai.new.priority_algorithm.mutations import mutate_local_max, mutate_random_swap
+from api.ai.priority_algorithm.mutations import mutate_local_max, mutate_random_swap
 from api.models.enums import ScenarioAttribute, Gpa, Age, Race, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
@@ -131,7 +131,7 @@ def three_tokenization_constraints(num_trials: int = 10, generate_graphs: bool =
                 AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
                 AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
                 AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
-                AlgorithmType.PRIORITY_NEW: [
+                AlgorithmType.PRIORITY: [
                     PriorityAlgorithmConfig(),
                     PriorityAlgorithmConfig(
                         name="local_max",

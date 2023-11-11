@@ -1,28 +1,28 @@
 from typing import cast, List, Tuple, Optional
 
-from api.ai.new.interfaces.algorithm import ChooseAlgorithm
-from api.ai.new.interfaces.algorithm_config import SocialAlgorithmConfig
-from api.ai.new.interfaces.algorithm_options import (
+from api.ai.interfaces.algorithm import ChooseAlgorithm
+from api.ai.interfaces.algorithm_config import SocialAlgorithmConfig
+from api.ai.interfaces.algorithm_options import (
     SocialAlgorithmOptions,
     WeightAlgorithmOptions,
 )
-from api.ai.new.social_algorithm.clique_finder import CliqueFinder
-from api.ai.new.social_algorithm.custom_models import TeamWithCliques
-from api.ai.new.social_algorithm.evaluation import TeamEvaluation
-from api.ai.new.social_algorithm.social_graph import SocialGraph
-from api.ai.new.social_algorithm.utils import (
+from api.ai.social_algorithm.clique_finder import CliqueFinder
+from api.ai.social_algorithm.custom_models import TeamWithCliques
+from api.ai.social_algorithm.evaluation import TeamEvaluation
+from api.ai.social_algorithm.social_graph import SocialGraph
+from api.ai.social_algorithm.utils import (
     next_empty_team,
     has_empty_teams,
     clique_ids_to_student_list,
     valid_clique_list,
     clean_clique_list,
 )
-from api.ai.new.utils import save_students_to_team, generate_with_choose
-from api.ai.new.weight_algorithm.utility import (
+from api.ai.utils import save_students_to_team, generate_with_choose
+from api.ai.weight_algorithm.utility import (
     get_social_utility,
     get_preference_utility,
 )
-from api.ai.new.weight_algorithm.weight_algorithm import WeightAlgorithm
+from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.models.enums import Relationship
 from api.models.student import Student
 from api.models.team import Team

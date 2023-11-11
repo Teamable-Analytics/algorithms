@@ -1,7 +1,7 @@
 from typing import List
 
-from api.ai.new.priority_algorithm.priority.interfaces import Priority
-from api.ai.new.priority_algorithm.priority.priority import (
+from api.ai.priority_algorithm.priority.interfaces import Priority
+from api.ai.priority_algorithm.priority.priority import (
     DiversityPriority,
     TokenizationPriority,
 )

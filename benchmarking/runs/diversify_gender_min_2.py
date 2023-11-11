@@ -3,13 +3,13 @@ from typing import Dict, List
 
 import typer
 
-from api.ai.new.interfaces.algorithm_config import (
+from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     RandomAlgorithmConfig,
     SocialAlgorithmConfig,
     WeightAlgorithmConfig,
 )
-from api.ai.new.priority_algorithm.mutations import (
+from api.ai.priority_algorithm.mutations import (
     mutate_local_max,
     mutate_random_swap,
 )
@@ -103,7 +103,7 @@ def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
                 AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
                 AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
                 AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
-                AlgorithmType.PRIORITY_NEW: [
+                AlgorithmType.PRIORITY: [
                     PriorityAlgorithmConfig(),
                     PriorityAlgorithmConfig(
                         name="local_max",

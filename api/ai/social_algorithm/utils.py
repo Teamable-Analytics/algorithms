@@ -1,6 +1,6 @@
 from typing import List
 
-from api.ai.new.social_algorithm.custom_models import TeamWithCliques
+from api.ai.social_algorithm.custom_models import TeamWithCliques
 from api.models.student import Student
 
 

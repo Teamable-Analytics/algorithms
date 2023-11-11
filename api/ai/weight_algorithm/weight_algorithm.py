@@ -1,12 +1,12 @@
 from typing import List, Tuple, Optional, cast
 
-from api.ai.new.interfaces.algorithm import ChooseAlgorithm
-from api.ai.new.interfaces.algorithm_config import WeightAlgorithmConfig
-from api.ai.new.interfaces.algorithm_options import (
+from api.ai.interfaces.algorithm import ChooseAlgorithm
+from api.ai.interfaces.algorithm_config import WeightAlgorithmConfig
+from api.ai.interfaces.algorithm_options import (
     WeightAlgorithmOptions,
 )
-from api.ai.new.utils import generate_with_choose
-from api.ai.new.weight_algorithm.utility import (
+from api.ai.utils import generate_with_choose
+from api.ai.weight_algorithm.utility import (
     get_requirement_utility,
     get_social_utility,
     get_diversity_utility,

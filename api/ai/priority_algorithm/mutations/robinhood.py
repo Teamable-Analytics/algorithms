@@ -2,10 +2,13 @@ import itertools
 import random
 from typing import List, Dict, Tuple
 
-from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.ai.priority_algorithm.mutations import utils
-from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
 from api.models.student import Student
+
+
+ROBINHOOD_SATISFACTION_THRESHOLD = 0.8
 
 
 def mutate_robinhood(
@@ -41,8 +44,11 @@ def mutate_robinhood(
             satisfied_teams: List[PriorityTeam] = []
             unsatisfied_teams: List[PriorityTeam] = []
             for team in available_priority_teams:
-                if priority.satisfied_by(
-                    [student_dict[student_id] for student_id in team.student_ids]
+                if (
+                    priority.satisfaction(
+                        [student_dict[student_id] for student_id in team.student_ids]
+                    )
+                    >= ROBINHOOD_SATISFACTION_THRESHOLD
                 ):
                     satisfied_teams.append(team)
                 else:
@@ -151,7 +157,7 @@ def perform_local_max_portion_of_robinhood(
 
     # Generate all possible teams using the students from the two teams
     # Elements of this list are lists of student ids
-    possible_teams: List[List[int]] = list(
+    possible_teams: List[Tuple[int]] = list(
         itertools.combinations(students, len(selected_team_b.student_ids))
     )
 

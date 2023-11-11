@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 
-from api.ai.new.priority_algorithm.priority.interfaces import Priority
-from api.ai.new.weight_algorithm.utility.diversity_utility import _blau_index
+from api.ai.priority_algorithm.priority.interfaces import Priority
+from api.ai.weight_algorithm.utility.diversity_utility import _blau_index
 from api.models.enums import DiversifyType, TokenizationConstraintDirection
 from api.models.student import Student
 

@@ -1,14 +1,13 @@
-import random
 import unittest
 from typing import List, Dict, Tuple
 
-from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
 from api.ai.priority_algorithm.mutations import utils
 from api.ai.priority_algorithm.mutations.robinhood import (
     mutate_robinhood,
     mutate_robinhood_holistic,
 )
-from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.models.student import Student
 from api.models.team import Team
 
@@ -25,9 +24,9 @@ class StudentListPriority(Priority):
     def validate(self):
         return True
 
-    def satisfied_by(self, students: List[Student]) -> bool:
+    def satisfaction(self, students: List[Student]) -> float:
         ids = [student.id for student in students]
-        return set(self.students).issubset(set(ids))
+        return int(set(self.students).issubset(set(ids)))
 
 
 def equal_priority_team_sets(a: PriorityTeamSet, b: PriorityTeamSet) -> bool:

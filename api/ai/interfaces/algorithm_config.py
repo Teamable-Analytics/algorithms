@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Callable, Tuple, List
 
-from api.ai.new.priority_algorithm.mutations.random_swap import mutate_random_swap
-
 
 @dataclass
 class AlgorithmConfig(ABC):
@@ -65,6 +63,10 @@ class PriorityAlgorithmConfig(AlgorithmConfig):
         super().__post_init__()
         # by default use random swap mutation for all the permitted mutation spread
         if not self.MUTATIONS:
+            from api.ai.priority_algorithm.mutations.random_swap import (
+                mutate_random_swap,
+            )
+
             self.MUTATIONS = [(mutate_random_swap, self.MAX_SPREAD)]
 
     def validate(self):
