@@ -2,8 +2,8 @@ import copy
 from dataclasses import dataclass
 from typing import List, Dict
 
-from api.ai.new.priority_algorithm.priority.interfaces import Priority
-from api.ai.new.priority_algorithm.scoring import (
+from api.ai.priority_algorithm.priority.interfaces import Priority
+from api.ai.priority_algorithm.scoring import (
     get_priority_satisfaction_array,
     get_multipliers,
 )

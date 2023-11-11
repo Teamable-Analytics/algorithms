@@ -1,6 +1,6 @@
 import unittest
 
-from api.ai.new.interfaces.algorithm_config import (
+from api.ai.interfaces.algorithm_config import (
     RandomAlgorithmConfig,
     SocialAlgorithmConfig,
     PriorityAlgorithmConfig,

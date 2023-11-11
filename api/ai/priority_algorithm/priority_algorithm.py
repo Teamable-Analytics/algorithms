@@ -1,145 +1,121 @@
 import time
-from typing import Dict, List, Literal
+from typing import cast, Dict, List
 
-from api.ai.new.utils import save_students_to_team
-from api.ai.priority_algorithm.interfaces import Priority
-from api.ai.priority_algorithm.mutations.local_max import mutate_local_max
-from api.ai.priority_algorithm.mutations.random_swap import mutate_random_swap
-from api.ai.priority_algorithm.mutations.robinhood import (
-    mutate_robinhood,
-    mutate_robinhood_holistic,
+from api.ai.interfaces.algorithm import Algorithm
+from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
+from api.ai.interfaces.algorithm_options import (
+    PriorityAlgorithmOptions,
+    WeightAlgorithmOptions,
 )
-from api.ai.priority_algorithm.priority import TokenizationPriority
-from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
-from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
-from api.models.enums import DiversifyType, TokenizationConstraintDirection
+from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
+from api.ai.utils import save_students_to_team
+from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.models.student import Student
 from api.models.team import Team
-from old.team_formation.app.team_generator.algorithm.algorithms import WeightAlgorithm
-from old.team_formation.app.team_generator.student import Student as AlgorithmStudent
-from old.team_formation.app.team_generator.team import Team as AlgorithmTeam
-from old.team_formation.app.team_generator.team_generator import TeamGenerationOption
+from api.models.team_set import TeamSet
+
+DEFAULT_PRIORITY_ALGORITHM_CONFIG = PriorityAlgorithmConfig(
+    MAX_KEEP=3,
+    MAX_SPREAD=3,
+    MAX_ITERATE=1500,
+    MAX_TIME=1,
+    # NOTE: default value for mutations is within the PriorityAlgorithmConfig class
+)
 
 
-class PriorityAlgorithm(WeightAlgorithm):
-    """Class used to select teams using a priority algorithm."""
-
-    MAX_KEEP: int = 3  # nodes
-    MAX_SPREAD: int = 3  # nodes
-    MAX_ITERATE: int = 1500  # times
-    MAX_TIME: int = 1  # seconds
-
+class PriorityAlgorithm(Algorithm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.student_dict: Dict[int, Student] = {}
-        self.priorities: List[Priority] = []
-        self.students: List[Student] = []
-
-    def set_default_weights(self):
-        self.options.diversity_weight = 1
-        self.options.preference_weight = 1
-        self.options.requirement_weight = 1
-        self.options.social_weight = 1
-
-    def create_student_dict(self, students: List[Student]) -> Dict[int, Student]:
-        student_dict = {}
-        for student in students:
-            student_dict[student.id] = student
-        return student_dict
-
-    def create_priority_objects(self) -> List[Priority]:
-        priorities = []
-
-        # todo: depends on the input dictionary object structure,
-        #  would be better if the input dict just had the right types
-        def get_strategy(constraint: Literal["diversify", "concentrate"]):
-            if constraint == "diversify":
-                return DiversifyType.DIVERSIFY
-            if constraint == "concentrate":
-                return DiversifyType.CONCENTRATE
-            raise TypeError
-
-        def get_direction(limit_option: Literal["min_of", "max_of"]):
-            if limit_option == "min_of":
-                return TokenizationConstraintDirection.MIN_OF
-            if limit_option == "max_of":
-                return TokenizationConstraintDirection.MAX_OF
-            raise TypeError
-
-        for priority in self.options.priorities:
-            priorities.append(
-                # todo: currently, only tokenization priorities are supported
-                TokenizationPriority(
-                    attribute_id=priority["skill_id"],
-                    strategy=get_strategy(priority["constraint"]),
-                    direction=get_direction(priority["limit_option"]),
-                    threshold=priority["limit"],
-                    value=priority["value"],
-                )
-            )
-        return priorities
-
-    def generate_initial_teams(
-        self,
-        students: List[AlgorithmStudent],
-        teams: List[AlgorithmTeam],
-        team_generation_option: TeamGenerationOption,
-    ) -> PriorityTeamSet:
-        self.set_default_weights()
-        initial_teams = super().generate(students, teams, team_generation_option)
-        initial_team_set = AlgorithmTranslator.algorithm_teams_to_team_set(
-            initial_teams
+        self.algorithm_options: PriorityAlgorithmOptions = cast(
+            PriorityAlgorithmOptions, self.algorithm_options
         )
-        priority_teams: List[PriorityTeam] = []
-        for team in initial_team_set.teams:
-            priority_team = PriorityTeam(
-                team=team, student_ids=[student.id for student in team.students]
+        if self.algorithm_config:
+            self.algorithm_config: PriorityAlgorithmConfig = cast(
+                PriorityAlgorithmConfig, self.algorithm_config
             )
-            priority_teams.append(priority_team)
+        else:
+            self.algorithm_config = DEFAULT_PRIORITY_ALGORITHM_CONFIG
 
-        return PriorityTeamSet(priority_teams=priority_teams)
+        self.student_dict: Dict[int, Student] = {}
 
-    def generate(
+    def generate_initial_team_set(
         self,
-        students: List[AlgorithmStudent],
-        teams: List[AlgorithmTeam],
-        team_generation_option: TeamGenerationOption,
-    ) -> List[AlgorithmTeam]:
-        self.students = AlgorithmTranslator.algorithm_students_to_students(students)
-        self.student_dict = self.create_student_dict(self.students)
-        self.priorities = self.create_priority_objects()
+        students: List[Student],
+    ) -> PriorityTeamSet:
+        team_set = WeightAlgorithm(
+            algorithm_options=weight_options_from_priority_options(
+                self.algorithm_options
+            ),
+            team_generation_options=self.team_generation_options,
+        ).generate(students)
+
+        # keep internal self.teams accurate
+        self.teams = team_set.teams
+
+        return PriorityTeamSet(
+            priority_teams=[
+                PriorityTeam(team=team, student_ids=[s.id for s in team.students])
+                for team in team_set.teams
+            ]
+        )
+
+    def generate(self, students: List[Student]) -> TeamSet:
+        self.student_dict = create_student_dict(students)
+
         start_time = time.time()
         iteration = 0
-        team_sets = [
-            self.generate_initial_teams(students, teams, team_generation_option)
-        ]
+        team_sets = [self.generate_initial_team_set(students)]
 
         while (
-            time.time() - start_time
-        ) < self.MAX_TIME and iteration < self.MAX_ITERATE:
+            time.time() - start_time < self.algorithm_config.MAX_TIME
+            and iteration < self.algorithm_config.MAX_ITERATE
+        ):
             new_team_sets: List[PriorityTeamSet] = []
             for team_set in team_sets:
                 new_team_sets += self.mutate(team_set)
             team_sets = new_team_sets + team_sets
             team_sets = sorted(
                 team_sets,
-                key=lambda ts: ts.calculate_score(self.priorities, self.student_dict),
+                key=lambda ts: ts.calculate_score(
+                    self.algorithm_options.priorities, self.student_dict
+                ),
                 reverse=True,
             )
-            team_sets = team_sets[: self.MAX_KEEP]
+            team_sets = team_sets[: self.algorithm_config.MAX_KEEP]
             iteration += 1
-        return AlgorithmTranslator.teams_to_algorithm_teams(
-            self.save_team_compositions_to_teams(team_sets[0])
-        )
 
-    def save_team_compositions_to_teams(
-        self, priority_team_set: PriorityTeamSet
-    ) -> List[Team]:
+        # the first team set is the "best" one
+        return self._unpack_priority_team_set(team_sets[0])
+
+    def mutate(self, team_set: PriorityTeamSet) -> List[PriorityTeamSet]:
+        """
+        Mutate a single teamset into child teamsets
+        """
+        mutated_team_sets = []
+        for mutation_func, num_outputs in self.algorithm_config.MUTATIONS:
+            mutated_team_sets.extend(
+                [
+                    mutation_func(
+                        team_set.clone(),
+                        self.algorithm_options.priorities,
+                        self.student_dict,
+                    )
+                    for _ in range(num_outputs)
+                ]
+            )
+
+        return mutated_team_sets
+
+    def _unpack_priority_team_set(self, priority_team_set: PriorityTeamSet) -> TeamSet:
         teams: List[Team] = []
 
         # empty underlying teams
         for priority_team in priority_team_set.priority_teams:
             priority_team.team.empty()
+
+        # students will be assigned a .team from the generate_initial_teams(), this must be removed
+        for student in self.student_dict.values():
+            student.team = None
 
         for priority_team in priority_team_set.priority_teams:
             students = [
@@ -148,40 +124,28 @@ class PriorityAlgorithm(WeightAlgorithm):
             ]
             save_students_to_team(priority_team.team, students)
             teams.append(priority_team.team)
-        return teams
 
-    def mutate(self, team_set: PriorityTeamSet) -> List[PriorityTeamSet]:
-        """
-        Mutate a single teamset into child teamsets
-        """
-        algorithm = 1
-        cloned_team_sets = [
-            team_set.clone() for _ in range(PriorityAlgorithm.MAX_SPREAD)
-        ]
-        if algorithm == 1:
-            return [
-                mutate_random_swap(cloned_team_set)
-                for cloned_team_set in cloned_team_sets
-            ]
-        elif algorithm == 2:
-            return [
-                mutate_robinhood(cloned_team_set, self.priorities, self.student_dict)
-                for cloned_team_set in cloned_team_sets
-            ]
-        elif algorithm == 3:
-            return [
-                mutate_robinhood_holistic(
-                    cloned_team_set, self.priorities, self.student_dict
-                )
-                for cloned_team_set in cloned_team_sets
-            ]
-        elif algorithm == 4:
-            return [
-                mutate_local_max(
-                    cloned_team_sets[0], self.priorities, self.student_dict
-                ),
-                *[
-                    mutate_random_swap(cloned_team_set)
-                    for cloned_team_set in cloned_team_sets[1:]
-                ],
-            ]
+        return TeamSet(teams=teams)
+
+
+def create_student_dict(students: List[Student]) -> Dict[int, Student]:
+    student_dict = {}
+    for student in students:
+        student_dict[student.id] = student
+    return student_dict
+
+
+def weight_options_from_priority_options(
+    options: PriorityAlgorithmOptions,
+) -> WeightAlgorithmOptions:
+    return WeightAlgorithmOptions(
+        requirement_weight=options.requirement_weight,
+        social_weight=options.social_weight,
+        diversity_weight=options.diversity_weight,
+        preference_weight=options.preference_weight,
+        max_project_preferences=options.max_project_preferences,
+        friend_behaviour=options.friend_behaviour,
+        enemy_behaviour=options.enemy_behaviour,
+        attributes_to_diversify=options.attributes_to_diversify,
+        attributes_to_concentrate=options.attributes_to_concentrate,
+    )

@@ -1,6 +1,6 @@
 from typing import List
 
-from api.ai.new.interfaces.algorithm import ChooseAlgorithm
+from api.ai.interfaces.algorithm import ChooseAlgorithm
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet

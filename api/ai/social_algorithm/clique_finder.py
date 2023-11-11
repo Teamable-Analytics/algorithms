@@ -1,7 +1,7 @@
 from itertools import combinations
 from typing import List, Set, Tuple
 
-from api.ai.new.social_algorithm.social_graph import SocialGraph
+from api.ai.social_algorithm.social_graph import SocialGraph
 from api.models.student import Student
 
 

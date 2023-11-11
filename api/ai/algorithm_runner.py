@@ -1,31 +1,33 @@
-from typing import List
+from typing import List, TYPE_CHECKING
 
-from api.ai.new.interfaces.algorithm_config import (
+from api.ai.interfaces.algorithm_config import (
     AlgorithmConfig,
     RandomAlgorithmConfig,
     WeightAlgorithmConfig,
     SocialAlgorithmConfig,
     PriorityAlgorithmConfig,
 )
-from api.ai.new.interfaces.algorithm_options import (
-    AlgorithmOptions,
+from api.ai.interfaces.algorithm_options import (
     RandomAlgorithmOptions,
     WeightAlgorithmOptions,
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
 )
-from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
-from api.ai.new.multiple_round_robin_with_adjusted_winner.multiple_round_robin import (
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
+from api.ai.multiple_round_robin_with_adjusted_winner.multiple_round_robin import (
     MultipleRoundRobinWithAdjustedWinnerAlgorithm,
 )
-from api.ai.new.priority_algorithm.priority_algorithm import PriorityAlgorithm
-from api.ai.new.random_algorithm.random_algorithm import RandomAlgorithm
-from api.ai.new.social_algorithm.social_algorithm import SocialAlgorithm
-from api.ai.new.weight_algorithm.weight_algorithm import WeightAlgorithm
+from api.ai.priority_algorithm.priority_algorithm import PriorityAlgorithm
+from api.ai.random_algorithm.random_algorithm import RandomAlgorithm
+from api.ai.social_algorithm.social_algorithm import SocialAlgorithm
+from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.models.enums import AlgorithmType
 from api.models.student import Student
 from api.models.team_set import TeamSet
+
+if TYPE_CHECKING:
+    from api.ai.interfaces.algorithm_options import AlgorithmOptions
 
 
 class AlgorithmRunner:
@@ -33,7 +35,7 @@ class AlgorithmRunner:
         self,
         algorithm_type: AlgorithmType,
         team_generation_options: TeamGenerationOptions,
-        algorithm_options: AlgorithmOptions,
+        algorithm_options: "AlgorithmOptions",
         algorithm_config: AlgorithmConfig = None,
     ):
         self.algorithm_cls = AlgorithmRunner.get_algorithm_from_type(algorithm_type)
@@ -58,9 +60,6 @@ class AlgorithmRunner:
             return SocialAlgorithm
         if algorithm_type == AlgorithmType.PRIORITY:
             return PriorityAlgorithm
-        # todo: fix to use old priority way
-        if algorithm_type == AlgorithmType.PRIORITY_NEW:
-            return PriorityAlgorithm
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinWithAdjustedWinnerAlgorithm
 
@@ -78,8 +77,6 @@ class AlgorithmRunner:
             return SocialAlgorithmOptions
         if algorithm_type == AlgorithmType.PRIORITY:
             return PriorityAlgorithmOptions
-        if algorithm_type == AlgorithmType.PRIORITY_NEW:
-            return PriorityAlgorithmOptions
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinAlgorithmOptions
 
@@ -96,8 +93,6 @@ class AlgorithmRunner:
         if algorithm_type == AlgorithmType.SOCIAL:
             return SocialAlgorithmConfig
         if algorithm_type == AlgorithmType.PRIORITY:
-            return PriorityAlgorithmConfig
-        if algorithm_type == AlgorithmType.PRIORITY_NEW:
             return PriorityAlgorithmConfig
         if algorithm_type == AlgorithmType.MRR:
             return None

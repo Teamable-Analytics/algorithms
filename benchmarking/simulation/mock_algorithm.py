@@ -1,8 +1,22 @@
-from typing import List
+import dataclasses
+from typing import List, Type
 
-from api.ai.priority_algorithm.priority_algorithm import (
-    PriorityAlgorithm as PriorityAlgorithmNew,
+from api.ai.interfaces.algorithm_options import (
+    AnyAlgorithmOptions,
+    RandomAlgorithmOptions,
+    PriorityAlgorithmOptions,
+    SocialAlgorithmOptions,
+    WeightAlgorithmOptions,
+    MultipleRoundRobinAlgorithmOptions,
 )
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
+from api.ai.priority_algorithm.priority.interfaces import Priority
+from api.models.enums import (
+    AlgorithmType,
+    DiversifyType,
+    RelationshipBehaviour,
+)
+from api.models.team import TeamShell
 from benchmarking.evaluations.enums import PreferenceSubject
 from benchmarking.evaluations.goals import (
     WeightGoal,
@@ -10,93 +24,69 @@ from benchmarking.evaluations.goals import (
     DiversityGoal,
     ProjectRequirementGoal,
 )
-from benchmarking.evaluations.interfaces import Scenario
-from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
-from api.models.enums import (
-    AlgorithmType,
-    DiversifyType,
+from benchmarking.evaluations.interfaces import Scenario, Goal
+from benchmarking.simulation.goal_to_priority import (
+    goal_to_priority,
 )
-from api.models.team import Team
-from api.models.team_set import TeamSet
-from old.team_formation.app.team_generator.algorithm.algorithms import (
-    AlgorithmOptions,
-    RandomAlgorithm,
-    WeightAlgorithm,
-)
-from old.team_formation.app.team_generator.algorithm.priority_algorithm.priority_algorithm import (
-    PriorityAlgorithm,
-)
-from old.team_formation.app.team_generator.algorithm.social_algorithm.social_algorithm import (
-    SocialAlgorithm,
-)
-from old.team_formation.app.team_generator.student import Student as AlgorithmStudent
-from old.team_formation.app.team_generator.team_generator import (
-    TeamGenerationOption,
-    TeamGenerator,
-)
+from utils.dictionaries import prune_dictionary_keys
 
 
 class MockAlgorithm:
-    def __init__(
-        self,
-        algorithm_type: AlgorithmType,
-        team_generation_options: TeamGenerationOption,
-        algorithm_options: AlgorithmOptions,
-    ):
-        self.algorithm = MockAlgorithm.get_algorithm_from_type(
-            algorithm_type, algorithm_options
-        )
-        self.team_generation_options = team_generation_options
-
-    def generate(self, students: List[AlgorithmStudent]) -> TeamSet:
-        team_generator = TeamGenerator(
-            students, self.algorithm, [], self.team_generation_options
-        )
-        teams = team_generator.generate()
-        return AlgorithmTranslator.algorithm_teams_to_team_set(teams)
-
-    @staticmethod
-    def get_algorithm_from_type(
-        algorithm_type: AlgorithmType, algorithm_options: AlgorithmOptions
-    ):
-        if algorithm_type == AlgorithmType.RANDOM:
-            return RandomAlgorithm(algorithm_options)
-        if algorithm_type == AlgorithmType.WEIGHT:
-            return WeightAlgorithm(algorithm_options)
-        if algorithm_type == AlgorithmType.SOCIAL:
-            return SocialAlgorithm(algorithm_options)
-        if algorithm_type == AlgorithmType.PRIORITY:
-            return PriorityAlgorithm(algorithm_options)
-        if algorithm_type == AlgorithmType.PRIORITY_NEW:
-            return PriorityAlgorithmNew(algorithm_options)
-
     @staticmethod
     def get_team_generation_options(
-        num_students: int, num_teams: int, initial_teams: List[Team] = None
-    ) -> TeamGenerationOption:
-        if initial_teams:
-            return AlgorithmTranslator.initial_teams_to_team_generation_options(
-                initial_teams,
-                num_students=num_students,
-            )
-
-        min_team_size = num_students // num_teams
-        return TeamGenerationOption(
+        num_students: int, num_teams: int, initial_teams: List[TeamShell] = None
+    ) -> TeamGenerationOptions:
+        _num_teams = len(initial_teams) if initial_teams else num_teams
+        min_team_size = num_students // _num_teams
+        return TeamGenerationOptions(
             max_team_size=min_team_size + 1,
             min_team_size=min_team_size,
-            total_teams=num_teams,
-            team_options=[],
+            total_teams=_num_teams,
+            initial_teams=initial_teams,
         )
+
+    @staticmethod
+    def algorithm_options_class(
+        algorithm_type: AlgorithmType,
+    ) -> Type[AnyAlgorithmOptions]:
+        if algorithm_type == AlgorithmType.RANDOM:
+            return RandomAlgorithmOptions
+        if algorithm_type == AlgorithmType.WEIGHT:
+            return WeightAlgorithmOptions
+        if algorithm_type == AlgorithmType.SOCIAL:
+            return SocialAlgorithmOptions
+        if algorithm_type == AlgorithmType.PRIORITY:
+            return PriorityAlgorithmOptions
+        if algorithm_type == AlgorithmType.PRIORITY_NEW:
+            return PriorityAlgorithmOptions
+        if algorithm_type == AlgorithmType.MRR:
+            return MultipleRoundRobinAlgorithmOptions
+
+    @staticmethod
+    def field_names_for_algorithm_type_options(
+        algorithm_type: AlgorithmType,
+    ) -> List[str]:
+        algorithm_options_cls = MockAlgorithm.algorithm_options_class(algorithm_type)
+        return [_.name for _ in dataclasses.fields(algorithm_options_cls)]
+
+    @staticmethod
+    def extract_priorities_from_goals(goals: List[Goal]) -> List[Priority]:
+        priorities = []
+        for goal in goals:
+            try:
+                priorities.append(goal_to_priority(goal))
+            except NotImplementedError:
+                continue
+
+        return priorities
 
     @staticmethod
     def algorithm_options_from_scenario(
         algorithm_type: AlgorithmType, scenario: Scenario, max_project_preferences: int
-    ) -> AlgorithmOptions:
+    ) -> AnyAlgorithmOptions:
         kwargs = {}
-        diversify_options = []
-        concentrate_options = []
-        priorities = []
-
+        attributes_to_diversify = []
+        attributes_to_concentrate = []
         has_weight_goal = False
         has_project_requirement_goal = False
         has_project_preference_goal = False
@@ -115,19 +105,14 @@ class MockAlgorithm:
                 if goal.subject == PreferenceSubject.PROJECTS:
                     has_project_preference_goal = True
                 if goal.subject == PreferenceSubject.FRIENDS:
-                    kwargs.update({"whitelist_behaviour": "enforce"})
+                    kwargs.update({"friend_behaviour": RelationshipBehaviour.ENFORCE})
                 if goal.subject == PreferenceSubject.ENEMIES:
-                    kwargs.update({"blacklist_behaviour": "enforce"})
+                    kwargs.update({"enemy_behaviour": RelationshipBehaviour.ENFORCE})
             if isinstance(goal, DiversityGoal):
                 if goal.strategy == DiversifyType.DIVERSIFY:
-                    diversify_options.append({"id": goal.attribute})
+                    attributes_to_diversify.append(goal.attribute)
                 else:
-                    concentrate_options.append({"id": goal.attribute})
-                priority = (
-                    AlgorithmTranslator.diversity_goal_to_algorithm_priority_dict(goal)
-                )
-                if priority:
-                    priorities.append(priority)
+                    attributes_to_concentrate.append(goal.attribute)
             if isinstance(goal, ProjectRequirementGoal):
                 has_project_requirement_goal = goal.match_skills
 
@@ -155,10 +140,22 @@ class MockAlgorithm:
             if algorithm_type == AlgorithmType.SOCIAL:
                 kwargs.update({"social_weight": 1})
 
-        return AlgorithmOptions(
-            **kwargs,
-            max_project_preferences=max_project_preferences,
-            concentrate_options=concentrate_options,
-            diversify_options=diversify_options,
-            priorities=priorities,
+        priorities = MockAlgorithm.extract_priorities_from_goals(
+            [goal for goal in scenario.goals]
         )
+        kwargs.update(
+            {
+                "max_project_preferences": max_project_preferences,
+                "attributes_to_concentrate": attributes_to_concentrate,
+                "attributes_to_diversify": attributes_to_diversify,
+                "priorities": priorities,
+            }
+        )
+
+        algorithm_options_class = MockAlgorithm.algorithm_options_class(algorithm_type)
+        specific_kwargs = prune_dictionary_keys(
+            kwargs,
+            MockAlgorithm.field_names_for_algorithm_type_options(algorithm_type),
+        )
+        # create an instance of the correct AlgorithmOptions class with only the keys relevant to it
+        return algorithm_options_class(**specific_kwargs)

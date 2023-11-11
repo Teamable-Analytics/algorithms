@@ -1,4 +1,4 @@
-from api.ai.new.multiple_round_robin_with_adjusted_winner.utils import calculate_value
+from api.ai.multiple_round_robin_with_adjusted_winner.utils import calculate_value
 from api.models.project import Project
 from api.models.student import Student
 from api.models.team import Team

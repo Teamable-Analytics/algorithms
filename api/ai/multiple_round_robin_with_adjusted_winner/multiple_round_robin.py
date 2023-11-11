@@ -30,14 +30,14 @@ for team_i in N:
 from heapq import heappush, heappop
 from typing import List, Dict
 
-from api.ai.new.interfaces.algorithm import Algorithm
-from api.ai.new.interfaces.algorithm_options import MultipleRoundRobinAlgorithmOptions
-from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
-from api.ai.new.multiple_round_robin_with_adjusted_winner.custom_models import (
+from api.ai.interfaces.algorithm import Algorithm
+from api.ai.interfaces.algorithm_options import MultipleRoundRobinAlgorithmOptions
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
+from api.ai.multiple_round_robin_with_adjusted_winner.custom_models import (
     TeamWithValues,
     StudentProjectValue,
 )
-from api.ai.new.multiple_round_robin_with_adjusted_winner.utils import (
+from api.ai.multiple_round_robin_with_adjusted_winner.utils import (
     is_ordered_envy_freeness_up_to_one_item,
     calculate_value,
 )
