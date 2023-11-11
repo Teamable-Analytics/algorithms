@@ -1,7 +1,10 @@
 from typing import List
 
 from api.ai.new.priority_algorithm.priority.interfaces import Priority
-from api.ai.new.priority_algorithm.priority.priority import DiversityPriority, TokenizationPriority
+from api.ai.new.priority_algorithm.priority.priority import (
+    DiversityPriority,
+    TokenizationPriority,
+)
 from benchmarking.evaluations.goals import DiversityGoal
 from benchmarking.evaluations.interfaces import Goal
 

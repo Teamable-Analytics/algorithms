@@ -66,4 +66,6 @@ class DiversityPriority(Priority):
 
     def satisfaction(self, students: List[Student]) -> float:
         blau_index = _blau_index(students, self.attribute_id)
-        return blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)
+        return (
+            blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)
+        )

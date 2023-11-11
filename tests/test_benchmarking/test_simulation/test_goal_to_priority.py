@@ -1,7 +1,10 @@
 import unittest
 from typing import List
 
-from api.ai.new.priority_algorithm.priority.priority import TokenizationPriority, DiversityPriority
+from api.ai.new.priority_algorithm.priority.priority import (
+    TokenizationPriority,
+    DiversityPriority,
+)
 from api.models.enums import (
     DiversifyType,
     ScenarioAttribute,
