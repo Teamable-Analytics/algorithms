@@ -14,14 +14,6 @@ from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
 
-DEFAULT_PRIORITY_ALGORITHM_CONFIG = PriorityAlgorithmConfig(
-    MAX_KEEP=3,
-    MAX_SPREAD=3,
-    MAX_ITERATE=1500,
-    MAX_TIME=1,
-    # NOTE: default value for mutations is within the PriorityAlgorithmConfig class
-)
-
 
 class PriorityAlgorithm(Algorithm):
     def __init__(self, *args, **kwargs):
@@ -34,7 +26,7 @@ class PriorityAlgorithm(Algorithm):
                 PriorityAlgorithmConfig, self.algorithm_config
             )
         else:
-            self.algorithm_config = DEFAULT_PRIORITY_ALGORITHM_CONFIG
+            self.algorithm_config = PriorityAlgorithmConfig()
 
         self.student_dict: Dict[int, Student] = {}
 
