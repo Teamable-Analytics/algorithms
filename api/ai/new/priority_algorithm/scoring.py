@@ -43,7 +43,7 @@ def get_satisfaction_ratio(
     # returns value in [0, 1] IMPORTANT that it does this, satisfaction value relies on it
     count = 0
     for priority_team in priority_teams:
-        count += priority.satisfied_by(
+        count += priority.satisfaction(
             [student_dict[student_id] for student_id in priority_team.student_ids]
         )
     return count / len(priority_teams)

@@ -1,7 +1,10 @@
-from typing import List, Literal
+from typing import List
 
-from api.ai.priority_algorithm.interfaces import Priority
-from api.ai.priority_algorithm.priority import TokenizationPriority
+from api.ai.new.priority_algorithm.priority.interfaces import Priority
+from api.ai.new.priority_algorithm.priority.priority import (
+    DiversityPriority,
+    TokenizationPriority,
+)
 from benchmarking.evaluations.goals import DiversityGoal
 from benchmarking.evaluations.interfaces import Goal
 
@@ -13,8 +16,12 @@ def goals_to_priorities(goals: List[Goal]) -> List[Priority]:
 def goal_to_priority(goal: Goal) -> Priority:
     if not isinstance(goal, DiversityGoal):
         raise NotImplementedError
+
     if goal.tokenization_constraint is None:
-        raise NotImplementedError
+        return DiversityPriority(
+            attribute_id=goal.attribute,
+            strategy=goal.strategy,
+        )
 
     return TokenizationPriority(
         attribute_id=goal.attribute,

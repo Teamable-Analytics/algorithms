@@ -1,6 +1,6 @@
 from typing import List
 
-from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.new.priority_algorithm.priority.interfaces import Priority
 from api.models.team import Team
 from api.models.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
@@ -45,8 +45,8 @@ class PrioritySatisfaction(TeamSetMetric):
         weights = [(2 ** (k - i)) / ((2**k) - 1) for i in range(1, k + 1)]
         return weights
 
-    def priorities_satisfied(self, team: Team) -> List[int]:
+    def priorities_satisfied(self, team: Team) -> List[float]:
         satisfied = [
-            int(priority.satisfied_by(team.students)) for priority in self.priorities
+            priority.satisfaction(team.students) for priority in self.priorities
         ]
         return satisfied

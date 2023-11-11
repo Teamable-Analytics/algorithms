@@ -12,7 +12,7 @@ class TokenizationPriority(Priority):
     strategy: DiversifyType
     direction: TokenizationConstraintDirection
     threshold: int  # number representing k
-    value: str  # string representing x
+    value: int  # string representing x
 
     def __post_init__(self, *args, **kwargs):
         self.validate()
