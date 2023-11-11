@@ -46,8 +46,8 @@ class SocialAlgorithmConfig(AlgorithmConfig):
 class PriorityAlgorithmConfig(AlgorithmConfig):
     MAX_KEEP: int = 3  # nodes
     MAX_SPREAD: int = 3  # nodes
-    MAX_ITERATE: int = 1  # iterations
-    MAX_TIME: int = 1  # seconds
+    MAX_ITERATE: int = 1500  # iterations
+    MAX_TIME: int = 30  # seconds
 
     """
     Specifies the mutations as a list of [mutation_function, number_team_sets_generated_this_way]

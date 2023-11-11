@@ -28,8 +28,6 @@ from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
 
-DEFAULT_WEIGHT_ALGORITHM_CONFIG = SocialAlgorithmConfig()
-
 
 class SocialAlgorithm(ChooseAlgorithm):
     def __init__(self, *args, **kwargs):
@@ -42,7 +40,7 @@ class SocialAlgorithm(ChooseAlgorithm):
                 SocialAlgorithmConfig, self.algorithm_config
             )
         else:
-            self.algorithm_config = DEFAULT_WEIGHT_ALGORITHM_CONFIG
+            self.algorithm_config = SocialAlgorithmConfig()
 
         self.teams: List[TeamWithCliques] = [
             TeamWithCliques.from_team(team) for team in self.teams

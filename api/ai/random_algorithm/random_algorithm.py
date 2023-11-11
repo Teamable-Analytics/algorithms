@@ -10,9 +10,6 @@ from api.models.team import Team
 from api.models.team_set import TeamSet
 
 
-DEFAULT_RANDOM_ALGORITHM_CONFIG = RandomAlgorithmConfig()
-
-
 class RandomAlgorithm(ChooseAlgorithm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,7 +21,7 @@ class RandomAlgorithm(ChooseAlgorithm):
                 RandomAlgorithmConfig, self.algorithm_config
             )
         else:
-            self.algorithm_config = DEFAULT_RANDOM_ALGORITHM_CONFIG
+            self.algorithm_config = RandomAlgorithmConfig()
 
     def generate(self, students: List[Student]) -> TeamSet:
         return generate_with_choose(self, students, self.teams)

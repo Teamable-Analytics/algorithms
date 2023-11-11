@@ -15,7 +15,7 @@ from api.ai.interfaces.algorithm_options import (
     MultipleRoundRobinAlgorithmOptions,
 )
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.ai.multiple_round_robin_with_adjusted_winner.multiple_round_robin import (
+from api.ai.multiple_round_robin_with_adjusted_winner.mrr_algorithm import (
     MultipleRoundRobinWithAdjustedWinnerAlgorithm,
 )
 from api.ai.priority_algorithm.priority_algorithm import PriorityAlgorithm
