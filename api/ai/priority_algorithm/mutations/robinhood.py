@@ -10,6 +10,7 @@ from api.models.student import Student
 
 ROBINHOOD_SATISFACTION_THRESHOLD = 0.8
 
+
 def mutate_robinhood(
     priority_team_set: PriorityTeamSet,
     priorities: List[Priority],
@@ -43,9 +44,12 @@ def mutate_robinhood(
             satisfied_teams: List[PriorityTeam] = []
             unsatisfied_teams: List[PriorityTeam] = []
             for team in available_priority_teams:
-                if priority.satisfaction(
-                    [student_dict[student_id] for student_id in team.student_ids]
-                ) >= ROBINHOOD_SATISFACTION_THRESHOLD:
+                if (
+                    priority.satisfaction(
+                        [student_dict[student_id] for student_id in team.student_ids]
+                    )
+                    >= ROBINHOOD_SATISFACTION_THRESHOLD
+                ):
                     satisfied_teams.append(team)
                 else:
                     unsatisfied_teams.append(team)

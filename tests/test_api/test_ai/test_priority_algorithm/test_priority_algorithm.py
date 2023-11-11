@@ -29,9 +29,7 @@ class TestPriorityAlgorithm(unittest.TestCase):
     @mock.patch(
         "api.ai.priority_algorithm.mutations.mutate_random_swap", return_value=[]
     )
-    @mock.patch(
-        "api.ai.priority_algorithm.mutations.mutate_local_max", return_value=[]
-    )
+    @mock.patch("api.ai.priority_algorithm.mutations.mutate_local_max", return_value=[])
     def test_mutate__uses_mutation_functions_from_config(
         self, mock_local_max, mock_random_swap
     ):

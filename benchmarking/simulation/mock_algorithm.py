@@ -57,8 +57,6 @@ class MockAlgorithm:
             return SocialAlgorithmOptions
         if algorithm_type == AlgorithmType.PRIORITY:
             return PriorityAlgorithmOptions
-        if algorithm_type == AlgorithmType.PRIORITY_NEW:
-            return PriorityAlgorithmOptions
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinAlgorithmOptions
 

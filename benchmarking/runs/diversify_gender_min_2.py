@@ -103,7 +103,7 @@ def diversify_gender_min_2(num_trials: int = 10, generate_graphs: bool = False):
                 AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
                 AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
                 AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
-                AlgorithmType.PRIORITY_NEW: [
+                AlgorithmType.PRIORITY: [
                     PriorityAlgorithmConfig(),
                     PriorityAlgorithmConfig(
                         name="local_max",
