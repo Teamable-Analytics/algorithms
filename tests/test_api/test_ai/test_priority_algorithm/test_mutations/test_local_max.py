@@ -18,11 +18,11 @@ class EvenPriority(Priority):
     A mock priority to check that all students in a team have an even student id
     """
 
-    def satisfied_by(self, students: List[Student]) -> bool:
+    def satisfaction(self, students: List[Student]) -> float:
         for student in students:
             if student.id % 2 == 1:
-                return False
-        return True
+                return 0
+        return 1
 
     def validate(self) -> bool:
         return True
@@ -34,11 +34,11 @@ class JohnPriority(Priority):
     A mock priority that checks if a team has a student named John
     """
 
-    def satisfied_by(self, students: List[Student]) -> bool:
+    def satisfaction(self, students: List[Student]) -> float:
         for student in students:
             if student.name == "John":
-                return True
-        return False
+                return 1
+        return 0
 
     def validate(self) -> bool:
         return True

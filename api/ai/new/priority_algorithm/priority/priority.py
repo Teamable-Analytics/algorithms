@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import List
 
 from api.ai.new.priority_algorithm.priority.interfaces import Priority
+from api.ai.new.weight_algorithm.utility.diversity_utility import _blau_index
 from api.models.enums import DiversifyType, TokenizationConstraintDirection
 from api.models.student import Student
 
@@ -12,12 +13,10 @@ class TokenizationPriority(Priority):
     strategy: DiversifyType
     direction: TokenizationConstraintDirection
     threshold: int  # number representing k
-    value: str  # string representing x
-
-    def __post_init__(self, *args, **kwargs):
-        self.validate()
+    value: int  # string representing x
 
     def validate(self):
+        super().validate()
         if (
             self.direction == TokenizationConstraintDirection.MIN_OF
             and self.strategy == DiversifyType.DIVERSIFY
@@ -31,6 +30,9 @@ class TokenizationPriority(Priority):
                 return True
             raise ValueError("Limit must be greater than 0")
         raise NotImplementedError()
+
+    def satisfaction(self, students: List[Student]) -> float:
+        return int(self.satisfied_by(students))
 
     def satisfied_by(self, students: List[Student]) -> bool:
         count = 0
@@ -52,3 +54,16 @@ class TokenizationPriority(Priority):
             and self.strategy == DiversifyType.CONCENTRATE
         ):
             return count <= self.threshold
+
+
+@dataclass
+class DiversityPriority(Priority):
+    attribute_id: int
+    strategy: DiversifyType
+
+    def validate(self):
+        super().validate()
+
+    def satisfaction(self, students: List[Student]) -> float:
+        blau_index = _blau_index(students, self.attribute_id)
+        return blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)

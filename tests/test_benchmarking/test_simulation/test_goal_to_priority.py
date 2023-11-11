@@ -1,7 +1,7 @@
 import unittest
 from typing import List
 
-from api.ai.priority_algorithm.priority import TokenizationPriority
+from api.ai.new.priority_algorithm.priority.priority import TokenizationPriority, DiversityPriority
 from api.models.enums import (
     DiversifyType,
     ScenarioAttribute,
@@ -9,10 +9,9 @@ from api.models.enums import (
 )
 from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
-from benchmarking.evaluations.interfaces import Scenario, Goal
+from benchmarking.evaluations.interfaces import Goal
 from benchmarking.simulation.goal_to_priority import (
     goal_to_priority,
-    goals_to_priorities,
 )
 
 
@@ -26,7 +25,7 @@ class TestGoalToPriority(unittest.TestCase):
                 tokenization_constraint=TokenizationConstraint(
                     direction=TokenizationConstraintDirection.MAX_OF,
                     threshold=2,
-                    value=ScenarioAttribute.GPA.value,
+                    value=1,
                 ),
             ),
             DiversityGoal(
@@ -35,31 +34,38 @@ class TestGoalToPriority(unittest.TestCase):
                 tokenization_constraint=TokenizationConstraint(
                     direction=TokenizationConstraintDirection.MIN_OF,
                     threshold=3,
-                    value=ScenarioAttribute.AGE.value,
+                    value=2,
                 ),
             ),
-            WeightGoal(diversity_goal_weight=1),
             DiversityGoal(DiversifyType.DIVERSIFY, ScenarioAttribute.MAJOR.value),
+            WeightGoal(diversity_goal_weight=1),
         ]
 
     def test_goal_to_priority__converts_goal_into_priority_correctly(self):
         priority_1 = goal_to_priority(self.goals[0])
-        priority_2 = goal_to_priority(self.goals[1])
         expected_priority_1 = TokenizationPriority(
             attribute_id=ScenarioAttribute.GPA.value,
             strategy=DiversifyType.CONCENTRATE,
             direction=TokenizationConstraintDirection.MAX_OF,
             threshold=2,
-            value=ScenarioAttribute.GPA.value,
+            value=1,
         )
         self.assertEqual(expected_priority_1, priority_1)
+        priority_2 = goal_to_priority(self.goals[1])
         expected_priority_2 = TokenizationPriority(
             attribute_id=ScenarioAttribute.AGE.value,
             strategy=DiversifyType.DIVERSIFY,
             direction=TokenizationConstraintDirection.MIN_OF,
             threshold=3,
-            value=ScenarioAttribute.AGE.value,
+            value=2,
         )
         self.assertEqual(expected_priority_2, priority_2)
-        self.assertRaises(NotImplementedError, goal_to_priority, self.goals[2])
+
+        priority_3 = goal_to_priority(self.goals[2])
+        expected_priority_3 = DiversityPriority(
+            attribute_id=ScenarioAttribute.MAJOR.value,
+            strategy=DiversifyType.DIVERSIFY,
+        )
+        self.assertEqual(expected_priority_3, priority_3)
+
         self.assertRaises(NotImplementedError, goal_to_priority, self.goals[3])
