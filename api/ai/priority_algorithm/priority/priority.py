@@ -38,11 +38,15 @@ class TokenizationPriority(Priority):
 
     def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
         blau_index = _blau_index(students, self.attribute_id)
-        general_diversity = blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)
+        general_diversity = (
+            blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)
+        )
 
         tokenized_student_count = 0
         for student in students:
-            tokenized_student_count += self.value in student.attributes.get(self.attribute_id, [])
+            tokenized_student_count += self.value in student.attributes.get(
+                self.attribute_id, []
+            )
         meets_threshold = self.student_count_meets_threshold(tokenized_student_count)
 
         if not meets_threshold:
