@@ -1,7 +1,7 @@
 import unittest
 
-from api.ai.new.interfaces.algorithm import Algorithm
-from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
+from api.ai.interfaces.algorithm import Algorithm
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.models.team import TeamShell
 from utils.validation import is_unique
 
