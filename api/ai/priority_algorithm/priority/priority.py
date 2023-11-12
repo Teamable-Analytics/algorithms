@@ -37,13 +37,23 @@ class TokenizationPriority(Priority):
         raise NotImplementedError()
 
     def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
-        return int(self.satisfied_by(students))
+        blau_index = _blau_index(students, self.attribute_id)
+        general_diversity = blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)
 
-    def satisfied_by(self, students: List[Student]) -> bool:
-        count = 0
+        tokenized_student_count = 0
         for student in students:
-            count += self.value in student.attributes.get(self.attribute_id, [])
-        return self.student_count_meets_threshold(count)
+            tokenized_student_count += self.value in student.attributes.get(self.attribute_id, [])
+        meets_threshold = self.student_count_meets_threshold(tokenized_student_count)
+
+        if not meets_threshold:
+            return 0
+
+        if meets_threshold and tokenized_student_count > 0:
+            return 0.8 + 0.2 * general_diversity
+
+        # a slight boost is given so that even teams that are not diverse/concentrated are considered over
+        #   teams that break the tokenization constraint
+        return (general_diversity + 0.1) / 1.1
 
     def student_count_meets_threshold(self, count: int) -> bool:
         if count == 0:
