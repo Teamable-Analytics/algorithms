@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from api.ai.priority_algorithm.priority.interfaces import Priority
-from api.ai.priority_algorithm.custom_models import PriorityTeam
+from api.ai.priority_algorithm.custom_models import PriorityTeam, PriorityTeamSet
 from api.ai.priority_algorithm.scoring import (
     get_multipliers,
     get_priority_satisfaction_array,
@@ -26,3 +26,13 @@ def score(
             )
         ]
     )
+
+
+def get_available_priority_teams(
+    priority_team_set: PriorityTeamSet,
+) -> List[PriorityTeam]:
+    return [
+        priority_team
+        for priority_team in priority_team_set.priority_teams
+        if not priority_team.team.is_locked
+    ]
