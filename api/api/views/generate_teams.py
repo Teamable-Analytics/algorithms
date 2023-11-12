@@ -9,7 +9,6 @@ from api.models.team_set.serializer import TeamSetSerializer
 
 
 class GenerateTeamsViewSet(viewsets.GenericViewSet):
-
     @action(url_path="teams", detail=False, methods=["POST"])
     def generate_teams(self, request):
         """
