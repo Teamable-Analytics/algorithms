@@ -8,7 +8,7 @@ from api.ai.priority_algorithm.scoring import (
     get_multipliers,
 )
 from api.models.student import Student
-from api.models.team import Team
+from api.models.team import TeamShell
 
 """
 These dataclasses are used only in the priority algorithm.
@@ -20,7 +20,8 @@ Because the priority algorithm deals with mutating teams, deep-cloning team sets
 
 @dataclass
 class PriorityTeam:
-    team: Team  # just a reference to the team so team requirements can be found easily without duplicating them
+    # just a reference to the team so team requirements can be found easily without duplicating them
+    team_shell: TeamShell
     student_ids: List[int]
 
 

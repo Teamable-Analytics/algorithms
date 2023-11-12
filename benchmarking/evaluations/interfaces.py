@@ -1,11 +1,17 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import List, Tuple, Optional
 
 from api.models.team_set import TeamSet
 
 
+@dataclass
 class Goal(ABC):
-    pass
+    def __post_init__(self):
+        self.validate()
+
+    def validate(self):
+        pass
 
 
 class Scenario(ABC):
