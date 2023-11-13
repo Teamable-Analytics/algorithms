@@ -13,7 +13,8 @@ from api.ai.interfaces.algorithm_options import (
     WeightAlgorithmOptions,
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
-    MultipleRoundRobinAlgorithmOptions, GeneralizedEnvyGraphAlgorithmOptions,
+    MultipleRoundRobinAlgorithmOptions,
+    GeneralizedEnvyGraphAlgorithmOptions,
 )
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.multiple_round_robin_with_adjusted_winner.mrr_algorithm import (
