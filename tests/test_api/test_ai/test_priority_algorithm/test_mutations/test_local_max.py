@@ -2,12 +2,13 @@ import unittest
 from dataclasses import dataclass
 from typing import List
 
-from api.ai.new.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
-from api.ai.new.priority_algorithm.mutations.local_max import (
+from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
+from api.ai.priority_algorithm.mutations import (
     mutate_local_max_random,
     mutate_local_max,
+    mutate_local_max_double_random,
 )
-from api.ai.new.priority_algorithm.priority.interfaces import Priority
+from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.models.student import Student
 from api.models.team import Team
 
@@ -18,11 +19,11 @@ class EvenPriority(Priority):
     A mock priority to check that all students in a team have an even student id
     """
 
-    def satisfied_by(self, students: List[Student]) -> bool:
+    def satisfaction(self, students: List[Student]) -> float:
         for student in students:
             if student.id % 2 == 1:
-                return False
-        return True
+                return 0
+        return 1
 
     def validate(self) -> bool:
         return True
@@ -34,11 +35,11 @@ class JohnPriority(Priority):
     A mock priority that checks if a team has a student named John
     """
 
-    def satisfied_by(self, students: List[Student]) -> bool:
+    def satisfaction(self, students: List[Student]) -> float:
         for student in students:
             if student.name == "John":
-                return True
-        return False
+                return 1
+        return 0
 
     def validate(self) -> bool:
         return True
@@ -118,6 +119,28 @@ class TestMutations(unittest.TestCase):
             self.priorities, self.student_dict
         )
         priority_team_set = mutate_local_max_random(
+            self.priority_team_set, self.priorities, self.student_dict
+        )
+        priority_team_set.score = None
+        score_after = priority_team_set.calculate_score(
+            self.priorities, self.student_dict
+        )
+        self.assertGreater(score_after, score_before)
+
+    def test_mutate_local_max_double_random__returns_priority_teams(self):
+        priority_team_set = mutate_local_max_double_random(
+            self.priority_team_set, self.priorities, self.student_dict
+        )
+        self.assertIsInstance(priority_team_set, PriorityTeamSet)
+        for team in priority_team_set.priority_teams:
+            self.assertIsInstance(team, PriorityTeam)
+
+    def test_mutate_local_max_double_double_random__improves_score(self):
+        self.priorities.append(JohnPriority())
+        score_before = self.priority_team_set.calculate_score(
+            self.priorities, self.student_dict
+        )
+        priority_team_set = mutate_local_max_double_random(
             self.priority_team_set, self.priorities, self.student_dict
         )
         priority_team_set.score = None

@@ -35,7 +35,6 @@ class AlgorithmType(Enum):
     WEIGHT = "weight"
     SOCIAL = "social"
     PRIORITY = "priority"
-    PRIORITY_NEW = "priority_new"
     MRR = "multiple_round_robin_with_adjusted_winner"
     DRR = "double_round_robin"
 
