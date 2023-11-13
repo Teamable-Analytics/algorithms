@@ -6,68 +6,57 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
 )
 from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
-from tests.test_benchmarking.test_simulation._data import TestScenario, TestMetric
+from benchmarking.simulation.simulation_settings import SimulationSettings
+from tests.test_benchmarking.test_simulation._data import TestScenario
+from utils.validation import is_unique
 
 
 class TestBasicSimulationSet(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.scenario = TestScenario()
-        cls.metric_1 = TestMetric(name="Test Metric 1")
-        cls.metric_2 = TestMetric(name="Test Metric 2")
-        cls.metric_3 = TestMetric(name="Test Metric 3")
         cls.student_provider = MockStudentProvider(
-            MockStudentProviderSettings(number_of_students=10)
+            MockStudentProviderSettings(number_of_students=10),
         )
 
-    def test_run__run_outputs_match_given_metrics_and_trials(self):
-        sim = BasicSimulationSet(
+    def test_get_simulation_settings_from_base__preserves_all_other_settings(self):
+        # ensures that if more fields are added to the settings class,
+        #   then they are updated in this method to ensure preservation
+        base_settings = SimulationSettings(
             num_teams=2,
             scenario=self.scenario,
             student_provider=self.student_provider,
-            metrics=[
-                self.metric_1,
-                self.metric_2,
-                self.metric_3,
-            ],
-            algorithm_types=[
-                AlgorithmType.RANDOM,
-                AlgorithmType.SOCIAL,
-                AlgorithmType.WEIGHT,
-                AlgorithmType.PRIORITY,
-                AlgorithmType.PRIORITY_NEW,
-            ],
+            cache_key="test_cache_key",
         )
-        simulation_outputs = sim.run(num_runs=5)
+        simulation_set = BasicSimulationSet(
+            settings=base_settings,
+        )
 
-        for algo_type in sim.algorithm_types:
-            run_output = simulation_outputs[algo_type]
+        modified_settings = simulation_set.get_simulation_settings_from_base(
+            AlgorithmType.RANDOM
+        )
+        self.assertIsNotNone(base_settings.cache_key)
+        for field_name in SimulationSettings.__dataclass_fields__.keys():
+            if field_name == "cache_key":  # cache key should be different
+                continue
             self.assertEqual(
-                len(run_output.keys()),
-                4,
-                msg="Run output for {} doesn't include the correct number of keys (3 metrics + 1 runtime)",
+                modified_settings.__getattribute__(field_name),
+                base_settings.__getattribute__(field_name),
             )
-            for name in ["Test Metric 1", "Test Metric 2", "Test Metric 3"]:
-                self.assertTrue(name in run_output)
-                self.assertEqual(
-                    len(run_output[name]),
-                    5,
-                    msg="Incorrect number of trials for metric.",
-                )
-            self.assertTrue(BasicSimulationSet.KEY_RUNTIMES in run_output)
 
-    def test_run__only_simulates_specified_algorithms_when_specified(self):
-        simulation_outputs = BasicSimulationSet(
-            algorithm_types=[AlgorithmType.SOCIAL, AlgorithmType.WEIGHT],
-            num_teams=2,
-            scenario=self.scenario,
-            student_provider=self.student_provider,
-            metrics=[
-                self.metric_1,
-            ],
-        ).run(num_runs=1)
-        self.assertEqual(
-            len(simulation_outputs), 2, msg="Incorrect number of keys in run outputs"
+    def test_get_simulation_settings_from_base__creates_unique_cache_keys(self):
+        simulation_set = BasicSimulationSet(
+            settings=SimulationSettings(
+                num_teams=2,
+                scenario=self.scenario,
+                student_provider=self.student_provider,
+                cache_key="test_cache_key",
+            ),
         )
-        self.assertTrue(AlgorithmType.SOCIAL in simulation_outputs)
-        self.assertTrue(AlgorithmType.WEIGHT in simulation_outputs)
+
+        generated_keys = [
+            simulation_set.get_simulation_settings_from_base(t).cache_key
+            for t in AlgorithmType
+        ]
+        self.assertGreater(len(generated_keys), 0)
+        self.assertTrue(is_unique(generated_keys))

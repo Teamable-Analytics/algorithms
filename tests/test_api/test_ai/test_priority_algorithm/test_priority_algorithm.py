@@ -1,11 +1,11 @@
 import unittest
 from unittest import mock
 
-import api.ai.new.priority_algorithm.mutations  # done this way to mutation functions can be mocked properly
-from api.ai.new.interfaces.algorithm_config import PriorityAlgorithmConfig
-from api.ai.new.interfaces.algorithm_options import PriorityAlgorithmOptions
-from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
-from api.ai.new.priority_algorithm.priority_algorithm import PriorityAlgorithm
+import api.ai.priority_algorithm.mutations  # done this way to mutation functions can be mocked properly
+from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
+from api.ai.interfaces.algorithm_options import PriorityAlgorithmOptions
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
+from api.ai.priority_algorithm.priority_algorithm import PriorityAlgorithm
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -27,11 +27,9 @@ class TestPriorityAlgorithm(unittest.TestCase):
         )
 
     @mock.patch(
-        "api.ai.new.priority_algorithm.mutations.mutate_random_swap", return_value=[]
+        "api.ai.priority_algorithm.mutations.mutate_random_swap", return_value=[]
     )
-    @mock.patch(
-        "api.ai.new.priority_algorithm.mutations.mutate_local_max", return_value=[]
-    )
+    @mock.patch("api.ai.priority_algorithm.mutations.mutate_local_max", return_value=[])
     def test_mutate__uses_mutation_functions_from_config(
         self, mock_local_max, mock_random_swap
     ):
@@ -41,8 +39,8 @@ class TestPriorityAlgorithm(unittest.TestCase):
             MAX_ITERATE=1,
             MAX_KEEP=3,
             MUTATIONS=[
-                (api.ai.new.priority_algorithm.mutations.mutate_random_swap, 7),
-                (api.ai.new.priority_algorithm.mutations.mutate_local_max, 3),
+                (api.ai.priority_algorithm.mutations.mutate_random_swap, 7),
+                (api.ai.priority_algorithm.mutations.mutate_local_max, 3),
             ],
         )
         algorithm = PriorityAlgorithm(

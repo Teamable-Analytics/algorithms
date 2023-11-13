@@ -1,11 +1,7 @@
 from schema import Schema, SchemaError
 
-from api.ai.algorithm_runner import AlgorithmRunner
-from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
 from api.api.validators.interface import Validator
 from api.models.enums import AlgorithmType
-from api.models.student import Student
-from api.api.utils.relationship import get_relationship
 
 
 class GenerateTeamsValidator(Validator):
