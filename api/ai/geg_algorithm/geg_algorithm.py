@@ -16,18 +16,18 @@ for each student s ∈ S:
 """
 from typing import List, Dict
 
-from api.ai.new.geg_algorithm.envy_graph import EnvyGraph
-from api.ai.new.geg_algorithm.utils import calculate_value
-from api.ai.new.interfaces.algorithm import Algorithm
-from api.ai.new.interfaces.algorithm_options import GeneralizedEnvyGraphAlgorithmOptions
-from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
+from api.ai.geg_algorithm.envy_graph import EnvyGraph
+from api.ai.geg_algorithm.utils import calculate_value
+from api.ai.interfaces.algorithm import Algorithm
+from api.ai.interfaces.algorithm_options import GeneralizedEnvyGraphAlgorithmOptions
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.models.project import Project
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
 
 
-class GEGAlgorithm(Algorithm):
+class GeneralizedEnvyGraphAlgorithm(Algorithm):
     """
     Generalized Envy Graph Algorithm
     """

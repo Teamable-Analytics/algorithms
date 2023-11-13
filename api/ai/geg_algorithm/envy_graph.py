@@ -1,6 +1,6 @@
-from typing import List, Dict, Set, Tuple
+from typing import List, Dict, Set
 
-from api.ai.new.geg_algorithm.utils import calculate_value
+from api.ai.geg_algorithm.utils import calculate_value
 from api.models.project import Project
 from api.models.student import Student
 

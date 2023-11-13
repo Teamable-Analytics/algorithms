@@ -1,5 +1,6 @@
 from typing import List, TYPE_CHECKING
 
+from api.ai.geg_algorithm.geg_algorithm import GeneralizedEnvyGraphAlgorithm
 from api.ai.interfaces.algorithm_config import (
     AlgorithmConfig,
     RandomAlgorithmConfig,
@@ -12,7 +13,7 @@ from api.ai.interfaces.algorithm_options import (
     WeightAlgorithmOptions,
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
-    MultipleRoundRobinAlgorithmOptions,
+    MultipleRoundRobinAlgorithmOptions, GeneralizedEnvyGraphAlgorithmOptions,
 )
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.multiple_round_robin_with_adjusted_winner.mrr_algorithm import (
@@ -62,6 +63,8 @@ class AlgorithmRunner:
             return PriorityAlgorithm
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinWithAdjustedWinnerAlgorithm
+        if algorithm_type == AlgorithmType.GEG:
+            return GeneralizedEnvyGraphAlgorithm
 
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm class!"
@@ -79,6 +82,8 @@ class AlgorithmRunner:
             return PriorityAlgorithmOptions
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinAlgorithmOptions
+        if algorithm_type == AlgorithmType.GEG:
+            return GeneralizedEnvyGraphAlgorithmOptions
 
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm options class!"
@@ -95,6 +100,8 @@ class AlgorithmRunner:
         if algorithm_type == AlgorithmType.PRIORITY:
             return PriorityAlgorithmConfig
         if algorithm_type == AlgorithmType.MRR:
+            return None
+        if algorithm_type == AlgorithmType.GEG:
             return None
 
         raise NotImplementedError(
