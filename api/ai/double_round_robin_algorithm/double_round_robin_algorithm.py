@@ -29,9 +29,9 @@ Definition:
 from typing import List, Dict, Set
 
 from api.ai.double_round_robin_algorithm.custom_models import Utility
-from api.ai.new.interfaces.algorithm import Algorithm
-from api.ai.new.interfaces.algorithm_options import DoubleRoundRobinAlgorithmOptions
-from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
+from api.ai.interfaces.algorithm import Algorithm
+from api.ai.interfaces.algorithm_options import DoubleRoundRobinAlgorithmOptions
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.double_round_robin_algorithm.utils import calculate_utilities
 from api.models.student import Student
 from api.models.team_set import TeamSet

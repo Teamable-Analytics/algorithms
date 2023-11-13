@@ -23,7 +23,9 @@ from api.ai.priority_algorithm.priority_algorithm import PriorityAlgorithm
 from api.ai.random_algorithm.random_algorithm import RandomAlgorithm
 from api.ai.social_algorithm.social_algorithm import SocialAlgorithm
 from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
-from api.ai.double_round_robin_algorithm.double_round_robin_algorithm import DoubleRoundRobinAlgorithm
+from api.ai.double_round_robin_algorithm.double_round_robin_algorithm import (
+    DoubleRoundRobinAlgorithm,
+)
 from api.models.enums import AlgorithmType
 from api.models.student import Student
 from api.models.team_set import TeamSet
