@@ -14,31 +14,17 @@ for each student s ∈ S:
     While G(pi) contains directed cycle C do
         allocation_C = pi(i) if i not in C else pi(i_j+1) if i == i_j in C
 """
-import math
-import random
-from typing import List, Dict, Tuple, Set
+from typing import List, Dict
 
 from api.ai.new.geg_algorithm.envy_graph import EnvyGraph
 from api.ai.new.geg_algorithm.utils import calculate_value
 from api.ai.new.interfaces.algorithm import Algorithm
 from api.ai.new.interfaces.algorithm_options import GeneralizedEnvyGraphAlgorithmOptions
 from api.ai.new.interfaces.team_generation_options import TeamGenerationOptions
-from api.models.enums import (
-    AlgorithmType,
-    ScenarioAttribute,
-    Gender,
-    Race,
-    RequirementOperator,
-)
-from api.models.project import Project, ProjectRequirement
+from api.models.project import Project
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
-from benchmarking.data.simulated_data.mock_student_provider import (
-    MockStudentProviderSettings,
-    MockStudentProvider,
-)
-from benchmarking.evaluations.graphing.graph_metadata import GraphData
 
 
 class GEGAlgorithm(Algorithm):
@@ -59,7 +45,7 @@ class GEGAlgorithm(Algorithm):
         super().__init__(algorithm_options, team_generation_options)
 
         self.allocation: Dict[int, List[int]] = {}
-        self.utilities: Dict[Tuple[int, int], int] = {}
+        self.utilities: Dict[int, Dict[int, int]] = {}
         self.projects: List[Project] = algorithm_options.projects
         self.project_ids_to_projects = {
             project.id: project for project in self.projects
@@ -67,12 +53,14 @@ class GEGAlgorithm(Algorithm):
 
     def _calculate_utilities(
         self, students: List[Student]
-    ) -> Dict[Tuple[int, int], int]:
-        utilities: Dict[Tuple[int, int], int] = {}
+    ) -> Dict[int, Dict[int, int]]:
+        utilities: Dict[int, Dict[int, int]] = {}
 
         for project in self.projects:
             for student in students:
-                utilities[(project.id, student.id)] = calculate_value(
+                if project.id not in utilities:
+                    utilities[project.id] = {}
+                utilities[project.id][student.id] = calculate_value(
                     student, project.requirements
                 )
 
@@ -87,7 +75,7 @@ class GEGAlgorithm(Algorithm):
         return [
             project
             for project in projects
-            if self.utilities.get((project.id, student.id)) >= 0
+            if self.utilities[project.id][student.id] >= 0
         ]
 
     def _construct_team_from_allocation(self) -> TeamSet:
