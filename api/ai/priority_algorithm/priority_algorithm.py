@@ -41,12 +41,12 @@ class PriorityAlgorithm(Algorithm):
             team_generation_options=self.team_generation_options,
         ).generate(students)
 
-        # keep internal self.teams accurate
-        self.teams = team_set.teams
-
         return PriorityTeamSet(
             priority_teams=[
-                PriorityTeam(team_shell=team, student_ids=[s.id for s in team.students])
+                PriorityTeam(
+                    team_shell=team.to_shell(),
+                    student_ids=[s.id for s in team.students],
+                )
                 for team in team_set.teams
             ]
         )
@@ -101,10 +101,6 @@ class PriorityAlgorithm(Algorithm):
     def _unpack_priority_team_set(self, priority_team_set: PriorityTeamSet) -> TeamSet:
         teams: List[Team] = []
 
-        # empty underlying teams
-        for priority_team in priority_team_set.priority_teams:
-            priority_team.team_shell.empty()
-
         # students will be assigned a .team from the generate_initial_teams(), this must be removed
         for student in self.student_dict.values():
             student.team = None
@@ -114,8 +110,9 @@ class PriorityAlgorithm(Algorithm):
                 self.student_dict[student_id]
                 for student_id in priority_team.student_ids
             ]
-            save_students_to_team(priority_team.team_shell, students)
-            teams.append(priority_team.team_shell)
+            team = Team.from_shell(priority_team.team_shell)
+            save_students_to_team(team, students)
+            teams.append(team)
 
         return TeamSet(teams=teams)
 

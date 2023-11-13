@@ -67,6 +67,15 @@ class Team(TeamShell):
             is_locked=shell.is_locked,
         )
 
+    def to_shell(self) -> TeamShell:
+        return TeamShell(
+            _id=self.id,
+            name=self.name,
+            project_id=self.project_id,
+            requirements=self.requirements,
+            is_locked=self.is_locked,
+        )
+
     def empty(self):
         for student in self.students:
             student.team = None

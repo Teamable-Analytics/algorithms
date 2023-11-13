@@ -47,9 +47,7 @@ class PrioritySatisfaction(TeamSetMetric):
 
     def priorities_satisfied(self, team: Team) -> List[float]:
         satisfied = [
-            # fixme: passes an instance of Team to TeamShell without converting,
-            #   this should be safe but should be handled properly eventually
-            priority.satisfaction(team.students, team)
+            priority.satisfaction(team.students, team.to_shell())
             for priority in self.priorities
         ]
         return satisfied
