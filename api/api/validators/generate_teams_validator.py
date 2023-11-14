@@ -1,12 +1,11 @@
-from typing import List
+from typing import List, Dict
 
 from schema import Schema, SchemaError, Or, Optional
 
 from api.ai.algorithm_runner import AlgorithmRunner
 from api.api.validators.interface import Validator
 from api.api.utils.relationship import get_relationship_str
-from api.models.enums import AlgorithmType, Relationship
-from api.models.team import TeamShell
+from api.models.enums import AlgorithmType, Relationship, RequirementOperator
 
 
 class GenerateTeamsValidator(Validator):
@@ -56,27 +55,7 @@ class GenerateTeamsValidator(Validator):
         algorithm_options_schema = algorithm_options_cls.get_schema()
         algorithm_options_schema.validate(algorithm_options)
 
-    def validate_students(self):
-        students: List = self.data.get("students")
-        Schema(
-            [
-                {
-                    "id": int,
-                    Optional("name"): str,
-                    Optional("attributes"): {str: [int]},
-                    Optional("relationships"): {
-                        str: Or(
-                            *[
-                                get_relationship_str(relationship)
-                                for relationship in Relationship
-                            ]
-                        )
-                    },
-                    Optional("project_preferences"): [int],
-                }
-            ]
-        ).validate(students)
-
+    def _validate_student_ids_unique(self, students: List[Dict]):
         student_ids = set()
         for student in students:
             student_id = student.get("id")
@@ -86,36 +65,14 @@ class GenerateTeamsValidator(Validator):
                 )
             student_ids.add(student_id)
 
-        teams = self.data.get("team_generation_options").get("initial_teams")
-
-        max_project_preferences = self.data.get("algorithm_options").get(
-            "max_project_preferences"
-        )
-        if max_project_preferences is not None:
-            for student in students:
-                student_project_preferences = student.get("project_preferences")
-                if (
-                    student_project_preferences is not None
-                    and len(student_project_preferences) > max_project_preferences
-                ):
-                    raise SchemaError(
-                        f"Student {student.get('id')} has {student_project_preferences} project preferences, "
-                        + f"but the maximum is {max_project_preferences}."
-                    )
-
+    def _validate_student_project_preferences_exist(
+        self, students: List[Dict], teams: List[Dict]
+    ):
         all_projects = set([team.get("project_id") for team in teams])
         for student in students:
             student_project_preferences = student.get("project_preferences")
             if student_project_preferences is None:
                 continue
-
-            # Validate if project preferences are unique
-            if len(student_project_preferences) != len(
-                set(student_project_preferences)
-            ):
-                raise SchemaError(
-                    f"Student {student.get('id')} has duplicate project preferences."
-                )
 
             # Validate if projects under student.project_preferences exist
             if not all_projects.issuperset(student_project_preferences):
@@ -123,6 +80,21 @@ class GenerateTeamsValidator(Validator):
                     f"Student {student.get('id')} has project preferences that do not exist in the project set."
                 )
 
+    def _validate_student_project_preferences(
+        self, students: List[Dict], max_project_preferences: int
+    ):
+        for student in students:
+            student_project_preferences = student.get("project_preferences")
+            if (
+                student_project_preferences is not None
+                and len(student_project_preferences) > max_project_preferences
+            ):
+                raise SchemaError(
+                    f"Student {student.get('id')} has {student_project_preferences} project preferences, "
+                    + f"but the maximum is {max_project_preferences}."
+                )
+
+    def _validate_student_attributes(self, students: List[Dict], teams: List[Dict]):
         all_attributes = set()
         for team in teams:
             all_attributes.update(
@@ -152,6 +124,9 @@ class GenerateTeamsValidator(Validator):
                     f"Student {student.get('id')} has attributes that do not exist."
                 )
 
+    def _validate_student_relationships(self, students: List[Dict]):
+        student_ids = set([student.get("id") for student in students])
+
         for student in students:
             relationships = student.get("relationships")
 
@@ -171,6 +146,44 @@ class GenerateTeamsValidator(Validator):
                     f"Student {student.get('id')} has relationships with unknown students."
                 )
 
+    def validate_students(self):
+        students: List = self.data.get("students")
+        Schema(
+            [
+                {
+                    "id": int,
+                    Optional("name"): str,
+                    Optional("attributes"): {str: [int]},
+                    Optional("relationships"): {
+                        str: Or(
+                            *[
+                                get_relationship_str(relationship)
+                                for relationship in Relationship
+                            ]
+                        )
+                    },
+                    Optional("project_preferences"): [int],
+                }
+            ]
+        ).validate(students)
+
+        self._validate_student_ids_unique(students)
+
+        max_project_preferences = self.data.get("algorithm_options").get(
+            "max_project_preferences"
+        )
+        if max_project_preferences is not None:
+            self._validate_student_project_preferences(
+                students, max_project_preferences
+            )
+
+        teams = self.data.get("team_generation_options").get("initial_teams")
+        self._validate_student_project_preferences_exist(students, teams)
+
+        self._validate_student_attributes(students, teams)
+
+        self._validate_student_relationships(students)
+
     def validate_team_options(self):
         team_options = self.data.get("team_generation_options")
 
@@ -180,11 +193,13 @@ class GenerateTeamsValidator(Validator):
                     {
                         "id": int,
                         Optional("name"): str,
-                        "project_id": int,
+                        Optional("project_id"): int,
                         Optional("requirements"): [
                             {
                                 "attribute": int,
-                                "operator": str,
+                                "operator": Or(
+                                    *[op.value for op in RequirementOperator]
+                                ),
                                 "value": int,
                             }
                         ],

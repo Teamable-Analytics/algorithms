@@ -1,29 +1,18 @@
-import copy
-import statistics
-import time
-from collections import defaultdict
-from typing import List, Dict, Union
+from typing import List, Dict
 
-from benchmarking.simulation.mock_algorithm import MockAlgorithm
 from api.models.enums import AlgorithmType
-from benchmarking.data.interfaces import (
-    StudentProvider,
-    InitialTeamsProvider,
-)
-from benchmarking.evaluations.interfaces import Scenario, TeamSetMetric
-from benchmarking.simulation.algorithm_translator import AlgorithmTranslator
+from benchmarking.simulation.simulation import SimulationArtifact, Simulation
 from benchmarking.simulation.simulation_settings import SimulationSettings
-from old.team_formation.app.team_generator.algorithm.algorithms import AlgorithmOptions
 
-RunOutput = Dict[AlgorithmType, Dict[str, List[float]]]
+BasicSimulationSetArtifact = Dict[AlgorithmType, SimulationArtifact]
 
 
 class BasicSimulationSet:
     """
-    Represents running a Simulation num_runs times and returning the metrics from each of those runs.
+    Represents a set of Simulation runs for when we want to run only 1 of each algorithm
+        (as opposed to running 2+ instances of the same algorithm but with different configs)
     """
 
-    KEY_RUNTIMES = "runtimes"
     DEFAULT_ALGORITHM_TYPES = [
         AlgorithmType.RANDOM,
         AlgorithmType.WEIGHT,
@@ -33,98 +22,49 @@ class BasicSimulationSet:
 
     def __init__(
         self,
-        scenario: Scenario,
-        student_provider: StudentProvider,
-        metrics: List[TeamSetMetric],
-        num_teams: int = None,
-        initial_teams_provider: InitialTeamsProvider = None,
+        settings: SimulationSettings,
         algorithm_types: List[AlgorithmType] = None,
+        # todo: it's actually pretty easy to support a custom config for each of the algorithm types passed in
     ):
-        self.scenario = scenario
-        self.metrics = metrics
-        self.student_provider = student_provider
-
-        self.num_teams = num_teams
-        self.initial_teams_provider = initial_teams_provider
         self.algorithm_types = algorithm_types or self.DEFAULT_ALGORITHM_TYPES
-
         if not self.algorithm_types:
             raise ValueError(
                 "If you override algorithm_types, you must specify at least 1 algorithm type to run a simulation."
             )
+        self.base_settings = settings
+        self.base_cache_key = self.base_settings.cache_key
+        self.basic_simulation_set_artifact: BasicSimulationSetArtifact = {}
 
-        # fixme: temporary: creates this object so we get all the validations there for free
-        SimulationSettings(
-            num_teams=num_teams,
-            student_provider=student_provider,
-            initial_teams_provider=initial_teams_provider,
-            scenario=scenario,
-        )
-
-        self.run_outputs = defaultdict(dict)
-        self.algorithm_options: Dict[AlgorithmType, Union[None, AlgorithmOptions]] = {}
+    def run(self, num_runs: int) -> BasicSimulationSetArtifact:
         for algorithm_type in self.algorithm_types:
-            self.run_outputs[algorithm_type] = {
-                metric.name: [] for metric in self.metrics
-            }
-            self.run_outputs[algorithm_type].update(
-                {BasicSimulationSet.KEY_RUNTIMES: []}
-            )
-
-    def run(self, num_runs: int) -> RunOutput:
-        initial_teams = (
-            self.initial_teams_provider.get() if self.initial_teams_provider else None
-        )
-        team_generation_options = MockAlgorithm.get_team_generation_options(
-            num_students=self.student_provider.num_students,
-            num_teams=self.num_teams,
-            initial_teams=initial_teams,
-        )
-
-        for _ in range(0, num_runs):
-            algorithm_students = AlgorithmTranslator.students_to_algorithm_students(
-                self.student_provider.get()
-            )
-            for algorithm_type in self.algorithm_types:
-                mock_algorithm = MockAlgorithm(
-                    algorithm_type=algorithm_type,
-                    team_generation_options=team_generation_options,
-                    algorithm_options=self._algorithm_options(algorithm_type),
-                )
-
-                start_time = time.time()
-                team_set = mock_algorithm.generate(copy.deepcopy(algorithm_students))
-                end_time = time.time()
-
-                self.run_outputs[algorithm_type][
-                    BasicSimulationSet.KEY_RUNTIMES
-                ].append(end_time - start_time)
-                for metric in self.metrics:
-                    self.run_outputs[algorithm_type][metric.name].append(
-                        metric.calculate(team_set)
-                    )
-
-        return self.run_outputs
-
-    def _algorithm_options(self, algorithm_type: AlgorithmType):
-        if algorithm_type not in self.algorithm_options:
-            algorithm_options = MockAlgorithm.algorithm_options_from_scenario(
+            # todo: Simulation calculates team gen options and algo options internally, might be wise to not have
+            #  that be done N times, but not a huge performance bottleneck currently
+            self.basic_simulation_set_artifact[algorithm_type] = Simulation(
                 algorithm_type=algorithm_type,
-                scenario=self.scenario,
-                max_project_preferences=self.student_provider.max_project_preferences_per_student,
-            )
-            self.algorithm_options[algorithm_type] = algorithm_options
+                settings=self.get_simulation_settings_from_base(algorithm_type),
+            ).run(num_runs)
 
-        return self.algorithm_options[algorithm_type]
+        return self.basic_simulation_set_artifact
+
+    def get_simulation_settings_from_base(
+        self, algorithm_type: AlgorithmType
+    ) -> SimulationSettings:
+        cache_key = (
+            f"{self.base_settings.cache_key}/{str(algorithm_type)}"
+            if self.base_settings.cache_key
+            else None
+        )
+        return SimulationSettings(
+            scenario=self.base_settings.scenario,
+            student_provider=self.base_settings.student_provider,
+            initial_teams_provider=self.base_settings.initial_teams_provider,
+            num_teams=self.base_settings.num_teams,
+            cache_key=cache_key,
+        )
 
     @staticmethod
-    def average_metric(
-        run_output: RunOutput, metric_name: str
-    ) -> Dict[AlgorithmType, float]:
-        averages_output = {}
-
-        for algorithm_type in run_output.keys():
-            metric_values = run_output[algorithm_type][metric_name]
-            averages_output[algorithm_type] = statistics.mean(metric_values)
-
-        return averages_output
+    def get_artifact(
+        basic_simulation_set_artifact: BasicSimulationSetArtifact,
+        algorithm_type: AlgorithmType,
+    ) -> SimulationArtifact:
+        return basic_simulation_set_artifact.get(algorithm_type, ([], []))

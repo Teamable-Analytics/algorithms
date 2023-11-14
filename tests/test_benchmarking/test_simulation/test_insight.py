@@ -5,7 +5,7 @@ from api.models.enums import AlgorithmType
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
-from benchmarking.simulation.basic_simulation_set_2 import BasicSimulationSetArtifact
+from benchmarking.simulation.basic_simulation_set import BasicSimulationSetArtifact
 from benchmarking.simulation.insight import Insight
 from tests.test_benchmarking.test_simulation._data import TestMetric
 
