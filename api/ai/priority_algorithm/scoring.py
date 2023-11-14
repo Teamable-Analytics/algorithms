@@ -44,7 +44,8 @@ def get_satisfaction_ratio(
     count = 0
     for priority_team in priority_teams:
         count += priority.satisfaction(
-            [student_dict[student_id] for student_id in priority_team.student_ids]
+            [student_dict[student_id] for student_id in priority_team.student_ids],
+            priority_team.team_shell,
         )
     return count / len(priority_teams)
 

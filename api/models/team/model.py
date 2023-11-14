@@ -23,6 +23,20 @@ class TeamShell:
     def id(self) -> int:
         return self._id
 
+    def num_requirements_met_by_student(self, student: "Student") -> int:
+        return sum(
+            [
+                int(student.meets_requirement(requirement))
+                for requirement in self.requirements
+            ]
+        )
+
+    def lock(self):
+        self.is_locked = True
+
+    def unlock(self):
+        self.is_locked = False
+
 
 @dataclass
 class Team(TeamShell):
@@ -62,20 +76,6 @@ class Team(TeamShell):
         if self.is_locked:
             raise ValueError(f"Cannot add student ({student.id}) to team {self.id}.")
         self.students.append(student)
-
-    def num_requirements_met_by_student(self, student: "Student") -> int:
-        return sum(
-            [
-                int(student.meets_requirement(requirement))
-                for requirement in self.requirements
-            ]
-        )
-
-    def lock(self):
-        self.is_locked = True
-
-    def unlock(self):
-        self.is_locked = False
 
     def todict(self) -> Dict:
         return {

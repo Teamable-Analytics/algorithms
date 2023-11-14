@@ -45,7 +45,8 @@ def mutate_robinhood(
             for team in available_priority_teams:
                 if (
                     priority.satisfaction(
-                        [student_dict[student_id] for student_id in team.student_ids]
+                        [student_dict[student_id] for student_id in team.student_ids],
+                        team.team_shell,
                     )
                     >= ROBINHOOD_SATISFACTION_THRESHOLD
                 ):

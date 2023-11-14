@@ -43,6 +43,11 @@ class TokenizationConstraintDirection(Enum):
     MAX_OF = "max_of"
 
 
+class RequirementsCriteria(Enum):
+    STUDENT_ATTRIBUTES_ARE_RELEVANT = "student_attributes_are_relevant"
+    PROJECT_REQUIREMENTS_ARE_SATISFIED = "project_requirements_are_satisfied"
+
+
 class ScenarioAttribute(Enum):
     """
     Attributes that are used in scenarios.

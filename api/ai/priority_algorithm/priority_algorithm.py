@@ -46,7 +46,7 @@ class PriorityAlgorithm(Algorithm):
 
         return PriorityTeamSet(
             priority_teams=[
-                PriorityTeam(team=team, student_ids=[s.id for s in team.students])
+                PriorityTeam(team_shell=team, student_ids=[s.id for s in team.students])
                 for team in team_set.teams
             ]
         )
@@ -103,7 +103,7 @@ class PriorityAlgorithm(Algorithm):
 
         # empty underlying teams
         for priority_team in priority_team_set.priority_teams:
-            priority_team.team.empty()
+            priority_team.team_shell.empty()
 
         # students will be assigned a .team from the generate_initial_teams(), this must be removed
         for student in self.student_dict.values():
@@ -114,8 +114,8 @@ class PriorityAlgorithm(Algorithm):
                 self.student_dict[student_id]
                 for student_id in priority_team.student_ids
             ]
-            save_students_to_team(priority_team.team, students)
-            teams.append(priority_team.team)
+            save_students_to_team(priority_team.team_shell, students)
+            teams.append(priority_team.team_shell)
 
         return TeamSet(teams=teams)
 
