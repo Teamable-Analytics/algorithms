@@ -165,10 +165,23 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
         )
 
 
+@dataclass
+class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
+    def validate(self):
+        super().validate()
+
+    @staticmethod
+    def parse_json(_: Dict[str, Any]):
+        raise AttributeError(
+            "DoubleRoundRobinAlgorithmOptions does not support parsing from json."
+        )
+
+
 AnyAlgorithmOptions = Union[
     RandomAlgorithmOptions,
     WeightAlgorithmOptions,
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
+    DoubleRoundRobinAlgorithmOptions,
 ]
