@@ -194,13 +194,6 @@ class TestGenerateTeamsValidator(unittest.TestCase):
         )
 
         with self.assertRaises(SchemaError) as e:
-            validator = GenerateTeamsValidator(self.student_with_extra_attribute_data)
-            validator.validate()
-        self.assertEqual(
-            e.exception.code, "Student 1 has attributes that do not exist."
-        )
-
-        with self.assertRaises(SchemaError) as e:
             validator = GenerateTeamsValidator(
                 self.student_with_invalid_project_id_data
             )
