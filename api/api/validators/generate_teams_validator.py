@@ -108,8 +108,6 @@ class GenerateTeamsValidator(Validator):
             # Validate if attribute keys integer string
             Schema({str: list}).validate(attributes)
 
-
-
     def _validate_student_relationships(self, students: List[Dict]):
         student_ids = set([student.get("id") for student in students])
 
