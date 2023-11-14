@@ -180,6 +180,7 @@ class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
     def parse_json(_: Dict[str, Any]):
         raise AttributeError(
             "GeneralizedEnvyGraphAlgorithmOptions does not support parsing from json."
+        )
 
 
 @dataclass
