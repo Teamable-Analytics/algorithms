@@ -45,7 +45,6 @@ class GenerateTeamsValidator(Validator):
             )
 
     def validate_algorithm_options(self):
-        # TODO: Do not commit this
         algorithm_options = self.data.get("algorithm_options")
 
         # Validate schema
