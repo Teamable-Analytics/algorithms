@@ -170,7 +170,9 @@ class GenerateTeamsValidator(Validator):
             "max_project_preferences"
         )
         if max_project_preferences is not None:
-            self._validate_student_project_preferences(students, max_project_preferences)
+            self._validate_student_project_preferences(
+                students, max_project_preferences
+            )
 
         teams = self.data.get("team_generation_options").get("initial_teams")
         self._validate_student_project_preferences_exist(students, teams)
