@@ -66,7 +66,7 @@ class GenerateTeamsValidator(Validator):
             student_ids.add(student_id)
 
     def _validate_student_project_preferences_exist(
-            self, students: List[Dict], teams: List[Dict]
+        self, students: List[Dict], teams: List[Dict]
     ):
         all_projects = set([team.get("project_id") for team in teams])
         for student in students:
@@ -81,13 +81,13 @@ class GenerateTeamsValidator(Validator):
                 )
 
     def _validate_student_project_preferences(
-            self, students: List[Dict], max_project_preferences: int
+        self, students: List[Dict], max_project_preferences: int
     ):
         for student in students:
             student_project_preferences = student.get("project_preferences")
             if (
-                    student_project_preferences is not None
-                    and len(student_project_preferences) > max_project_preferences
+                student_project_preferences is not None
+                and len(student_project_preferences) > max_project_preferences
             ):
                 raise SchemaError(
                     f"Student {student.get('id')} has {student_project_preferences} project preferences, "

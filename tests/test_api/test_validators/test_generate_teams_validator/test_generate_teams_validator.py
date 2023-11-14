@@ -185,9 +185,15 @@ class TestGenerateTeamsValidator(unittest.TestCase):
             team_generation_options_with_duplicate_ids_data
         )
 
-        algorithm_type_with_invalid_value_data = copy.deepcopy(valid_random_algorithm_data)
-        algorithm_type_with_invalid_value_data["algorithm_options"]["algorithm_type"] = "invalid_algorithm"
-        cls.algorithm_type_with_invalid_value_data = algorithm_type_with_invalid_value_data
+        algorithm_type_with_invalid_value_data = copy.deepcopy(
+            valid_random_algorithm_data
+        )
+        algorithm_type_with_invalid_value_data["algorithm_options"][
+            "algorithm_type"
+        ] = "invalid_algorithm"
+        cls.algorithm_type_with_invalid_value_data = (
+            algorithm_type_with_invalid_value_data
+        )
 
     def test_validate__no_error_raised__random_algorithm(self):
         try:
@@ -237,7 +243,9 @@ class TestGenerateTeamsValidator(unittest.TestCase):
             validator.validate()
         self.assertEqual(e.exception.code, "Missing key: 'team_generation_options'")
 
-    def test_validate_student_relationships__error_raised_when_have_unknown_student_id(self):
+    def test_validate_student_relationships__error_raised_when_have_unknown_student_id(
+        self,
+    ):
         with self.assertRaises(SchemaError) as e:
             validator = GenerateTeamsValidator(
                 self.student_with_invalid_relationship_data
@@ -247,7 +255,9 @@ class TestGenerateTeamsValidator(unittest.TestCase):
             e.exception.code, "Student 1 has relationships with unknown students."
         )
 
-    def test_validate_student_attributes__error_raised_when_have_unknown_attribute_id(self):
+    def test_validate_student_attributes__error_raised_when_have_unknown_attribute_id(
+        self,
+    ):
         with self.assertRaises(SchemaError) as e:
             validator = GenerateTeamsValidator(self.student_with_extra_attribute_data)
             validator.validate()
@@ -255,7 +265,9 @@ class TestGenerateTeamsValidator(unittest.TestCase):
             e.exception.code, "Student 1 has attributes that do not exist."
         )
 
-    def test_validate_student_project_preferences_exist__error_raised_when_have_unknown_project_id(self):
+    def test_validate_student_project_preferences_exist__error_raised_when_have_unknown_project_id(
+        self,
+    ):
         with self.assertRaises(SchemaError) as e:
             validator = GenerateTeamsValidator(
                 self.student_with_invalid_project_id_data
@@ -280,9 +292,14 @@ class TestGenerateTeamsValidator(unittest.TestCase):
                 self.algorithm_type_with_invalid_value_data
             )
             validator.validate()
-        self.assertEqual(e.exception.code, "Algorithm type invalid_algorithm is not a valid algorithm type.")
+        self.assertEqual(
+            e.exception.code,
+            "Algorithm type invalid_algorithm is not a valid algorithm type.",
+        )
 
-    def test_validate_algorithm_options__error_raised_when_missing_key_max_project_preferences__random_algorithm(self):
+    def test_validate_algorithm_options__error_raised_when_missing_key_max_project_preferences__random_algorithm(
+        self,
+    ):
         invalid_field_random_algorithm_data = copy.deepcopy(
             self.valid_random_algorithm_data
         )
@@ -294,7 +311,9 @@ class TestGenerateTeamsValidator(unittest.TestCase):
             validator.validate()
         self.assertIn("Wrong key 'max_project_preferences' in ", e.exception.code)
 
-    def test_validate_algorithm_options__error_raised_when_having_extra_key_priority__weight_algorithm(self):
+    def test_validate_algorithm_options__error_raised_when_having_extra_key_priority__weight_algorithm(
+        self,
+    ):
         invalid_field_weight_algorithm_data = copy.deepcopy(
             self.valid_weight_algorithm_data
         )
@@ -304,7 +323,9 @@ class TestGenerateTeamsValidator(unittest.TestCase):
             validator.validate()
         self.assertIn("Wrong key 'priority' in ", e.exception.code)
 
-    def test_validate_algorithm_options__error_raised_when_having_extra_key_priority__social_algorithm(self):
+    def test_validate_algorithm_options__error_raised_when_having_extra_key_priority__social_algorithm(
+        self,
+    ):
         invalid_field_social_algorithm_data = copy.deepcopy(
             self.valid_social_algorithm_data
         )
@@ -314,7 +335,9 @@ class TestGenerateTeamsValidator(unittest.TestCase):
             validator.validate()
         self.assertIn("Wrong key 'priority' in ", e.exception.code)
 
-    def test_validate_algorithm_options__error_raised_when_having_extra_random_field__priority_algorithm(self):
+    def test_validate_algorithm_options__error_raised_when_having_extra_random_field__priority_algorithm(
+        self,
+    ):
         invalid_field_priority_algorithm_data = copy.deepcopy(
             self.valid_priority_algorithm_data
         )
