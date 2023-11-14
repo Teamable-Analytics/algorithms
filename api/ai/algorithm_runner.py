@@ -1,5 +1,6 @@
 from typing import List, TYPE_CHECKING
 
+from api.ai.geg_algorithm.geg_algorithm import GeneralizedEnvyGraphAlgorithm
 from api.ai.interfaces.algorithm_config import (
     AlgorithmConfig,
     RandomAlgorithmConfig,
@@ -13,6 +14,8 @@ from api.ai.interfaces.algorithm_options import (
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
+    GeneralizedEnvyGraphAlgorithmOptions,
+    DoubleRoundRobinAlgorithmOptions,
 )
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.multiple_round_robin_with_adjusted_winner.mrr_algorithm import (
@@ -22,6 +25,9 @@ from api.ai.priority_algorithm.priority_algorithm import PriorityAlgorithm
 from api.ai.random_algorithm.random_algorithm import RandomAlgorithm
 from api.ai.social_algorithm.social_algorithm import SocialAlgorithm
 from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
+from api.ai.double_round_robin_algorithm.double_round_robin_algorithm import (
+    DoubleRoundRobinAlgorithm,
+)
 from api.models.enums import AlgorithmType
 from api.models.student import Student
 from api.models.team_set import TeamSet
@@ -40,15 +46,18 @@ class AlgorithmRunner:
     ):
         self.algorithm_cls = AlgorithmRunner.get_algorithm_from_type(algorithm_type)
         self.team_generation_options = team_generation_options
-
-        self.algorithm = self.algorithm_cls(
-            team_generation_options=team_generation_options,
-            algorithm_options=algorithm_options,
-            algorithm_config=algorithm_config,
-        )
+        self.algorithm_options = algorithm_options
+        self.algorithm_config = algorithm_config
 
     def generate(self, students: List[Student]) -> TeamSet:
-        return self.algorithm.generate(students)
+        # the algorithm classes internally track generated teams, so a new instance of the
+        #   algorithm class MUST be created to run a new generation without side effects
+        algorithm = self.algorithm_cls(
+            team_generation_options=self.team_generation_options,
+            algorithm_options=self.algorithm_options,
+            algorithm_config=self.algorithm_config,
+        )
+        return algorithm.generate(students)
 
     @staticmethod
     def get_algorithm_from_type(algorithm_type: AlgorithmType):
@@ -62,6 +71,10 @@ class AlgorithmRunner:
             return PriorityAlgorithm
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinWithAdjustedWinnerAlgorithm
+        if algorithm_type == AlgorithmType.GEG:
+            return GeneralizedEnvyGraphAlgorithm
+        if algorithm_type == AlgorithmType.DRR:
+            return DoubleRoundRobinAlgorithm
 
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm class!"
@@ -79,6 +92,10 @@ class AlgorithmRunner:
             return PriorityAlgorithmOptions
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinAlgorithmOptions
+        if algorithm_type == AlgorithmType.GEG:
+            return GeneralizedEnvyGraphAlgorithmOptions
+        if algorithm_type == AlgorithmType.DRR:
+            return DoubleRoundRobinAlgorithmOptions
 
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm options class!"
@@ -95,6 +112,10 @@ class AlgorithmRunner:
         if algorithm_type == AlgorithmType.PRIORITY:
             return PriorityAlgorithmConfig
         if algorithm_type == AlgorithmType.MRR:
+            return None
+        if algorithm_type == AlgorithmType.GEG:
+            return None
+        if algorithm_type == AlgorithmType.DRR:
             return None
 
         raise NotImplementedError(

@@ -36,11 +36,18 @@ class AlgorithmType(Enum):
     SOCIAL = "social"
     PRIORITY = "priority"
     MRR = "multiple_round_robin_with_adjusted_winner"
+    GEG = "generalized_envy_graph"
+    DRR = "double_round_robin"
 
 
 class TokenizationConstraintDirection(Enum):
     MIN_OF = "min_of"
     MAX_OF = "max_of"
+
+
+class RequirementsCriteria(Enum):
+    STUDENT_ATTRIBUTES_ARE_RELEVANT = "student_attributes_are_relevant"
+    PROJECT_REQUIREMENTS_ARE_SATISFIED = "project_requirements_are_satisfied"
 
 
 class ScenarioAttribute(Enum):

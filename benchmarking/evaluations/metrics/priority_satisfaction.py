@@ -47,6 +47,7 @@ class PrioritySatisfaction(TeamSetMetric):
 
     def priorities_satisfied(self, team: Team) -> List[float]:
         satisfied = [
-            priority.satisfaction(team.students) for priority in self.priorities
+            priority.satisfaction(team.students, team.to_shell())
+            for priority in self.priorities
         ]
         return satisfied

@@ -256,10 +256,42 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
         return Schema(dict)
 
 
+@dataclass
+class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
+    projects: List[Project]
+
+    def validate(self):
+        super().validate()
+
+        Schema([Project]).validate(self.projects)
+        if len(self.projects) == 0:
+            raise SchemaError("Project list cannot be empty")
+
+    @staticmethod
+    def parse_json(_: Dict[str, Any]):
+        raise AttributeError(
+            "GeneralizedEnvyGraphAlgorithmOptions does not support parsing from json."
+        )
+
+
+@dataclass
+class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
+    def validate(self):
+        super().validate()
+
+    @staticmethod
+    def parse_json(_: Dict[str, Any]):
+        raise AttributeError(
+            "DoubleRoundRobinAlgorithmOptions does not support parsing from json."
+        )
+
+
 AnyAlgorithmOptions = Union[
     RandomAlgorithmOptions,
     WeightAlgorithmOptions,
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
+    GeneralizedEnvyGraphAlgorithmOptions,
+    DoubleRoundRobinAlgorithmOptions,
 ]

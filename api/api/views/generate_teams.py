@@ -2,15 +2,13 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from api.ai.algorithm_runner import AlgorithmRunner
-from api.api.serializers.team_set import TeamSetSerializer
 from api.api.utils.generate_teams_data_loader import GenerateTeamsDataLoader
 from api.api.utils.response_with_metadata import ResponseWithMetadata
 from api.api.validators.generate_teams_validator import GenerateTeamsValidator
+from api.models.team_set.serializer import TeamSetSerializer
 
 
 class GenerateTeamsViewSet(viewsets.GenericViewSet):
-    pass
-
     @action(url_path="teams", detail=False, methods=["POST"])
     def generate_teams(self, request):
         """
@@ -27,7 +25,6 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
         4. Run algorithm
         5. Serialize algorithm's output (TeamSet) to JSON
         6. Return JSON to a happy user :) 🚀!
-
         """
         request_data = dict(request.data)
 
@@ -43,7 +40,7 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
         )
         team_set = runner.generate(input_data.students)
 
-        serialized_team_set = TeamSetSerializer(team_set).data
+        serialized_team_set = TeamSetSerializer().encode(team_set)
 
         return ResponseWithMetadata(
             data_label="teams", data=serialized_team_set, status=200

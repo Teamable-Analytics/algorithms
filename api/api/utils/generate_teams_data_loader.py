@@ -1,12 +1,12 @@
-from typing import Dict, Any, List
 from dataclasses import dataclass
+from typing import Dict, Any, List
 
 from api.ai.algorithm_runner import AlgorithmRunner
-from api.ai.interfaces import AlgorithmOptions
-from api.ai.interfaces import TeamGenerationOptions
+from api.ai.interfaces.algorithm_options import AlgorithmOptions
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
+from api.api.utils.relationship import get_relationship
 from api.models.enums import AlgorithmType
 from api.models.student import Student
-from api.api.utils.relationship import get_relationship
 from api.models.team import TeamShell
 
 

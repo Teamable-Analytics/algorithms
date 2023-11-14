@@ -13,21 +13,20 @@ from api.ai.priority_algorithm.mutations import (
     mutate_local_max,
     mutate_random_swap,
 )
-from benchmarking.evaluations.goals import DiversityGoal
-from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
-from benchmarking.evaluations.graphing.line_graph import line_graph
-from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.interfaces import TeamSetMetric
-from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
-from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from api.models.enums import ScenarioAttribute, Gender, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
+from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
+from benchmarking.evaluations.graphing.line_graph import line_graph
+from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
+from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.average_gini_index import (
     AverageGiniIndex,
 )
+from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
+from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
     DiversifyGenderMin2Female,
@@ -72,9 +71,7 @@ class DiversifyGenderMin2Run(Run):
             "MaxGiniIndex": MaximumGiniIndex(attribute=ScenarioAttribute.GENDER.value),
             "MinGiniIndex": MinimumGiniIndex(attribute=ScenarioAttribute.GENDER.value),
             "PrioritySatisfaction": PrioritySatisfaction(
-                goals_to_priorities(
-                    [goal for goal in scenario.goals if isinstance(goal, DiversityGoal)]
-                ),
+                goals_to_priorities(scenario.goals),
                 False,
             ),
         }

@@ -147,6 +147,82 @@ class GenerateTeamsValidator(Validator):
                     f"Student {student.get('id')} has relationships with unknown students."
                 )
 
+    def _validate_student_ids_unique(self, students: List[Dict]):
+        student_ids = set()
+        for student in students:
+            student_id = student.get("id")
+            if student_id in student_ids:
+                raise SchemaError(
+                    f"Student ids must be unique. Student {student_id} is duplicated."
+                )
+            student_ids.add(student_id)
+
+    def _validate_student_project_preferences_exist(
+        self, students: List[Dict], teams: List[Dict]
+    ):
+        all_projects = set([team.get("project_id") for team in teams])
+        for student in students:
+            student_project_preferences = student.get("project_preferences")
+            if student_project_preferences is None:
+                continue
+
+            # Validate if projects under student.project_preferences exist
+            if not all_projects.issuperset(student_project_preferences):
+                raise SchemaError(
+                    f"Student {student.get('id')} has project preferences that do not exist in the project set."
+                )
+
+    def _validate_student_project_preferences(
+        self, students: List[Dict], max_project_preferences: int
+    ):
+        for student in students:
+            student_project_preferences = student.get("project_preferences")
+            if (
+                student_project_preferences is not None
+                and len(student_project_preferences) > max_project_preferences
+            ):
+                raise SchemaError(
+                    f"Student {student.get('id')} has {student_project_preferences} project preferences, "
+                    + f"but the maximum is {max_project_preferences}."
+                )
+
+    def _validate_student_attributes(self, students: List[Dict], teams: List[Dict]):
+        all_attributes = set()
+        for team in teams:
+            all_attributes.update(
+                [
+                    requirement.get("attribute")
+                    for requirement in team.get("requirements")
+                ]
+                if team.get("requirements")
+                else []
+            )
+        for student in students:
+            attributes = student.get("attributes")
+            if attributes is None:
+                raise SchemaError(f"Student {student.get('id')} has no attributes.")
+
+            # Validate if attribute keys integer string
+            Schema({str: list}).validate(attributes)
+
+    def _validate_student_relationships(self, students: List[Dict]):
+        student_ids = set([student.get("id") for student in students])
+
+        for student in students:
+            relationships = student.get("relationships")
+
+            # Validate if relationship keys integer string
+            try:
+                relationship_keys = list(map(int, relationships.keys()))
+            except ValueError:
+                raise SchemaError("Relationship keys must be integers.")
+
+            # Validate if relationship keys exist
+            if not student_ids.issuperset(relationship_keys):
+                raise SchemaError(
+                    f"Student {student.get('id')} has relationships with unknown students."
+                )
+
     def validate_students(self):
         students: List = self.data.get("students")
         Schema(

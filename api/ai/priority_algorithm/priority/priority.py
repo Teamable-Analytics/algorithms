@@ -3,8 +3,13 @@ from typing import List
 
 from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.ai.weight_algorithm.utility.diversity_utility import _blau_index
-from api.models.enums import DiversifyType, TokenizationConstraintDirection
+from api.models.enums import (
+    DiversifyType,
+    TokenizationConstraintDirection,
+    RequirementsCriteria,
+)
 from api.models.student import Student
+from api.models.team import TeamShell
 
 
 @dataclass
@@ -31,17 +36,28 @@ class TokenizationPriority(Priority):
             raise ValueError("Limit must be greater than 0")
         raise NotImplementedError()
 
-    def satisfaction(self, students: List[Student]) -> float:
-        return int(self.satisfied_by(students))
+    def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
+        blau_index = _blau_index(students, self.attribute_id)
+        general_diversity = (
+            blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)
+        )
 
-    def satisfied_by(self, students: List[Student]) -> bool:
-        count = 0
+        tokenized_student_count = 0
         for student in students:
-            if student.attributes is None:
-                raise ValueError(f"Student {student.id} has no attributes")
+            tokenized_student_count += self.value in student.attributes.get(
+                self.attribute_id, []
+            )
+        meets_threshold = self.student_count_meets_threshold(tokenized_student_count)
 
-            count += self.value in student.attributes.get(self.attribute_id, [])
-        return self.student_count_meets_threshold(count)
+        if not meets_threshold:
+            return 0
+
+        if meets_threshold and tokenized_student_count > 0:
+            return 0.8 + 0.2 * general_diversity
+
+        # a slight boost is given so that even teams that are not diverse/concentrated are considered over
+        #   teams that break the tokenization constraint
+        return (general_diversity + 0.1) / 1.1
 
     def student_count_meets_threshold(self, count: int) -> bool:
         if count == 0:
@@ -67,8 +83,41 @@ class DiversityPriority(Priority):
     def validate(self):
         super().validate()
 
-    def satisfaction(self, students: List[Student]) -> float:
+    def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
         blau_index = _blau_index(students, self.attribute_id)
         return (
             blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)
         )
+
+
+@dataclass
+class RequirementPriority(Priority):
+    criteria: RequirementsCriteria
+
+    def validate(self):
+        super().validate()
+
+    def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
+        num_team_requirements = len(team_shell.requirements)
+        if num_team_requirements <= 0:
+            # If a team has no requirements then the student is a perfect match
+            return 1
+
+        if self.criteria == RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED:
+            total_met_requirements = 0
+            for req in team_shell.requirements:
+                for student in students:
+                    if student.meets_requirement(req):
+                        total_met_requirements += 1
+                        break
+
+            return total_met_requirements / num_team_requirements
+
+        if self.criteria == RequirementsCriteria.STUDENT_ATTRIBUTES_ARE_RELEVANT:
+            num_students_that_meet_any_req = sum(
+                [
+                    (team_shell.num_requirements_met_by_student(student) > 0)
+                    for student in students
+                ]
+            )
+            return num_students_that_meet_any_req / len(students)

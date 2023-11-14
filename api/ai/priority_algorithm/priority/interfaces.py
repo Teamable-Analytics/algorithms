@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import List
 
 from api.models.student import Student
+from api.models.team import TeamShell
 
 
 @dataclass
@@ -15,6 +16,6 @@ class Priority(ABC):
         pass
 
     @abstractmethod
-    def satisfaction(self, students: List[Student]) -> float:
+    def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
         # should always return a value in the range [0, 1]
         raise NotImplementedError
