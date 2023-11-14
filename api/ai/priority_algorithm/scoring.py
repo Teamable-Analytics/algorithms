@@ -1,11 +1,11 @@
 from math import floor
 from typing import List, Dict, TYPE_CHECKING
 
-from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.models.student import Student
 
 if TYPE_CHECKING:
-    from ai.priority_algorithm.priority_teamset import PriorityTeam
+    from api.ai.priority_algorithm.custom_models import PriorityTeam
 
 NUM_BUCKETS = 25
 
@@ -43,7 +43,7 @@ def get_satisfaction_ratio(
     # returns value in [0, 1] IMPORTANT that it does this, satisfaction value relies on it
     count = 0
     for priority_team in priority_teams:
-        count += priority.satisfied_by(
+        count += priority.satisfaction(
             [student_dict[student_id] for student_id in priority_team.student_ids]
         )
     return count / len(priority_teams)

@@ -4,7 +4,7 @@ import unittest
 from os import path
 from unittest.mock import patch
 
-from api.ai.new.interfaces.algorithm_config import PriorityAlgorithmConfig
+from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.models.enums import AlgorithmType
 from api.models.project import Project
 from api.models.team_set import TeamSet
@@ -18,7 +18,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
-from benchmarking.simulation.basic_simulation_set_2 import BasicSimulationSet2
+from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
 from benchmarking.simulation.simulation import Simulation, SimulationArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from tests.test_benchmarking.test_simulation._data import TestScenario
@@ -104,14 +104,14 @@ class TestSimulation(unittest.TestCase):
             self.assertIsInstance(run_time, float)
 
     def test_run__works_with_each_algorithm_type(self):
-        for algorithm_type in BasicSimulationSet2.DEFAULT_ALGORITHM_TYPES:
+        for algorithm_type in BasicSimulationSet.DEFAULT_ALGORITHM_TYPES:
             Simulation(
                 algorithm_type=algorithm_type,
                 settings=self.settings,
             ).run(num_runs=1)
 
     def test_run__works_with_complex_settings(self):
-        for algorithm_type in BasicSimulationSet2.DEFAULT_ALGORITHM_TYPES:
+        for algorithm_type in BasicSimulationSet.DEFAULT_ALGORITHM_TYPES:
             Simulation(
                 algorithm_type=algorithm_type,
                 settings=self.complex_settings,
