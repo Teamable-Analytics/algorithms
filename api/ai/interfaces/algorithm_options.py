@@ -176,7 +176,7 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
     def get_schema() -> Schema:
         return Schema(
             {
-                "algorithm_type": Const(AlgorithmType.PRIORITY_NEW.value),
+                "algorithm_type": Const(AlgorithmType.PRIORITY.value),
                 "max_project_preferences": int,
                 "priorities": [
                     {
@@ -202,7 +202,7 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
                 SchemaOptional("enemy_behaviour"): Or(
                     *[behaviour.value for behaviour in RelationshipBehaviour]
                 ),
-                SchemaOptional("attributes_to_diversify"): Optional[List[int]],
+                SchemaOptional("attributes_to_diversify"): List[int],
                 SchemaOptional("attributes_to_concentrate"): List[int],
             }
         )
