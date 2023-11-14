@@ -10,7 +10,7 @@ from api.ai.priority_algorithm.mutations import (
 )
 from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.models.student import Student
-from api.models.team import Team
+from api.models.team import Team, TeamShell
 
 
 @dataclass
@@ -19,7 +19,7 @@ class EvenPriority(Priority):
     A mock priority to check that all students in a team have an even student id
     """
 
-    def satisfaction(self, students: List[Student]) -> float:
+    def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
         for student in students:
             if student.id % 2 == 1:
                 return 0
@@ -35,7 +35,7 @@ class JohnPriority(Priority):
     A mock priority that checks if a team has a student named John
     """
 
-    def satisfaction(self, students: List[Student]) -> float:
+    def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
         for student in students:
             if student.name == "John":
                 return 1

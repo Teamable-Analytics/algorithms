@@ -34,5 +34,5 @@ def get_available_priority_teams(
     return [
         priority_team
         for priority_team in priority_team_set.priority_teams
-        if not priority_team.team.is_locked
+        if not priority_team.team_shell.is_locked
     ]

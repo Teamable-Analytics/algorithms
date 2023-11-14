@@ -180,6 +180,17 @@ class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
     def parse_json(_: Dict[str, Any]):
         raise AttributeError(
             "GeneralizedEnvyGraphAlgorithmOptions does not support parsing from json."
+
+
+@dataclass
+class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
+    def validate(self):
+        super().validate()
+
+    @staticmethod
+    def parse_json(_: Dict[str, Any]):
+        raise AttributeError(
+            "DoubleRoundRobinAlgorithmOptions does not support parsing from json."
         )
 
 
@@ -190,4 +201,5 @@ AnyAlgorithmOptions = Union[
     PriorityAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
     GeneralizedEnvyGraphAlgorithmOptions,
+    DoubleRoundRobinAlgorithmOptions,
 ]
