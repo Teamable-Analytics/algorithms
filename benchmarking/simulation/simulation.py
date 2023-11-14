@@ -74,7 +74,7 @@ class Simulation:
             students = self.settings.student_provider.get()
 
             start_time = time.time()
-            team_set = runner.generate(copy.deepcopy(students))
+            team_set = runner.generate(students)
             end_time = time.time()
 
             self.run_times.append(end_time - start_time)

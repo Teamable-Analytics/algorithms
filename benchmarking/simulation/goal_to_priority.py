@@ -11,7 +11,13 @@ from benchmarking.evaluations.interfaces import Goal
 
 
 def goals_to_priorities(goals: List[Goal]) -> List[Priority]:
-    return [goal_to_priority(goal) for goal in goals]
+    priorities = []
+    for goal in goals:
+        try:
+            priorities.append(goal_to_priority(goal))
+        except NotImplementedError:
+            continue
+    return priorities
 
 
 def goal_to_priority(goal: Goal) -> Priority:

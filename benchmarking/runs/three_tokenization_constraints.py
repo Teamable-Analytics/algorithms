@@ -85,9 +85,7 @@ class ThreeTokenizationConstraintsRun(Run):
                 ]
             ),
             "PrioritySatisfaction": PrioritySatisfaction(
-                goals_to_priorities(
-                    [goal for goal in scenario.goals if isinstance(goal, DiversityGoal)]
-                ),
+                goals_to_priorities(scenario.goals),
                 False,
             ),
         }
