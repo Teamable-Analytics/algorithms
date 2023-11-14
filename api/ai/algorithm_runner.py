@@ -40,15 +40,18 @@ class AlgorithmRunner:
     ):
         self.algorithm_cls = AlgorithmRunner.get_algorithm_from_type(algorithm_type)
         self.team_generation_options = team_generation_options
-
-        self.algorithm = self.algorithm_cls(
-            team_generation_options=team_generation_options,
-            algorithm_options=algorithm_options,
-            algorithm_config=algorithm_config,
-        )
+        self.algorithm_options = algorithm_options
+        self.algorithm_config = algorithm_config
 
     def generate(self, students: List[Student]) -> TeamSet:
-        return self.algorithm.generate(students)
+        # the algorithm classes internally track generated teams, so a new instance of the
+        #   algorithm class MUST be created to run a new generation without side effects
+        algorithm = self.algorithm_cls(
+            team_generation_options=self.team_generation_options,
+            algorithm_options=self.algorithm_options,
+            algorithm_config=self.algorithm_config,
+        )
+        return algorithm.generate(students)
 
     @staticmethod
     def get_algorithm_from_type(algorithm_type: AlgorithmType):
