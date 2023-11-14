@@ -2,6 +2,7 @@ from typing import List, Dict
 
 from schema import Schema, SchemaError, Or, Optional
 
+from api.ai.algorithm_runner import AlgorithmRunner
 from api.api.validators.interface import Validator
 from api.api.utils.relationship import get_relationship_str
 from api.models.enums import AlgorithmType, Relationship, RequirementOperator
@@ -44,11 +45,107 @@ class GenerateTeamsValidator(Validator):
             )
 
     def validate_algorithm_options(self):
-        # todo: validate that anything that is an id is real (?)
-        #   so attributes_to_concentrate is a list of attribute ids, ideally these exist on each student
+        algorithm_options = self.data.get("algorithm_options")
 
-        # todo: if a max_project_preferences is given, then students can't have more project preferences than that
-        pass
+        # Validate schema
+        algorithm_options_cls = AlgorithmRunner.get_algorithm_option_class(
+            AlgorithmType(algorithm_options.get("algorithm_type"))
+        )
+        algorithm_options_schema = algorithm_options_cls.get_schema()
+        algorithm_options_schema.validate(algorithm_options)
+
+    def _validate_student_ids_unique(self, students: List[Dict]):
+        student_ids = set()
+        for student in students:
+            student_id = student.get("id")
+            if student_id in student_ids:
+                raise SchemaError(
+                    f"Student ids must be unique. Student {student_id} is duplicated."
+                )
+            student_ids.add(student_id)
+
+    def _validate_student_project_preferences_exist(
+        self, students: List[Dict], teams: List[Dict]
+    ):
+        all_projects = set([team.get("project_id") for team in teams])
+        for student in students:
+            student_project_preferences = student.get("project_preferences")
+            if student_project_preferences is None:
+                continue
+
+            # Validate if projects under student.project_preferences exist
+            if not all_projects.issuperset(student_project_preferences):
+                raise SchemaError(
+                    f"Student {student.get('id')} has project preferences that do not exist in the project set."
+                )
+
+    def _validate_student_project_preferences(
+        self, students: List[Dict], max_project_preferences: int
+    ):
+        for student in students:
+            student_project_preferences = student.get("project_preferences")
+            if (
+                student_project_preferences is not None
+                and len(student_project_preferences) > max_project_preferences
+            ):
+                raise SchemaError(
+                    f"Student {student.get('id')} has {student_project_preferences} project preferences, "
+                    + f"but the maximum is {max_project_preferences}."
+                )
+
+    def _validate_student_attributes(self, students: List[Dict], teams: List[Dict]):
+        all_attributes = set()
+        for team in teams:
+            all_attributes.update(
+                [
+                    requirement.get("attribute")
+                    for requirement in team.get("requirements")
+                ]
+                if team.get("requirements")
+                else []
+            )
+        for student in students:
+            attributes = student.get("attributes")
+            if attributes is None:
+                raise SchemaError(f"Student {student.get('id')} has no attributes.")
+
+            # Validate if attribute keys integer string
+            try:
+                attribute_keys = list(map(int, attributes.keys())) if attributes else []
+            except ValueError:
+                raise SchemaError("Attribute keys must be integers.")
+
+            # Validate if attribute keys are unique
+            if len(attribute_keys) != len(set(attribute_keys)):
+                raise SchemaError("Attribute keys must be unique.")
+
+            # Validate if attribute keys exist
+            if not all_attributes.issuperset(attribute_keys):
+                raise SchemaError(
+                    f"Student {student.get('id')} has attributes that do not exist."
+                )
+
+    def _validate_student_relationships(self, students: List[Dict]):
+        student_ids = set([student.get("id") for student in students])
+
+        for student in students:
+            relationships = student.get("relationships")
+
+            # Validate if relationship keys integer string
+            try:
+                relationship_keys = list(map(int, relationships.keys()))
+            except ValueError:
+                raise SchemaError("Relationship keys must be integers.")
+
+            # Validate if relationship keys are unique
+            if len(relationship_keys) != len(set(relationship_keys)):
+                raise SchemaError("Relationship keys must be unique.")
+
+            # Validate if relationship keys exist
+            if not student_ids.issuperset(relationship_keys):
+                raise SchemaError(
+                    f"Student {student.get('id')} has relationships with unknown students."
+                )
 
     def _validate_student_ids_unique(self, students: List[Dict]):
         student_ids = set()

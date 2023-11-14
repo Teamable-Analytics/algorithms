@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import List, Union, Dict, Any
+from typing import List, Union, Dict, Any, Optional
 
-from schema import Schema, SchemaError
+from schema import Schema, SchemaError, Const, Or, Optional as SchemaOptional
 
 from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.ai.priority_algorithm.priority.priority import TokenizationPriority
@@ -10,6 +10,7 @@ from api.models.enums import (
     RelationshipBehaviour,
     DiversifyType,
     TokenizationConstraintDirection,
+    AlgorithmType,
 )
 from api.models.project import Project
 
@@ -32,6 +33,11 @@ class AlgorithmOptions(ABC):
     def parse_json(json: Dict[str, Any]):
         raise NotImplementedError("parse_json is not implemented.")
 
+    @staticmethod
+    @abstractmethod
+    def get_schema() -> Schema:
+        raise NotImplementedError("get_schema is not implemented.")
+
 
 @dataclass
 class RandomAlgorithmOptions(AlgorithmOptions):
@@ -41,6 +47,10 @@ class RandomAlgorithmOptions(AlgorithmOptions):
     @staticmethod
     def parse_json(_: Dict[str, Any]) -> "RandomAlgorithmOptions":
         return RandomAlgorithmOptions()
+
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema({"algorithm_type": Const(AlgorithmType.RANDOM.value)})
 
 
 @dataclass
@@ -96,6 +106,27 @@ class WeightAlgorithmOptions(AlgorithmOptions):
             max_project_preferences=max_project_preferences,
         )
 
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema(
+            {
+                "algorithm_type": Const(AlgorithmType.WEIGHT.value),
+                "max_project_preferences": int,
+                SchemaOptional("requirement_weight"): int,
+                SchemaOptional("social_weight"): int,
+                SchemaOptional("diversity_weight"): int,
+                SchemaOptional("preference_weight"): int,
+                SchemaOptional("friend_behaviour"): Or(
+                    *[behaviour.value for behaviour in RelationshipBehaviour]
+                ),
+                SchemaOptional("enemy_behaviour"): Or(
+                    *[behaviour.value for behaviour in RelationshipBehaviour]
+                ),
+                SchemaOptional("attributes_to_diversify"): List[int],
+                SchemaOptional("attributes_to_concentrate"): List[int],
+            }
+        )
+
 
 @dataclass
 class PriorityAlgorithmOptions(WeightAlgorithmOptions):
@@ -141,11 +172,67 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
             max_project_preferences=max_project_preferences,
         )
 
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema(
+            {
+                "algorithm_type": Const(AlgorithmType.PRIORITY.value),
+                "max_project_preferences": int,
+                "priorities": [
+                    {
+                        "attribute_id": int,
+                        "strategy": Or(*[strategy.value for strategy in DiversifyType]),
+                        "direction": Or(
+                            *[
+                                direction.value
+                                for direction in TokenizationConstraintDirection
+                            ]
+                        ),
+                        "threshold": int,
+                        "value": int,
+                    }
+                ],
+                SchemaOptional("requirement_weight"): int,
+                SchemaOptional("social_weight"): int,
+                SchemaOptional("diversity_weight"): int,
+                SchemaOptional("preference_weight"): int,
+                SchemaOptional("friend_behaviour"): Or(
+                    *[behaviour.value for behaviour in RelationshipBehaviour]
+                ),
+                SchemaOptional("enemy_behaviour"): Or(
+                    *[behaviour.value for behaviour in RelationshipBehaviour]
+                ),
+                SchemaOptional("attributes_to_diversify"): List[int],
+                SchemaOptional("attributes_to_concentrate"): List[int],
+            }
+        )
+
 
 @dataclass
 class SocialAlgorithmOptions(WeightAlgorithmOptions):
     def validate(self):
         super().validate()
+
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema(
+            {
+                "algorithm_type": Const(AlgorithmType.SOCIAL.value),
+                "max_project_preferences": int,
+                SchemaOptional("requirement_weight"): int,
+                SchemaOptional("social_weight"): int,
+                SchemaOptional("diversity_weight"): int,
+                SchemaOptional("preference_weight"): int,
+                SchemaOptional("friend_behaviour"): Or(
+                    *[behaviour.value for behaviour in RelationshipBehaviour]
+                ),
+                SchemaOptional("enemy_behaviour"): Or(
+                    *[behaviour.value for behaviour in RelationshipBehaviour]
+                ),
+                SchemaOptional("attributes_to_diversify"): List[int],
+                SchemaOptional("attributes_to_concentrate"): List[int],
+            }
+        )
 
 
 @dataclass
@@ -163,6 +250,10 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
         raise AttributeError(
             "MultipleRoundRobinAlgorithmOptions does not support parsing from json."
         )
+
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema(dict)
 
 
 @dataclass
