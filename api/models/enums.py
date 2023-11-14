@@ -36,6 +36,7 @@ class AlgorithmType(Enum):
     SOCIAL = "social"
     PRIORITY = "priority"
     MRR = "multiple_round_robin_with_adjusted_winner"
+    GEG = "generalized_envy_graph"
     DRR = "double_round_robin"
 
 

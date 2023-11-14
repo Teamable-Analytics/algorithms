@@ -1,5 +1,6 @@
 from typing import List, TYPE_CHECKING
 
+from api.ai.geg_algorithm.geg_algorithm import GeneralizedEnvyGraphAlgorithm
 from api.ai.interfaces.algorithm_config import (
     AlgorithmConfig,
     RandomAlgorithmConfig,
@@ -13,6 +14,7 @@ from api.ai.interfaces.algorithm_options import (
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
+    GeneralizedEnvyGraphAlgorithmOptions,
     DoubleRoundRobinAlgorithmOptions,
 )
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
@@ -69,6 +71,8 @@ class AlgorithmRunner:
             return PriorityAlgorithm
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinWithAdjustedWinnerAlgorithm
+        if algorithm_type == AlgorithmType.GEG:
+            return GeneralizedEnvyGraphAlgorithm
         if algorithm_type == AlgorithmType.DRR:
             return DoubleRoundRobinAlgorithm
 
@@ -88,6 +92,8 @@ class AlgorithmRunner:
             return PriorityAlgorithmOptions
         if algorithm_type == AlgorithmType.MRR:
             return MultipleRoundRobinAlgorithmOptions
+        if algorithm_type == AlgorithmType.GEG:
+            return GeneralizedEnvyGraphAlgorithmOptions
         if algorithm_type == AlgorithmType.DRR:
             return DoubleRoundRobinAlgorithmOptions
 
@@ -106,6 +112,8 @@ class AlgorithmRunner:
         if algorithm_type == AlgorithmType.PRIORITY:
             return PriorityAlgorithmConfig
         if algorithm_type == AlgorithmType.MRR:
+            return None
+        if algorithm_type == AlgorithmType.GEG:
             return None
         if algorithm_type == AlgorithmType.DRR:
             return None
