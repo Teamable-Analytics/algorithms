@@ -61,7 +61,7 @@ class GenerateTeamsValidator(Validator):
             student_ids.add(student_id)
 
     def _validate_student_project_preferences_exist(
-            self, students: List[Dict], teams: List[Dict]
+        self, students: List[Dict], teams: List[Dict]
     ):
         all_projects = set([team.get("project_id") for team in teams])
         for student in students:
@@ -76,13 +76,13 @@ class GenerateTeamsValidator(Validator):
                 )
 
     def _validate_student_project_preferences(
-            self, students: List[Dict], max_project_preferences: int
+        self, students: List[Dict], max_project_preferences: int
     ):
         for student in students:
             student_project_preferences = student.get("project_preferences")
             if (
-                    student_project_preferences is not None
-                    and len(student_project_preferences) > max_project_preferences
+                student_project_preferences is not None
+                and len(student_project_preferences) > max_project_preferences
             ):
                 raise SchemaError(
                     f"Student {student.get('id')} has {student_project_preferences} project preferences, "
@@ -106,20 +106,7 @@ class GenerateTeamsValidator(Validator):
                 raise SchemaError(f"Student {student.get('id')} has no attributes.")
 
             # Validate if attribute keys integer string
-            try:
-                attribute_keys = list(map(int, attributes.keys())) if attributes else []
-            except ValueError:
-                raise SchemaError("Attribute keys must be integers.")
-
-            # Validate if attribute keys are unique
-            if len(attribute_keys) != len(set(attribute_keys)):
-                raise SchemaError("Attribute keys must be unique.")
-
-            # Validate if attribute keys exist
-            if not all_attributes.issuperset(attribute_keys):
-                raise SchemaError(
-                    f"Student {student.get('id')} has attributes that do not exist."
-                )
+            Schema([int]).validate(attributes)
 
     def _validate_student_relationships(self, students: List[Dict]):
         student_ids = set([student.get("id") for student in students])
@@ -132,10 +119,6 @@ class GenerateTeamsValidator(Validator):
                 relationship_keys = list(map(int, relationships.keys()))
             except ValueError:
                 raise SchemaError("Relationship keys must be integers.")
-
-            # Validate if relationship keys are unique
-            if len(relationship_keys) != len(set(relationship_keys)):
-                raise SchemaError("Relationship keys must be unique.")
 
             # Validate if relationship keys exist
             if not student_ids.issuperset(relationship_keys):
