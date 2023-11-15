@@ -10,6 +10,7 @@ from api.models.enums import (
 )
 from api.models.student import Student
 from api.models.team import TeamShell
+from benchmarking.evaluations.enums import PreferenceDirection
 
 
 @dataclass
@@ -121,3 +122,26 @@ class RequirementPriority(Priority):
                 ]
             )
             return num_students_that_meet_any_req / len(students)
+
+
+@dataclass
+class ProjectPreferencePriority(Priority):
+    direction: PreferenceDirection
+    max_project_preferences: int
+
+    def validate(self):
+        super().validate()
+
+    def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
+        max_satisfaction_score = len(students) * self.max_project_preferences
+        satisfaction_score = 0
+        for student in students:
+            for index, preference in enumerate(student.project_preferences):
+                if preference == team_shell.project_id:
+                    satisfaction_score += self.max_project_preferences - index
+
+        if self.direction == PreferenceDirection.EXCLUDE:
+            return (
+                max_satisfaction_score - satisfaction_score
+            ) / max_satisfaction_score
+        return satisfaction_score / max_satisfaction_score

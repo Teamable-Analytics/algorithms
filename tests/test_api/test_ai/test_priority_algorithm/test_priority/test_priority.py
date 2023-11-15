@@ -4,6 +4,7 @@ from api.ai.priority_algorithm.priority.priority import (
     RequirementPriority,
     DiversityPriority,
     TokenizationPriority,
+    ProjectPreferencePriority,
 )
 from api.models.enums import (
     RequirementOperator,
@@ -14,6 +15,7 @@ from api.models.enums import (
 from api.models.project import ProjectRequirement
 from api.models.student import Student
 from api.models.team import TeamShell
+from benchmarking.evaluations.enums import PreferenceDirection
 
 
 class TestTokenizationPriority(unittest.TestCase):
@@ -262,3 +264,121 @@ class TestDiversityPriority(unittest.TestCase):
 
         self.assertGreater(high_satisfaction, medium_satisfaction)
         self.assertGreater(medium_satisfaction, low_satisfaction)
+
+
+class TestProjectPreferencePriority(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.project_id = 100
+        cls.team_shell = TeamShell(_id=1, project_id=cls.project_id)
+        cls.max_project_preferences = 3
+        cls.student_with_correct_preference = Student(
+            _id=1,
+            project_preferences=[cls.project_id, 2, 3],
+        )
+        cls.student_b = Student(_id=2, project_preferences=[1, cls.project_id, 3])
+        cls.student_c = Student(_id=3, project_preferences=[1, 2, cls.project_id])
+        cls.student_irrelevant_pref = Student(_id=3, project_preferences=[1, 2, 3])
+        cls.student_no_pref = Student(_id=3, project_preferences=[])
+
+    def test_satisfaction__doesnt_care_about_team_size(self):
+        project_preference_priority = ProjectPreferencePriority(
+            max_project_preferences=self.max_project_preferences,
+            direction=PreferenceDirection.INCLUDE,
+        )
+        satisfaction = project_preference_priority.satisfaction(
+            [self.student_with_correct_preference], self.team_shell
+        )
+        also_satisfaction = project_preference_priority.satisfaction(
+            [
+                self.student_with_correct_preference,
+                self.student_with_correct_preference,
+                self.student_with_correct_preference,
+            ],
+            self.team_shell,
+        )
+        self.assertEqual(satisfaction, also_satisfaction)
+
+        satisfaction_2 = project_preference_priority.satisfaction(
+            [self.student_with_correct_preference], self.team_shell
+        )
+        also_satisfaction_2 = project_preference_priority.satisfaction(
+            [
+                self.student_with_correct_preference,
+                self.student_with_correct_preference,
+                self.student_with_correct_preference,
+            ],
+            self.team_shell,
+        )
+        self.assertEqual(satisfaction_2, also_satisfaction_2)
+
+        project_preference_priority_excludes = ProjectPreferencePriority(
+            max_project_preferences=self.max_project_preferences,
+            direction=PreferenceDirection.EXCLUDE,
+        )
+        satisfaction_3 = project_preference_priority_excludes.satisfaction(
+            [self.student_with_correct_preference], self.team_shell
+        )
+        also_satisfaction_3 = project_preference_priority_excludes.satisfaction(
+            [
+                self.student_with_correct_preference,
+                self.student_with_correct_preference,
+                self.student_with_correct_preference,
+            ],
+            self.team_shell,
+        )
+        self.assertEqual(satisfaction_3, also_satisfaction_3)
+
+    def test_satisfaction__with_including_preferences(self):
+        project_preference_priority = ProjectPreferencePriority(
+            max_project_preferences=self.max_project_preferences,
+            direction=PreferenceDirection.INCLUDE,
+        )
+        high_satisfaction = project_preference_priority.satisfaction(
+            [self.student_with_correct_preference], self.team_shell
+        )
+        medium_satisfaction = project_preference_priority.satisfaction(
+            [self.student_b], self.team_shell
+        )
+        low_satisfaction = project_preference_priority.satisfaction(
+            [self.student_c], self.team_shell
+        )
+        lowest_satisfaction = project_preference_priority.satisfaction(
+            [self.student_no_pref], self.team_shell
+        )
+        also_lowest_satisfaction = project_preference_priority.satisfaction(
+            [self.student_irrelevant_pref], self.team_shell
+        )
+
+        self.assertGreater(high_satisfaction, medium_satisfaction)
+        self.assertGreater(medium_satisfaction, low_satisfaction)
+        self.assertGreater(low_satisfaction, lowest_satisfaction)
+        self.assertGreater(low_satisfaction, also_lowest_satisfaction)
+        self.assertEqual(lowest_satisfaction, also_lowest_satisfaction)
+
+    def test_satisfaction__with_excluding_preferences(self):
+        project_preference_priority = ProjectPreferencePriority(
+            max_project_preferences=self.max_project_preferences,
+            direction=PreferenceDirection.EXCLUDE,
+        )
+        high_satisfaction = project_preference_priority.satisfaction(
+            [self.student_no_pref], self.team_shell
+        )
+        also_high_satisfaction = project_preference_priority.satisfaction(
+            [self.student_irrelevant_pref], self.team_shell
+        )
+        medium_satisfaction = project_preference_priority.satisfaction(
+            [self.student_c], self.team_shell
+        )
+        low_satisfaction = project_preference_priority.satisfaction(
+            [self.student_b], self.team_shell
+        )
+        lowest_satisfaction = project_preference_priority.satisfaction(
+            [self.student_with_correct_preference], self.team_shell
+        )
+
+        self.assertEqual(high_satisfaction, also_high_satisfaction)
+        self.assertGreater(high_satisfaction, medium_satisfaction)
+        self.assertGreater(also_high_satisfaction, medium_satisfaction)
+        self.assertGreater(medium_satisfaction, low_satisfaction)
+        self.assertGreater(low_satisfaction, lowest_satisfaction)
