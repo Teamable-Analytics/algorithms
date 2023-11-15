@@ -33,7 +33,7 @@ def goal_to_priority(goal: Goal) -> Priority:
             direction=goal.direction,
         )
 
-    if isinstance(goal, ProjectRequirementGoal) and goal.match_skills:
+    if isinstance(goal, ProjectRequirementGoal):
         return RequirementPriority(
             criteria=goal.criteria,
         )
