@@ -1,16 +1,15 @@
-import random
 import unittest
 from typing import List, Dict, Tuple
 
-from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
 from api.ai.priority_algorithm.mutations import utils
 from api.ai.priority_algorithm.mutations.robinhood import (
     mutate_robinhood,
     mutate_robinhood_holistic,
 )
-from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.models.student import Student
-from api.models.team import Team
+from api.models.team import Team, TeamShell
 
 
 class StudentListPriority(Priority):
@@ -25,9 +24,9 @@ class StudentListPriority(Priority):
     def validate(self):
         return True
 
-    def satisfied_by(self, students: List[Student]) -> bool:
+    def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
         ids = [student.id for student in students]
-        return set(self.students).issubset(set(ids))
+        return int(set(self.students).issubset(set(ids)))
 
 
 def equal_priority_team_sets(a: PriorityTeamSet, b: PriorityTeamSet) -> bool:
@@ -37,7 +36,7 @@ def equal_priority_team_sets(a: PriorityTeamSet, b: PriorityTeamSet) -> bool:
     if len(a.priority_teams) != len(b.priority_teams):
         return False
     for priority_team_a, priority_team_b in zip(a.priority_teams, b.priority_teams):
-        if priority_team_a.team.id != priority_team_b.team.id:
+        if priority_team_a.team_shell.id != priority_team_b.team_shell.id:
             return False
         if (
             len(
@@ -83,10 +82,10 @@ def get_priority_team(team_id: int, priority_team_set: PriorityTeamSet) -> Prior
         raise ValueError(
             f"Team id must be less than {len(priority_team_set.priority_teams)}, not {team_id}"
         )
-    if priority_team_set.priority_teams[team_id].team.id == team_id:
+    if priority_team_set.priority_teams[team_id].team_shell.id == team_id:
         return priority_team_set.priority_teams[team_id]
     for priority_team in priority_team_set.priority_teams:
-        if priority_team.team.id == team_id:
+        if priority_team.team_shell.id == team_id:
             return priority_team
     raise ValueError(f"Team {team_id} not found")
 
@@ -141,7 +140,7 @@ class TestMutateRobinhood(unittest.TestCase):
         for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
             priority_team_set, student_dict = create_new_priority_team_set(3, 9)
             priorities = [StudentListPriority([1, 2])]
-            priority_team_set.priority_teams[0].team.is_locked = True
+            priority_team_set.priority_teams[0].team_shell.is_locked = True
 
             mutated_team_set = mutate_func(priority_team_set, priorities, student_dict)
 
@@ -205,7 +204,7 @@ class TestMutateRobinhood(unittest.TestCase):
             all_students = [
                 student.id
                 for priority_team in priority_team_set.priority_teams
-                for student in priority_team.team.students
+                for student in priority_team.team_shell.students
             ]
 
             self.assertEqual(
@@ -253,8 +252,8 @@ class TestMutateRobinhood(unittest.TestCase):
         for team in priority_team_set.priority_teams:
             team_scores.append((team, utils.score(team, priorities, student_dict)))
 
-        min_scoring_team: int = min(team_scores, key=lambda x: x[1])[0].team.id
-        max_scoring_team: int = max(team_scores, key=lambda x: x[1])[0].team.id
+        min_scoring_team: int = min(team_scores, key=lambda x: x[1])[0].team_shell.id
+        max_scoring_team: int = max(team_scores, key=lambda x: x[1])[0].team_shell.id
         other_team: int = (
             {0, 1, 2}.difference({min_scoring_team, max_scoring_team}).pop()
         )

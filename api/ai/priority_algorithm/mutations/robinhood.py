@@ -2,10 +2,14 @@ import itertools
 import random
 from typing import List, Dict, Tuple
 
-from api.ai.priority_algorithm.interfaces import Priority
+from api.ai.priority_algorithm.mutations.utils import get_available_priority_teams
+from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.ai.priority_algorithm.mutations import utils
-from api.ai.priority_algorithm.priority_teamset import PriorityTeamSet, PriorityTeam
+from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
 from api.models.student import Student
+
+
+ROBINHOOD_SATISFACTION_THRESHOLD = 0.8
 
 
 def mutate_robinhood(
@@ -31,18 +35,20 @@ def mutate_robinhood(
             # We need to clone the priority_team_set because we will be modifying it in order to get the score of the whole TeamSet
             cloned_priority_team_set: PriorityTeamSet = priority_team_set.clone()
 
-            available_priority_teams = [
-                priority_team
-                for priority_team in cloned_priority_team_set.priority_teams
-                if not priority_team.team.is_locked
-            ]
+            available_priority_teams = get_available_priority_teams(
+                cloned_priority_team_set
+            )
 
             # Sort the teams into two lists: those that satisfy the priority and those that don't
             satisfied_teams: List[PriorityTeam] = []
             unsatisfied_teams: List[PriorityTeam] = []
             for team in available_priority_teams:
-                if priority.satisfied_by(
-                    [student_dict[student_id] for student_id in team.student_ids]
+                if (
+                    priority.satisfaction(
+                        [student_dict[student_id] for student_id in team.student_ids],
+                        team.team_shell,
+                    )
+                    >= ROBINHOOD_SATISFACTION_THRESHOLD
                 ):
                     satisfied_teams.append(team)
                 else:
@@ -97,11 +103,7 @@ def mutate_robinhood_holistic(
 
     cloned_priority_team_set: PriorityTeamSet = priority_team_set.clone()
 
-    available_priority_teams = [
-        priority_team
-        for priority_team in cloned_priority_team_set.priority_teams
-        if not priority_team.team.is_locked
-    ]
+    available_priority_teams = get_available_priority_teams(cloned_priority_team_set)
 
     # Calculate the score of each team in the team set
     team_scores: List[Tuple[PriorityTeam, int]] = []
@@ -151,7 +153,7 @@ def perform_local_max_portion_of_robinhood(
 
     # Generate all possible teams using the students from the two teams
     # Elements of this list are lists of student ids
-    possible_teams: List[List[int]] = list(
+    possible_teams: List[Tuple[int]] = list(
         itertools.combinations(students, len(selected_team_b.student_ids))
     )
 
