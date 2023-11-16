@@ -7,25 +7,34 @@ from benchmarking.evaluations.interfaces import TeamSetMetric
 
 class EnvyFreenessUpToOneItem(TeamSetMetric):
     """
-    Calculate the envy-free up to one metric for the given attribute for each team and average the results
+    Calculate the "envy-freeness up to one item" metric for the given attribute for each team and average the results
 
-    A allocation is envy-free up to one if no agent envies another agent by more than one unit of the given attribute
-    Meaning if A is envying B, then A will no longer envy B if we remove one unit of the given attribute from  B
+    ----
+
+    Definitions:
+
+    - Envy: Team A envies Team B if Team A's utility is less than Team B's utility
+    - Envy-free up to one item (ef1): Team B ef1 Team A if Team B envies Team A and if Team A removes one student, Team B no longer envies Team A
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__(name="EnvyFreenessUpToOneItem", *args, **kwargs)
+        super().__init__(theoretical_range=(0, 1), *args, **kwargs)
 
     def calculate(self, team_set: TeamSet) -> float:
         """
-        If envy-free up to one, return 1.0, else return 0.0
+        If envy-free up to one item, return 1.0, else return 0.0
+
+        ----
+
+        Note: The return of this function should be `bool`, but we return
+        `float` to calculate the average between multiple runs
         """
         for team in team_set.teams:
             for other_team in team_set.teams:
                 if team == other_team:
                     continue
 
-                if not self._is_envy(team, other_team):
+                if not self._is_envy(other_team, team):
                     continue
 
                 envy_up_to_one = False
@@ -51,7 +60,7 @@ class EnvyFreenessUpToOneItem(TeamSetMetric):
 
     def _calculate_team_utility(self, team: Team) -> int:
         """
-        Calculate additive utility of all students in the team
+        Calculate **additive** utility of all students in the team
 
         Utility of a student is calculated as the sum of the student's satisfied attributes to the requirements
         """
