@@ -6,9 +6,9 @@ from api.models.student import Student
 def num_friends_satisfied(student: Student) -> int:
     count = 0
     for relation_student_id, relation in student.relationships.items():
-        if relation != Relationship.FRIEND:
+        if relation != Relationship.FRIEND or relation_student_id == student.id:
             continue
-        if relation_student_id in [t.id for t in student.team.students if t.id != student.id]:
+        if relation_student_id in [t.id for t in student.team.students]:
             count += 1
     return count
 
@@ -16,9 +16,9 @@ def num_friends_satisfied(student: Student) -> int:
 def num_enemies_satisfied(student: Student) -> int:
     count = 0
     for relation_student_id, relation in student.relationships.items():
-        if relation != Relationship.ENEMY:
+        if relation != Relationship.ENEMY or relation_student_id == student.id:
             continue
-        if relation_student_id not in [t.id for t in student.team.students if t.id != student.id]:
+        if relation_student_id not in [t.id for t in student.team.students]:
             count += 1
     return count
 
