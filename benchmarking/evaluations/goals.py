@@ -22,6 +22,17 @@ class DiversityGoal(Goal):
 class PreferenceGoal(Goal):
     direction: PreferenceDirection
     subject: PreferenceSubject
+    max_project_preferences: Optional[int]
+
+    def validate(self):
+        if (
+            self.subject == PreferenceSubject.PROJECTS
+            and not self.max_project_preferences
+        ):
+            raise ValueError(
+                "Using the projects preference subject requires the specification of "
+                "max_project_preferences"
+            )
 
 
 @dataclass
