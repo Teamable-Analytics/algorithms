@@ -115,7 +115,7 @@ class MockAlgorithm:
                 else:
                     attributes_to_concentrate.append(goal.attribute)
             if isinstance(goal, ProjectRequirementGoal):
-                has_project_requirement_goal = goal.match_skills
+                has_project_requirement_goal = True
 
         if not has_weight_goal:
             # set default weights if no weights are explicitly given in the scenario

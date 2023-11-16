@@ -37,16 +37,9 @@ class PreferenceGoal(Goal):
 
 @dataclass
 class ProjectRequirementGoal(Goal):
-    match_skills: bool
     criteria: Optional[
         RequirementsCriteria
     ] = RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
-
-    def validate(self):
-        if not self.match_skills and self.criteria:
-            raise ValueError(
-                "If skills are not being matched at all, no matching criteria can be set!"
-            )
 
 
 @dataclass
