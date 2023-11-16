@@ -18,7 +18,12 @@ class EnvyFreenessUpToOneItem(TeamSetMetric):
     - Envy-free up to one item (ef1): Team B ef1 Team A if Team B envies Team A and if Team A removes one student, Team B no longer envies Team A
     """
 
-    def __init__(self, calculate_utilities: Callable[[TeamSet], Dict[int, Dict[int]]], *args, **kwargs):
+    def __init__(
+        self,
+        calculate_utilities: Callable[[TeamSet], Dict[int, Dict[int]]],
+        *args,
+        **kwargs
+    ):
         super().__init__(theoretical_range=(0, 1), *args, **kwargs)
         self.calculate_utilities = calculate_utilities
 
@@ -52,7 +57,9 @@ class EnvyFreenessUpToOneItem(TeamSetMetric):
                     return 0
         return 1
 
-    def _is_envy(self, team: Team, other_team: Team, utilities: Dict[int, Dict[int]]) -> bool:
+    def _is_envy(
+        self, team: Team, other_team: Team, utilities: Dict[int, Dict[int]]
+    ) -> bool:
         """
         Check if team envies other_team
         """
@@ -61,8 +68,9 @@ class EnvyFreenessUpToOneItem(TeamSetMetric):
 
         return team_utility < other_team_utility
 
-    def _calculate_team_utility(self, team: Team, utilities: Dict[int, Dict[int]]) -> int:
-        return sum([
-            utilities[team.project_id][student.id]
-            for student in team.students
-        ])
+    def _calculate_team_utility(
+        self, team: Team, utilities: Dict[int, Dict[int]]
+    ) -> int:
+        return sum(
+            [utilities[team.project_id][student.id] for student in team.students]
+        )
