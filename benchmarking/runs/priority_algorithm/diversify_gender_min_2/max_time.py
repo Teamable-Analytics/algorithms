@@ -1,4 +1,3 @@
-import math
 from typing import Dict, List
 
 import typer
@@ -6,12 +5,14 @@ import typer
 from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     RandomAlgorithmConfig,
-    SocialAlgorithmConfig,
     WeightAlgorithmConfig,
 )
 from api.ai.priority_algorithm.mutations import (
     mutate_local_max,
-    mutate_random_swap, mutate_local_max_random, mutate_local_max_double_random, mutate_robinhood,
+    mutate_random_swap,
+    mutate_local_max_random,
+    mutate_local_max_double_random,
+    mutate_robinhood,
     mutate_robinhood_holistic,
 )
 from api.models.enums import ScenarioAttribute, Gender, AlgorithmType
@@ -39,29 +40,29 @@ from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetA
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class DiversifyGenderMin2Run(Run):
+class DiversifyGenderMin2MaxTime(Run):
     @staticmethod
     def start(num_trials: int = 10, generate_graphs: bool = True):
         """
-        Goal: Run diversify gender scenario, measure average, min, and max gini index
+        Goal: Run diversify gender scenario while varying the maximum time argument for the priority algorithm.
         """
 
         # Defining our changing x-values (in the graph sense)
         times = list(range(2, 21, 2))
         ratio_of_female_students = 0.4
-
+        max_iterate = 300
+        number_of_students = 200
+        number_of_teams = 40
+        max_keep = 3
+        max_spread = 3
         scenario = DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value)
 
         graph_runtime_dict = {}
         graph_avg_gini_dict = {}
-        graph_min_gini_dict = {}
-        graph_max_gini_dict = {}
         graph_priority_dict = {}
         graph_dicts = [
             graph_runtime_dict,
             graph_avg_gini_dict,
-            graph_min_gini_dict,
-            graph_max_gini_dict,
             graph_priority_dict,
         ]
 
@@ -81,12 +82,9 @@ class DiversifyGenderMin2Run(Run):
 
         for time in times:
             print("TIME /", time)
-
-            number_of_teams = 40
-
             # set up either mock or real data
             student_provider_settings = MockStudentProviderSettings(
-                number_of_students=200,
+                number_of_students=number_of_students,
                 attribute_ranges={
                     ScenarioAttribute.GENDER.value: [
                         (Gender.MALE, 1 - ratio_of_female_students),
@@ -107,59 +105,77 @@ class DiversifyGenderMin2Run(Run):
                     AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
-                            MAX_ITERATE=300,
+                            MAX_ITERATE=max_iterate,
                             MAX_TIME=time,
+                            MAX_KEEP=max_keep,
+                            MAX_SPREAD=max_spread,
                         ),
                         PriorityAlgorithmConfig(
                             name="local_max",
                             MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
                             MAX_TIME=time,
-                            MAX_ITERATE=300,
+                            MAX_ITERATE=max_iterate,
+                            MAX_KEEP=max_keep,
+                            MAX_SPREAD=max_spread,
                         ),
                         PriorityAlgorithmConfig(
                             name="local_max_random",
-                            MUTATIONS=[(mutate_local_max_random, 1), (mutate_random_swap, 2)],
+                            MUTATIONS=[
+                                (mutate_local_max_random, 1),
+                                (mutate_random_swap, 2),
+                            ],
                             MAX_TIME=time,
-                            MAX_ITERATE=300
+                            MAX_ITERATE=max_iterate,
+                            MAX_KEEP=max_keep,
+                            MAX_SPREAD=max_spread,
                         ),
                         PriorityAlgorithmConfig(
                             name="local_max_double_random",
-                            MUTATIONS=[(mutate_local_max_double_random, 1), (mutate_random_swap, 2)],
+                            MUTATIONS=[
+                                (mutate_local_max_double_random, 1),
+                                (mutate_random_swap, 2),
+                            ],
                             MAX_TIME=time,
-                            MAX_ITERATE=300
+                            MAX_ITERATE=max_iterate,
+                            MAX_KEEP=max_keep,
+                            MAX_SPREAD=max_spread,
                         ),
                         PriorityAlgorithmConfig(
                             name="local_max_pure_double_random",
                             MUTATIONS=[(mutate_local_max_double_random, 3)],
                             MAX_TIME=time,
-                            MAX_ITERATE=300
+                            MAX_ITERATE=max_iterate,
+                            MAX_KEEP=max_keep,
+                            MAX_SPREAD=max_spread,
                         ),
                         PriorityAlgorithmConfig(
                             name="robinhood",
                             MUTATIONS=[(mutate_robinhood, 3)],
                             MAX_TIME=time,
-                            MAX_ITERATE=300
+                            MAX_ITERATE=max_iterate,
+                            MAX_KEEP=max_keep,
+                            MAX_SPREAD=max_spread,
                         ),
                         PriorityAlgorithmConfig(
                             name="robinhood_holistic",
                             MUTATIONS=[(mutate_robinhood_holistic, 3)],
                             MAX_TIME=time,
-                            MAX_ITERATE=300
+                            MAX_ITERATE=max_iterate,
+                            MAX_KEEP=max_keep,
+                            MAX_SPREAD=max_spread,
                         ),
                     ],
                 },
             ).run(num_runs=num_trials)
-            artifacts[iteration] = simulation_set_artifact
+            artifacts[time] = simulation_set_artifact
 
         if generate_graphs:
-            for iteration, artifact in artifacts.items():
+            for time, artifact in artifacts.items():
                 insight_set: Dict[str, Dict[str, List[float]]] = Insight.get_output_set(
                     artifact=artifact, metrics=list(metrics.values())
                 )
 
                 average_ginis = Insight.average_metric(insight_set, "AverageGiniIndex")
-                maximum_ginis = Insight.average_metric(insight_set, "MaximumGiniIndex")
-                minimum_ginis = Insight.average_metric(insight_set, "MinimumGiniIndex")
                 average_runtimes = Insight.average_metric(
                     insight_set, Insight.KEY_RUNTIMES
                 )
@@ -170,8 +186,6 @@ class DiversifyGenderMin2Run(Run):
                 metric_values = [
                     average_runtimes,
                     average_ginis,
-                    minimum_ginis,
-                    maximum_ginis,
                     satisfied_priorities,
                 ]
 
@@ -180,17 +194,17 @@ class DiversifyGenderMin2Run(Run):
                     for name, data in metric.items():
                         if name not in graph_dicts[i]:
                             graph_dicts[i][name] = GraphData(
-                                x_data=[iteration],
+                                x_data=[time],
                                 y_data=[data],
                                 name=name,
                             )
                         else:
-                            graph_dicts[i][name].x_data.append(iteration)
+                            graph_dicts[i][name].x_data.append(time)
                             graph_dicts[i][name].y_data.append(data)
 
             line_graph(
                 LineGraphMetadata(
-                    x_label="Max Num Iterations",
+                    x_label="Time (seconds)",
                     y_label="Run time (seconds)",
                     title="Diversify Gender With Min of Two Runtimes",
                     data=list(graph_runtime_dict.values()),
@@ -199,7 +213,7 @@ class DiversifyGenderMin2Run(Run):
 
             line_graph(
                 LineGraphMetadata(
-                    x_label="Max Num Iterations",
+                    x_label="Time (seconds)",
                     y_label="Average Gini Index",
                     title="Diversify Gender With Min of Two Average Gini Index",
                     data=list(graph_avg_gini_dict.values()),
@@ -211,27 +225,7 @@ class DiversifyGenderMin2Run(Run):
 
             line_graph(
                 LineGraphMetadata(
-                    x_label="Max Num Iterations",
-                    y_label="Minimum Gini Index",
-                    title="Diversify Gender With Min of Two Minimum Gini",
-                    data=list(graph_min_gini_dict.values()),
-                    y_lim=GraphAxisRange(*metrics["MinGiniIndex"].theoretical_range),
-                )
-            )
-
-            line_graph(
-                LineGraphMetadata(
-                    x_label="Max Num Iterations",
-                    y_label="Maximum Gini Index",
-                    title="Diversify Gender With Min of Two Max Gini",
-                    data=list(graph_max_gini_dict.values()),
-                    y_lim=GraphAxisRange(*metrics["MaxGiniIndex"].theoretical_range),
-                )
-            )
-
-            line_graph(
-                LineGraphMetadata(
-                    x_label="Max Num Iterations",
+                    x_label="Time (seconds)",
                     y_label="Priorities Satisfied",
                     title="Diversity Gender With Min of Two Satisfied Priorities",
                     data=list(graph_priority_dict.values()),
@@ -243,4 +237,4 @@ class DiversifyGenderMin2Run(Run):
 
 
 if __name__ == "__main__":
-    typer.run(DiversifyGenderMin2Run.start)
+    typer.run(DiversifyGenderMin2MaxTime.start)

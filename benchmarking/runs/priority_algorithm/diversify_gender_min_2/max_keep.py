@@ -1,4 +1,3 @@
-import math
 from typing import Dict, List
 
 import typer
@@ -41,21 +40,21 @@ from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetA
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class DiversifyGenderMin2ClassSize(Run):
+class DiversifyGenderMin2MaxKeep(Run):
     @staticmethod
     def start(num_trials: int = 10, generate_graphs: bool = True):
         """
-        Goal: Run diversify gender scenario while varying the size of the class
+        Goal: Run diversify gender scenario while varying the maximum keep argument for the priority algorithm.
         """
 
         # Defining our changing x-values (in the graph sense)
-        class_sizes = list(range(50, 201, 50))
-        ratio_of_female_students = 0.2
-        max_time = 10
+        max_keep = list(range(1, 10))
+        ratio_of_female_students = 0.4
         max_iterate = 300
-        max_keep = 3
+        number_of_students = 200
+        number_of_teams = 40
+        max_time = 10
         max_spread = 3
-
         scenario = DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value)
 
         graph_runtime_dict = {}
@@ -81,14 +80,11 @@ class DiversifyGenderMin2ClassSize(Run):
 
         artifacts: Dict[int, SimulationSetArtifact] = {}
 
-        for class_size in class_sizes:
-            print("CLASS SIZE /", class_size)
-
-            number_of_teams = math.ceil(class_size / 5)
-
+        for keep in max_keep:
+            print("MAX KEEP /", keep)
             # set up either mock or real data
             student_provider_settings = MockStudentProviderSettings(
-                number_of_students=class_size,
+                number_of_students=number_of_students,
                 attribute_ranges={
                     ScenarioAttribute.GENDER.value: [
                         (Gender.MALE, 1 - ratio_of_female_students),
@@ -102,7 +98,7 @@ class DiversifyGenderMin2ClassSize(Run):
                     num_teams=number_of_teams,
                     scenario=scenario,
                     student_provider=MockStudentProvider(student_provider_settings),
-                    cache_key=f"diversify_gender_min_2_class_size_{class_size}",
+                    cache_key=f"diversify_gender_min_2_max_keep_{keep}",
                 ),
                 algorithm_set={
                     AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
@@ -111,7 +107,7 @@ class DiversifyGenderMin2ClassSize(Run):
                         PriorityAlgorithmConfig(
                             MAX_ITERATE=max_iterate,
                             MAX_TIME=max_time,
-                            MAX_KEEP=max_keep,
+                            MAX_KEEP=keep,
                             MAX_SPREAD=max_spread,
                         ),
                         PriorityAlgorithmConfig(
@@ -119,7 +115,7 @@ class DiversifyGenderMin2ClassSize(Run):
                             MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
-                            MAX_KEEP=max_keep,
+                            MAX_KEEP=keep,
                             MAX_SPREAD=max_spread,
                         ),
                         PriorityAlgorithmConfig(
@@ -130,7 +126,7 @@ class DiversifyGenderMin2ClassSize(Run):
                             ],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
-                            MAX_KEEP=max_keep,
+                            MAX_KEEP=keep,
                             MAX_SPREAD=max_spread,
                         ),
                         PriorityAlgorithmConfig(
@@ -141,7 +137,7 @@ class DiversifyGenderMin2ClassSize(Run):
                             ],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
-                            MAX_KEEP=max_keep,
+                            MAX_KEEP=keep,
                             MAX_SPREAD=max_spread,
                         ),
                         PriorityAlgorithmConfig(
@@ -149,7 +145,7 @@ class DiversifyGenderMin2ClassSize(Run):
                             MUTATIONS=[(mutate_local_max_double_random, 3)],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
-                            MAX_KEEP=max_keep,
+                            MAX_KEEP=keep,
                             MAX_SPREAD=max_spread,
                         ),
                         PriorityAlgorithmConfig(
@@ -157,7 +153,7 @@ class DiversifyGenderMin2ClassSize(Run):
                             MUTATIONS=[(mutate_robinhood, 3)],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
-                            MAX_KEEP=max_keep,
+                            MAX_KEEP=keep,
                             MAX_SPREAD=max_spread,
                         ),
                         PriorityAlgorithmConfig(
@@ -165,16 +161,16 @@ class DiversifyGenderMin2ClassSize(Run):
                             MUTATIONS=[(mutate_robinhood_holistic, 3)],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
-                            MAX_KEEP=max_keep,
+                            MAX_KEEP=keep,
                             MAX_SPREAD=max_spread,
                         ),
                     ],
                 },
             ).run(num_runs=num_trials)
-            artifacts[class_size] = simulation_set_artifact
+            artifacts[keep] = simulation_set_artifact
 
         if generate_graphs:
-            for class_size, artifact in artifacts.items():
+            for keep, artifact in artifacts.items():
                 insight_set: Dict[str, Dict[str, List[float]]] = Insight.get_output_set(
                     artifact=artifact, metrics=list(metrics.values())
                 )
@@ -198,17 +194,17 @@ class DiversifyGenderMin2ClassSize(Run):
                     for name, data in metric.items():
                         if name not in graph_dicts[i]:
                             graph_dicts[i][name] = GraphData(
-                                x_data=[class_size],
+                                x_data=[keep],
                                 y_data=[data],
                                 name=name,
                             )
                         else:
-                            graph_dicts[i][name].x_data.append(class_size)
+                            graph_dicts[i][name].x_data.append(keep)
                             graph_dicts[i][name].y_data.append(data)
 
             line_graph(
                 LineGraphMetadata(
-                    x_label="Class size",
+                    x_label="Number of Children to Keep",
                     y_label="Run time (seconds)",
                     title="Diversify Gender With Min of Two Runtimes",
                     data=list(graph_runtime_dict.values()),
@@ -217,7 +213,7 @@ class DiversifyGenderMin2ClassSize(Run):
 
             line_graph(
                 LineGraphMetadata(
-                    x_label="Class size",
+                    x_label="Number of Children to Keep",
                     y_label="Average Gini Index",
                     title="Diversify Gender With Min of Two Average Gini Index",
                     data=list(graph_avg_gini_dict.values()),
@@ -229,7 +225,7 @@ class DiversifyGenderMin2ClassSize(Run):
 
             line_graph(
                 LineGraphMetadata(
-                    x_label="Class size",
+                    x_label="Number of Children to Keep",
                     y_label="Priorities Satisfied",
                     title="Diversity Gender With Min of Two Satisfied Priorities",
                     data=list(graph_priority_dict.values()),
@@ -241,4 +237,4 @@ class DiversifyGenderMin2ClassSize(Run):
 
 
 if __name__ == "__main__":
-    typer.run(DiversifyGenderMin2ClassSize.start)
+    typer.run(DiversifyGenderMin2MaxKeep.start)
