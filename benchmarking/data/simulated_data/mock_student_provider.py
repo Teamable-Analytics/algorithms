@@ -107,17 +107,20 @@ def create_mock_students(
 
     for i in range(n):
         relationships = {}
-        for j in range(f):
+        for j in range(f + 1):
             # todo: (document) this doesn't guarantee the friend/enemy count, just sets the max
             if friend_distribution == "cluster":
-                friend_id = (i // f * f + j) % n
+                friend_id = (i // (f + 1) * (f + 1) + j) % n
             else:
                 friend_id = random.randrange(0, n)
             if friend_id == i:
                 continue
             relationships[friend_id] = Relationship.FRIEND
         for j in range(e):
-            enemy_id = random.randrange(0, n)
+            while True:
+                enemy_id = random.randrange(0, n)
+                if enemy_id not in relationships:
+                    break
             relationships[enemy_id] = Relationship.ENEMY
 
         attributes = {}
