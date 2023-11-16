@@ -1,6 +1,6 @@
 from typing import List
 
-from api.models.enums import DiversifyType, ScenarioAttribute
+from api.models.enums import DiversifyType, ScenarioAttribute, RequirementsCriteria
 from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubject
 from benchmarking.evaluations.goals import (
     DiversityGoal,
@@ -23,7 +23,9 @@ class ProjectRequirementPreferenceDiversifyGender:
     def goals(self) -> List[Goal]:
         return [
             DiversityGoal(DiversifyType.DIVERSIFY, ScenarioAttribute.GENDER.value),
-            ProjectRequirementGoal(),
+            ProjectRequirementGoal(
+                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
+            ),
             PreferenceGoal(
                 direction=PreferenceDirection.INCLUDE,
                 subject=PreferenceSubject.PROJECTS,
