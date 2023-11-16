@@ -22,7 +22,7 @@ class DiversityGoal(Goal):
 class PreferenceGoal(Goal):
     direction: PreferenceDirection
     subject: PreferenceSubject
-    max_project_preferences: Optional[int]
+    max_project_preferences: Optional[int] = None
 
     def validate(self):
         if (
@@ -36,7 +36,7 @@ class PreferenceGoal(Goal):
 
 
 @dataclass
-class ProjectRequirementGoal(Goal):
+class RequirementsCriteria(Goal):
     criteria: Optional[
         RequirementsCriteria
     ] = RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
