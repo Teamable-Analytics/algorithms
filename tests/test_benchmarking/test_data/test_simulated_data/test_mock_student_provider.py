@@ -21,6 +21,76 @@ class TestMockStudentProvider(unittest.TestCase):
         for student in students:
             self.assertIsInstance(student, Student)
 
+    def test_get__each_student_has_correct_num_friends_and_enemies(self):
+        students = MockStudentProvider(
+            MockStudentProviderSettings(
+                number_of_students=10,
+                number_of_friends=4,
+                number_of_enemies=1,
+            )
+        ).get()
+
+        for student in students:
+            num_friends = len(
+                [
+                    1
+                    for stu_id, relation in student.relationships.items()
+                    if relation == Relationship.FRIEND
+                ]
+            )
+            num_enemies = len(
+                [
+                    1
+                    for stu_id, relation in student.relationships.items()
+                    if relation == Relationship.ENEMY
+                ]
+            )
+
+            self.assertEqual(4, num_friends)
+            self.assertEqual(1, num_enemies)
+
+    def test_get__each_student_has_correct_num_friends_and_enemies_non_divisible_class_size(
+        self,
+    ):
+        students = MockStudentProvider(
+            MockStudentProviderSettings(
+                number_of_students=10,
+                number_of_friends=3,
+                number_of_enemies=1,
+            )
+        ).get()
+
+        for student in students:
+            num_friends = len(
+                [
+                    1
+                    for stu_id, relation in student.relationships.items()
+                    if relation == Relationship.FRIEND
+                ]
+            )
+            num_enemies = len(
+                [
+                    1
+                    for stu_id, relation in student.relationships.items()
+                    if relation == Relationship.ENEMY
+                ]
+            )
+
+            self.assertEqual(3, num_friends)
+            self.assertEqual(1, num_enemies)
+
+    def test_get__class_size_too_small(self):
+        self.assertRaises(
+            ValueError,
+            lambda: MockStudentProvider(
+                MockStudentProviderSettings(
+                    number_of_students=2,
+                    number_of_friends=4,
+                    number_of_enemies=1,
+                )
+            ).get(),
+        )
+
     def test_max_project_preferences__are_correctly_inferred(self):
         max_project_preferences_1 = MockStudentProvider(
             MockStudentProviderSettings(
@@ -105,7 +175,7 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
     def test_create_mock_students__students_have_correct_friend_and_enemy_count(self):
         for i in [1, 5, 10]:
             students = create_mock_students(
-                number_of_students=i + 1,
+                number_of_students=i * 2 + 1,
                 number_of_friends=i,
                 number_of_enemies=i,
                 friend_distribution="random",
