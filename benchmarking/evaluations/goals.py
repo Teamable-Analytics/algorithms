@@ -36,7 +36,7 @@ class PreferenceGoal(Goal):
 
 
 @dataclass
-class RequirementsCriteria(Goal):
+class ProjectRequirementGoal(Goal):
     criteria: Optional[
         RequirementsCriteria
     ] = RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED

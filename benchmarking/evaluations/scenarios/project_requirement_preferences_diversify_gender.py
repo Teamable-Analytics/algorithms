@@ -5,8 +5,8 @@ from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubjec
 from benchmarking.evaluations.goals import (
     DiversityGoal,
     WeightGoal,
-    RequirementsCriteria,
     PreferenceGoal,
+    ProjectRequirementGoal,
 )
 from benchmarking.evaluations.interfaces import Goal
 
@@ -20,7 +20,7 @@ class ProjectRequirementPreferenceDiversifyGender:
     def goals(self) -> List[Goal]:
         return [
             DiversityGoal(DiversifyType.DIVERSIFY, ScenarioAttribute.GENDER.value),
-            RequirementsCriteria(),
+            ProjectRequirementGoal(),
             PreferenceGoal(
                 direction=PreferenceDirection.INCLUDE,
                 subject=PreferenceSubject.PROJECTS,

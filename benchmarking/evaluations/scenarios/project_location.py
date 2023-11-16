@@ -4,7 +4,7 @@ from api.models.enums import DiversifyType, ScenarioAttribute
 from benchmarking.evaluations.goals import (
     DiversityGoal,
     WeightGoal,
-    RequirementsCriteria,
+    ProjectRequirementGoal,
 )
 from benchmarking.evaluations.interfaces import Scenario, Goal
 
@@ -18,6 +18,6 @@ class ProjectLocation(Scenario):
     def goals(self) -> List[Goal]:
         return [
             DiversityGoal(DiversifyType.CONCENTRATE, ScenarioAttribute.LOCATION.value),
-            RequirementsCriteria(),
+            ProjectRequirementGoal(),
             WeightGoal(diversity_goal_weight=2, project_requirement_weight=1),
         ]
