@@ -112,7 +112,10 @@ class DiversifyGenderMin2MaxKeep(Run):
                         ),
                         PriorityAlgorithmConfig(
                             name="local_max",
-                            MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, spread - 1)],
+                            MUTATIONS=[
+                                (mutate_local_max, 1),
+                                (mutate_random_swap, spread - 1),
+                            ],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
                             MAX_KEEP=max_keep,
