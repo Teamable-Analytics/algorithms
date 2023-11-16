@@ -12,8 +12,8 @@ from benchmarking.evaluations.interfaces import Goal, Scenario
 
 
 class ProjectRequirementPreferenceDiversifyGender(Scenario):
-    def __init__(self, max_project_preferences: int):
-        super().__init__()
+    def __init__(self, max_project_preferences: int, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.max_project_preferences = max_project_preferences
 
     @property
