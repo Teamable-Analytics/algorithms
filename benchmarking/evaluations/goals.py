@@ -22,7 +22,7 @@ class DiversityGoal(Goal):
 class PreferenceGoal(Goal):
     direction: PreferenceDirection
     subject: PreferenceSubject
-    max_project_preferences: Optional[int]
+    max_project_preferences: Optional[int] = None
 
     def validate(self):
         if (
