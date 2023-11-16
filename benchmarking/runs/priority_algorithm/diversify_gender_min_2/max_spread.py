@@ -42,7 +42,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 class DiversifyGenderMin2MaxKeep(Run):
     @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = True):
+    def start(num_trials: int = 10, generate_graphs: bool = False):
         """
         Goal: Run diversify gender scenario while varying the maximum keep argument for the priority algorithm.
         """
@@ -112,7 +112,7 @@ class DiversifyGenderMin2MaxKeep(Run):
                         ),
                         PriorityAlgorithmConfig(
                             name="local_max",
-                            MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
+                            MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, spread - 1)],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
                             MAX_KEEP=max_keep,
@@ -122,7 +122,7 @@ class DiversifyGenderMin2MaxKeep(Run):
                             name="local_max_random",
                             MUTATIONS=[
                                 (mutate_local_max_random, 1),
-                                (mutate_random_swap, 2),
+                                (mutate_random_swap, spread - 1),
                             ],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
@@ -133,7 +133,7 @@ class DiversifyGenderMin2MaxKeep(Run):
                             name="local_max_double_random",
                             MUTATIONS=[
                                 (mutate_local_max_double_random, 1),
-                                (mutate_random_swap, 2),
+                                (mutate_random_swap, spread - 1),
                             ],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
@@ -142,7 +142,7 @@ class DiversifyGenderMin2MaxKeep(Run):
                         ),
                         PriorityAlgorithmConfig(
                             name="local_max_pure_double_random",
-                            MUTATIONS=[(mutate_local_max_double_random, 3)],
+                            MUTATIONS=[(mutate_local_max_double_random, spread)],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
                             MAX_KEEP=max_keep,
@@ -150,7 +150,7 @@ class DiversifyGenderMin2MaxKeep(Run):
                         ),
                         PriorityAlgorithmConfig(
                             name="robinhood",
-                            MUTATIONS=[(mutate_robinhood, 3)],
+                            MUTATIONS=[(mutate_robinhood, spread)],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
                             MAX_KEEP=max_keep,
@@ -158,7 +158,7 @@ class DiversifyGenderMin2MaxKeep(Run):
                         ),
                         PriorityAlgorithmConfig(
                             name="robinhood_holistic",
-                            MUTATIONS=[(mutate_robinhood_holistic, 3)],
+                            MUTATIONS=[(mutate_robinhood_holistic, spread)],
                             MAX_TIME=max_time,
                             MAX_ITERATE=max_iterate,
                             MAX_KEEP=max_keep,

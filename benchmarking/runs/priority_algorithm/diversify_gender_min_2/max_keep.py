@@ -42,7 +42,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 class DiversifyGenderMin2MaxKeep(Run):
     @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = True):
+    def start(num_trials: int = 10, generate_graphs: bool = False):
         """
         Goal: Run diversify gender scenario while varying the maximum keep argument for the priority algorithm.
         """
