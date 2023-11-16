@@ -12,6 +12,9 @@ from benchmarking.evaluations.interfaces import Goal
 
 
 class ProjectRequirementPreferenceDiversifyGender:
+    def __init__(self, max_project_preferences: int):
+        self.max_project_preferences = max_project_preferences
+
     @property
     def name(self) -> str:
         return "Meet Project Requirements, Project Preferences, and Diversify Gender"
@@ -24,7 +27,7 @@ class ProjectRequirementPreferenceDiversifyGender:
             PreferenceGoal(
                 direction=PreferenceDirection.INCLUDE,
                 subject=PreferenceSubject.PROJECTS,
-                max_project_preferences=3,
+                max_project_preferences=self.max_project_preferences,
             ),
             WeightGoal(
                 diversity_goal_weight=3,
