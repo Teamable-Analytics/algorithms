@@ -57,8 +57,10 @@ class EnvyFreenessUpToOne(TeamSetMetric):
         """
         team_utility = 0
         for student in team.students:
-            team_utility += sum([
-                student.meets_requirement(requirement)
-                for requirement in team.requirements
-            ])
+            team_utility += sum(
+                [
+                    student.meets_requirement(requirement)
+                    for requirement in team.requirements
+                ]
+            )
         return team_utility
