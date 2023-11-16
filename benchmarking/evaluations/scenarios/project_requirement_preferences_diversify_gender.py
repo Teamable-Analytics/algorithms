@@ -13,8 +13,8 @@ from benchmarking.evaluations.interfaces import Goal, Scenario
 
 class ProjectRequirementPreferenceDiversifyGender(Scenario):
     def __init__(self, max_project_preferences: int):
-        self.max_project_preferences = max_project_preferences
         super().__init__()
+        self.max_project_preferences = max_project_preferences
 
     @property
     def name(self) -> str:
