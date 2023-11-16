@@ -100,7 +100,7 @@ class DiversifyGenderMin2NumIterations(Run):
                     num_teams=number_of_teams,
                     scenario=scenario,
                     student_provider=MockStudentProvider(student_provider_settings),
-                    cache_key=f"diversify_gender_min_2_num_iterations_{iteration}",
+                    cache_key=f"priority_algorithm/diversify_gender_min_2/num_iterations/{iteration}",
                 ),
                 algorithm_set={
                     AlgorithmType.RANDOM: [RandomAlgorithmConfig()],

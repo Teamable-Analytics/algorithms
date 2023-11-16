@@ -98,7 +98,7 @@ class DiversifyGenderMin2MaxKeep(Run):
                     num_teams=number_of_teams,
                     scenario=scenario,
                     student_provider=MockStudentProvider(student_provider_settings),
-                    cache_key=f"diversify_gender_min_2_max_keep_{keep}",
+                    cache_key=f"priority_algorithm/diversify_gender_min_2/max_keep/{keep}",
                 ),
                 algorithm_set={
                     AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
