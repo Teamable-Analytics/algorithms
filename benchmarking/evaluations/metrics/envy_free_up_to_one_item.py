@@ -5,9 +5,10 @@ from api.models.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
 
-class EnvyFreenessUpToOneItem(TeamSetMetric):
+class EnvyFreenessUpToOneWithRequirementUtility(TeamSetMetric):
     """
-    Calculate the "envy-freeness up to one item" metric for the given attribute for each team and average the results
+    Calculate the "envy-freeness up to one item" metric for the given attribute using requirement utility (team
+    satisfaction) for each team and average the results
 
     ----
 
@@ -52,24 +53,23 @@ class EnvyFreenessUpToOneItem(TeamSetMetric):
         """
         Check if team envies other_team
         """
-        team_utility = self._calculate_team_utility(team)
-        other_team_utility = self._calculate_team_utility(other_team)
-        if team_utility < other_team_utility:
-            return True
-        return False
+        team_utility = self._calculate_team_requirement_satisfaction(team)
+        other_team_utility = self._calculate_team_requirement_satisfaction(other_team)
 
-    def _calculate_team_utility(self, team: Team) -> int:
-        """
-        Calculate **additive** utility of all students in the team
+        return team_utility < other_team_utility
 
-        Utility of a student is calculated as the sum of the student's satisfied attributes to the requirements
+    def _calculate_team_requirement_satisfaction(self, team: Team) -> int:
         """
-        team_utility = 0
+        Calculate team requirement satisfaction (additive requirement utility) of all students in the team
+
+        Team requirement satisfaction is calculated as the sum of the satisfied requirements of all students in the team
+        """
+        team_requirement_satisfaction = 0
         for student in team.students:
-            team_utility += sum(
+            team_requirement_satisfaction += sum(
                 [
                     student.meets_requirement(requirement)
                     for requirement in team.requirements
                 ]
             )
-        return team_utility
+        return team_requirement_satisfaction
