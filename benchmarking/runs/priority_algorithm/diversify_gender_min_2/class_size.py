@@ -49,7 +49,7 @@ class DiversifyGenderMin2ClassSize(Run):
         """
 
         # Defining our changing x-values (in the graph sense)
-        class_sizes = list(range(50, 201, 50))
+        class_sizes = list(range(50, 501, 50))
         ratio_of_female_students = 0.2
         max_time = 10
         max_iterate = 300
