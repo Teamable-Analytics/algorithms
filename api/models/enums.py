@@ -46,6 +46,15 @@ class TokenizationConstraintDirection(Enum):
 
 
 class RequirementsCriteria(Enum):
+    """
+    STUDENT_ATTRIBUTES_ARE_RELEVANT: This focuses the algorithm on putting students that have skills relevant to the
+    project on the team. This can result in a scenario where everyone on the team has the same skill, and some of the
+    project requirements are not met.
+
+    PROJECT_REQUIREMENTS_ARE_SATISFIED: This focuses on making sure all project requirements are met. If one student has
+    all the skills required, then this priority would be satisfied.
+    """
+
     STUDENT_ATTRIBUTES_ARE_RELEVANT = "student_attributes_are_relevant"
     PROJECT_REQUIREMENTS_ARE_SATISFIED = "project_requirements_are_satisfied"
 
@@ -65,6 +74,7 @@ class ScenarioAttribute(Enum):
     MAJOR = 5
     YEAR_LEVEL = 6
     TIMESLOT_AVAILABILITY = 7
+    LOCATION = 8
 
 
 class AttributeValueEnum(Enum):
