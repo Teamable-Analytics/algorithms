@@ -1,7 +1,9 @@
+import os
+from os import path
 from typing import List, Tuple
 
 import matplotlib.pyplot as plt
-from matplotlib.ticker import AutoMinorLocator, MaxNLocator
+from matplotlib.ticker import AutoMinorLocator
 
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
@@ -108,6 +110,9 @@ def line_graph(graph_data: LineGraphMetadata):
 
     plt.tight_layout()
     if graph_data.save_graph:
-        plt.savefig(graph_data.file_name or graph_data.title)
+        file_save_location = path.abspath(graph_data.file_name or graph_data.title)
+        if not path.exists(path.dirname(file_save_location)):
+            os.makedirs(path.dirname(file_save_location))
+        plt.savefig(file_save_location)
     else:
         plt.show()
