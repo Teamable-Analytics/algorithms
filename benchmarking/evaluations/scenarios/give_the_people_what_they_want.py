@@ -11,7 +11,7 @@ from benchmarking.evaluations.goals import WeightGoal, PreferenceGoal
 class GiveThePeopleWhatTheyWant(Scenario):
     @property
     def name(self):
-        return "Give the people what they want"
+        return "Give the people what they want, socially"
 
     @property
     def goals(self) -> List[Goal]:
