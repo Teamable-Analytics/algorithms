@@ -110,7 +110,6 @@ class VariedNumFriendsSocialRun(Run):
         if generate_graphs:
             # Use: graph_data[class_size][metric.name][algorithm_name] = GraphData
             graph_data: Dict[int, Dict[str, Dict[str, GraphData]]] = {}
-            algorithm_names = []
 
             for class_size in class_sizes:
                 graph_data[class_size] = {}
