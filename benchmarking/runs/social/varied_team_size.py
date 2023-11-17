@@ -34,9 +34,21 @@ class VariedTeamSizeSocialRun(Run):
     @staticmethod
     def start(num_trials: int = 10, generate_graphs: bool = True):
         """
-        Goal: See how the social algorithm reacts to different team sizes
+        Goal: See how the social algorithm reacts to different team sizes.
+        We will keep the number of friends (clique size) equal to the team size as that is
+        the most likely scenario in a class setting and allows us to see the effect of the
+        algorithm trying to deal with larger cliques without having to worry about them
+        not fitting into a single team.
         """
-        team_sizes = list(range(2, 21))
+
+        # Use team sizes that will evenly divide the class sizes
+        team_sizes = [
+            2,
+            4,
+            5,
+            8,
+            10,
+        ]
         class_sizes = [200, 400]
 
         metrics: Dict[str, TeamSetMetric] = {
@@ -90,11 +102,12 @@ class VariedTeamSizeSocialRun(Run):
                     f"Running with {class_size} students split into teams of {team_size}..."
                 )
 
-                num_teams = int(class_size / team_size)
+                num_teams = class_size // team_size
 
+                # Number of enemies can stay constant because it is a relatively easy constraint to reach, especially with such a large class size
                 student_provider_settings = MockStudentProviderSettings(
                     number_of_students=class_size,
-                    number_of_friends=2,
+                    number_of_friends=(team_size - 1),
                     number_of_enemies=2,
                     friend_distribution="cluster",
                 )
@@ -104,7 +117,7 @@ class VariedTeamSizeSocialRun(Run):
                         num_teams=num_teams,
                         scenario=GiveThePeopleWhatTheyWant(),
                         student_provider=MockStudentProvider(student_provider_settings),
-                        cache_key=f"social/varied_team_size/team_size_{team_size}/{class_size}_students",
+                        cache_key=f"social/varied_team_size/{class_size}_students/team_size_{team_size}",
                     ),
                     algorithm_set=algorithms,
                 ).run(num_runs=num_trials)
@@ -154,20 +167,30 @@ class VariedTeamSizeSocialRun(Run):
 
             for metric_name in [Insight.KEY_RUNTIMES, *list(metrics.keys())]:
                 for class_size in class_sizes:
+                    y_label = (
+                        "Run time (seconds)"
+                        if metric_name == Insight.KEY_RUNTIMES
+                        else "Ratio of Teams"
+                    )
+                    y_lim = (
+                        None
+                        if metric_name == Insight.KEY_RUNTIMES
+                        else GraphAxisRange(-0.1, 1.1)
+                    )
+                    graph_subtitle = (
+                        f"{metric_name.capitalize()} - {class_size} students"
+                    )
+                    graph_filename = f"varied_team_size/{class_size}_students/{metric_name.lower().replace(' ', '_')}"
                     line_graph(
                         LineGraphMetadata(
                             x_label="Team size",
-                            y_label="Run time (seconds)"
-                            if metric_name == Insight.KEY_RUNTIMES
-                            else "Ratio of Teams",
+                            y_label=y_label,
                             title=f"Varied Team Size",
-                            description=f"{metric_name.capitalize()} - {class_size} students",
+                            description=graph_subtitle,
                             data=list(graph_data[class_size][metric_name].values()),
-                            y_lim=GraphAxisRange(-0.1, 1.1)
-                            if metric_name != Insight.KEY_RUNTIMES
-                            else None,
+                            y_lim=y_lim,
                             save_graph=True,
-                            file_name=f"varied_team_size/{metric_name.lower().replace(' ', '_')}__{class_size}_students",
+                            file_name=graph_filename,
                         )
                     )
 
