@@ -57,13 +57,13 @@ class EnvyFreenessUpToOneItem(TeamSetMetric):
                     return 0
         return 1
 
-    def _is_envy(
-        self, team: Team, other_team: Team
-    ) -> bool:
+    def _is_envy(self, team: Team, other_team: Team) -> bool:
         """
         Check if team envies other_team
         """
         team_utility = self.calculate_utilities(team.students, team.to_shell())
-        other_team_utility = self.calculate_utilities(other_team.students, other_team.to_shell())
+        other_team_utility = self.calculate_utilities(
+            other_team.students, other_team.to_shell()
+        )
 
         return team_utility < other_team_utility

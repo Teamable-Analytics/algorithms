@@ -19,9 +19,7 @@ class TestEnvyFreeUpToOneItem(unittest.TestCase):
                     project_id=0,
                     requirements=[
                         ProjectRequirement(
-                            attribute=0,
-                            value=1,
-                            operator=RequirementOperator.EXACTLY
+                            attribute=0, value=1, operator=RequirementOperator.EXACTLY
                         )
                     ],
                     students=[
@@ -29,15 +27,15 @@ class TestEnvyFreeUpToOneItem(unittest.TestCase):
                             _id=0,
                             attributes={
                                 0: [1],
-                            }
+                            },
                         ),
                         Student(
                             _id=1,
                             attributes={
                                 0: [2],
-                            }
-                        )
-                    ]
+                            },
+                        ),
+                    ],
                 ),
                 Team(
                     _id=0,
@@ -45,9 +43,7 @@ class TestEnvyFreeUpToOneItem(unittest.TestCase):
                     project_id=0,
                     requirements=[
                         ProjectRequirement(
-                            attribute=0,
-                            value=1,
-                            operator=RequirementOperator.EXACTLY
+                            attribute=0, value=1, operator=RequirementOperator.EXACTLY
                         )
                     ],
                     students=[
@@ -55,16 +51,16 @@ class TestEnvyFreeUpToOneItem(unittest.TestCase):
                             _id=2,
                             attributes={
                                 0: [2],
-                            }
+                            },
                         ),
                         Student(
                             _id=3,
                             attributes={
                                 0: [2],
-                            }
-                        )
-                    ]
-                )
+                            },
+                        ),
+                    ],
+                ),
             ],
             name="EF1 Teamset",
         )
@@ -79,9 +75,7 @@ class TestEnvyFreeUpToOneItem(unittest.TestCase):
                     project_id=0,
                     requirements=[
                         ProjectRequirement(
-                            attribute=0,
-                            value=1,
-                            operator=RequirementOperator.EXACTLY
+                            attribute=0, value=1, operator=RequirementOperator.EXACTLY
                         )
                     ],
                     students=[
@@ -89,15 +83,15 @@ class TestEnvyFreeUpToOneItem(unittest.TestCase):
                             _id=0,
                             attributes={
                                 0: [1],
-                            }
+                            },
                         ),
                         Student(
                             _id=1,
                             attributes={
                                 0: [1],
-                            }
-                        )
-                    ]
+                            },
+                        ),
+                    ],
                 ),
                 Team(
                     _id=0,
@@ -105,9 +99,7 @@ class TestEnvyFreeUpToOneItem(unittest.TestCase):
                     project_id=0,
                     requirements=[
                         ProjectRequirement(
-                            attribute=0,
-                            value=1,
-                            operator=RequirementOperator.EXACTLY
+                            attribute=0, value=1, operator=RequirementOperator.EXACTLY
                         )
                     ],
                     students=[
@@ -115,16 +107,16 @@ class TestEnvyFreeUpToOneItem(unittest.TestCase):
                             _id=2,
                             attributes={
                                 0: [2],
-                            }
+                            },
                         ),
                         Student(
                             _id=3,
                             attributes={
                                 0: [2],
-                            }
-                        )
-                    ]
-                )
+                            },
+                        ),
+                    ],
+                ),
             ],
             name="EF1 Teamset",
         )
