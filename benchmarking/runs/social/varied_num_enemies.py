@@ -132,8 +132,8 @@ class VariedNumEnemiesSocialRun(Run):
                             graph_data[class_size][metric_name] = {}
                         for algorithm_name, value in average_metric.items():
                             if (
-                                    algorithm_name
-                                    not in graph_data[class_size][metric_name]
+                                algorithm_name
+                                not in graph_data[class_size][metric_name]
                             ):
                                 graph_data[class_size][metric_name][
                                     algorithm_name
