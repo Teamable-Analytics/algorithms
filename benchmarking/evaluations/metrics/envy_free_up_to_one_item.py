@@ -1,7 +1,8 @@
 import copy
-from typing import Callable, Dict
+from typing import Callable, Dict, List
 
-from api.models.team import Team
+from api.models.student import Student
+from api.models.team import Team, TeamShell
 from api.models.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
@@ -20,7 +21,7 @@ class EnvyFreenessUpToOneItem(TeamSetMetric):
 
     def __init__(
         self,
-        calculate_utilities: Callable[[TeamSet], Dict[int, Dict[int]]],
+        calculate_utilities: Callable[[List[Student], TeamShell], float],
         *args,
         **kwargs
     ):
@@ -36,21 +37,20 @@ class EnvyFreenessUpToOneItem(TeamSetMetric):
         Note: The return of this function should be `bool`, but we return
         `float` to calculate the average between multiple runs
         """
-        utilities = self.calculate_utilities(team_set)
 
         for team in team_set.teams:
             for other_team in team_set.teams:
                 if team == other_team:
                     continue
 
-                if not self._is_envy(other_team, team, utilities):
+                if not self._is_envy(other_team, team):
                     continue
 
                 envy_up_to_one = False
                 for student_idx, student in enumerate(team.students):
                     team_copy = copy.deepcopy(team)
                     team_copy.students.pop(student_idx)
-                    if not self._is_envy(team, other_team, utilities):
+                    if not self._is_envy(team, other_team):
                         envy_up_to_one = True
                         break
                 if not envy_up_to_one:
@@ -58,19 +58,12 @@ class EnvyFreenessUpToOneItem(TeamSetMetric):
         return 1
 
     def _is_envy(
-        self, team: Team, other_team: Team, utilities: Dict[int, Dict[int]]
+        self, team: Team, other_team: Team
     ) -> bool:
         """
         Check if team envies other_team
         """
-        team_utility = self._calculate_team_utility(team, utilities)
-        other_team_utility = self._calculate_team_utility(other_team, utilities)
+        team_utility = self.calculate_utilities(team.students, team.to_shell())
+        other_team_utility = self.calculate_utilities(other_team.students, other_team.to_shell())
 
         return team_utility < other_team_utility
-
-    def _calculate_team_utility(
-        self, team: Team, utilities: Dict[int, Dict[int]]
-    ) -> int:
-        return sum(
-            [utilities[team.project_id][student.id] for student in team.students]
-        )
