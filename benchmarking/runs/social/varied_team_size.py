@@ -161,7 +161,8 @@ class VariedTeamSizeSocialRun(Run):
                             y_label="Run time (seconds)"
                             if metric_name == Insight.KEY_RUNTIMES
                             else "Ratio of Teams",
-                            title=f"{metric_name.capitalize()} - {class_size} students",
+                            title=f"Varied Team Size",
+                            description=f"{metric_name.capitalize()} - {class_size} students",
                             data=list(graph_data[class_size][metric_name].values()),
                             y_lim=GraphAxisRange(-0.1, 1.1)
                             if metric_name != Insight.KEY_RUNTIMES
