@@ -36,10 +36,8 @@ class VariedTeamSizeSocialRun(Run):
         """
         Goal: See how the social algorithm reacts to different team sizes
         """
-        team_sizes = [2, 3, 4, 5]  # list(range(2, 21))
-        class_sizes = [
-            200,
-        ]
+        team_sizes = list(range(2, 21))
+        class_sizes = [200, 500]
 
         metrics: Dict[str, TeamSetMetric] = {
             "Strictly Happy Team (Friend)": AverageSocialSatisfaction(
