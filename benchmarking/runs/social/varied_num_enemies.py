@@ -34,7 +34,10 @@ class VariedNumEnemiesSocialRun(Run):
     @staticmethod
     def start(num_trials: int = 10, generate_graphs: bool = True):
         """
-        Goal: See how the social algorithm reacts to different team sizes
+        Goal: See how the social algorithm reacts to different numbers of enemies.
+
+        This run will hold the class size constant and show what happens as the number of
+        enemies specified by each student changes. Cliques are equal in size to team size.
         """
         enemy_nums = list(range(0, 10))
         class_sizes = [200, 400]
@@ -92,7 +95,7 @@ class VariedNumEnemiesSocialRun(Run):
 
                 student_provider_settings = MockStudentProviderSettings(
                     number_of_students=class_size,
-                    number_of_friends=2,
+                    number_of_friends=5,
                     number_of_enemies=num_enemies,
                     friend_distribution="cluster",
                 )
@@ -152,20 +155,30 @@ class VariedNumEnemiesSocialRun(Run):
 
             for metric_name in [Insight.KEY_RUNTIMES, *list(metrics.keys())]:
                 for class_size in class_sizes:
+                    y_label = (
+                        "Run time (seconds)"
+                        if metric_name == Insight.KEY_RUNTIMES
+                        else "Ratio of Teams"
+                    )
+                    y_lim = (
+                        None
+                        if metric_name == Insight.KEY_RUNTIMES
+                        else GraphAxisRange(-0.1, 1.1)
+                    )
+                    graph_subtitle = (
+                        f"{metric_name.capitalize()} - {class_size} students"
+                    )
+                    graph_filename = f"varied_num_enemies/{class_size}_students/{metric_name.lower().replace(' ', '_')}"
                     line_graph(
                         LineGraphMetadata(
                             x_label="Number of Enemies",
-                            y_label="Run time (seconds)"
-                            if metric_name == Insight.KEY_RUNTIMES
-                            else "Ratio of Teams",
+                            y_label=y_label,
                             title="Varied Number of Enemies",
-                            description=f"{metric_name.capitalize()} - {class_size} students",
+                            description=graph_subtitle,
                             data=list(graph_data[class_size][metric_name].values()),
-                            y_lim=GraphAxisRange(-0.1, 1.1)
-                            if metric_name != Insight.KEY_RUNTIMES
-                            else None,
+                            y_lim=y_lim,
                             save_graph=True,
-                            file_name=f"varied_num_enemies/{metric_name.lower().replace(' ', '_')}__{class_size}_students",
+                            file_name=graph_filename,
                         )
                     )
 

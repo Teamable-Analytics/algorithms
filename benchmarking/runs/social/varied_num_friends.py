@@ -32,12 +32,19 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 class VariedNumFriendsSocialRun(Run):
     @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = True):
+    def start(num_trials: int = 1, generate_graphs: bool = True):
         """
-        Goal: See how the social algorithm reacts to different team sizes
+        Goal: See how the social algorithm reacts to different numbers of friends.
+
+        This run holds the team size constant at 4, then tests it with cliques that are 0.5, 1,
+        1.5, and 2 times the size of the team. This will test to see if the algorithm will be
+        able to put cliques into teams if the clique size does not match the team size.
+        The most interesting case will be the 0.5 case because it should be able to put two
+        full cliques into a single team.
         """
-        friend_nums = list(range(0, 10))
-        class_sizes = [200, 400]
+
+        clique_sizes = [2, 4, 6, 8]
+        class_sizes = [100, 200]  # list(range(50, 501, 50))
 
         metrics: Dict[str, TeamSetMetric] = {
             "Strictly Happy Team (Friend)": AverageSocialSatisfaction(
@@ -80,42 +87,42 @@ class VariedNumFriendsSocialRun(Run):
             AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
         }
 
-        # Use: simulation_sets[class_size][num_friends]: SimulationSetArtifact
+        # Use: simulation_sets[clique_size][class_size]: SimulationSetArtifact
         simulation_sets: Dict[int, Dict[int, SimulationSetArtifact]] = {}
 
-        for class_size in class_sizes:
-            simulation_sets[class_size] = {}
-            for num_friends in friend_nums:
+        for clique_size in clique_sizes:
+            simulation_sets[clique_size] = {}
+            for class_size in class_sizes:
                 print(
-                    f"Running with {class_size} students with {num_friends} friend{'s' if num_friends != 1 else ''}..."
+                    f"Running with {class_size} students with {clique_size} friend{'s' if clique_size != 1 else ''}..."
                 )
 
                 student_provider_settings = MockStudentProviderSettings(
                     number_of_students=class_size,
-                    number_of_friends=num_friends,
+                    number_of_friends=(clique_size - 1),
                     number_of_enemies=2,
                     friend_distribution="cluster",
                 )
 
-                simulation_sets[class_size][num_friends] = SimulationSet(
+                simulation_sets[clique_size][class_size] = SimulationSet(
                     settings=SimulationSettings(
-                        num_teams=class_size // 5,
+                        num_teams=class_size // 4,
                         scenario=GiveThePeopleWhatTheyWant(),
                         student_provider=MockStudentProvider(student_provider_settings),
-                        cache_key=f"social/varied_num_friends/{num_friends}_friends/{class_size}_students",
+                        cache_key=f"social/varied_num_friends/clique_size_{clique_size}/{class_size}_students",
                     ),
                     algorithm_set=algorithms,
                 ).run(num_runs=num_trials)
 
         if generate_graphs:
-            # Use: graph_data[class_size][metric.name][algorithm_name] = GraphData
+            # Use: graph_data[clique_size][metric.name][algorithm_name] = GraphData
             graph_data: Dict[int, Dict[str, Dict[str, GraphData]]] = {}
 
-            for class_size in class_sizes:
-                graph_data[class_size] = {}
-                for num_friends in friend_nums:
-                    artifact: SimulationSetArtifact = simulation_sets[class_size][
-                        num_friends
+            for clique_size in clique_sizes:
+                graph_data[clique_size] = {}
+                for class_size in class_sizes:
+                    artifact: SimulationSetArtifact = simulation_sets[clique_size][
+                        class_size
                     ]
                     insight_set: Dict[str, InsightOutput] = Insight.get_output_set(
                         artifact=artifact, metrics=list(metrics.values())
@@ -128,44 +135,52 @@ class VariedNumFriendsSocialRun(Run):
                         )
 
                     for metric_name, average_metric in average_metrics.items():
-                        if metric_name not in graph_data[class_size]:
-                            graph_data[class_size][metric_name] = {}
+                        if metric_name not in graph_data[clique_size]:
+                            graph_data[clique_size][metric_name] = {}
                         for algorithm_name, value in average_metric.items():
                             if (
                                 algorithm_name
-                                not in graph_data[class_size][metric_name]
+                                not in graph_data[clique_size][metric_name]
                             ):
-                                graph_data[class_size][metric_name][
+                                graph_data[clique_size][metric_name][
                                     algorithm_name
                                 ] = GraphData(
-                                    x_data=[num_friends],
+                                    x_data=[class_size],
                                     y_data=[value],
                                     name=algorithm_name,
                                 )
                             else:
-                                graph_data[class_size][metric_name][
+                                graph_data[clique_size][metric_name][
                                     algorithm_name
-                                ].x_data.append(num_friends)
-                                graph_data[class_size][metric_name][
+                                ].x_data.append(class_size)
+                                graph_data[clique_size][metric_name][
                                     algorithm_name
                                 ].y_data.append(value)
 
             for metric_name in [Insight.KEY_RUNTIMES, *list(metrics.keys())]:
-                for class_size in class_sizes:
+                for clique_size in clique_sizes:
+                    y_label = (
+                        "Run time (seconds)"
+                        if metric_name == Insight.KEY_RUNTIMES
+                        else "Ratio of Teams"
+                    )
+                    y_lim = (
+                        None
+                        if metric_name == Insight.KEY_RUNTIMES
+                        else GraphAxisRange(-0.1, 1.1)
+                    )
+                    graph_subtitle = f"{metric_name.capitalize()} - Cliques {clique_size / 4}x team size"
+                    graph_filename = f"varied_num_friends/clique_size_{clique_size}/{metric_name.lower().replace(' ', '_')}"
                     line_graph(
                         LineGraphMetadata(
                             x_label="Number of Friends",
-                            y_label="Run time (seconds)"
-                            if metric_name == Insight.KEY_RUNTIMES
-                            else "Ratio of Teams",
+                            y_label=y_label,
                             title="Varied Number of Friends",
-                            description=f"{metric_name.capitalize()} - {class_size} students",
-                            data=list(graph_data[class_size][metric_name].values()),
-                            y_lim=GraphAxisRange(-0.1, 1.1)
-                            if metric_name != Insight.KEY_RUNTIMES
-                            else None,
+                            description=graph_subtitle,
+                            data=list(graph_data[clique_size][metric_name].values()),
+                            y_lim=y_lim,
                             save_graph=True,
-                            file_name=f"varied_num_friends/{metric_name.lower().replace(' ', '_')}__{class_size}_students",
+                            file_name=graph_filename,
                         )
                     )
 
