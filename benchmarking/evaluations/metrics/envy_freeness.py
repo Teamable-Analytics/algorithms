@@ -37,8 +37,8 @@ class EnvyFreeness(TeamSetMetric):
                 if team.id == other_team.id:
                     continue
                 if self._is_envy(other_team, team):
-                    return 0
-        return 1
+                    return 0.0
+        return 1.0
 
     def _is_envy(self, team: Team, other_team: Team) -> bool:
         """
