@@ -116,3 +116,4 @@ def line_graph(graph_data: LineGraphMetadata):
         plt.savefig(file_save_location)
     else:
         plt.show()
+    plt.close()
