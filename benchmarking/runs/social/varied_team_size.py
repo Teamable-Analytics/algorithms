@@ -1,14 +1,7 @@
-from typing import Dict, List
+from typing import Dict
 
 import typer
 
-from api.ai.interfaces.algorithm_config import (
-    WeightAlgorithmConfig,
-    SocialAlgorithmConfig,
-    RandomAlgorithmConfig,
-    AlgorithmConfig,
-)
-from api.models.enums import AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
     MockStudentProvider,
@@ -16,23 +9,18 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.interfaces import TeamSetMetric
-from benchmarking.evaluations.metrics.average_social_satisfied import (
-    AverageSocialSatisfaction,
-)
-from benchmarking.evaluations.metrics.utils.team_calculations import *
 from benchmarking.evaluations.scenarios.give_the_people_what_they_want import (
     GiveThePeopleWhatTheyWant,
 )
-from benchmarking.runs.interfaces import Run
+from benchmarking.runs.social.scoial_run import SocialRun
 from benchmarking.simulation.insight import Insight, InsightOutput
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class VariedTeamSizeSocialRun(Run):
+class VariedTeamSizeSocialRun(SocialRun):
     @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = True):
+    def start(num_trials: int = 10, generate_graphs: bool = False):
         """
         Goal: See how the social algorithm reacts to different team sizes.
         We will keep the number of friends (clique size) equal to the team size as that is
@@ -50,47 +38,6 @@ class VariedTeamSizeSocialRun(Run):
             10,
         ]
         class_sizes = [200, 400]
-
-        metrics: Dict[str, TeamSetMetric] = {
-            "Strictly Happy Team (Friend)": AverageSocialSatisfaction(
-                metric_function=is_strictly_happy_team_friend,
-                name="Strictly Happy Team (Friend)",
-            ),
-            "Strictly Happy Team (Enemy)": AverageSocialSatisfaction(
-                metric_function=is_strictly_happy_team_enemy,
-                name="Strictly Happy Team (Enemy)",
-            ),
-            "Happy Team 1SHP (Friend)": AverageSocialSatisfaction(
-                metric_function=is_happy_team_1shp_friend,
-                name="Happy Team 1SHP (Friend)",
-            ),
-            "Happy Team 1SHP (Enemy)": AverageSocialSatisfaction(
-                metric_function=is_happy_team_1shp_enemy,
-                name="Happy Team 1SHP (Enemy)",
-            ),
-            "Happy Team 1HP (Friend)": AverageSocialSatisfaction(
-                metric_function=is_happy_team_1hp_friend,
-                name="Happy Team 1HP (Friend)",
-            ),
-            "Happy Team 1HP (Enemy)": AverageSocialSatisfaction(
-                metric_function=is_happy_team_1hp_enemy,
-                name="Happy Team 1HP (Enemy)",
-            ),
-            "Happy Team All HP (Friend)": AverageSocialSatisfaction(
-                metric_function=is_happy_team_allhp_friend,
-                name="Happy Team All HP (Friend)",
-            ),
-            "Happy Team All HP (Enemy)": AverageSocialSatisfaction(
-                metric_function=is_happy_team_allhp_enemy,
-                name="Happy Team All HP (Enemy)",
-            ),
-        }
-
-        algorithms: Dict[AlgorithmType, List[AlgorithmConfig]] = {
-            AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
-            AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
-            AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
-        }
 
         # Use: simulation_sets[class_size][team_size]: SimulationSetArtifact
         simulation_sets: Dict[int, Dict[int, SimulationSetArtifact]] = {}
@@ -119,7 +66,7 @@ class VariedTeamSizeSocialRun(Run):
                         student_provider=MockStudentProvider(student_provider_settings),
                         cache_key=f"social/varied_team_size/{class_size}_students/team_size_{team_size}",
                     ),
-                    algorithm_set=algorithms,
+                    algorithm_set=super().algorithms,
                 ).run(num_runs=num_trials)
 
         if generate_graphs:
@@ -133,11 +80,11 @@ class VariedTeamSizeSocialRun(Run):
                         team_size
                     ]
                     insight_set: Dict[str, InsightOutput] = Insight.get_output_set(
-                        artifact=artifact, metrics=list(metrics.values())
+                        artifact=artifact, metrics=list(super().metrics.values())
                     )
 
                     average_metrics: Dict[str, Dict[str, float]] = {}
-                    for metric_name in [Insight.KEY_RUNTIMES, *metrics.keys()]:
+                    for metric_name in [Insight.KEY_RUNTIMES, *super().metrics.keys()]:
                         average_metrics[metric_name] = Insight.average_metric(
                             insight_set, metric_name
                         )
@@ -165,7 +112,7 @@ class VariedTeamSizeSocialRun(Run):
                                     algorithm_name
                                 ].y_data.append(value)
 
-            for metric_name in [Insight.KEY_RUNTIMES, *list(metrics.keys())]:
+            for metric_name in [Insight.KEY_RUNTIMES, *list(super().metrics.keys())]:
                 for class_size in class_sizes:
                     y_label = (
                         "Run time (seconds)"
