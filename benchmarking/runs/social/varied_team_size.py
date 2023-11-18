@@ -66,7 +66,7 @@ class VariedTeamSizeSocialRun(SocialRun):
                         student_provider=MockStudentProvider(student_provider_settings),
                         cache_key=f"social/varied_team_size/{class_size}_students/team_size_{team_size}",
                     ),
-                    algorithm_set=super().algorithms,
+                    algorithm_set=SocialRun.algorithms(),
                 ).run(num_runs=num_trials)
 
         if generate_graphs:
@@ -80,11 +80,14 @@ class VariedTeamSizeSocialRun(SocialRun):
                         team_size
                     ]
                     insight_set: Dict[str, InsightOutput] = Insight.get_output_set(
-                        artifact=artifact, metrics=list(super().metrics.values())
+                        artifact=artifact, metrics=list(SocialRun.metrics().values())
                     )
 
                     average_metrics: Dict[str, Dict[str, float]] = {}
-                    for metric_name in [Insight.KEY_RUNTIMES, *super().metrics.keys()]:
+                    for metric_name in [
+                        Insight.KEY_RUNTIMES,
+                        *SocialRun.metrics().keys(),
+                    ]:
                         average_metrics[metric_name] = Insight.average_metric(
                             insight_set, metric_name
                         )
@@ -112,7 +115,10 @@ class VariedTeamSizeSocialRun(SocialRun):
                                     algorithm_name
                                 ].y_data.append(value)
 
-            for metric_name in [Insight.KEY_RUNTIMES, *list(super().metrics.keys())]:
+            for metric_name in [
+                Insight.KEY_RUNTIMES,
+                *list(SocialRun.metrics().keys()),
+            ]:
                 for class_size in class_sizes:
                     y_label = (
                         "Run time (seconds)"

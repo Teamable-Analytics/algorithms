@@ -51,7 +51,7 @@ class VariedNumEnemiesSocialRun(SocialRun):
                     student_provider=MockStudentProvider(student_provider_settings),
                     cache_key=f"social/varied_num_friends/{num_enemies}_enemies",
                 ),
-                algorithm_set=super().algorithms,
+                algorithm_set=SocialRun.algorithms(),
             ).run(num_runs=num_trials)
 
         if generate_graphs:
@@ -61,11 +61,11 @@ class VariedNumEnemiesSocialRun(SocialRun):
             for num_enemies in enemy_nums:
                 artifact: SimulationSetArtifact = simulation_sets[num_enemies]
                 insight_set: Dict[str, InsightOutput] = Insight.get_output_set(
-                    artifact=artifact, metrics=list(super().metrics.values())
+                    artifact=artifact, metrics=list(SocialRun.metrics().values())
                 )
 
                 average_metrics: Dict[str, Dict[str, float]] = {}
-                for metric_name in [Insight.KEY_RUNTIMES, *super().metrics.keys()]:
+                for metric_name in [Insight.KEY_RUNTIMES, *SocialRun.metrics().keys()]:
                     average_metrics[metric_name] = Insight.average_metric(
                         insight_set, metric_name
                     )
@@ -86,7 +86,10 @@ class VariedNumEnemiesSocialRun(SocialRun):
                             )
                             graph_data[metric_name][algorithm_name].y_data.append(value)
 
-            for metric_name in [Insight.KEY_RUNTIMES, *list(super().metrics.keys())]:
+            for metric_name in [
+                Insight.KEY_RUNTIMES,
+                *list(SocialRun.metrics().keys()),
+            ]:
                 y_label = (
                     "Run time (seconds)"
                     if metric_name == Insight.KEY_RUNTIMES
