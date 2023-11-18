@@ -54,8 +54,8 @@ class EnvyFreenessUpToOneItem(TeamSetMetric):
                         envy_up_to_one = True
                         break
                 if not envy_up_to_one:
-                    return 0
-        return 1
+                    return 0.0
+        return 1.0
 
     def _is_envy(self, team: Team, other_team: Team) -> bool:
         """
