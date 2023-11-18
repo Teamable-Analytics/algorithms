@@ -16,10 +16,10 @@ class EnvyFreeness(TeamSetMetric):
     """
 
     def __init__(
-            self,
-            calculate_utilities: Callable[[List[Student], TeamShell], float],
-            *args,
-            **kwargs
+        self,
+        calculate_utilities: Callable[[List[Student], TeamShell], float],
+        *args,
+        **kwargs
     ):
         super().__init__(theoretical_range=(0, 1), *args, **kwargs)
         self.calculate_utilities = calculate_utilities
