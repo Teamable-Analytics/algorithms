@@ -1,13 +1,15 @@
 import unittest
+from typing import Callable, List
 
 from api.models.enums import RequirementOperator
 from api.models.project import ProjectRequirement
 from api.models.student import Student
-from api.models.team import Team
+from api.models.team import Team, TeamShell
 from api.models.team_set import TeamSet
+from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
 
 
-class TestEnvyFreeUpToOneItem(unittest.TestCase):
+class TestEnvyFreenessUpToOneItem(unittest.TestCase):
     def setUp(self):
         # Team 2 envies Team 1, but if Team 1 removes student 0, then Team 2 is no longer envious
         self.ef1_teamset = TeamSet(
@@ -38,8 +40,8 @@ class TestEnvyFreeUpToOneItem(unittest.TestCase):
                     ],
                 ),
                 Team(
-                    _id=0,
-                    name="Team 0",
+                    _id=1,
+                    name="Team 1",
                     project_id=0,
                     requirements=[
                         ProjectRequirement(
@@ -94,8 +96,8 @@ class TestEnvyFreeUpToOneItem(unittest.TestCase):
                     ],
                 ),
                 Team(
-                    _id=0,
-                    name="Team 0",
+                    _id=1,
+                    name="Team 1",
                     project_id=0,
                     requirements=[
                         ProjectRequirement(
@@ -121,5 +123,46 @@ class TestEnvyFreeUpToOneItem(unittest.TestCase):
             name="EF1 Teamset",
         )
 
+        self.additive_utility_function = (
+            lambda students, team: sum(
+                [
+                    sum([
+                        student.meets_requirement(requirement)
+                        for requirement in team.requirements
+                    ])
+                    for student in students
+                ]
+            )
+        )
+
     def test_calculate__should_return_1_when_ef1(self):
-        pass
+        metric = EnvyFreenessUpToOneItem(self.additive_utility_function)
+        self.assertEqual(1, metric.calculate(self.ef1_teamset))
+
+    def test_calculate__should_return_0_when_not_ef1(self):
+        metric = EnvyFreenessUpToOneItem(self.additive_utility_function)
+        self.assertEqual(0, metric.calculate(self.no_ef1_teamset))
+
+    def test_is_envy__should_return_true_when_utility_of_team_1_less_than_team_2(self):
+        team_1 = Team(_id=0)
+        team_2 = Team(_id=1)
+        utility_function = lambda students, team: 0 if team._id == 0 else 1
+
+        metric = EnvyFreenessUpToOneItem(utility_function)
+        self.assertTrue(metric._is_envy(team_1, team_2))
+
+    def test_is_envy__should_return_false_when_utility_of_team_1_greater_than_team_2(self):
+        team_1 = Team(_id=0)
+        team_2 = Team(_id=1)
+        utility_function = lambda students, team: 0 if team._id == 1 else 1
+
+        metric = EnvyFreenessUpToOneItem(utility_function)
+        self.assertFalse(metric._is_envy(team_1, team_2))
+
+    def test_is_envy__should_return_false_when_utility_of_team_1_equal_team_2(self):
+        team_1 = Team(_id=0)
+        team_2 = Team(_id=1)
+        utility_function = lambda students, team: 0 if team._id == 1 else 0
+
+        metric = EnvyFreenessUpToOneItem(utility_function)
+        self.assertFalse(metric._is_envy(team_1, team_2))

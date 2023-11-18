@@ -40,7 +40,7 @@ class EnvyFreenessUpToOneItem(TeamSetMetric):
 
         for team in team_set.teams:
             for other_team in team_set.teams:
-                if team == other_team:
+                if team.id == other_team.id:
                     continue
 
                 if not self._is_envy(other_team, team):
@@ -50,7 +50,7 @@ class EnvyFreenessUpToOneItem(TeamSetMetric):
                 for student_idx, student in enumerate(team.students):
                     team_copy = copy.deepcopy(team)
                     team_copy.students.pop(student_idx)
-                    if not self._is_envy(team, other_team):
+                    if not self._is_envy(other_team, team_copy):
                         envy_up_to_one = True
                         break
                 if not envy_up_to_one:
