@@ -10,7 +10,6 @@ from benchmarking.evaluations.metrics.proportional_team_set import ProportionalT
 
 class TestProportionalTeamSet(unittest.TestCase):
     def setUp(self):
-
         # This teamset is proportional because each team has 2 students that meet the requirements,
         # so the utility of each team is the same, and proportional to the class utility
         self.prop_teamset = TeamSet(
@@ -37,7 +36,7 @@ class TestProportionalTeamSet(unittest.TestCase):
                             attributes={
                                 0: [1],
                             },
-                        )
+                        ),
                     ],
                 ),
                 Team(
@@ -61,7 +60,7 @@ class TestProportionalTeamSet(unittest.TestCase):
                             attributes={
                                 0: [1],
                             },
-                        )
+                        ),
                     ],
                 ),
             ],
@@ -94,7 +93,7 @@ class TestProportionalTeamSet(unittest.TestCase):
                             attributes={
                                 0: [1],
                             },
-                        )
+                        ),
                     ],
                 ),
                 Team(
@@ -118,7 +117,7 @@ class TestProportionalTeamSet(unittest.TestCase):
                             attributes={
                                 0: [2],
                             },
-                        )
+                        ),
                     ],
                 ),
             ],
