@@ -6,9 +6,9 @@ from api.models.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
 
-class ProportionalTeamSet(TeamSetMetric):
+class Proportionality(TeamSetMetric):
     """
-    Calculate the proportional (PROP) metric for team set average the results
+    Calculate the proportionality (PROP) metric for team set average the results
 
     ----
 

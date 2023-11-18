@@ -5,10 +5,10 @@ from api.models.project import ProjectRequirement
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
-from benchmarking.evaluations.metrics.proportional_team_set import ProportionalTeamSet
+from benchmarking.evaluations.metrics.proportionality import Proportionality
 
 
-class TestProportionalTeamSet(unittest.TestCase):
+class TestProportionality(unittest.TestCase):
     def setUp(self):
         # This teamset is proportional because each team has 2 students that meet the requirements,
         # so the utility of each team is the same, and proportional to the class utility
@@ -138,13 +138,13 @@ class TestProportionalTeamSet(unittest.TestCase):
     def test_calculate__should_return_1_when_there_is_only_one_team(self):
         # Because the team is always proportional to itself
         single_team_teamset = TeamSet(_id=0, teams=[Team(_id=0)])
-        metric = ProportionalTeamSet(self.additive_utility_function)
+        metric = Proportionality(self.additive_utility_function)
         self.assertEqual(metric.calculate(single_team_teamset), 1.0)
 
     def test_calculate__should_return_1_if_all_teams_are_proportional(self):
-        metric = ProportionalTeamSet(self.additive_utility_function)
+        metric = Proportionality(self.additive_utility_function)
         self.assertEqual(metric.calculate(self.prop_teamset), 1.0)
 
     def test_calculate__should_return_0_if_any_team_is_not_proportional(self):
-        metric = ProportionalTeamSet(self.additive_utility_function)
+        metric = Proportionality(self.additive_utility_function)
         self.assertEqual(metric.calculate(self.non_prop_teamset), 0.0)
