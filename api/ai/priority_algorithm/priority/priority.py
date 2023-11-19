@@ -10,10 +10,12 @@ from api.models.enums import (
     TokenizationConstraintDirection,
     RequirementsCriteria,
     PriorityType,
+    Relationship,
 )
 from api.models.student import Student
 from api.models.team import TeamShell
 from benchmarking.evaluations.enums import PreferenceDirection
+from utils.math import change_range
 
 
 @dataclass
@@ -201,6 +203,43 @@ class ProjectPreferencePriority(Priority):
                 ),
                 "max_project_preferences": int,
             }
+        )
+
+
+@dataclass
+class SocialPriority(Priority):
+    max_num_friends: int
+    max_num_enemies: int
+
+    def validate(self):
+        super().validate()
+
+    def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
+        num_students = len(students)
+        if num_students < 2:
+            return 0
+
+        student_ids = [s.id for s in students]
+        # bidirectional friendship for all team members
+        theoretical_min = (
+            num_students * self.max_num_friends * Relationship.FRIEND.value
+        )
+        # bidirectional enemies for all team members
+        theoretical_max = (
+            num_students * self.max_num_enemies * Relationship.ENEMY.value * 2
+        )
+
+        total = 0
+        for student in students:
+            for relation_student_id, relationship in student.relationships.items():
+                if (
+                    relation_student_id in student_ids
+                    and relation_student_id != student.id
+                ):
+                    total += relationship.value
+
+        return 1 - change_range(
+            total, original_range=(theoretical_min, theoretical_max), new_range=(0, 1)
         )
 
 
