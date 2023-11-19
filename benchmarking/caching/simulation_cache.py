@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from datetime import datetime
 from os import path
 from typing import List, Dict, Any, TYPE_CHECKING
@@ -74,11 +75,23 @@ class SimulationCache:
         # Get metadata
         metadata = metadata or {}
         # Epoch time, num seconds since 1970, no timezone (utc)
-        metadata["timestamp"] = datetime.utcnow().timestamp()
+        metadata["timestamp"] = (
+            metadata.get("timestamp") or datetime.utcnow().timestamp()
+        )
         # Get latest commit hash. This is so that we can track which commit generated the cache and go back to the code that generated it if needed. Would then be accessible at https://github.com/Teamable-Analytics/algorithms/commit/<commit_hash>
-        metadata["commit_hash"] = git.Repo(
+        current_commit_hash = git.Repo(
             search_parent_directories=True
         ).head.object.hexsha
+        if (
+            metadata.get("commit_hash")
+            and metadata.get("commit_hash") != current_commit_hash
+        ):
+            print(
+                "[WARNING]: The commit hash that you are writing to cache does not match the commit hash of your current branch",
+                file=sys.stderr,
+            )
+
+        metadata["commit_hash"] = metadata.get("commit_hash") or current_commit_hash
 
         # Make dict that will be stored
         cached_data = {
