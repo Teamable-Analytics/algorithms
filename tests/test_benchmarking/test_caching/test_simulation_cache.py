@@ -1,68 +1,18 @@
 import json
-import os
 import shutil
 import unittest
 from os import path
 from typing import List
 from unittest.mock import patch
 
-from api.models.student import Student
-from api.models.team import Team
 from api.models.team_set import TeamSet
 from api.models.team_set.serializer import TeamSetSerializer
 from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.simulation.simulation import SimulationArtifact
-
-mock_simulation_result: List[TeamSet] = [
-    TeamSet(
-        _id=0,
-        name="TeamSet0",
-        teams=[
-            Team(
-                _id=0,
-                name="Team0",
-                students=[
-                    Student(_id=0),
-                    Student(_id=1),
-                ],
-            ),
-            Team(
-                _id=1,
-                name="Team1",
-                students=[
-                    Student(_id=2),
-                    Student(_id=3),
-                ],
-            ),
-        ],
-    ),
-    TeamSet(
-        _id=1,
-        name="TeamSet1",
-        teams=[
-            Team(
-                _id=0,
-                name="Team0",
-                students=[
-                    Student(_id=0),
-                    Student(_id=2),
-                ],
-            ),
-            Team(
-                _id=1,
-                name="Team1",
-                students=[
-                    Student(_id=1),
-                    Student(_id=3),
-                ],
-            ),
-        ],
-    ),
-]
-mock_runtimes: List[float] = [
-    1.8,
-    2.0,
-]
+from tests.test_benchmarking.test_caching._data import (
+    mock_simulation_result,
+    mock_runtimes,
+)
 
 
 class TestSimulationCache(unittest.TestCase):
