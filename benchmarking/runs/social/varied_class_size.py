@@ -10,7 +10,7 @@ from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxi
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.scenarios.give_the_people_what_they_want import (
-    GiveThePeopleWhatTheyWant,
+    IncludeFriendsExcludeEnemies,
 )
 from benchmarking.runs.social.scoial_run import SocialRun
 from benchmarking.simulation.insight import Insight, InsightOutput
@@ -43,7 +43,7 @@ class VariedClassSizeSocialRun(SocialRun):
             simulation_sets[class_size] = SimulationSet(
                 settings=SimulationSettings(
                     num_teams=class_size // 5,
-                    scenario=GiveThePeopleWhatTheyWant(),
+                    scenario=IncludeFriendsExcludeEnemies(),
                     student_provider=MockStudentProvider(student_provider_settings),
                     cache_key=f"social/varied_class_size/{class_size}_students",
                 ),
