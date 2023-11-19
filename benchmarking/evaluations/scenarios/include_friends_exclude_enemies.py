@@ -8,10 +8,10 @@ from benchmarking.evaluations.interfaces import (
 from benchmarking.evaluations.goals import WeightGoal, PreferenceGoal
 
 
-class GiveThePeopleWhatTheyWant(Scenario):
+class IncludeFriendsExcludeEnemies(Scenario):
     @property
     def name(self):
-        return "Give the people what they want, socially"
+        return "Include friends, exclude enemies"
 
     @property
     def goals(self) -> List[Goal]:
