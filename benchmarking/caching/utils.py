@@ -40,13 +40,13 @@ def combine(cache_key: str):
         return
 
     # Get initial list of files where the cache should be
-    fragments = [
-        f for f in os.listdir(cache_location) if re.match(r"fragment_\d+\.json", f)
-    ]
-    # Remove .json
-    fragments = [f[:-5] for f in fragments]
+    fragments = []
+    for f in os.listdir(cache_location):
+        match = re.match(r"(fragment_\d+)\.json", f)
+        if match:
+            fragments.append(match.group(1))
 
-    info: List[Dict[str, any]] = []
+    fragment_data: List[Dict[str, any]] = []
 
     for fragment in fragments:
         cache = SimulationCache(cache_key + "/" + fragment)
@@ -55,17 +55,31 @@ def combine(cache_key: str):
         metadata = cache.get_metadata()
         team_sets, runtimes = cache.get_simulation_artifact()
 
+        # Check that expected keys exist
+        if (
+            not metadata
+            or not metadata.get("commit_hash")
+            or not metadata.get("timestamp")
+            or not team_sets
+            or not runtimes
+        ):
+            print(
+                f"[WARNING]: Cache fragment missing critical data, skipping {fragment}",
+                file=sys.stderr,
+            )
+            continue
+
         # Commit hashes must match
         if (
-            len(info) > 0
-            and metadata["commit_hash"] != info[0]["metadata"]["commit_hash"]
+            len(fragment_data) > 0
+            and metadata["commit_hash"] != fragment_data[0]["metadata"]["commit_hash"]
         ):
             print(
                 "[WARNING]: Commit hashes of fragments should be the same",
                 file=sys.stderr,
             )
 
-        info.append(
+        fragment_data.append(
             {
                 "metadata": metadata,
                 "team_sets": team_sets,
@@ -74,17 +88,19 @@ def combine(cache_key: str):
         )
 
     # Sort by timestamp so that the newest fragment has metadata priority
-    sorted_info = sorted(info, key=lambda x: x["metadata"]["timestamp"])
+    sorted_fragment_data = sorted(
+        fragment_data, key=lambda x: x["metadata"]["timestamp"]
+    )
 
     result_cache: Dict[str, any] = {
         "metadata": {},
         "team_sets": [],
         "runtimes": [],
     }
-    for fragment_data in sorted_info:
-        result_cache["metadata"].update(fragment_data["metadata"])
-        result_cache["team_sets"].extend(fragment_data["team_sets"])
-        result_cache["runtimes"].extend(fragment_data["runtimes"])
+    for fragment in sorted_fragment_data:
+        result_cache["metadata"].update(fragment["metadata"])
+        result_cache["team_sets"].extend(fragment["team_sets"])
+        result_cache["runtimes"].extend(fragment["runtimes"])
 
     # Write out resulting combined cache to cache_key
     full_cache = SimulationCache(cache_key)
@@ -93,7 +109,3 @@ def combine(cache_key: str):
 
     # Remove fragments
     shutil.rmtree(cache_location)
-
-
-if __name__ == "__main__":
-    combine("social/varied_class_size/10_students/AlgorithmType.RANDOM-default")
