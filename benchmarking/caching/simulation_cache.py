@@ -176,3 +176,7 @@ class SimulationCache:
             ]
 
             self._data: Dict[str, Any] = json_data
+
+    @staticmethod
+    def get_fragment_cache_key(cache_key: str, fragment_id: int):
+        return f"{cache_key}/fragment_{fragment_id}"
