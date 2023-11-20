@@ -205,12 +205,12 @@ class ProjectPreferencePriority(Priority):
 
 
 def get_priority_from_type(priority_type: PriorityType):
-    if priority_type == PriorityType.Tokenization:
+    if priority_type == PriorityType.TOKENIZATION:
         return TokenizationPriority
-    if priority_type == PriorityType.Diversity:
+    if priority_type == PriorityType.DIVERSITY:
         return DiversityPriority
-    if priority_type == PriorityType.Requirement:
+    if priority_type == PriorityType.PROJECT_REQUIREMENT:
         return RequirementPriority
-    if priority_type == PriorityType.ProjectPreference:
+    if priority_type == PriorityType.PROJECT_PREFERENCE:
         return ProjectPreferencePriority
     raise NotImplementedError()

@@ -119,8 +119,8 @@ class Race(AttributeValueEnum):
 
 
 class PriorityType(Enum):
-    Tokenization = "tokenization"
-    Diversity = "diversity"
-    ProjectPreference = "project_preference"
-    Requirement = "requirement"
-    Social = "social"
+    TOKENIZATION = "tokenization"
+    DIVERSITY = "diversity"
+    PROJECT_PREFERENCE = "project_preference"
+    PROJECT_REQUIREMENT = "project_requirement"
+    SOCIAL_PREFERENCE = "social_preference"
