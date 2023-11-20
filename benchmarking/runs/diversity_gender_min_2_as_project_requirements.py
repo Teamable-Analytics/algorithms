@@ -38,7 +38,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 class DiversifyGenderMin2AsProjectRequirementRun(Run):
     @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = True):
+    def start(num_trials: int = 20, generate_graphs: bool = False):
         """
         Goal: Run diversify gender scenario, measure average EF, EF1, PROP, and PROP1
         """
