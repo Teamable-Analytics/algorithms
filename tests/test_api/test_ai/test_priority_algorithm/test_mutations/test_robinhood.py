@@ -1,6 +1,8 @@
 import unittest
 from typing import List, Dict, Tuple
 
+from schema import Schema
+
 from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
 from api.ai.priority_algorithm.mutations import utils
 from api.ai.priority_algorithm.mutations.robinhood import (
@@ -27,6 +29,10 @@ class StudentListPriority(Priority):
     def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
         ids = [student.id for student in students]
         return int(set(self.students).issubset(set(ids)))
+
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema({})
 
 
 def equal_priority_team_sets(a: PriorityTeamSet, b: PriorityTeamSet) -> bool:
