@@ -28,6 +28,16 @@ def create_social_students(
     num_haters=None,
     num_outcasts=None,
 ) -> List[Student]:
+    """
+    - friends (in a clique with each other friend)
+    - enemies (mutual enemies with everyone considered an enemy)
+    - neutral (no preferences*)
+    - fans (they like everyone in their group, but no reciprocity)
+    - haters (they hate everyone in their group but no reciprocity)
+    - outcasts (they hate everyone in their group and everyone hates them back)
+
+    * because neutral people will still also dislike outcasts because of the naive way it's programmed
+    """
     students = []
 
     if num_friends:
