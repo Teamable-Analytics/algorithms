@@ -178,40 +178,6 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
 
     @staticmethod
     def get_schema() -> Schema:
-        """
-        priority_data = ...
-
-        def validate_priority(priority_data: dict):
-            priority_data_copy = {**priority_data}
-            priority_type = priority_data_copy.pop("priority_type")
-            priority_schema = get_priority_from_type(priority_type).get_schema()
-            return Schema(priority_schema).validate(priority_data_copy)
-
-        ...
-
-        "priorities": [
-            And(
-                dict,
-                lambda _data: validate_priority(_data),
-            ),
-        ]
-        Returns:
-
-
-
-                    {
-                        "attribute_id": int,
-                        "strategy": Or(*[strategy.value for strategy in DiversifyType]),
-                        "direction": Or(
-                            *[
-                                direction.value
-                                for direction in TokenizationConstraintDirection
-                            ]
-                        ),
-                        "threshold": int,
-                        "value": int,
-                    }
-        """
         return Schema(
             {
                 "algorithm_type": Const(AlgorithmType.PRIORITY.value),
