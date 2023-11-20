@@ -207,7 +207,7 @@ class ProjectPreferencePriority(Priority):
 
 
 @dataclass
-class SocialPriority(Priority):
+class SocialPreferencePriority(Priority):
     max_num_friends: int
     max_num_enemies: int
 

@@ -5,7 +5,7 @@ from api.ai.priority_algorithm.priority.priority import (
     DiversityPriority,
     TokenizationPriority,
     ProjectPreferencePriority,
-    SocialPriority,
+    SocialPreferencePriority,
 )
 from api.models.enums import (
     RequirementOperator,
@@ -395,7 +395,7 @@ class TestSocialPriority(unittest.TestCase):
         cls.trivial_team_shell = TeamShell(_id=1)
 
     def test_satisfaction(self):
-        social_priority = SocialPriority(
+        social_priority = SocialPreferencePriority(
             max_num_friends=2,
             max_num_enemies=2,
         )
