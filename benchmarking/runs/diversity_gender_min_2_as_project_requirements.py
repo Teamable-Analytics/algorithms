@@ -4,7 +4,10 @@ from typing import Dict, List
 import typer
 
 from api.ai.interfaces.algorithm_config import DoubleRoundRobinAlgorithmConfig, \
-    MultipleRoundRobinAlgorithmConfig, GeneralizedEnvyGraphAlgorithmConfig
+    MultipleRoundRobinAlgorithmConfig, GeneralizedEnvyGraphAlgorithmConfig, RandomAlgorithmConfig, \
+    SocialAlgorithmConfig, WeightAlgorithmConfig, PriorityAlgorithmConfig
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
+from api.ai.priority_algorithm.mutations import mutate_local_max, mutate_random_swap
 from api.models.enums import ScenarioAttribute, Gender, AlgorithmType, RequirementOperator
 from api.models.project import Project, ProjectRequirement
 from api.models.student import Student
@@ -23,6 +26,7 @@ from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreene
 from benchmarking.evaluations.metrics.envy_freeness import EnvyFreeness
 from benchmarking.evaluations.metrics.proportionality import Proportionality
 from benchmarking.evaluations.metrics.proportionality_up_to_one_item import ProportionalityUpToOneItem
+from benchmarking.evaluations.metrics.team_generation_options_satisfied import TeamGenerationOptionsSatisfied
 from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
     DiversifyGenderMin2Female,
 )
@@ -40,7 +44,7 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
         """
 
         # Defining our changing x-values (in the graph sense)
-        class_sizes = list(range(50, 101, 50))
+        class_sizes = list(range(50, 451, 50))
         ratio_of_female_students = 0.2
 
         graph_runtime_dict = {}
@@ -48,28 +52,15 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
         graph_avg_ef1_dict = {}
         graph_avg_prop_dict = {}
         graph_avg_prop1_dict = {}
+        graph_team_generation_options_satisfied_dict = {}
         graph_dicts = [
             graph_runtime_dict,
             graph_avg_ef_dict,
             graph_avg_ef1_dict,
             graph_avg_prop_dict,
             graph_avg_prop1_dict,
+            graph_team_generation_options_satisfied_dict,
         ]
-
-        metrics: Dict[str, TeamSetMetric] = {
-            "EF": EnvyFreeness(
-                calculate_utilities=DiversifyGenderMin2AsProjectRequirementRun.get_team_utility,
-            ),
-            "EF1": EnvyFreenessUpToOneItem(
-                calculate_utilities=DiversifyGenderMin2AsProjectRequirementRun.get_team_utility,
-            ),
-            "PROP": Proportionality(
-                calculate_utilities=DiversifyGenderMin2AsProjectRequirementRun.get_team_utility,
-            ),
-            "PROP1": ProportionalityUpToOneItem(
-                calculate_utilities=DiversifyGenderMin2AsProjectRequirementRun.get_team_utility,
-            ),
-        }
 
         artifacts: Dict[int, SimulationSetArtifact] = {}
 
@@ -123,15 +114,48 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
                     initial_teams_provider=initialTeamsProvider,
                 ),
                 algorithm_set={
-                    AlgorithmType.DRR: [DoubleRoundRobinAlgorithmConfig(name='Double Round Robin')],
-                    AlgorithmType.MRR: [MultipleRoundRobinAlgorithmConfig(name='Multiple Round Robin')],
-                    AlgorithmType.GEG: [GeneralizedEnvyGraphAlgorithmConfig(name='Generalized Envy Graph')],
+                    AlgorithmType.DRR: [DoubleRoundRobinAlgorithmConfig()],
+                    AlgorithmType.MRR: [MultipleRoundRobinAlgorithmConfig()],
+                    AlgorithmType.GEG: [GeneralizedEnvyGraphAlgorithmConfig()],
+                    AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
+                    AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
+                    AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
+                    AlgorithmType.PRIORITY: [
+                        PriorityAlgorithmConfig(),
+                        PriorityAlgorithmConfig(
+                            name="local_max",
+                            MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
+                        ),
+                    ],
                 },
             ).run(num_runs=num_trials)
             artifacts[class_size] = simulation_set_artifact
 
         if generate_graphs:
             for class_size, artifact in artifacts.items():
+                metrics: Dict[str, TeamSetMetric] = {
+                    "EF": EnvyFreeness(
+                        calculate_utilities=DiversifyGenderMin2AsProjectRequirementRun.get_team_utility,
+                    ),
+                    "EF1": EnvyFreenessUpToOneItem(
+                        calculate_utilities=DiversifyGenderMin2AsProjectRequirementRun.get_team_utility,
+                    ),
+                    "PROP": Proportionality(
+                        calculate_utilities=DiversifyGenderMin2AsProjectRequirementRun.get_team_utility,
+                    ),
+                    "PROP1": ProportionalityUpToOneItem(
+                        calculate_utilities=DiversifyGenderMin2AsProjectRequirementRun.get_team_utility,
+                    ),
+                    "TeamGenerationOptionsSatisfied": TeamGenerationOptionsSatisfied(
+                        options=TeamGenerationOptions(
+                            max_team_size=6,
+                            min_team_size=5,
+                            total_teams=0,
+                            initial_teams=[],
+                        )
+                    ),
+                }
+
                 insight_set: Dict[str, Dict[str, List[float]]] = Insight.get_output_set(
                     artifact=artifact, metrics=list(metrics.values())
                 )
@@ -140,6 +164,9 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
                 average_ef1 = Insight.average_metric(insight_set, "EnvyFreenessUpToOneItem")
                 average_prop = Insight.average_metric(insight_set, "Proportionality")
                 average_prop1 = Insight.average_metric(insight_set, "ProportionalityUpToOneItem")
+                average_team_generation_options_satisfied = Insight.average_metric(
+                    insight_set, "TeamGenerationOptionsSatisfied"
+                )
                 average_runtimes = Insight.average_metric(
                     insight_set, Insight.KEY_RUNTIMES
                 )
@@ -150,6 +177,7 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
                     average_ef1,
                     average_prop,
                     average_prop1,
+                    average_team_generation_options_satisfied,
                 ]
 
                 # Data processing for graph
@@ -210,6 +238,16 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
                     y_label="PROP1",
                     title="Diversity Gender With Min of Two Average PROP1",
                     data=list(graph_avg_prop1_dict.values()),
+                    y_lim=GraphAxisRange(start=-0.01, end=1.05),
+                )
+            )
+
+            line_graph(
+                LineGraphMetadata(
+                    x_label="Class size",
+                    y_label="TeamGenerationOptionsSatisfied",
+                    title="Diversity Gender With Min of Two Average TeamGenerationOptionsSatisfied",
+                    data=list(graph_team_generation_options_satisfied_dict.values()),
                     y_lim=GraphAxisRange(start=-0.01, end=1.05),
                 )
             )
