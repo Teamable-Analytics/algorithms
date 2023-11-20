@@ -242,6 +242,15 @@ class SocialPreferencePriority(Priority):
             total, original_range=(theoretical_min, theoretical_max), new_range=(0, 1)
         )
 
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema(
+            {
+                "max_num_friends": int,
+                "max_num_enemies": int,
+            }
+        )
+
 
 def get_priority_from_type(priority_type: PriorityType):
     if priority_type == PriorityType.TOKENIZATION:
@@ -252,4 +261,6 @@ def get_priority_from_type(priority_type: PriorityType):
         return RequirementPriority
     if priority_type == PriorityType.PROJECT_PREFERENCE:
         return ProjectPreferencePriority
+    if priority_type == PriorityType.SOCIAL_PREFERENCE:
+        return SocialPreferencePriority
     raise NotImplementedError()
