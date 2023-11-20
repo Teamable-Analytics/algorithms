@@ -273,6 +273,10 @@ class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
             "GeneralizedEnvyGraphAlgorithmOptions does not support parsing from json."
         )
 
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema(dict)
+
 
 @dataclass
 class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
@@ -284,6 +288,11 @@ class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
         raise AttributeError(
             "DoubleRoundRobinAlgorithmOptions does not support parsing from json."
         )
+
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema(dict)
+
 
 
 AnyAlgorithmOptions = Union[

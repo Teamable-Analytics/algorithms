@@ -86,6 +86,11 @@ class Team(TeamShell):
             raise ValueError(f"Cannot add student ({student.id}) to team {self.id}.")
         self.students.append(student)
 
+    def remove_student(self, student: "Student"):
+        if self.is_locked:
+            raise ValueError(f"Cannot remove student ({student.id}) from team {self.id}.")
+        self.students.remove(student)
+
     def todict(self) -> Dict:
         return {
             "id": self.id,

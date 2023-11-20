@@ -41,6 +41,8 @@ class GeneralizedEnvyGraphAlgorithm(Algorithm):
         self,
         algorithm_options: GeneralizedEnvyGraphAlgorithmOptions,
         team_generation_options: TeamGenerationOptions,
+        *args,
+        **kwargs,
     ):
         super().__init__(algorithm_options, team_generation_options)
 

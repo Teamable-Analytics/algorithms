@@ -50,6 +50,8 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         self,
         algorithm_options: MultipleRoundRobinAlgorithmOptions,
         team_generation_options: TeamGenerationOptions,
+        *args,
+        **kwargs,
     ):
         super().__init__(algorithm_options, team_generation_options)
         self.projects = algorithm_options.projects
@@ -185,7 +187,7 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
 
                 for student in team_j.students:
                     student_value_to_team_i = calculate_value(
-                        student, team_i.project.requirements
+                        student, team_i.requirements
                     )
                     if student_value_to_team_i > 0:
                         team_i.add_student(student)

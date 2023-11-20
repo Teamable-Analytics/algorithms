@@ -5,17 +5,19 @@ from api.models.enums import (
     ScenarioAttribute,
     TokenizationConstraintDirection,
 )
+from api.models.project import Project
 from benchmarking.evaluations.interfaces import (
     Scenario,
     Goal,
 )
-from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
+from benchmarking.evaluations.goals import DiversityGoal, WeightGoal, ProjectsGoal
 from api.models.tokenization_constraint import TokenizationConstraint
 
 
 class DiversifyGenderMin2Female(Scenario):
-    def __init__(self, value_of_female: int):
+    def __init__(self, value_of_female: int, projects: List[Project] = None):
         self.value_of_female = value_of_female
+        self.projects = projects
 
     @property
     def name(self):
@@ -34,4 +36,5 @@ class DiversifyGenderMin2Female(Scenario):
                 ),
             ),
             WeightGoal(diversity_goal_weight=1),
+            ProjectsGoal(projects=self.projects),
         ]

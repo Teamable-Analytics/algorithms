@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List
 
+from api.models.project import Project
 from benchmarking.evaluations.enums import (
     PreferenceDirection,
     PreferenceSubject,
@@ -48,3 +49,8 @@ class WeightGoal(Goal):
     social_preference_weight: int = 0
     diversity_goal_weight: int = 0
     project_preference_weight: int = 0
+
+
+@dataclass
+class ProjectsGoal(Goal):
+    projects: List[Project]
