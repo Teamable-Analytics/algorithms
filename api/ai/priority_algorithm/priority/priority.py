@@ -1,12 +1,15 @@
 from dataclasses import dataclass
 from typing import List
 
+from schema import And, Or, Schema
+
 from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.ai.weight_algorithm.utility.diversity_utility import _blau_index
 from api.models.enums import (
     DiversifyType,
     TokenizationConstraintDirection,
     RequirementsCriteria,
+    PriorityType,
 )
 from api.models.student import Student
 from api.models.team import TeamShell
@@ -75,6 +78,28 @@ class TokenizationPriority(Priority):
         ):
             return count <= self.threshold
 
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema(
+            {
+                "attribute_id": int,
+                "strategy": And(
+                    str, Or(*[strategy.value for strategy in DiversifyType])
+                ),
+                "direction": And(
+                    str,
+                    Or(
+                        *[
+                            direction.value
+                            for direction in TokenizationConstraintDirection
+                        ]
+                    ),
+                ),
+                "threshold": int,
+                "value": int,
+            }
+        )
+
 
 @dataclass
 class DiversityPriority(Priority):
@@ -88,6 +113,17 @@ class DiversityPriority(Priority):
         blau_index = _blau_index(students, self.attribute_id)
         return (
             blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)
+        )
+
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema(
+            {
+                "attribute_id": int,
+                "strategy": And(
+                    str, Or(*[strategy.value for strategy in DiversifyType])
+                ),
+            }
         )
 
 
@@ -123,6 +159,16 @@ class RequirementPriority(Priority):
             )
             return num_students_that_meet_any_req / len(students)
 
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema(
+            {
+                "criteria": And(
+                    str, Or(*[criteria.value for criteria in RequirementsCriteria])
+                ),
+            }
+        )
+
 
 @dataclass
 class ProjectPreferencePriority(Priority):
@@ -145,3 +191,26 @@ class ProjectPreferencePriority(Priority):
                 max_satisfaction_score - satisfaction_score
             ) / max_satisfaction_score
         return satisfaction_score / max_satisfaction_score
+
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema(
+            {
+                "direction": And(
+                    str, Or(*[direction.value for direction in PreferenceDirection])
+                ),
+                "max_project_preferences": int,
+            }
+        )
+
+
+def get_priority_from_type(priority_type: PriorityType):
+    if priority_type == PriorityType.Tokenization:
+        return TokenizationPriority
+    if priority_type == PriorityType.Diversity:
+        return DiversityPriority
+    if priority_type == PriorityType.Requirement:
+        return RequirementPriority
+    if priority_type == PriorityType.ProjectPreference:
+        return ProjectPreferencePriority
+    raise NotImplementedError()
