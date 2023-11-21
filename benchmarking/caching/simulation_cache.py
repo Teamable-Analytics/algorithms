@@ -33,10 +33,18 @@ class SimulationCache:
         }
         """
 
+    def is_fragmented(self) -> bool:
+        """
+        TODO: FINISH
+        """
+        return False
+
     def exists(self) -> bool:
         """
         Checks if the cache_key is in the cache.
         """
+        if self.is_fragmented():
+            return True
         return path.exists(self._get_file())
 
     def get_simulation_artifact(self) -> "SimulationArtifact":
@@ -158,6 +166,10 @@ class SimulationCache:
             if not self.exists():
                 raise FileNotFoundError("Cache doesn't exist")
 
+            if self.is_fragmented():
+                # todo: combine here
+                pass
+
             # Load json data
             with open(self._get_file(), "r") as f:
                 json_data = json.load(f)
@@ -180,3 +192,17 @@ class SimulationCache:
     @staticmethod
     def get_fragment_cache_key(cache_key: str, fragment_id: int):
         return f"{cache_key}/fragment_{fragment_id}"
+
+    @staticmethod
+    def create_fragment_parent_dir(cache_key: str):
+        # Get cache directory
+        cache_dir = path.abspath(
+            path.join(path.dirname(__file__), "..", "..", "simulation_cache")
+        )
+
+        # Create cache directory if it doesn't exist
+        cache_key_dirs = path.normpath(cache_key).split(os.sep)
+        cache_key_dirs = cache_key_dirs[:-1]
+        full_cache_dir = path.join(cache_dir, *cache_key_dirs)
+        if not path.exists(full_cache_dir):
+            os.makedirs(full_cache_dir)
