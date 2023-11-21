@@ -1,7 +1,6 @@
-import copy
+import os
 import os
 import time
-from threading import Thread
 from typing import List, Tuple
 
 from api.ai.algorithm_runner import AlgorithmRunner
@@ -12,7 +11,7 @@ from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.simulation.mock_algorithm import MockAlgorithm
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from benchmarking.simulation.utils import chunk
-from utils.threads import ThreadWithReturnValue
+from utils.threads import ProcessWithReturnValue
 
 # list of floats tracks the runtime of each run
 SimulationArtifact = Tuple[List[TeamSet], List[float]]
@@ -83,18 +82,18 @@ class Simulation:
             SimulationCache.create_fragment_parent_dir(self.settings.cache_key)
 
         num_runs_per_thread = chunk(num_runs, os.cpu_count())
-        threads: List[ThreadWithReturnValue] = []
+        processes: List[ProcessWithReturnValue] = []
         for fragment_id, batch_num_runs in enumerate(num_runs_per_thread):
             print("Starting thread", fragment_id)
-            _thread = ThreadWithReturnValue(
+            _process = ProcessWithReturnValue(
                 target=run_trial_batch, args=(fragment_id, batch_num_runs, self.settings, runner)
             )
-            threads.append(_thread)
-            _thread.start()
+            processes.append(_process)
+            _process.start()
 
-        # await completion of all threads, and store their results
-        for thread in threads:
-            batch_team_sets, batch_run_times = thread.join()
+        # await completion of all processes, and store their results
+        for process in processes:
+            batch_team_sets, batch_run_times = process.join()
             self.team_sets.extend(batch_team_sets)
             self.run_times.extend(batch_run_times)
 

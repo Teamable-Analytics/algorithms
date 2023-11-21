@@ -1,3 +1,4 @@
+from multiprocessing import Process
 from threading import Thread
 
 
@@ -19,4 +20,20 @@ class ThreadWithReturnValue(Thread):
 
     def join(self, *args) -> any:
         Thread.join(self, *args)
+        return self._return
+
+
+class ProcessWithReturnValue(Process):
+    def __init__(
+        self, *args, **kwargs
+    ):
+        Process.__init__(self, *args, **kwargs)
+        self._return = None
+
+    def run(self):
+        if self._target:
+            self._return = self._target(*self._args, **self._kwargs)
+
+    def join(self, *args) -> any:
+        Process.join(self, *args)
         return self._return
