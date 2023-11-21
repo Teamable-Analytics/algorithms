@@ -81,7 +81,12 @@ class Simulation:
         pool = Pool(processes=num_processes)
 
         for fragment_id, batch_num_runs in enumerate(num_runs_per_worker):
-            processes.append(pool.apply_async(run_trial_batch, args=(fragment_id, batch_num_runs, self.settings, runner)))
+            processes.append(
+                pool.apply_async(
+                    run_trial_batch,
+                    args=(fragment_id, batch_num_runs, self.settings, runner),
+                )
+            )
 
         # await completion of all processes, and store their results
         for process in processes:
@@ -91,13 +96,17 @@ class Simulation:
 
         if self.settings.cache_key:
             from benchmarking.caching.utils import combine
+
             combine(self.settings.cache_key)
 
         return self.team_sets, self.run_times
 
 
 def run_trial_batch(
-    fragment: int, num_runs_for_batch: int, settings: SimulationSettings, runner: AlgorithmRunner
+    fragment: int,
+    num_runs_for_batch: int,
+    settings: SimulationSettings,
+    runner: AlgorithmRunner,
 ):
     batch_cache = None
     if settings.cache_key:
