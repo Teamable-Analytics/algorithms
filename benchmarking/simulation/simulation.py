@@ -2,6 +2,7 @@ import os
 import os
 import time
 from multiprocessing import Pool
+from multiprocessing.pool import ApplyResult
 from typing import List, Tuple
 
 from api.ai.algorithm_runner import AlgorithmRunner
@@ -12,7 +13,6 @@ from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.simulation.mock_algorithm import MockAlgorithm
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from benchmarking.simulation.utils import chunk
-from utils.threads import ProcessWithReturnValue
 
 # list of floats tracks the runtime of each run
 SimulationArtifact = Tuple[List[TeamSet], List[float]]
@@ -60,7 +60,6 @@ class Simulation:
             algorithm_config=self.config,
         )
 
-        # todo: abstract into some other method that returns num runs remaining and sets self.team_sets and self.runtimes
         if self.settings.cache_key:
             cache = SimulationCache(self.settings.cache_key)
             if cache.exists():
@@ -72,36 +71,27 @@ class Simulation:
                 else:
                     num_runs -= len(cached_team_sets)
 
-        # todo: START PARALLEL BLOCK
-        """
-        todo:
-        get chunks
-        for each thread, create an instance of simulation cache that goes to that threads fragment
-        run like a beast
-        """
         if self.settings.cache_key:
             SimulationCache.create_fragment_parent_dir(self.settings.cache_key)
 
-        num_processes = os.cpu_count()
-        num_runs_per_thread = chunk(num_runs, os.cpu_count())
-        processes: List[ProcessWithReturnValue] = []
+        num_processes = max(1, os.cpu_count() - 2)
+        num_runs_per_worker = chunk(num_runs, num_processes)
+        processes: List[ApplyResult] = []
 
-        p_list = []
         pool = Pool(processes=num_processes)
 
-        for fragment_id, batch_num_runs in enumerate(num_runs_per_thread):
-            print("Starting process", fragment_id, batch_num_runs)
-            p = pool.apply_async(run_trial_batch, args=(fragment_id, batch_num_runs, self.settings, runner))
-            p_list.append(p)
+        for fragment_id, batch_num_runs in enumerate(num_runs_per_worker):
+            processes.append(pool.apply_async(run_trial_batch, args=(fragment_id, batch_num_runs, self.settings, runner)))
 
         # await completion of all processes, and store their results
-        for process in p_list:
+        for process in processes:
             batch_team_sets, batch_run_times = process.get()
             self.team_sets.extend(batch_team_sets)
             self.run_times.extend(batch_run_times)
 
-        # todo: END PARALLEL BLOCK
-        # todo: clean up cache fragments
+        if self.settings.cache_key:
+            from benchmarking.caching.utils import combine
+            combine(self.settings.cache_key)
 
         return self.team_sets, self.run_times
 
@@ -119,7 +109,7 @@ def run_trial_batch(
     batch_team_sets = []
     batch_run_times = []
 
-    # todo: some goated error handling, so one thread doesnt tank the others
+    # todo: some goated error handling, so one worker doesnt tank the others
     for _ in range(0, num_runs_for_batch):
         students = settings.student_provider.get()
 

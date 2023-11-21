@@ -102,7 +102,7 @@ class DiversifyGenderMin2Run(Run):
                     cache_key=f"diversify_gender_min_2_{number_of_teams}",
                 ),
                 algorithm_set={
-                    AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
+                    # AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
                     AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
                     AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
                     AlgorithmType.PRIORITY: [

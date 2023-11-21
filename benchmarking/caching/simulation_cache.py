@@ -1,7 +1,10 @@
 import json
 import os
+import re
+import shutil
 import sys
 from datetime import datetime
+from functools import cached_property
 from os import path
 from typing import List, Dict, Any, TYPE_CHECKING
 
@@ -12,6 +15,9 @@ from api.models.team_set.serializer import TeamSetSerializer
 
 if TYPE_CHECKING:
     from benchmarking.simulation.simulation import SimulationArtifact
+
+
+FRAGMENT_FILE_NAME_PATTERN = r"(fragment_\d+)\.json"
 
 
 class SimulationCache:
@@ -34,9 +40,19 @@ class SimulationCache:
         """
 
     def is_fragmented(self) -> bool:
-        """
-        TODO: FINISH
-        """
+        maybe_cache_fragment_directory = SimulationCache.cache_key_parent_directory(
+            self.cache_key
+        )
+        if not path.exists(maybe_cache_fragment_directory):
+            return False
+        if len(os.listdir(maybe_cache_fragment_directory)) < 1:
+            print(f"[WARNING]: Empty directory @ {maybe_cache_fragment_directory}")
+            return False
+
+        for f in os.listdir(maybe_cache_fragment_directory):
+            if re.match(FRAGMENT_FILE_NAME_PATTERN, f):
+                return True
+
         return False
 
     def exists(self) -> bool:
@@ -137,7 +153,13 @@ class SimulationCache:
         Clears the cache.
         """
         if self.exists():
-            os.remove(self._get_file())
+            if self.is_fragmented():
+                # Remove fragments and directory
+                shutil.rmtree(
+                    SimulationCache.cache_key_parent_directory(self.cache_key)
+                )
+            else:
+                os.remove(self._get_file())
         self._data = {}
 
     def _get_file(self) -> str:
@@ -161,14 +183,39 @@ class SimulationCache:
         # Get file
         return path.join(full_cache_dir, filename)
 
+    def _load_existing_data(self):
+        if not self._data:
+            if not self.exists() and not self.is_fragmented():
+                raise FileNotFoundError("Existing cache data doesn't exist")
+
+            # Load json data
+            with open(self._get_file(), "r") as f:
+                json_data = json.load(f)
+            if not json_data:
+                raise ValueError(
+                    f'No json could be loaded from the "{self.cache_key}" cache'
+                )
+
+            # Init data to be the loaded json
+            self._data = json_data
+
+            # Convert json team sets to actual TeamSets
+            self._data["team_sets"] = [
+                TeamSetSerializer().decode(team_set)
+                for team_set in json_data["team_sets"]
+            ]
+
+            self._data: Dict[str, Any] = json_data
+
     def _load_data(self) -> None:
         if not self._data:
             if not self.exists():
                 raise FileNotFoundError("Cache doesn't exist")
 
             if self.is_fragmented():
-                # todo: combine here
-                pass
+                from benchmarking.caching.utils import combine
+
+                combine(self.cache_key)
 
             # Load json data
             with open(self._get_file(), "r") as f:
@@ -194,15 +241,19 @@ class SimulationCache:
         return f"{cache_key}/fragment_{fragment_id}"
 
     @staticmethod
-    def create_fragment_parent_dir(cache_key: str):
+    def cache_key_parent_directory(cache_key: str):
         # Get cache directory
         cache_dir = path.abspath(
             path.join(path.dirname(__file__), "..", "..", "simulation_cache")
         )
 
-        # Create cache directory if it doesn't exist
-        cache_key_dirs = path.normpath(cache_key).split(os.sep)
-        cache_key_dirs = cache_key_dirs[:-1]
-        full_cache_dir = path.join(cache_dir, *cache_key_dirs)
+        full_cache_dir = path.join(cache_dir, cache_key)
+
+        return full_cache_dir
+
+    @staticmethod
+    def create_fragment_parent_dir(cache_key: str):
+        full_cache_dir = SimulationCache.cache_key_parent_directory(cache_key)
+        print(full_cache_dir)
         if not path.exists(full_cache_dir):
             os.makedirs(full_cache_dir)
