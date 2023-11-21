@@ -1,9 +1,9 @@
 from json import JSONEncoder
-from typing import Dict, Any
+from typing import Dict, Any, List
 
-from api.models.project import ProjectRequirementSerializer
+from api.models.project import ProjectRequirementSerializer, ProjectRequirement
 from api.models.interfaces import ModelDecoder
-from api.models.student import StudentSerializer
+from api.models.student import StudentSerializer, Student
 from api.models.team import Team
 
 
@@ -26,16 +26,18 @@ class TeamSerializer(JSONEncoder, ModelDecoder):
     def decode(self, json_dict: Dict[str, Any]) -> Team:
         requirement_serializer = ProjectRequirementSerializer()
         student_serializer = StudentSerializer()
-        students = [
-            student_serializer.decode(student) for student in json_dict["students"]
+        students: List[Student] = [
+            student_serializer.decode(student)
+            for student in json_dict.get("students", [])
         ]
-        requirements = [
-            requirement_serializer.decode(req) for req in json_dict["requirements"]
+        requirements: List[ProjectRequirement] = [
+            requirement_serializer.decode(req)
+            for req in json_dict.get("requirements", [])
         ]
         team = Team(
-            _id=json_dict["_id"],
-            name=json_dict["name"],
-            project_id=json_dict["project_id"],
+            _id=int(json_dict.get("id", json_dict.get("_id"))),
+            name=json_dict.get("name"),
+            project_id=json_dict.get("project_id"),
             requirements=requirements,
             students=students,
         )
