@@ -1,6 +1,7 @@
 import os
 import os
 import time
+from multiprocessing import Pool
 from typing import List, Tuple
 
 from api.ai.algorithm_runner import AlgorithmRunner
@@ -81,19 +82,21 @@ class Simulation:
         if self.settings.cache_key:
             SimulationCache.create_fragment_parent_dir(self.settings.cache_key)
 
+        num_processes = os.cpu_count()
         num_runs_per_thread = chunk(num_runs, os.cpu_count())
         processes: List[ProcessWithReturnValue] = []
+
+        p_list = []
+        pool = Pool(processes=num_processes)
+
         for fragment_id, batch_num_runs in enumerate(num_runs_per_thread):
-            print("Starting thread", fragment_id)
-            _process = ProcessWithReturnValue(
-                target=run_trial_batch, args=(fragment_id, batch_num_runs, self.settings, runner)
-            )
-            processes.append(_process)
-            _process.start()
+            print("Starting process", fragment_id, batch_num_runs)
+            p = pool.apply_async(run_trial_batch, args=(fragment_id, batch_num_runs, self.settings, runner))
+            p_list.append(p)
 
         # await completion of all processes, and store their results
-        for process in processes:
-            batch_team_sets, batch_run_times = process.join()
+        for process in p_list:
+            batch_team_sets, batch_run_times = process.get()
             self.team_sets.extend(batch_team_sets)
             self.run_times.extend(batch_run_times)
 
