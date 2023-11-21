@@ -231,14 +231,17 @@ class GenerateTeamsValidator(Validator):
                     "id": int,
                     "attributes": Or({str: [int]}, {}),
                     Optional("name"): str,
-                    Optional("relationships"): Or({
-                        str: Or(
-                            *[
-                                get_relationship_str(relationship)
-                                for relationship in Relationship
-                            ]
-                        )
-                    }, {}),
+                    Optional("relationships"): Or(
+                        {
+                            str: Or(
+                                *[
+                                    get_relationship_str(relationship)
+                                    for relationship in Relationship
+                                ]
+                            )
+                        },
+                        {},
+                    ),
                     Optional("project_preferences"): [int],
                 }
             ]
