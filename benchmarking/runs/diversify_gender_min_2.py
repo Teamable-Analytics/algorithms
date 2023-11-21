@@ -40,7 +40,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 class DiversifyGenderMin2Run(Run):
     @staticmethod
-    def start(num_trials: int = 100, generate_graphs: bool = True):
+    def start(num_trials: int = 10, generate_graphs: bool = True):
         """
         Goal: Run diversify gender scenario, measure average, min, and max gini index
         """
@@ -102,7 +102,7 @@ class DiversifyGenderMin2Run(Run):
                     cache_key=f"diversify_gender_min_2_{number_of_teams}",
                 ),
                 algorithm_set={
-                    # AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
+                    AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
                     AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
                     AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
                     AlgorithmType.PRIORITY: [

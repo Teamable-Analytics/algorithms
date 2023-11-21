@@ -1,5 +1,4 @@
 import os
-import os
 import time
 from multiprocessing import Pool
 from multiprocessing.pool import ApplyResult
