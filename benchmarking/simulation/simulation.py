@@ -78,7 +78,6 @@ class Simulation:
         processes: List[ApplyResult] = []
 
         pool = Pool(processes=num_processes)
-
         for fragment_id, batch_num_runs in enumerate(num_runs_per_worker):
             processes.append(
                 pool.apply_async(
@@ -97,7 +96,7 @@ class Simulation:
             from benchmarking.caching.utils import combine
 
             combine(self.settings.cache_key)
-
+        pool.close()
         return self.team_sets, self.run_times
 
 

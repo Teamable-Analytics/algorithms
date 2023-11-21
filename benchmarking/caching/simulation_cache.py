@@ -254,6 +254,5 @@ class SimulationCache:
     @staticmethod
     def create_fragment_parent_dir(cache_key: str):
         full_cache_dir = SimulationCache.cache_key_parent_directory(cache_key)
-        print(full_cache_dir)
         if not path.exists(full_cache_dir):
             os.makedirs(full_cache_dir)
