@@ -34,7 +34,7 @@ class StudentSerializer(JSONEncoder, ModelDecoder):
             },
             relationships={
                 int(key): Relationship(value)
-                if isinstance(value, int)
+                if isinstance(value, float) or isinstance(value, int)
                 else get_relationship(value)
                 for key, value in json_dict["relationships"].items()
             },
