@@ -20,7 +20,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 class VariedTeamSizeSocialRun(SocialRun):
     @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = False):
+    def start(num_trials: int = 50, generate_graphs: bool = False):
         """
         Goal: See how the social algorithm reacts to different team sizes.
         We will keep the number of friends (clique size) equal to the team size as that is
