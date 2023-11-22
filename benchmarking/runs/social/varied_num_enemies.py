@@ -49,7 +49,7 @@ class VariedNumEnemiesSocialRun(SocialRun):
                     num_teams=250 // 5,
                     scenario=IncludeFriendsExcludeEnemies(),
                     student_provider=MockStudentProvider(student_provider_settings),
-                    cache_key=f"social/varied_num_friends/{num_enemies}_enemies",
+                    cache_key=f"social/varied_num_enemies/{num_enemies}_enemies",
                 ),
                 algorithm_set=SocialRun.algorithms(),
             ).run(num_runs=num_trials)
