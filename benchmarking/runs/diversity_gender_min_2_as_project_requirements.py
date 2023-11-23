@@ -38,7 +38,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 class DiversifyGenderMin2AsProjectRequirementRun(Run):
     @staticmethod
-    def start(num_trials: int = 20, generate_graphs: bool = False):
+    def start(num_trials: int = 20, generate_graphs: bool = True):
         """
         Goal: Run diversify gender scenario, measure average EF, EF1, PROP, and PROP1
         """
@@ -199,6 +199,7 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
                     y_label="Run time (seconds)",
                     title="Diversify Gender With Min of Two Runtimes",
                     data=list(graph_runtime_dict.values()),
+                    save_graph=True,
                 )
             )
 
@@ -209,6 +210,7 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
                     title="Diversify Gender With Min of Two Average EF",
                     data=list(graph_avg_ef_dict.values()),
                     y_lim=GraphAxisRange(start=-0.01, end=1.05),
+                    save_graph=True,
                 )
             )
 
@@ -219,6 +221,7 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
                     title="Diversify Gender With Min of Two Average EF1",
                     data=list(graph_avg_ef1_dict.values()),
                     y_lim=GraphAxisRange(start=-0.01, end=1.05),
+                    save_graph=True,
                 )
             )
 
@@ -229,6 +232,7 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
                     title="Diversify Gender With Min of Two Average PROP",
                     data=list(graph_avg_prop_dict.values()),
                     y_lim=GraphAxisRange(start=-0.01, end=1.05),
+                    save_graph=True,
                 )
             )
 
@@ -239,6 +243,7 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
                     title="Diversity Gender With Min of Two Average PROP1",
                     data=list(graph_avg_prop1_dict.values()),
                     y_lim=GraphAxisRange(start=-0.01, end=1.05),
+                    save_graph=True,
                 )
             )
 
@@ -249,6 +254,7 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
                     title="Diversity Gender With Min of Two Average TeamGenerationOptionsSatisfied",
                     data=list(graph_team_generation_options_satisfied_dict.values()),
                     y_lim=GraphAxisRange(start=-0.01, end=1.05),
+                    save_graph=True,
                 )
             )
 
