@@ -35,7 +35,7 @@ class VariedClassSizeSocialRun(SocialRun):
 
             student_provider_settings = MockStudentProviderSettings(
                 number_of_students=class_size,
-                number_of_friends=5,
+                number_of_friends=4,
                 number_of_enemies=2,
                 friend_distribution="cluster",
             )
