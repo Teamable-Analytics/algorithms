@@ -39,7 +39,7 @@ class VariedNumEnemiesSocialRun(SocialRun):
 
             student_provider_settings = MockStudentProviderSettings(
                 number_of_students=250,
-                number_of_friends=5,
+                number_of_friends=4,
                 number_of_enemies=num_enemies,
                 friend_distribution="cluster",
             )
