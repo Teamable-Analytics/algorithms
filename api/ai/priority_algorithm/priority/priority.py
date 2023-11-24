@@ -216,18 +216,13 @@ class SocialPreferencePriority(Priority):
 
     def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
         num_students = len(students)
-        if num_students < 2:
-            return 0
-
         student_ids = [s.id for s in students]
         # bidirectional friendship for all team members
         theoretical_min = (
             num_students * self.max_num_friends * Relationship.FRIEND.value
         )
         # bidirectional enemies for all team members
-        theoretical_max = (
-            num_students * self.max_num_enemies * Relationship.ENEMY.value * 2
-        )
+        theoretical_max = num_students * self.max_num_enemies * Relationship.ENEMY.value
 
         total = 0
         for student in students:
@@ -238,6 +233,8 @@ class SocialPreferencePriority(Priority):
                 ):
                     total += relationship.value
 
+        # subtract the total from 1 because FRIEND is a negative number, meaning the closer we are to the theoretical
+        # min, the better for social satisfaction
         return 1 - change_range(
             total, original_range=(theoretical_min, theoretical_max), new_range=(0, 1)
         )
