@@ -2,6 +2,7 @@ from typing import List
 
 
 def chunk(num_runs: int, num_workers: int) -> List[int]:
+    print(f'Num runs: {num_runs}, Num Workers: {num_workers}')
     """
     Returns a list where each element is the number of runs that thread should do
     """
@@ -10,7 +11,6 @@ def chunk(num_runs: int, num_workers: int) -> List[int]:
             f"Invalid args (num_runs={num_runs}, num_workers={num_workers}) for chunk()"
         )
     if num_runs < num_workers:
-        # todo: write a test
         return [1 for _ in range(num_runs)]
     return [
         num_runs // num_workers + (1 if i < num_runs % num_workers else 0)
