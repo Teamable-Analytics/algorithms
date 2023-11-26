@@ -54,13 +54,13 @@ class PriorityAlgorithmParameters(Run):
         }
 
     @property
-    def mock_student_provider_settings(self, **kwargs):
+    def mock_student_provider_settings(self):
         return MockStudentProviderSettings(
-            number_of_students=kwargs["number_of_students"],
+            number_of_students=self.NUMBER_OF_STUDENTS,
             attribute_ranges={
                 ScenarioAttribute.GENDER.value: [
-                    (Gender.MALE, 1 - kwargs["ratio_female_students"]),
-                    (Gender.FEMALE, kwargs["ratio_female_students"]),
+                    (Gender.MALE, 1 - self.RATIO_OF_FEMALE_STUDENT),
+                    (Gender.FEMALE, self.RATIO_OF_FEMALE_STUDENT),
                 ],
             },
         )
