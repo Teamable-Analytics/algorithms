@@ -5,8 +5,14 @@ from api.ai.priority_algorithm.priority.priority import (
     DiversityPriority,
     TokenizationPriority,
     RequirementPriority,
+    ProjectPreferencePriority,
 )
-from benchmarking.evaluations.goals import DiversityGoal, ProjectRequirementGoal
+from benchmarking.evaluations.enums import PreferenceSubject
+from benchmarking.evaluations.goals import (
+    DiversityGoal,
+    ProjectRequirementGoal,
+    PreferenceGoal,
+)
 from benchmarking.evaluations.interfaces import Goal
 
 
@@ -21,7 +27,13 @@ def goals_to_priorities(goals: List[Goal]) -> List[Priority]:
 
 
 def goal_to_priority(goal: Goal) -> Priority:
-    if isinstance(goal, ProjectRequirementGoal) and goal.match_skills:
+    if isinstance(goal, PreferenceGoal) and goal.subject == PreferenceSubject.PROJECTS:
+        return ProjectPreferencePriority(
+            max_project_preferences=goal.max_project_preferences,
+            direction=goal.direction,
+        )
+
+    if isinstance(goal, ProjectRequirementGoal):
         return RequirementPriority(
             criteria=goal.criteria,
         )

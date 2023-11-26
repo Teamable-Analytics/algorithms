@@ -2,6 +2,8 @@ import unittest
 from dataclasses import dataclass
 from typing import List
 
+from schema import Schema
+
 from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
 from api.ai.priority_algorithm.mutations import (
     mutate_local_max_random,
@@ -28,6 +30,10 @@ class EvenPriority(Priority):
     def validate(self) -> bool:
         return True
 
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema({})
+
 
 @dataclass
 class JohnPriority(Priority):
@@ -43,6 +49,10 @@ class JohnPriority(Priority):
 
     def validate(self) -> bool:
         return True
+
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema({})
 
 
 class TestMutations(unittest.TestCase):

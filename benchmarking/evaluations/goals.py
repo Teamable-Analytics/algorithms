@@ -22,20 +22,24 @@ class DiversityGoal(Goal):
 class PreferenceGoal(Goal):
     direction: PreferenceDirection
     subject: PreferenceSubject
+    max_project_preferences: Optional[int] = None
+
+    def validate(self):
+        if (
+            self.subject == PreferenceSubject.PROJECTS
+            and not self.max_project_preferences
+        ):
+            raise ValueError(
+                "Using the projects preference subject requires the specification of "
+                "max_project_preferences"
+            )
 
 
 @dataclass
 class ProjectRequirementGoal(Goal):
-    match_skills: bool
     criteria: Optional[
         RequirementsCriteria
     ] = RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
-
-    def validate(self):
-        if not self.match_skills and self.criteria:
-            raise ValueError(
-                "If skills are not being matched at all, no matching criteria can be set!"
-            )
 
 
 @dataclass

@@ -105,19 +105,32 @@ def create_mock_students(
     f = number_of_friends
     e = number_of_enemies
 
+    if number_of_friends + number_of_enemies >= number_of_students:
+        raise ValueError(
+            "Cannot request more friends/enemies than there are people in the class"
+        )
+
     for i in range(n):
         relationships = {}
-        for j in range(f):
-            # todo: (document) this doesn't guarantee the friend/enemy count, just sets the max
-            if friend_distribution == "cluster":
-                friend_id = (i // f * f + j) % n
-            else:
-                friend_id = random.randrange(0, n)
-            if friend_id == i:
-                continue
+
+        # Pick friends
+        if friend_distribution == "cluster":
+            clique_start = i // (f + 1) * (f + 1)
+            friends = [
+                friend_id % n
+                for friend_id in range(clique_start, clique_start + f + 1)
+                if friend_id != i
+            ]
+        else:
+            other_people = [_ for _ in range(0, n) if _ != i]
+            friends = random.sample(other_people, min(f, len(other_people)))
+        for friend_id in friends:
             relationships[friend_id] = Relationship.FRIEND
-        for j in range(e):
-            enemy_id = random.randrange(0, n)
+
+        # Pick enemies
+        eligible_enemies = [_ for _ in range(0, n) if _ not in [i, *friends]]
+        enemies = random.sample(eligible_enemies, min(e, len(eligible_enemies)))
+        for enemy_id in enemies:
             relationships[enemy_id] = Relationship.ENEMY
 
         attributes = {}

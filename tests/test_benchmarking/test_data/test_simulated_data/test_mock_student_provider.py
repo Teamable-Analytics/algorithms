@@ -1,4 +1,5 @@
 import unittest
+from typing import Literal, List
 
 from api.models.enums import Gpa, ScenarioAttribute, Relationship
 from api.models.student import Student
@@ -105,7 +106,7 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
     def test_create_mock_students__students_have_correct_friend_and_enemy_count(self):
         for i in [1, 5, 10]:
             students = create_mock_students(
-                number_of_students=i + 1,
+                number_of_students=i * 2 + 1,
                 number_of_friends=i,
                 number_of_enemies=i,
                 friend_distribution="random",
@@ -135,6 +136,156 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                         ]
                     ),
                 )
+
+    def test_create_mock_students__each_student_has_correct_num_friends_and_enemies(
+        self,
+    ):
+        dist_types: List[Literal["random", "cluster"]] = ["random", "cluster"]
+        for dist_type in dist_types:
+            students = create_mock_students(
+                number_of_students=10,
+                number_of_friends=4,
+                number_of_enemies=2,
+                friend_distribution=dist_type,
+                attribute_ranges={},
+                num_values_per_attribute={},
+                project_preference_options=[],
+                num_project_preferences_per_student=0,
+            )
+
+            for student in students:
+                num_friends = len(
+                    [
+                        1
+                        for stu_id, relation in student.relationships.items()
+                        if relation == Relationship.FRIEND
+                    ]
+                )
+                num_enemies = len(
+                    [
+                        1
+                        for stu_id, relation in student.relationships.items()
+                        if relation == Relationship.ENEMY
+                    ]
+                )
+
+                self.assertEqual(4, num_friends)
+                self.assertEqual(2, num_enemies)
+
+    def test_create_mock_students__each_student_has_correct_num_friends_and_enemies_non_divisible_class_size(
+        self,
+    ):
+        dist_types: List[Literal["random", "cluster"]] = ["random", "cluster"]
+        for dist_type in dist_types:
+            students = create_mock_students(
+                number_of_students=10,
+                number_of_friends=3,
+                number_of_enemies=2,
+                friend_distribution=dist_type,
+                attribute_ranges={},
+                num_values_per_attribute={},
+                project_preference_options=[],
+                num_project_preferences_per_student=0,
+            )
+
+            for student in students:
+                num_friends = len(
+                    [
+                        1
+                        for stu_id, relation in student.relationships.items()
+                        if relation == Relationship.FRIEND
+                    ]
+                )
+                num_enemies = len(
+                    [
+                        1
+                        for stu_id, relation in student.relationships.items()
+                        if relation == Relationship.ENEMY
+                    ]
+                )
+
+                self.assertEqual(3, num_friends)
+                self.assertEqual(2, num_enemies)
+
+    def test_create_mock_students__class_size_too_small(self):
+        self.assertRaises(
+            ValueError,
+            lambda: create_mock_students(
+                number_of_students=2,
+                number_of_friends=4,
+                number_of_enemies=1,
+                friend_distribution="random",
+                attribute_ranges={},
+                num_values_per_attribute={},
+                project_preference_options=[],
+                num_project_preferences_per_student=0,
+            ),
+        )
+
+    def test_create_mock_students__friend_cannot_be_enemy(self):
+        dist_types: List[Literal["random", "cluster"]] = ["random", "cluster"]
+        for dist_type in dist_types:
+            students = create_mock_students(
+                number_of_students=10,
+                number_of_friends=3,
+                number_of_enemies=2,
+                friend_distribution=dist_type,
+                attribute_ranges={},
+                num_values_per_attribute={},
+                project_preference_options=[],
+                num_project_preferences_per_student=0,
+            )
+
+            for student in students:
+                friends = [
+                    friend_id
+                    for friend_id, relation in student.relationships.items()
+                    if relation == Relationship.FRIEND
+                ]
+                enemies = [
+                    enemy_id
+                    for enemy_id, relation in student.relationships.items()
+                    if relation == Relationship.ENEMY
+                ]
+
+                for friend in friends:
+                    self.assertNotIn(friend, enemies)
+
+    def test_create_mock_students__cluster_setting_returns_clustered_students(self):
+        students = create_mock_students(
+            number_of_students=12,
+            number_of_friends=3,
+            number_of_enemies=2,
+            friend_distribution="cluster",
+            attribute_ranges={},
+            num_values_per_attribute={},
+            project_preference_options=[],
+            num_project_preferences_per_student=0,
+        )
+
+        cliques: List[List[int]] = []
+        for student in students:
+            friends = [
+                friend_id
+                for friend_id, relation in student.relationships.items()
+                if relation == Relationship.FRIEND
+            ]
+
+            # Check if current student is assigned to a clique yet
+            my_clique = None
+            for clique in cliques:
+                if student.id in clique:
+                    my_clique = clique
+                    break
+
+            if my_clique:
+                # Check that clique contains all friends
+                self.assertTrue(all([friend in my_clique for friend in friends]))
+            else:
+                # If not in clique yet, create one
+                cliques.append([student.id, *friends])
+
+        self.assertEqual(3, len(cliques))
 
     def test_random_choice__always_returns_list_of_int(self):
         values_1 = random_choice(possible_values=[1, 2, 3], size=1)
