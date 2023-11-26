@@ -171,7 +171,6 @@ class SimulationCache:
         cache_dir = path.abspath(
             path.join(path.dirname(__file__), "..", "..", "simulation_cache")
         )
-        print("Cache dir: ", cache_dir)
 
         # Create cache directory if it doesn't exist
         cache_key_dirs = path.normpath(self.cache_key).split(os.sep)

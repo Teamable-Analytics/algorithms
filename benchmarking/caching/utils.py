@@ -31,7 +31,6 @@ def combine(cache_key: str):
     """
 
     cache_location = SimulationCache.cache_key_parent_directory(cache_key)
-    print("Cache location: ", cache_location)
 
     # If cache not found, return
     if not path.exists(cache_location):

@@ -2,7 +2,6 @@ from typing import List
 
 
 def chunk(num_runs: int, num_workers: int) -> List[int]:
-    print(f'Num runs: {num_runs}, Num Workers: {num_workers}')
     """
     Returns a list where each element is the number of runs that thread should do
     """
