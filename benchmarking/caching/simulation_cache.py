@@ -125,7 +125,6 @@ class SimulationCache:
         }
 
         # Write to json file
-        print("Test Word for Opey")
         with open(self._get_file(), "w+") as file:
             json.dump(cached_data, file, cls=TeamSetSerializer)
 
@@ -170,10 +169,7 @@ class SimulationCache:
 
         # Get cache directory
         cache_dir = path.abspath(
-            # TODO: this is where problem is. Sometimes returns wrong thing
             path.join(path.dirname(__file__), "..", "..", "simulation_cache")
-            # Something to do with how __file__ works, maybe also with pools??
-            # Coding pools are less fun then real pools
         )
         print("Cache dir: ", cache_dir)
 
@@ -182,13 +178,9 @@ class SimulationCache:
         filename = str(cache_key_dirs[-1]) + ".json"
         cache_key_dirs = cache_key_dirs[:-1]
         full_cache_dir = path.join(cache_dir, *cache_key_dirs)
-        print("Full cache dir: ", full_cache_dir)
         if not path.exists(full_cache_dir):
             os.makedirs(full_cache_dir)
 
-        var = path.join(full_cache_dir, filename)
-        print("Final: ", var)
-        # Get file
         return path.join(full_cache_dir, filename)
 
     def _load_existing_data(self):
@@ -246,8 +238,6 @@ class SimulationCache:
 
     @staticmethod
     def get_fragment_cache_key(cache_key: str, fragment_id: int):
-        var = f"{cache_key}/fragment_{fragment_id}"
-        print("frag cache key: ", var)
         return f"{cache_key}/fragment_{fragment_id}"
 
     @staticmethod
@@ -257,11 +247,7 @@ class SimulationCache:
             path.join(path.dirname(__file__), "..", "..", "simulation_cache")
         )
 
-        full_cache_dir = path.join(cache_dir, cache_key)
-        # print("Path dir name: ", path.dirname(__file__))
-        # print("Cache dir: ", cache_dir)
-        # print("Full cache dir: ", full_cache_dir)
-        return full_cache_dir
+        return path.join(cache_dir, cache_key)
 
     @staticmethod
     def create_fragment_parent_dir(cache_key: str):
