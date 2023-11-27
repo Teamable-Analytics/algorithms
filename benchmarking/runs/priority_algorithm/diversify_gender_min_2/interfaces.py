@@ -40,7 +40,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 class PriorityAlgorithmParameters(Run):
     MAX_KEEP = 3
     MAX_SPREAD = 3
-    MAX_ITERATE = 300
+    MAX_ITERATE = 400
     MAX_TIME = 20
     RATIO_OF_FEMALE_STUDENT = 0.4
     NUMBER_OF_STUDENTS = 200
@@ -73,7 +73,9 @@ class PriorityAlgorithmParameters(Run):
 
     def mock_student_provider_settings(self, **kwargs):
         return MockStudentProviderSettings(
-            number_of_students=kwargs.get("number_of_students", self.NUMBER_OF_STUDENTS),
+            number_of_students=kwargs.get(
+                "number_of_students", self.NUMBER_OF_STUDENTS
+            ),
             attribute_ranges={
                 ScenarioAttribute.GENDER.value: [
                     (Gender.MALE, 1 - self.RATIO_OF_FEMALE_STUDENT),
@@ -172,7 +174,9 @@ class PriorityAlgorithmParameters(Run):
     def scenario(self) -> Scenario:
         return DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value)
 
-    def generate_graphs(self, artifacts: Dict[int, SimulationSetArtifact]):
+    def generate_graphs(
+        self, artifacts: Dict[int, SimulationSetArtifact], x_label: str
+    ):
         graph_runtime_dict = {}
         graph_avg_gini_dict = {}
         graph_priority_dict = {}
@@ -182,7 +186,7 @@ class PriorityAlgorithmParameters(Run):
             graph_priority_dict,
         ]
 
-        for class_size, artifact in artifacts.items():
+        for item, artifact in artifacts.items():
             insight_set: Dict[str, Dict[str, List[float]]] = Insight.get_output_set(
                 artifact=artifact, metrics=list(self.metrics.values())
             )
@@ -204,17 +208,17 @@ class PriorityAlgorithmParameters(Run):
                 for name, data in metric.items():
                     if name not in graph_dicts[i]:
                         graph_dicts[i][name] = GraphData(
-                            x_data=[class_size],
+                            x_data=[item],
                             y_data=[data],
                             name=name,
                         )
                     else:
-                        graph_dicts[i][name].x_data.append(class_size)
+                        graph_dicts[i][name].x_data.append(item)
                         graph_dicts[i][name].y_data.append(data)
 
         line_graph(
             LineGraphMetadata(
-                x_label="Class size",
+                x_label=x_label,
                 y_label="Run time (seconds)",
                 title="Diversify Gender With Min of Two Runtimes",
                 data=list(graph_runtime_dict.values()),
@@ -223,17 +227,19 @@ class PriorityAlgorithmParameters(Run):
 
         line_graph(
             LineGraphMetadata(
-                x_label="Class size",
+                x_label=x_label,
                 y_label="Average Gini Index",
                 title="Diversify Gender With Min of Two Average Gini Index",
                 data=list(graph_avg_gini_dict.values()),
-                y_lim=GraphAxisRange(*self.metrics["AverageGiniIndex"].theoretical_range),
+                y_lim=GraphAxisRange(
+                    *self.metrics["AverageGiniIndex"].theoretical_range
+                ),
             )
         )
 
         line_graph(
             LineGraphMetadata(
-                x_label="Class size",
+                x_label=x_label,
                 y_label="Priorities Satisfied",
                 title="Diversity Gender With Min of Two Satisfied Priorities",
                 data=list(graph_priority_dict.values()),

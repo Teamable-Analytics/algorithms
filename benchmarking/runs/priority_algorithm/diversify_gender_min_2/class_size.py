@@ -31,7 +31,7 @@ class DiversifyGenderMin2ClassSize(PriorityAlgorithmParameters):
             artifacts[class_size] = simulation_set_artifact
 
         if generate_graphs:
-            self.generate_graphs(artifacts)
+            self.generate_graphs(artifacts=artifacts, x_label="Class Size")
 
 
 if __name__ == "__main__":
