@@ -148,7 +148,9 @@ class VariedNumFriendsSocialRun(SocialRun):
                     name="AlgorithmType.RANDOM-default",
                     x_data=clique_sizes,
                     y_data=[
-                        graph_data[clique_size][metric_name]["AlgorithmType.RANDOM-default"].y_data[class_sizes.index(class_size)]
+                        graph_data[clique_size][metric_name][
+                            "AlgorithmType.RANDOM-default"
+                        ].y_data[class_sizes.index(class_size)]
                         for clique_size in clique_sizes
                     ],
                 )
@@ -156,7 +158,9 @@ class VariedNumFriendsSocialRun(SocialRun):
                     name="AlgorithmType.WEIGHT-default",
                     x_data=clique_sizes,
                     y_data=[
-                        graph_data[clique_size][metric_name]["AlgorithmType.WEIGHT-default"].y_data[class_sizes.index(class_size)]
+                        graph_data[clique_size][metric_name][
+                            "AlgorithmType.WEIGHT-default"
+                        ].y_data[class_sizes.index(class_size)]
                         for clique_size in clique_sizes
                     ],
                 )
@@ -164,7 +168,9 @@ class VariedNumFriendsSocialRun(SocialRun):
                     name="AlgorithmType.SOCIAL-default",
                     x_data=clique_sizes,
                     y_data=[
-                        graph_data[clique_size][metric_name]["AlgorithmType.SOCIAL-default"].y_data[class_sizes.index(class_size)]
+                        graph_data[clique_size][metric_name][
+                            "AlgorithmType.SOCIAL-default"
+                        ].y_data[class_sizes.index(class_size)]
                         for clique_size in clique_sizes
                     ],
                 )
@@ -180,7 +186,9 @@ class VariedNumFriendsSocialRun(SocialRun):
                     else GraphAxisRange(-0.1, 1.1)
                 )
                 graph_subtitle = f"{metric_name.capitalize()} - {class_size} students"
-                graph_filename = f"varied_num_friends/{metric_name.lower().replace(' ', '_')}"
+                graph_filename = (
+                    f"varied_num_friends/{metric_name.lower().replace(' ', '_')}"
+                )
                 line_graph(
                     LineGraphMetadata(
                         x_label="Clique Size",
