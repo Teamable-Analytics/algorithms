@@ -19,8 +19,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class VariedNumFriendsSocialRun(SocialRun):
-    @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = False):
+    def start(self, num_trials: int = 10, generate_graphs: bool = False):
         """
         Goal: See how the social algorithm reacts to different numbers of friends.
 
@@ -139,4 +138,4 @@ class VariedNumFriendsSocialRun(SocialRun):
 
 
 if __name__ == "__main__":
-    typer.run(VariedNumFriendsSocialRun.start)
+    typer.run(VariedNumFriendsSocialRun().start)
