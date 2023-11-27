@@ -1,5 +1,7 @@
 import os
+import random
 import time
+import uuid
 from multiprocessing import Pool
 from multiprocessing.pool import ApplyResult
 from typing import List, Tuple
@@ -125,6 +127,9 @@ def run_trial_batch(
         end_time = time.time()
 
         run_time = end_time - start_time
+
+        # Give the generated team set a unique id
+        team_set._id = str(uuid.uuid4())
 
         batch_team_sets.append(team_set)
         batch_run_times.append(run_time)

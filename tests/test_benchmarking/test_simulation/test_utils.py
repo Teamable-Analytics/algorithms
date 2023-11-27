@@ -12,7 +12,9 @@ class TestUtils(unittest.TestCase):
         result = chunk(10, 2)
         self.assertListEqual([5, 5], result)
 
-    def test_chunk__returns_correct_worker_array_when_num_runs_less_than_num_workers(self):
+    def test_chunk__returns_correct_worker_array_when_num_runs_less_than_num_workers(
+        self,
+    ):
         for num_threads in [4, 5, 6, 29837]:
             chunk_array = chunk(4, num_threads)
             self.assertEqual(4, len(chunk_array))

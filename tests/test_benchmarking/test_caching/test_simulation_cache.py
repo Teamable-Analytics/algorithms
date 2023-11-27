@@ -1,9 +1,9 @@
 import json
 import shutil
 import unittest
+from datetime import datetime
 from os import path
 from typing import List
-from unittest.mock import patch
 
 from api.models.team_set import TeamSet
 from api.models.team_set.serializer import TeamSetSerializer
@@ -17,43 +17,19 @@ from tests.test_benchmarking.test_caching._data import (
 
 class TestSimulationCache(unittest.TestCase):
     def setUp(self):
-        # Mock the cache directory
-        self.real_dirname = path.dirname
-
-        def mock_dirname(path_str):
-            root_dir = path.abspath(
-                path.join(self.real_dirname(__file__), "..", "..", "..")
-            )
-            file_name = path.abspath(path_str)
-            target_dir = path.join(
-                root_dir, "benchmarking", "caching", "simulation_cache.py"
-            )
-            # If the dirname request is from simulation_cache.py, return a directory that will cause the file to be written to the test cache directory
-            if file_name == target_dir:
-                return path.join(root_dir, "test_simulation_cache", "_", "_")
-            return self.real_dirname(path_str)
-
-        self.mock_dirname = mock_dirname
-        self.patcher = patch("os.path.dirname", self.mock_dirname)
-        self.patcher.start()
+        self.test_cache_key = f"test/{datetime.now().timestamp()}/test_cache_key"
 
     def tearDown(self):
-        self.patcher.stop()
-        # Delete the cache directory
-        cache_dir = path.abspath(
+        test_cache_dir = path.abspath(
             path.join(
-                self.real_dirname(__file__), "..", "..", "..", "test_simulation_cache"
+                path.dirname(__file__), "..", "..", "..", "simulation_cache", "test"
             )
         )
-        if path.exists(cache_dir):
-            shutil.rmtree(cache_dir)
+        if path.exists(test_cache_dir):
+            shutil.rmtree(test_cache_dir)
 
     def test_get_file__path_in_cache_dir(self):
-        # Don't mock the dirname function for this test
-        self.patcher.stop()
-
-        cache_key = "test_cache_key"
-        cache = SimulationCache(cache_key)
+        cache = SimulationCache(self.test_cache_key)
 
         # Get the absolute path of the directory and the file
         cache_dir = path.abspath(
@@ -64,14 +40,8 @@ class TestSimulationCache(unittest.TestCase):
         # Check if the file path is a subpath of the directory
         self.assertEqual(path.commonpath([cache_dir, file_path]), cache_dir)
 
-        cache.clear()
-
     def test_save__file_is_created(self):
-        cache_key = "test_cache_key"
-        cache = SimulationCache(cache_key)
-
-        # Make sure file doesn't exist
-        cache.clear()
+        cache = SimulationCache(self.test_cache_key)
 
         # Save
         cache.save([], [])
@@ -80,8 +50,7 @@ class TestSimulationCache(unittest.TestCase):
         self.assertTrue(path.exists(cache._get_file()))
 
     def test_save__file_is_overwritten(self):
-        cache_key = "test_cache_key"
-        cache = SimulationCache(cache_key)
+        cache = SimulationCache(self.test_cache_key)
 
         # Save
         cache.save([], [])
@@ -101,8 +70,7 @@ class TestSimulationCache(unittest.TestCase):
         self.assertNotEqual(file_contents, new_file_contents)
 
     def test_save__is_json(self):
-        cache_key = "test_cache_key"
-        cache = SimulationCache(cache_key)
+        cache = SimulationCache(self.test_cache_key)
 
         # Save
         cache.save([], [])
@@ -118,8 +86,7 @@ class TestSimulationCache(unittest.TestCase):
             self.fail("File contents are not valid json.")
 
     def test_save__saves_time_and_commit_in_metadata(self):
-        cache_key = "test_cache_key"
-        cache = SimulationCache(cache_key)
+        cache = SimulationCache(self.test_cache_key)
 
         # Save
         cache.save([], [])
@@ -134,8 +101,7 @@ class TestSimulationCache(unittest.TestCase):
         self.assertIn("commit_hash", file_contents["metadata"])
 
     def test_save__saves_team_sets_and_runtimes(self):
-        cache_key = "test_cache_key"
-        cache = SimulationCache(cache_key)
+        cache = SimulationCache(self.test_cache_key)
 
         # Save
         cache.save(mock_simulation_result, mock_runtimes)
@@ -156,9 +122,7 @@ class TestSimulationCache(unittest.TestCase):
         self.assertEqual(mock_runtimes, file_contents["runtimes"])
 
     def test_add_run__correctly_adds_run(self):
-        cache_key = "test_cache_key"
-        cache = SimulationCache(cache_key)
-        cache.clear()
+        cache = SimulationCache(self.test_cache_key)
         cache.save(mock_simulation_result[:1], mock_runtimes[:1])
 
         self.assertEqual(1, len(cache.get_simulation_artifact()[0]))
@@ -178,9 +142,7 @@ class TestSimulationCache(unittest.TestCase):
         self.assertEqual(2, len(file_contents["runtimes"]))
 
     def test_add_run__correctly_adds_run_no_save(self):
-        cache_key = "test_cache_key"
-        cache = SimulationCache(cache_key)
-        cache.clear()
+        cache = SimulationCache(self.test_cache_key)
         cache.add_run(mock_simulation_result[0], mock_runtimes[0])
 
         self.assertEqual(1, len(cache.get_simulation_artifact()[0]))
@@ -199,8 +161,7 @@ class TestSimulationCache(unittest.TestCase):
         self.assertEqual(2, len(file_contents["runtimes"]))
 
     def test_clear__deletes_cache_file(self):
-        cache_key = "test_cache_key"
-        cache = SimulationCache(cache_key)
+        cache = SimulationCache(self.test_cache_key)
         cache.save([], [])
 
         # Check to make sure file exists
@@ -213,8 +174,7 @@ class TestSimulationCache(unittest.TestCase):
         self.assertFalse(cache.exists())
 
     def test_get_simulation_artifact__returns_correct_teams(self):
-        cache_key = "test_cache_key"
-        cache = SimulationCache(cache_key)
+        cache = SimulationCache(self.test_cache_key)
         cache.save(mock_simulation_result, mock_runtimes)
 
         # Get teams
@@ -230,8 +190,7 @@ class TestSimulationCache(unittest.TestCase):
         self.assertEqual(mock_runtimes, artifact[1])
 
     def test_get_metadata__returns_correct_metadata(self):
-        cache_key = "test_cache_key"
-        cache = SimulationCache(cache_key)
+        cache = SimulationCache(self.test_cache_key)
         cache.save([], [])
 
         # Get metadata
@@ -255,7 +214,7 @@ class TestSimulationCache(unittest.TestCase):
         self.assertIsInstance(metadata["timestamp"], float)
 
     def test_save__cache_key_with_slashes(self):
-        cache_key = "test_cache_key/with/slashes"
+        cache_key = self.test_cache_key + "/test_cache_key/with/slashes"
         cache = SimulationCache(cache_key)
 
         # Save
@@ -264,12 +223,12 @@ class TestSimulationCache(unittest.TestCase):
         # Check to make sure folders were created
         expected_cache_location = path.abspath(
             path.join(
-                self.real_dirname(__file__),
+                path.dirname(__file__),
                 "..",
                 "..",
                 "..",
-                "test_simulation_cache",
                 "simulation_cache",
+                self.test_cache_key,
                 "test_cache_key",
                 "with",
                 "slashes.json",
