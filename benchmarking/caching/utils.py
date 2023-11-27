@@ -98,7 +98,6 @@ def combine(cache_key: str):
         "runtimes": [],
     }
 
-    # todo: read data from the cache FILE if a FILE exists at that cache key, and load it into result_cache
     if path.exists(cache_location + ".json"):
         existing_cache = SimulationCache(cache_key)
         existing_cache._load_existing_data()
