@@ -1,155 +1,38 @@
 import math
-from typing import Dict, List
+from typing import Dict
 
 import typer
-
-from api.ai.interfaces.algorithm_config import (
-    PriorityAlgorithmConfig,
-    RandomAlgorithmConfig,
-    WeightAlgorithmConfig,
+from benchmarking.runs.priority_algorithm.diversify_gender_min_2.interfaces import (
+    PriorityAlgorithmParameters,
 )
-from api.ai.priority_algorithm.mutations import (
-    mutate_local_max,
-    mutate_random_swap,
-    mutate_local_max_random,
-    mutate_local_max_double_random,
-    mutate_robinhood,
-    mutate_robinhood_holistic,
-)
-from api.models.enums import ScenarioAttribute, Gender, AlgorithmType
-from benchmarking.data.simulated_data.mock_student_provider import (
-    MockStudentProvider,
-    MockStudentProviderSettings,
-)
-from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
-from benchmarking.evaluations.graphing.line_graph import line_graph
-from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.interfaces import TeamSetMetric
-from benchmarking.evaluations.metrics.average_gini_index import (
-    AverageGiniIndex,
-)
-from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
-from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
-from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
-    DiversifyGenderMin2Female,
-)
-from benchmarking.runs.interfaces import Run
-from benchmarking.runs.priority_algorithm.diversify_gender_min_2.interfaces import PriorityAlgorithmParameters
-from benchmarking.simulation.goal_to_priority import goals_to_priorities
-from benchmarking.simulation.insight import Insight
-from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
-from benchmarking.simulation.simulation_settings import SimulationSettings
+from benchmarking.simulation.simulation_set import SimulationSetArtifact
 
 
 class DiversifyGenderMin2ClassSize(PriorityAlgorithmParameters):
-    @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = False):
+    def start(self, num_trials: int = 4, generate_graphs: bool = True):
         """
         Goal: Run diversify gender scenario while varying the size of the class
         """
 
         # Defining our changing x-values (in the graph sense)
-        class_sizes = list(range(50, 501, 50))
-        scenario = DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value)
-
-        graph_runtime_dict = {}
-        graph_avg_gini_dict = {}
-        graph_priority_dict = {}
-        graph_dicts = [
-            graph_runtime_dict,
-            graph_avg_gini_dict,
-            graph_priority_dict,
-        ]
-
-        metrics: Dict[str, TeamSetMetric] = {
-            "AverageGiniIndex": AverageGiniIndex(
-                attribute=ScenarioAttribute.GENDER.value
-            ),
-            "MaxGiniIndex": MaximumGiniIndex(attribute=ScenarioAttribute.GENDER.value),
-            "MinGiniIndex": MinimumGiniIndex(attribute=ScenarioAttribute.GENDER.value),
-            "PrioritySatisfaction": PrioritySatisfaction(
-                goals_to_priorities(scenario.goals),
-                False,
-            ),
-        }
+        class_sizes = list(range(50, 101, 50))
 
         artifacts: Dict[int, SimulationSetArtifact] = {}
 
         for class_size in class_sizes:
             print("CLASS SIZE /", class_size)
-
             number_of_teams = math.ceil(class_size / 5)
 
-            PriorityAlgorithmParameters.simulation_set(cache_key=f"priority_algorithm/diversify_gender_min_2/class_size/{class_size}", number_of_students=class_size, number_of_teams=number_of_teams).run(num_runs=num_trials)
+            simulation_set_artifact = self.simulation_set(
+                cache_key=f"priority_algorithm/diversify_gender_min_2/class_size/{class_size}",
+                number_of_students=class_size,
+                number_of_teams=number_of_teams,
+            ).run(num_runs=num_trials)
             artifacts[class_size] = simulation_set_artifact
 
         if generate_graphs:
-            for class_size, artifact in artifacts.items():
-                insight_set: Dict[str, Dict[str, List[float]]] = Insight.get_output_set(
-                    artifact=artifact, metrics=list(metrics.values())
-                )
-
-                average_ginis = Insight.average_metric(insight_set, "AverageGiniIndex")
-                average_runtimes = Insight.average_metric(
-                    insight_set, Insight.KEY_RUNTIMES
-                )
-                satisfied_priorities = Insight.average_metric(
-                    insight_set, "PrioritySatisfaction"
-                )
-
-                metric_values = [
-                    average_runtimes,
-                    average_ginis,
-                    satisfied_priorities,
-                ]
-
-                # Data processing for graph
-                for i, metric in enumerate(metric_values):
-                    for name, data in metric.items():
-                        if name not in graph_dicts[i]:
-                            graph_dicts[i][name] = GraphData(
-                                x_data=[class_size],
-                                y_data=[data],
-                                name=name,
-                            )
-                        else:
-                            graph_dicts[i][name].x_data.append(class_size)
-                            graph_dicts[i][name].y_data.append(data)
-
-            line_graph(
-                LineGraphMetadata(
-                    x_label="Class size",
-                    y_label="Run time (seconds)",
-                    title="Diversify Gender With Min of Two Runtimes",
-                    data=list(graph_runtime_dict.values()),
-                )
-            )
-
-            line_graph(
-                LineGraphMetadata(
-                    x_label="Class size",
-                    y_label="Average Gini Index",
-                    title="Diversify Gender With Min of Two Average Gini Index",
-                    data=list(graph_avg_gini_dict.values()),
-                    y_lim=GraphAxisRange(
-                        *metrics["AverageGiniIndex"].theoretical_range
-                    ),
-                )
-            )
-
-            line_graph(
-                LineGraphMetadata(
-                    x_label="Class size",
-                    y_label="Priorities Satisfied",
-                    title="Diversity Gender With Min of Two Satisfied Priorities",
-                    data=list(graph_priority_dict.values()),
-                    y_lim=GraphAxisRange(
-                        *metrics["PrioritySatisfaction"].theoretical_range
-                    ),
-                )
-            )
+            self.generate_graphs(artifacts)
 
 
 if __name__ == "__main__":
-    typer.run(DiversifyGenderMin2ClassSize.start)
+    typer.run(DiversifyGenderMin2ClassSize().start)
