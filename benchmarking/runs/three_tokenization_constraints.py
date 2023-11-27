@@ -35,8 +35,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class ThreeTokenizationConstraintsRun(Run):
-    @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = True):
+    def start(self, num_trials: int = 10, generate_graphs: bool = True):
         """
         Goal: Run a scenario with three tokenization constraints:
         concentrate GPA max three, diversify race min two, and concentrate age max three.
@@ -207,4 +206,4 @@ class ThreeTokenizationConstraintsRun(Run):
 
 
 if __name__ == "__main__":
-    typer.run(ThreeTokenizationConstraintsRun.start)
+    typer.run(ThreeTokenizationConstraintsRun().start)

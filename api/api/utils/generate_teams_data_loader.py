@@ -4,10 +4,9 @@ from typing import Dict, Any, List
 from api.ai.algorithm_runner import AlgorithmRunner
 from api.ai.interfaces.algorithm_options import AlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.api.utils.relationship import get_relationship
 from api.models.enums import AlgorithmType
-from api.models.student import Student
-from api.models.team import TeamShell
+from api.models.student import Student, StudentSerializer
+from api.models.team import TeamSerializer
 
 
 @dataclass
@@ -37,19 +36,7 @@ class GenerateTeamsDataLoader:
 
     def _get_students(self) -> List[Student]:
         students = self.data.get("students")
-        return [
-            Student(
-                _id=int(student.get("id")),
-                name=student.get("name"),
-                relationships={
-                    int(student_id): get_relationship(relationship)
-                    for student_id, relationship in student.get("relationships").items()
-                },
-                attributes=student.get("attributes"),
-                project_preferences=student.get("project_preferences"),
-            )
-            for student in students
-        ]
+        return [StudentSerializer().decode(student) for student in students]
 
     def _get_algorithm_options(self) -> AlgorithmOptions:
         algorithm_options = {**self.data.get("algorithm_options")}
@@ -66,12 +53,7 @@ class GenerateTeamsDataLoader:
         return TeamGenerationOptions(
             total_teams=team_generation_options.get("total_teams"),
             initial_teams=[
-                TeamShell(
-                    _id=int(team.get("id")),
-                    name=team.get("name"),
-                    project_id=int(team.get("project_id")),
-                    requirements=team.get("requirements", []),
-                )
+                TeamSerializer().decode(team).to_shell()
                 for team in team_generation_options.get("initial_teams")
             ],
             max_team_size=team_generation_options.get("max_team_size"),
