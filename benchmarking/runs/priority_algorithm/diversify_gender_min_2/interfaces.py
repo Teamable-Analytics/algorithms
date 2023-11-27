@@ -19,7 +19,6 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
     MockStudentProvider,
 )
-from benchmarking.evaluations import metrics
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
@@ -86,15 +85,11 @@ class PriorityAlgorithmParameters(Run):
         )
 
     def simulation_set(self, cache_key: str, **kwargs):
-        max_iterate = (
-            kwargs["max_iterate"] if "max_iterate" in kwargs else self.MAX_ITERATE
-        )
+        max_iterate = kwargs.get("max_iterate", self.MAX_ITERATE)
         max_spread = kwargs["max_spread"] if "max_spread" in kwargs else self.MAX_SPREAD
         max_time = kwargs["max_time"] if "max_time" in kwargs else self.MAX_TIME
         max_keep = kwargs["max_keep"] if "max_keep" in kwargs else self.MAX_KEEP
-        num_teams = (
-            kwargs["number_teams"] if "number_teams" in kwargs else self.NUMBER_OF_TEAMS
-        )
+        num_teams = kwargs["number_teams"] if "number_teams" in kwargs else self.NUMBER_OF_TEAMS
         return SimulationSet(
             settings=SimulationSettings(
                 num_teams=num_teams,
@@ -234,7 +229,7 @@ class PriorityAlgorithmParameters(Run):
                 y_label="Average Gini Index",
                 title="Diversify Gender With Min of Two Average Gini Index",
                 data=list(graph_avg_gini_dict.values()),
-                y_lim=GraphAxisRange(*metrics["AverageGiniIndex"].theoretical_range),
+                y_lim=GraphAxisRange(*self.metrics["AverageGiniIndex"].theoretical_range),
             )
         )
 
@@ -245,7 +240,7 @@ class PriorityAlgorithmParameters(Run):
                 title="Diversity Gender With Min of Two Satisfied Priorities",
                 data=list(graph_priority_dict.values()),
                 y_lim=GraphAxisRange(
-                    *metrics["PrioritySatisfaction"].theoretical_range
+                    *self.metrics["PrioritySatisfaction"].theoretical_range
                 ),
             )
         )
