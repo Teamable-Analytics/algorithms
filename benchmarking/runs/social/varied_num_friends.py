@@ -126,7 +126,7 @@ class VariedNumFriendsSocialRun(SocialRun):
                     graph_filename = f"varied_num_friends/clique_size_{clique_size}/{metric_name.lower().replace(' ', '_')}"
                     line_graph(
                         LineGraphMetadata(
-                            x_label="Number of Friends",
+                            x_label="Class Size",
                             y_label=y_label,
                             title="Varied Number of Friends",
                             description=graph_subtitle,
@@ -136,6 +136,63 @@ class VariedNumFriendsSocialRun(SocialRun):
                             file_name=graph_filename,
                         )
                     )
+
+            # graphs with clique size on the x-axis
+            class_size = 200
+            for metric_name in [
+                Insight.KEY_RUNTIMES,
+                *list(SocialRun.metrics().keys()),
+            ]:
+                # Make GraphData objects
+                random_graph_data = GraphData(
+                    name="AlgorithmType.RANDOM-default",
+                    x_data=clique_sizes,
+                    y_data=[
+                        graph_data[clique_size][metric_name]["AlgorithmType.RANDOM-default"].y_data[class_sizes.index(class_size)]
+                        for clique_size in clique_sizes
+                    ],
+                )
+                weight_graph_data = GraphData(
+                    name="AlgorithmType.WEIGHT-default",
+                    x_data=clique_sizes,
+                    y_data=[
+                        graph_data[clique_size][metric_name]["AlgorithmType.WEIGHT-default"].y_data[class_sizes.index(class_size)]
+                        for clique_size in clique_sizes
+                    ],
+                )
+                social_graph_data = GraphData(
+                    name="AlgorithmType.SOCIAL-default",
+                    x_data=clique_sizes,
+                    y_data=[
+                        graph_data[clique_size][metric_name]["AlgorithmType.SOCIAL-default"].y_data[class_sizes.index(class_size)]
+                        for clique_size in clique_sizes
+                    ],
+                )
+
+                y_label = (
+                    "Run time (seconds)"
+                    if metric_name == Insight.KEY_RUNTIMES
+                    else "Ratio of Teams"
+                )
+                y_lim = (
+                    None
+                    if metric_name == Insight.KEY_RUNTIMES
+                    else GraphAxisRange(-0.1, 1.1)
+                )
+                graph_subtitle = f"{metric_name.capitalize()} - {class_size} students"
+                graph_filename = f"varied_num_friends/{metric_name.lower().replace(' ', '_')}"
+                line_graph(
+                    LineGraphMetadata(
+                        x_label="Clique Size",
+                        y_label=y_label,
+                        title="Varied Number of Friends",
+                        description=graph_subtitle,
+                        data=[random_graph_data, weight_graph_data, social_graph_data],
+                        y_lim=y_lim,
+                        save_graph=True,
+                        file_name=graph_filename,
+                    )
+                )
 
 
 if __name__ == "__main__":
