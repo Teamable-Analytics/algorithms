@@ -73,9 +73,7 @@ class PriorityAlgorithmParameters(Run):
 
     def mock_student_provider_settings(self, **kwargs):
         return MockStudentProviderSettings(
-            number_of_students=kwargs["number_students"]
-            if "number_students" in kwargs
-            else self.NUMBER_OF_STUDENTS,
+            number_of_students=kwargs.get("number_of_students", self.NUMBER_OF_STUDENTS),
             attribute_ranges={
                 ScenarioAttribute.GENDER.value: [
                     (Gender.MALE, 1 - self.RATIO_OF_FEMALE_STUDENT),
@@ -86,10 +84,10 @@ class PriorityAlgorithmParameters(Run):
 
     def simulation_set(self, cache_key: str, **kwargs):
         max_iterate = kwargs.get("max_iterate", self.MAX_ITERATE)
-        max_spread = kwargs["max_spread"] if "max_spread" in kwargs else self.MAX_SPREAD
-        max_time = kwargs["max_time"] if "max_time" in kwargs else self.MAX_TIME
-        max_keep = kwargs["max_keep"] if "max_keep" in kwargs else self.MAX_KEEP
-        num_teams = kwargs["number_teams"] if "number_teams" in kwargs else self.NUMBER_OF_TEAMS
+        max_spread = kwargs.get("max_spread", self.MAX_SPREAD)
+        max_time = kwargs.get("max_time", self.MAX_TIME)
+        max_keep = kwargs.get("max_keep", self.MAX_KEEP)
+        num_teams = kwargs.get("number_of_teams", self.NUMBER_OF_TEAMS)
         return SimulationSet(
             settings=SimulationSettings(
                 num_teams=num_teams,

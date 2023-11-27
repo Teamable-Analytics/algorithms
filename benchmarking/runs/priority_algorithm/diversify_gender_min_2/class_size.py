@@ -35,13 +35,14 @@ from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
     DiversifyGenderMin2Female,
 )
 from benchmarking.runs.interfaces import Run
+from benchmarking.runs.priority_algorithm.diversify_gender_min_2.interfaces import PriorityAlgorithmParameters
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class DiversifyGenderMin2ClassSize(Run):
+class DiversifyGenderMin2ClassSize(PriorityAlgorithmParameters):
     @staticmethod
     def start(num_trials: int = 10, generate_graphs: bool = False):
         """
@@ -50,12 +51,6 @@ class DiversifyGenderMin2ClassSize(Run):
 
         # Defining our changing x-values (in the graph sense)
         class_sizes = list(range(50, 501, 50))
-        ratio_of_female_students = 0.4
-        max_time = 10
-        max_iterate = 300
-        max_keep = 3
-        max_spread = 3
-
         scenario = DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value)
 
         graph_runtime_dict = {}
@@ -86,91 +81,7 @@ class DiversifyGenderMin2ClassSize(Run):
 
             number_of_teams = math.ceil(class_size / 5)
 
-            # set up either mock or real data
-            student_provider_settings = MockStudentProviderSettings(
-                number_of_students=class_size,
-                attribute_ranges={
-                    ScenarioAttribute.GENDER.value: [
-                        (Gender.MALE, 1 - ratio_of_female_students),
-                        (Gender.FEMALE, ratio_of_female_students),
-                    ],
-                },
-            )
-
-            simulation_set_artifact = SimulationSet(
-                settings=SimulationSettings(
-                    num_teams=number_of_teams,
-                    scenario=scenario,
-                    student_provider=MockStudentProvider(student_provider_settings),
-                    cache_key=f"priority_algorithm/diversify_gender_min_2/class_size/{class_size}",
-                ),
-                algorithm_set={
-                    AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
-                    AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
-                    AlgorithmType.PRIORITY: [
-                        PriorityAlgorithmConfig(
-                            MAX_ITERATE=max_iterate,
-                            MAX_TIME=max_time,
-                            MAX_KEEP=max_keep,
-                            MAX_SPREAD=max_spread,
-                        ),
-                        PriorityAlgorithmConfig(
-                            name="local_max",
-                            MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
-                            MAX_TIME=max_time,
-                            MAX_ITERATE=max_iterate,
-                            MAX_KEEP=max_keep,
-                            MAX_SPREAD=max_spread,
-                        ),
-                        PriorityAlgorithmConfig(
-                            name="local_max_random",
-                            MUTATIONS=[
-                                (mutate_local_max_random, 1),
-                                (mutate_random_swap, 2),
-                            ],
-                            MAX_TIME=max_time,
-                            MAX_ITERATE=max_iterate,
-                            MAX_KEEP=max_keep,
-                            MAX_SPREAD=max_spread,
-                        ),
-                        PriorityAlgorithmConfig(
-                            name="local_max_double_random",
-                            MUTATIONS=[
-                                (mutate_local_max_double_random, 1),
-                                (mutate_random_swap, 2),
-                            ],
-                            MAX_TIME=max_time,
-                            MAX_ITERATE=max_iterate,
-                            MAX_KEEP=max_keep,
-                            MAX_SPREAD=max_spread,
-                        ),
-                        PriorityAlgorithmConfig(
-                            name="local_max_pure_double_random",
-                            MUTATIONS=[(mutate_local_max_double_random, 3)],
-                            MAX_TIME=max_time,
-                            MAX_ITERATE=max_iterate,
-                            MAX_KEEP=max_keep,
-                            MAX_SPREAD=max_spread,
-                        ),
-                        PriorityAlgorithmConfig(
-                            name="robinhood",
-                            MUTATIONS=[(mutate_robinhood, 3)],
-                            MAX_TIME=max_time,
-                            MAX_ITERATE=max_iterate,
-                            MAX_KEEP=max_keep,
-                            MAX_SPREAD=max_spread,
-                        ),
-                        PriorityAlgorithmConfig(
-                            name="robinhood_holistic",
-                            MUTATIONS=[(mutate_robinhood_holistic, 3)],
-                            MAX_TIME=max_time,
-                            MAX_ITERATE=max_iterate,
-                            MAX_KEEP=max_keep,
-                            MAX_SPREAD=max_spread,
-                        ),
-                    ],
-                },
-            ).run(num_runs=num_trials)
+            PriorityAlgorithmParameters.simulation_set(cache_key=f"priority_algorithm/diversify_gender_min_2/class_size/{class_size}", number_of_students=class_size, number_of_teams=number_of_teams).run(num_runs=num_trials)
             artifacts[class_size] = simulation_set_artifact
 
         if generate_graphs:
