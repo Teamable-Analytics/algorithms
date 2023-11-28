@@ -44,7 +44,7 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
         """
 
         # Defining our changing x-values (in the graph sense)
-        class_sizes = list(range(50, 1001, 50))
+        class_sizes = list(range(20, 61, 20))
         ratio_of_female_students = 0.2
 
         graph_runtime_dict = {}
