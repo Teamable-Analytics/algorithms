@@ -108,34 +108,36 @@ def run_trial_batch(
     settings: SimulationSettings,
     runner: AlgorithmRunner,
 ):
-    batch_cache = None
-    if settings.cache_key:
-        batch_cache_key = SimulationCache.get_fragment_cache_key(
-            settings.cache_key, fragment
-        )
-        batch_cache = SimulationCache(batch_cache_key)
+    try:
+        batch_cache = None
+        if settings.cache_key:
+            batch_cache_key = SimulationCache.get_fragment_cache_key(
+                settings.cache_key, fragment
+            )
+            batch_cache = SimulationCache(batch_cache_key)
 
-    batch_team_sets = []
-    batch_run_times = []
+        batch_team_sets = []
+        batch_run_times = []
 
-    # todo: some goated error handling, so one worker doesnt tank the others
-    for _ in range(0, num_runs_for_batch):
-        students = settings.student_provider.get()
+        for _ in range(0, num_runs_for_batch):
+            students = settings.student_provider.get()
 
-        start_time = time.time()
-        team_set = runner.generate(students)
-        end_time = time.time()
+            start_time = time.time()
+            team_set = runner.generate(students)
+            end_time = time.time()
 
-        run_time = end_time - start_time
+            run_time = end_time - start_time
 
-        # Give the generated team set a unique id
-        team_set._id = str(uuid.uuid4())
+            # Give the generated team set a unique id
+            team_set._id = str(uuid.uuid4())
 
-        batch_team_sets.append(team_set)
-        batch_run_times.append(run_time)
+            batch_team_sets.append(team_set)
+            batch_run_times.append(run_time)
 
-        # Save result to cache. Do this inside the loop so that if the program crashes, we still have the results from the previous runs.
-        if batch_cache is not None:
-            batch_cache.add_run(team_set, run_time)
+            # Save result to cache. Do this inside the loop so that if the program crashes, we still have the results from the previous runs.
+            if batch_cache is not None:
+                batch_cache.add_run(team_set, run_time)
 
-    return batch_team_sets, batch_run_times
+        return batch_team_sets, batch_run_times
+    except Exception:
+        return [], []
