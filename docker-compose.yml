@@ -2,11 +2,9 @@ services:
     nginx:
         build:
             context: nginx
+            dockerfile: Dockerfile
         ports:
-            - 1337:80
-        volumes:
-            - static_volume:/home/app/algorithms/staticfiles
-            - media_volume:/home/app/algorithms/mediafiles
+            - 80:80
         depends_on:
             - api
         restart: 'on-failure'
@@ -15,13 +13,9 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        command: gunicorn config.wsgi:application --bind
-
-        volumes:
-            - static_volume:/home/app/algorithms/staticfiles
-            - media_volume:/home/app/algorithms/mediafiles
+        command: gunicorn api.api.wsgi:application --bind 0.0.0.0:8000
         expose:
-            - 8000:8000
+            - 8000
         restart: 'on-failure'
 
 volumes:
