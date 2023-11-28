@@ -118,6 +118,11 @@ class Race(AttributeValueEnum):
     Other = 9
 
 
+class Location(AttributeValueEnum):
+    Okanagan = 1
+    Vancouver = 2
+
+
 class PriorityType(Enum):
     TOKENIZATION = "tokenization"
     DIVERSITY = "diversity"

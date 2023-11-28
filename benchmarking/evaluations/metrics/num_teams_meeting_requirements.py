@@ -10,7 +10,7 @@ class NumTeamsMeetingRequirements(TeamSetMetric):
     The count of teams that have students that meet all of their requirements
     """
 
-    def __init__(self, num_teams: int, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def calculate(self, team_set: TeamSet) -> float:
