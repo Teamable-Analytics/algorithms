@@ -1,0 +1,19 @@
+services:
+  nginx:
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    depends_on:
+      - api
+    restart: 'on-failure'
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: gunicorn api.api.wsgi:application --bind 0.0.0.0:8000
+    expose:
+      - 8000
+    restart: 'on-failure'
