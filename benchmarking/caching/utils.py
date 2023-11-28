@@ -3,11 +3,13 @@ import re
 import shutil
 import sys
 from os import path
-from typing import List, Dict, Tuple, Union
+from typing import List, Dict, Tuple
 
 from api.models.team_set import TeamSet
-from benchmarking.caching.simulation_cache import SimulationCache
-
+from benchmarking.caching.simulation_cache import (
+    SimulationCache,
+    FRAGMENT_FILE_NAME_PATTERN,
+)
 
 SimulationArtifact = Tuple[List[TeamSet], List[float]]
 
@@ -28,12 +30,7 @@ def combine(cache_key: str):
                 ...
     """
 
-    cache_directory = path.abspath(
-        path.join(path.dirname(__file__), "..", "..", "simulation_cache")
-    )
-    cache_location = path.normpath(path.join(cache_directory, cache_key)).replace(
-        "\\", "/"
-    )
+    cache_location = SimulationCache.cache_key_parent_directory(cache_key)
 
     # If cache not found, return
     if not path.exists(cache_location):
@@ -42,9 +39,12 @@ def combine(cache_key: str):
     # Get initial list of files where the cache should be
     fragments = []
     for f in os.listdir(cache_location):
-        match = re.match(r"(fragment_\d+)\.json", f)
+        match = re.match(FRAGMENT_FILE_NAME_PATTERN, f)
         if match:
             fragments.append(match.group(1))
+
+    if len(fragments) == 0:
+        return
 
     fragment_data: List[Dict[str, any]] = []
 
@@ -97,6 +97,17 @@ def combine(cache_key: str):
         "team_sets": [],
         "runtimes": [],
     }
+
+    if path.exists(cache_location + ".json"):
+        existing_cache = SimulationCache(cache_key)
+        existing_cache._load_existing_data()
+        existing_team_sets, existing_runtimes = existing_cache.get_simulation_artifact()
+        if existing_team_sets and existing_runtimes:
+            result_cache["team_sets"].extend(existing_team_sets)
+            result_cache["runtimes"].extend(existing_runtimes)
+        existing_metadata = existing_cache.get_metadata()
+        result_cache["metadata"].update(existing_metadata)
+
     for fragment in sorted_fragment_data:
         result_cache["metadata"].update(fragment["metadata"])
         result_cache["team_sets"].extend(fragment["team_sets"])
@@ -106,6 +117,3 @@ def combine(cache_key: str):
     full_cache = SimulationCache(cache_key)
     full_cache.clear()
     full_cache.save(**result_cache)
-
-    # Remove fragments
-    shutil.rmtree(cache_location)

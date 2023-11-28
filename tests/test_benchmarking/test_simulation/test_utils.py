@@ -5,12 +5,20 @@ from benchmarking.simulation.utils import chunk
 
 class TestUtils(unittest.TestCase):
     def test_chunk__returns_list_len_equal_to_num_threads(self):
-        for num_threads in [1, 2, 4, 23893]:
+        for num_threads in [1, 2, 4]:
             self.assertEqual(num_threads, len(chunk(12, num_threads)))
 
     def test_chunk__evenly_divisible(self):
         result = chunk(10, 2)
         self.assertListEqual([5, 5], result)
+
+    def test_chunk__returns_correct_worker_array_when_num_runs_less_than_num_workers(
+        self,
+    ):
+        for num_threads in [4, 5, 6, 29837]:
+            chunk_array = chunk(4, num_threads)
+            self.assertEqual(4, len(chunk_array))
+            self.assertListEqual([1, 1, 1, 1], chunk_array)
 
     def test_chunk__not_evenly_divisible(self):
         result = chunk(10, 3)
