@@ -14,7 +14,7 @@ class DiversifyGenderMin2MaxKeep(DiversifyGenderMin2PriorityAlgorithm):
         """
 
         # Defining our changing x-values (in the graph sense)
-        max_spread = list(range(1, 10))
+        max_spread = list(range(1, 11))
 
         artifacts: Dict[int, SimulationSetArtifact] = {}
 

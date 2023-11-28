@@ -14,7 +14,7 @@ class DiversifyGenderMin2MaxTime(DiversifyGenderMin2PriorityAlgorithm):
         """
 
         # Defining our changing x-values (in the graph sense)
-        times = list(range(5, 30, 5))
+        times = list(range(5, 31, 5))
 
         artifacts: Dict[int, SimulationSetArtifact] = {}
 
