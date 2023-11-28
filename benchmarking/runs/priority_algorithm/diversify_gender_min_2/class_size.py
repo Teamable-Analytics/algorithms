@@ -3,12 +3,13 @@ from typing import Dict
 
 import typer
 from benchmarking.runs.priority_algorithm.diversify_gender_min_2.interfaces import (
-    PriorityAlgorithmParameters,
+    DiversifyGenderMin2PriorityAlgorithm,
 )
+from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact
 
 
-class DiversifyGenderMin2ClassSize(PriorityAlgorithmParameters):
+class DiversifyGenderMin2ClassSize(DiversifyGenderMin2PriorityAlgorithm):
     def start(self, num_trials: int = 4, generate_graphs: bool = True):
         """
         Goal: Run diversify gender scenario while varying the size of the class
@@ -31,7 +32,14 @@ class DiversifyGenderMin2ClassSize(PriorityAlgorithmParameters):
             artifacts[class_size] = simulation_set_artifact
 
         if generate_graphs:
-            self.generate_graphs(artifacts=artifacts, x_label="Class Size")
+            graph_names = {
+                Insight.KEY_RUNTIMES: "Diversify Gender With Min of Two Runtimes with Varied Class Size",
+                "AverageGiniIndex": "Diversify Gender With Min of Two Average Gini Index with Varied Class Size",
+                "PrioritySatisfaction": "Diversity Gender With Min of Two Satisfied Priorities with Varied Class Size",
+            }
+            self.generate_graphs(
+                artifacts=artifacts, x_label="Class Size", graph_names=graph_names
+            )
 
 
 if __name__ == "__main__":

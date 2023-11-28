@@ -34,7 +34,7 @@ from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
     DiversifyGenderMin2Female,
 )
 from benchmarking.runs.priority_algorithm.diversify_gender_min_2.interfaces import (
-    PriorityAlgorithmParameters,
+    DiversifyGenderMin2PriorityAlgorithm,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -42,14 +42,14 @@ from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetA
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class DiversifyGenderMin2NumIterations(PriorityAlgorithmParameters):
+class DiversifyGenderMin2NumIterations(DiversifyGenderMin2PriorityAlgorithm):
     def start(self, num_trials: int = 4, generate_graphs: bool = True):
         """
-        Goal: Run diversify gender scenario while varying the size of the class
+        Goal: Run diversify gender scenario while varying the maximum number of iterations
         """
 
         # Defining our changing x-values (in the graph sense)
-        num_iterations = list(range(100, 801, 100))
+        num_iterations = list(range(100, 201, 100))
 
         artifacts: Dict[int, SimulationSetArtifact] = {}
 
@@ -62,10 +62,17 @@ class DiversifyGenderMin2NumIterations(PriorityAlgorithmParameters):
             artifacts[iteration] = simulation_set_artifact
 
         if generate_graphs:
+            graph_names = {
+                Insight.KEY_RUNTIMES: "Diversify Gender With Min of Two Runtimes with Varied Max Iterations",
+                "AverageGiniIndex": "Diversify Gender With Min of Two Average Gini Index with Varied Max Iterations",
+                "PrioritySatisfaction": "Diversity Gender With Min of Two Satisfied Priorities with Varied Max Iterations",
+            }
             self.generate_graphs(
-                artifacts=artifacts, x_label="Max Number of Iterations"
+                artifacts=artifacts,
+                x_label="Max Number of Iterations",
+                graph_names=graph_names,
             )
 
 
 if __name__ == "__main__":
-    typer.run(DiversifyGenderMin2NumIterations.start)
+    typer.run(DiversifyGenderMin2NumIterations().start)

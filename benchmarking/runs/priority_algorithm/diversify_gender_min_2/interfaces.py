@@ -37,11 +37,11 @@ from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetA
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class PriorityAlgorithmParameters(Run):
+class DiversifyGenderMin2PriorityAlgorithm(Run):
     MAX_KEEP = 3
     MAX_SPREAD = 3
-    MAX_ITERATE = 400
-    MAX_TIME = 20
+    MAX_ITERATE = 300
+    MAX_TIME = 10
     RATIO_OF_FEMALE_STUDENT = 0.4
     NUMBER_OF_STUDENTS = 200
     NUMBER_OF_TEAMS = 40
@@ -175,7 +175,10 @@ class PriorityAlgorithmParameters(Run):
         return DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value)
 
     def generate_graphs(
-        self, artifacts: Dict[int, SimulationSetArtifact], x_label: str
+        self,
+        artifacts: Dict[int, SimulationSetArtifact],
+        graph_names: Dict[str, str],
+        x_label: str,
     ):
         graph_runtime_dict = {}
         graph_avg_gini_dict = {}
@@ -220,7 +223,7 @@ class PriorityAlgorithmParameters(Run):
             LineGraphMetadata(
                 x_label=x_label,
                 y_label="Run time (seconds)",
-                title="Diversify Gender With Min of Two Runtimes",
+                title=graph_names.get(Insight.KEY_RUNTIMES),
                 data=list(graph_runtime_dict.values()),
             )
         )
@@ -229,7 +232,7 @@ class PriorityAlgorithmParameters(Run):
             LineGraphMetadata(
                 x_label=x_label,
                 y_label="Average Gini Index",
-                title="Diversify Gender With Min of Two Average Gini Index",
+                title=graph_names.get("AverageGiniIndex"),
                 data=list(graph_avg_gini_dict.values()),
                 y_lim=GraphAxisRange(
                     *self.metrics["AverageGiniIndex"].theoretical_range
@@ -241,7 +244,7 @@ class PriorityAlgorithmParameters(Run):
             LineGraphMetadata(
                 x_label=x_label,
                 y_label="Priorities Satisfied",
-                title="Diversity Gender With Min of Two Satisfied Priorities",
+                title=graph_names.get("PrioritySatisfaction"),
                 data=list(graph_priority_dict.values()),
                 y_lim=GraphAxisRange(
                     *self.metrics["PrioritySatisfaction"].theoretical_range
