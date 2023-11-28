@@ -1,1 +1,12 @@
-venv/
+# JetBrains IDEA
+/.idea/
+/venv/
+/old/algorithm_sandbox/mock_data/
+/old/algorithm_sandbox/logs/
+__pycache__/
+
+# ignore all data files
+/benchmarking/data/real_data/*/files/
+
+.DS_Store
+.env
