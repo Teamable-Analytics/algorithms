@@ -39,6 +39,17 @@ class Simulation:
         self.run_times = []
 
     def run(self, num_runs: int) -> SimulationArtifact:
+        if self.settings.cache_key:
+            cache = SimulationCache(self.settings.cache_key)
+            if cache.exists():
+                cached_team_sets, cached_run_times = cache.get_simulation_artifact()
+                self.team_sets = cached_team_sets
+                self.run_times = cached_run_times
+                if len(self.team_sets) >= num_runs:
+                    return self.team_sets[:num_runs], self.run_times[:num_runs]
+                else:
+                    num_runs -= len(cached_team_sets)
+
         custom_initial_teams = (
             self.settings.initial_teams_provider.get()
             if self.settings.initial_teams_provider
@@ -60,17 +71,6 @@ class Simulation:
             algorithm_options=algorithm_options,
             algorithm_config=self.config,
         )
-
-        if self.settings.cache_key:
-            cache = SimulationCache(self.settings.cache_key)
-            if cache.exists():
-                cached_team_sets, cached_run_times = cache.get_simulation_artifact()
-                self.team_sets = cached_team_sets
-                self.run_times = cached_run_times
-                if len(self.team_sets) >= num_runs:
-                    return self.team_sets[:num_runs], self.run_times[:num_runs]
-                else:
-                    num_runs -= len(cached_team_sets)
 
         if self.settings.cache_key:
             SimulationCache.create_fragment_parent_dir(self.settings.cache_key)

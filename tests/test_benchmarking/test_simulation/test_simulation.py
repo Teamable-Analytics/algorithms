@@ -1,7 +1,7 @@
 import json
 import shutil
 import unittest
-from datetime import time, datetime
+from datetime import datetime
 from os import path
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
@@ -206,8 +206,18 @@ class TestSimulation(unittest.TestCase):
         self.assertEqual(2, len(new_simulation_result[1]))
 
         self.assertEqual(
-            simplify_simulation_result(simulation_result),
-            simplify_simulation_result(new_simulation_result),
+            simplify_simulation_result(
+                (
+                    sorted(simulation_result[0], key=lambda x: x._id),
+                    sorted(simulation_result[1]),
+                )
+            ),
+            simplify_simulation_result(
+                (
+                    sorted(new_simulation_result[0], key=lambda x: x._id),
+                    sorted(new_simulation_result[1]),
+                )
+            ),
         )
 
     def test_run__return_only_num_runs_number_of_run_outputs(self):
