@@ -41,7 +41,7 @@ class DiversifyGenderMin2PriorityAlgorithm(Run):
     MAX_KEEP = 3
     MAX_SPREAD = 3
     MAX_ITERATE = 300
-    MAX_TIME = 10
+    MAX_TIME = 20
     RATIO_OF_FEMALE_STUDENT = 0.4
     NUMBER_OF_STUDENTS = 200
     NUMBER_OF_TEAMS = 40
@@ -150,22 +150,22 @@ class DiversifyGenderMin2PriorityAlgorithm(Run):
                         MAX_KEEP=max_keep,
                         MAX_SPREAD=max_spread,
                     ),
-                    # PriorityAlgorithmConfig(
-                    #     name="robinhood",
-                    #     MUTATIONS=[(mutate_robinhood, max_spread)],
-                    #     MAX_TIME=max_time,
-                    #     MAX_ITERATE=max_iterate,
-                    #     MAX_KEEP=max_keep,
-                    #     MAX_SPREAD=max_spread,
-                    # ),
-                    # PriorityAlgorithmConfig(
-                    #     name="robinhood_holistic",
-                    #     MUTATIONS=[(mutate_robinhood_holistic, max_spread)],
-                    #     MAX_TIME=max_time,
-                    #     MAX_ITERATE=max_iterate,
-                    #     MAX_KEEP=max_keep,
-                    #     MAX_SPREAD=max_spread,
-                    # ),
+                    PriorityAlgorithmConfig(
+                        name="robinhood",
+                        MUTATIONS=[(mutate_robinhood, max_spread)],
+                        MAX_TIME=max_time,
+                        MAX_ITERATE=max_iterate,
+                        MAX_KEEP=max_keep,
+                        MAX_SPREAD=max_spread,
+                    ),
+                    PriorityAlgorithmConfig(
+                        name="robinhood_holistic",
+                        MUTATIONS=[(mutate_robinhood_holistic, max_spread)],
+                        MAX_TIME=max_time,
+                        MAX_ITERATE=max_iterate,
+                        MAX_KEEP=max_keep,
+                        MAX_SPREAD=max_spread,
+                    ),
                 ],
             },
         )

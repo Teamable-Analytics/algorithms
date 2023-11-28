@@ -1,20 +1,20 @@
-from typing import Dict, List
+from typing import Dict
 import typer
 from benchmarking.runs.priority_algorithm.diversify_gender_min_2.interfaces import (
     DiversifyGenderMin2PriorityAlgorithm,
 )
 from benchmarking.simulation.insight import Insight
-from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
+from benchmarking.simulation.simulation_set import SimulationSetArtifact
 
 
 class DiversifyGenderMin2MaxKeep(DiversifyGenderMin2PriorityAlgorithm):
-    def start(self, num_trials: int = 4, generate_graphs: bool = True):
+    def start(self, num_trials: int = 100, generate_graphs: bool = False):
         """
         Goal: Run diversify gender scenario while varying the maximum keep argument for the priority algorithm.
         """
 
         # Defining our changing x-values (in the graph sense)
-        max_keep = list(range(1, 3))
+        max_keep = list(range(1, 10))
 
         artifacts: Dict[int, SimulationSetArtifact] = {}
 
