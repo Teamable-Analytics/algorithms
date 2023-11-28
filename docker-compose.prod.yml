@@ -14,6 +14,8 @@ services:
       context: .
       dockerfile: Dockerfile.prod
     command: gunicorn api.api.wsgi:application --bind 0.0.0.0:8000
+    env_file:
+      - ./.env.prod
     expose:
       - 8000
     restart: 'on-failure'
