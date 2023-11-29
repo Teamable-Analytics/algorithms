@@ -1,10 +1,8 @@
 from typing import Dict
 import typer
-from benchmarking.runs.priority_algorithm.diversify_gender_min_2.interfaces import (
-    DiversifyGenderMin2PriorityAlgorithm,
+from benchmarking.runs.priority_algorithm.diversify_gender_min_2_lower_priority_constants.interfaces import (
+    DiversifyGenderMin2LowerPriorityConstants,
 )
-from benchmarking.runs.priority_algorithm.diversify_gender_min_2_lower_priority_constants.interfaces import \
-    DiversifyGenderMin2LowerPriorityConstants
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact
 
@@ -24,7 +22,7 @@ class DiversifyGenderMin2MaxKeep(DiversifyGenderMin2LowerPriorityConstants):
         for spread in max_spread:
             print("MAX SPREAD /", spread)
             simulation_set_artifact = self.simulation_set(
-                cache_key=f"priority_algorithm/diversify_gender_min_2_lower_constants/max_spread/{spread}",
+                cache_key=f"priority_algorithm/diversify_gender_min_2_lower_priority_constants/max_spread/{spread}",
                 max_spread=spread,
             ).run(num_runs=num_trials)
             artifacts[spread] = simulation_set_artifact

@@ -1,10 +1,8 @@
 from typing import Dict
 import typer
-from benchmarking.runs.priority_algorithm.diversify_gender_min_2.interfaces import (
-    DiversifyGenderMin2PriorityAlgorithm,
+from benchmarking.runs.priority_algorithm.diversify_gender_min_2_lower_priority_constants.interfaces import (
+    DiversifyGenderMin2LowerPriorityConstants,
 )
-from benchmarking.runs.priority_algorithm.diversify_gender_min_2_lower_priority_constants.interfaces import \
-    DiversifyGenderMin2LowerPriorityConstants
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact
 
@@ -24,7 +22,7 @@ class DiversifyGenderMin2MaxTime(DiversifyGenderMin2LowerPriorityConstants):
         for time in times:
             print("TIME /", time)
             simulation_set_artifact = self.simulation_set(
-                cache_key=f"priority_algorithm/diversify_gender_min_2_lower_constants/max_time/{time}_seconds",
+                cache_key=f"priority_algorithm/diversify_gender_min_2_lower_priority_constants/max_time/{time}_seconds",
                 max_time=time,
             ).run(num_runs=num_trials)
             artifacts[time] = simulation_set_artifact

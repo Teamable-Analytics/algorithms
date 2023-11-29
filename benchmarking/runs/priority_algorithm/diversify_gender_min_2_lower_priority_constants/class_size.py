@@ -1,11 +1,9 @@
 import math
 from typing import Dict
 import typer
-from benchmarking.runs.priority_algorithm.diversify_gender_min_2.interfaces import (
-    DiversifyGenderMin2PriorityAlgorithm,
+from benchmarking.runs.priority_algorithm.diversify_gender_min_2_lower_priority_constants.interfaces import (
+    DiversifyGenderMin2LowerPriorityConstants,
 )
-from benchmarking.runs.priority_algorithm.diversify_gender_min_2_lower_priority_constants.interfaces import \
-    DiversifyGenderMin2LowerPriorityConstants
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact
 
@@ -27,7 +25,7 @@ class DiversifyGenderMin2ClassSize(DiversifyGenderMin2LowerPriorityConstants):
             number_of_teams = math.ceil(class_size / 5)
 
             simulation_set_artifact = self.simulation_set(
-                cache_key=f"priority_algorithm/diversify_gender_min_2_lower_priority_constraints/class_size/{class_size}",
+                cache_key=f"priority_algorithm/diversify_gender_min_2_lower_priority_constants/class_size/{class_size}",
                 number_of_students=class_size,
                 number_of_teams=number_of_teams,
             ).run(num_runs=num_trials)
