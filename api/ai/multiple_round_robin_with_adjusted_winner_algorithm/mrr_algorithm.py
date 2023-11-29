@@ -33,13 +33,12 @@ from typing import List, Dict
 from api.ai.interfaces.algorithm import Algorithm
 from api.ai.interfaces.algorithm_options import MultipleRoundRobinAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.ai.multiple_round_robin_with_adjusted_winner.custom_models import (
+from api.ai.multiple_round_robin_with_adjusted_winner_algorithm.custom_models import (
     TeamWithValues,
     StudentProjectValue,
 )
-from api.ai.multiple_round_robin_with_adjusted_winner.utils import (
+from api.ai.multiple_round_robin_with_adjusted_winner_algorithm.utils import (
     is_ordered_envy_freeness_up_to_one_item,
-    calculate_value,
 )
 from api.models.student import Student
 from api.models.team_set import TeamSet
@@ -54,10 +53,10 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         **kwargs,
     ):
         super().__init__(algorithm_options, team_generation_options)
-        self.projects = algorithm_options.projects
+        self.utility_function = algorithm_options.utility_function
 
     def _get_values_heap(
-        self, students: List[Student], teams: List[TeamWithValues]
+        self, students: List[Student], teams_heap: List[TeamWithValues]
     ) -> Dict[int, List[StudentProjectValue]]:
         """
         Calculate each student values to each project and push them into a heap
@@ -66,13 +65,12 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         """
         # Each project will have its own heap, showing how effective each student to that project
         values_heap: Dict[int, List[StudentProjectValue]] = {
-            team.project.id: [] for team in teams
+            team.project_id: [] for team in teams_heap
         }
-        for team in teams:
-            project = team.project
+        for team in teams_heap:
             for student in students:
-                new_value = StudentProjectValue(student, project)
-                heappush(values_heap[project.id], new_value)
+                new_value = StudentProjectValue(student, team, self.utility_function)
+                heappush(values_heap[team.project_id], new_value)
 
         return values_heap
 
@@ -121,12 +119,12 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         """
 
         # O(N)
-        teams = []
-        for idx, project in enumerate(self.projects):
-            heappush(teams, TeamWithValues(idx, project))
+        allocation_heap = []
+        for team in enumerate(self.teams):
+            heappush(allocation_heap, TeamWithValues(team, self.utility_function))
 
         # O(max(N, H))
-        values_heap = self._get_values_heap(students, teams)
+        values_heap = self._get_values_heap(students, allocation_heap)
 
         assigned_students = set()
         num_students = len(students)
@@ -134,14 +132,16 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         while len(assigned_students) < num_students:
             if self._has_student_with_positive_value(values_heap):
                 # Add dummy students
-                num_dummy_students = len(teams) - (len(students) % len(teams))
+                num_dummy_students = len(allocation_heap) - (
+                    len(students) % len(allocation_heap)
+                )
                 students.extend(self._get_dummy_students(num_dummy_students))
 
             updated_teams = []
             # O(N * log(max(N, H)))
-            while len(teams) > 0:
+            while len(allocation_heap) > 0:
                 # O(log(max(N, H)))
-                current_team = heappop(teams)
+                current_team = heappop(allocation_heap)
 
                 current_heap = values_heap[current_team.project.id]
 
@@ -170,9 +170,9 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
                 # O(log(max(N, H)))
                 heappush(updated_teams, current_team)
 
-            teams = updated_teams
+            allocation_heap = updated_teams
 
-        return TeamSet(teams=teams)
+        return TeamSet(teams=allocation_heap)
 
     def _adjust_allocation_with_adjusted_winner(self, team_set: TeamSet) -> TeamSet:
         """
@@ -182,12 +182,14 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
             for team_j in team_set.teams:
                 if team_i is team_j:
                     continue
-                if is_ordered_envy_freeness_up_to_one_item(team_i, team_j):
+                if is_ordered_envy_freeness_up_to_one_item(
+                    team_i, team_j, self.utility_function
+                ):
                     continue
 
                 for student in team_j.students:
-                    student_value_to_team_i = calculate_value(
-                        student, team_i.requirements
+                    student_value_to_team_i = self.utility_function(
+                        student, team_i.to_shell()
                     )
                     if student_value_to_team_i > 0:
                         team_i.add_student(student)
