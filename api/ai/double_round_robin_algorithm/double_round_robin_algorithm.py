@@ -26,22 +26,24 @@ Definition:
     - Remove all dummy student
     - Return the allocations
 """
-from typing import List, Dict, Set
+from typing import List, Dict, Set, Callable
 
 from api.ai.double_round_robin_algorithm.custom_models import Utility
 from api.ai.interfaces.algorithm import Algorithm
 from api.ai.interfaces.algorithm_options import DoubleRoundRobinAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.ai.double_round_robin_algorithm.utils import calculate_utilities
 from api.models.student import Student
+from api.models.team import Team, TeamShell
 from api.models.team_set import TeamSet
 
 
 class DoubleRoundRobinAlgorithm(Algorithm):
+    utilities: Dict[int, Dict[int, Utility]]
+
     def __init__(
-        self,
-        algorithm_options: DoubleRoundRobinAlgorithmOptions,
-        team_generation_options: TeamGenerationOptions,
+            self,
+            algorithm_options: DoubleRoundRobinAlgorithmOptions,
+            team_generation_options: TeamGenerationOptions,
     ):
         super().__init__(algorithm_options, team_generation_options)
 
@@ -49,13 +51,29 @@ class DoubleRoundRobinAlgorithm(Algorithm):
             team.project_id: team_idx for team_idx, team in enumerate(self.teams)
         }
 
+        self._calculate_utilities(algorithm_options.students, self.teams, algorithm_options.utility_function)
+
+    def _calculate_utilities(self,
+                             students: List[Student],
+                             teams: List[Team],
+                             utility_function: Callable[[Student, TeamShell], float]):
+        team_shells = [team.to_shell() for team in teams]
+        self.utilities = {team.project_id: {} for team in teams}
+        for team in teams:
+            for student in students:
+                self.utilities[team.project_id][student.id] = Utility(
+                    student=student,
+                    project_id=team.project_id,
+                    value=utility_function(student, team_shells[team.project_id])
+                )
+
     def _round_robin(
-        self,
-        utilities: Dict[int, List[Utility]],
-        num_students: int,
-        allocation: Dict[int, List[Student]],
-        selected_students: Set[int],
-        total_dummy_students: int = -1,
+            self,
+            utilities: Dict[int, List[Utility]],
+            num_students: int,
+            allocation: Dict[int, List[Student]],
+            selected_students: Set[int],
+            total_dummy_students: int = -1,
     ) -> Dict[int, List[Student]]:
         dummy_student_counter = 1
 
@@ -66,8 +84,8 @@ class DoubleRoundRobinAlgorithm(Algorithm):
                 )
 
                 while (
-                    len(sorted_utilities_of_team) > 0
-                    and sorted_utilities_of_team[0].student.id in selected_students
+                        len(sorted_utilities_of_team) > 0
+                        and sorted_utilities_of_team[0].student.id in selected_students
                 ):
                     sorted_utilities_of_team.pop(0)
                     if len(sorted_utilities_of_team) == 0:
@@ -77,8 +95,8 @@ class DoubleRoundRobinAlgorithm(Algorithm):
                     continue
 
                 added_dummy_student = (
-                    sorted_utilities_of_team[0].value < 0
-                    and dummy_student_counter < total_dummy_students
+                        sorted_utilities_of_team[0].value < 0
+                        and dummy_student_counter < total_dummy_students
                 )
 
                 if added_dummy_student:
@@ -91,8 +109,6 @@ class DoubleRoundRobinAlgorithm(Algorithm):
         return allocation
 
     def generate(self, students: List[Student]) -> TeamSet:
-        utilities = calculate_utilities(self.teams, students)
-
         positive_utilities: Dict[int, List[Utility]] = {
             team.project_id: [] for team in self.teams
         }
@@ -104,7 +120,7 @@ class DoubleRoundRobinAlgorithm(Algorithm):
 
         for team in self.teams:
             for student in students:
-                curr_utility = utilities[team.project_id][student.id]
+                curr_utility = self.utilities[team.project_id][student.id]
                 if curr_utility.value > 0:
                     positive_utilities[team.project_id].append(curr_utility)
                     positive_utility_students.add(student.id)
@@ -114,8 +130,8 @@ class DoubleRoundRobinAlgorithm(Algorithm):
 
         # Add dummy students to negative utilities
         num_dummy_students = (
-            len(self.teams) - len(negative_utility_students) % len(self.teams)
-        ) % len(self.teams)
+                                     len(self.teams) - len(negative_utility_students) % len(self.teams)
+                             ) % len(self.teams)
 
         selected_students: Set[int] = set()
         allocation: Dict[int, List[Student]] = {
