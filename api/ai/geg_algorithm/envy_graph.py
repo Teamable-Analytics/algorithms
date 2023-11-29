@@ -1,20 +1,23 @@
-from typing import List, Dict, Set
+from typing import List, Dict, Set, Callable
 
-from api.ai.geg_algorithm.utils import calculate_value
-from api.models.project import Project
 from api.models.student import Student
+from api.models.team import Team, TeamShell
 
 
 class EnvyGraph:
-    def __init__(self, projects: List[Project], students: List[Student]) -> None:
+    def __init__(self,
+                 teams: List[Team],
+                 students: List[Student],
+                 utility_function: Callable[[Student, TeamShell], float]):
         """
         Initialize an envy graph
         """
-        vertices = [proj.id for proj in projects]
+        vertices = [team.project_id for team in teams]
         self.graph: Dict[int, Set[int]] = {vertex: set([]) for vertex in vertices}
         self.additive_utilities: Dict[int, int] = {vertex: 0 for vertex in vertices}
-        self.project_id_traces: Dict[int, Project] = {p.id: p for p in projects}
+        self.project_id_traces: Dict[int, Team] = {t.project_id: t for t in teams}
         self.student_id_traces: Dict[int, Student] = {s.id: s for s in students}
+        self.utility_function = utility_function
 
     def add_edge(self, envy_project: int, other_project: int) -> None:
         """
@@ -51,10 +54,10 @@ class EnvyGraph:
     def update_envy_graph(
         self, project_id: int, allocation: Dict[int, List[int]]
     ) -> None:
-        project = self.project_id_traces.get(project_id)
+        team = self.project_id_traces.get(project_id)
         new_utility_value = sum(
             [
-                calculate_value(self.student_id_traces.get(s), project.requirements)
+                self.utility_function(self.student_id_traces.get(s), team.to_shell())
                 for s in allocation[project_id]
             ]
         )
@@ -65,11 +68,11 @@ class EnvyGraph:
             if project_id == other_project_id:
                 continue
 
-            other_project = self.project_id_traces.get(other_project_id)
+            other_team = self.project_id_traces.get(other_project_id)
             other_project_utilities_with_curr_project_allocation = sum(
                 [
-                    calculate_value(
-                        self.student_id_traces.get(s), other_project.requirements
+                    self.utility_function(
+                        self.student_id_traces.get(s), other_team.to_shell()
                     )
                     for s in allocation[project_id]
                 ]

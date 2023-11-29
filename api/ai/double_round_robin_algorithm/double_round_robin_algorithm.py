@@ -51,21 +51,22 @@ class DoubleRoundRobinAlgorithm(Algorithm):
             team.project_id: team_idx for team_idx, team in enumerate(self.teams)
         }
 
-        self._calculate_utilities(algorithm_options.students, self.teams, algorithm_options.utility_function)
+        self.utilities = self._calculate_utilities(algorithm_options.students, self.teams,
+                                                   algorithm_options.utility_function)
 
     def _calculate_utilities(self,
                              students: List[Student],
                              teams: List[Team],
-                             utility_function: Callable[[Student, TeamShell], float]):
-        team_shells = [team.to_shell() for team in teams]
-        self.utilities = {team.project_id: {} for team in teams}
+                             utility_function: Callable[[Student, TeamShell], float]) -> Dict[int, Dict[int, Utility]]:
+        utilities = {team.project_id: {} for team in teams}
         for team in teams:
             for student in students:
                 self.utilities[team.project_id][student.id] = Utility(
                     student=student,
                     project_id=team.project_id,
-                    value=utility_function(student, team_shells[team.project_id])
+                    value=utility_function(student, team.to_shell())
                 )
+        return utilities
 
     def _round_robin(
             self,

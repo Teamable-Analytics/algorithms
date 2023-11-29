@@ -270,20 +270,25 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
 
 @dataclass
 class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
-    projects: List[Project]
+    utility_function: Callable[[Student, TeamShell], float]
+    students: List[Student]
 
     def validate(self):
         super().validate()
 
-        Schema([Project]).validate(self.projects)
-        if len(self.projects) == 0:
-            raise SchemaError("Project list cannot be empty")
+        Schema([Student]).validate(self.students)
+        if len(self.students) == 0:
+            raise SchemaError("Student list cannot be empty")
 
     @staticmethod
     def parse_json(_: Dict[str, Any]):
         raise AttributeError(
             "GeneralizedEnvyGraphAlgorithmOptions does not support parsing from json."
         )
+
+    @staticmethod
+    def get_schema() -> Schema:
+        raise NotImplementedError
 
 
 @dataclass
@@ -303,6 +308,10 @@ class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
         raise AttributeError(
             "DoubleRoundRobinAlgorithmOptions does not support parsing from json."
         )
+
+    @staticmethod
+    def get_schema() -> Schema:
+        raise NotImplementedError
 
 
 AnyAlgorithmOptions = Union[

@@ -14,16 +14,14 @@ for each student s ∈ S:
     While G(pi) contains directed cycle C do
         allocation_C = pi(i) if i not in C else pi(i_j+1) if i == i_j in C
 """
-from typing import List, Dict
+from typing import List, Dict, Callable
 
 from api.ai.geg_algorithm.envy_graph import EnvyGraph
-from api.ai.geg_algorithm.utils import calculate_value
 from api.ai.interfaces.algorithm import Algorithm
 from api.ai.interfaces.algorithm_options import GeneralizedEnvyGraphAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.models.project import Project
 from api.models.student import Student
-from api.models.team import Team
+from api.models.team import Team, TeamShell
 from api.models.team_set import TeamSet
 
 
@@ -46,36 +44,34 @@ class GeneralizedEnvyGraphAlgorithm(Algorithm):
 
         self.allocation: Dict[int, List[int]] = {}
         self.utilities: Dict[int, Dict[int, int]] = {}
-        self.projects: List[Project] = algorithm_options.projects
         self.project_ids_to_projects = {
-            project.id: project for project in self.projects
+            team.project_id: team for team in self.teams
         }
+        self.utilities = self._calculate_utilities(students=algorithm_options.students,
+                                                   utility_function=algorithm_options.utility_function)
 
     def _calculate_utilities(
-        self, students: List[Student]
-    ) -> Dict[int, Dict[int, int]]:
-        utilities: Dict[int, Dict[int, int]] = {}
+            self, students: List[Student], utility_function: Callable[[Student, TeamShell], float]
+    ) -> Dict[int, Dict[int, float]]:
+        utilities: Dict[int, Dict[int, float]] = {team.project_id: {} for team in self.teams}
 
-        for project in self.projects:
+        for team in self.teams:
             for student in students:
-                if project.id not in utilities:
-                    utilities[project.id] = {}
-                utilities[project.id][student.id] = calculate_value(
-                    student, project.requirements
-                )
+                project_id = team.project_id
+                utilities[project_id][student.id] = utility_function(student, team.to_shell())
 
         return utilities
 
-    def _get_projects_with_positive_utilities(
-        self, projects: List[Project], student: Student
-    ) -> List[Project]:
+    def _get_team_with_positive_utilities(
+            self, student: Student
+    ) -> List[Team]:
         """
         This run in O(N)
         """
         return [
-            project
-            for project in projects
-            if self.utilities[project.id][student.id] >= 0
+            team
+            for team in self.teams
+            if self.utilities[team.project_id][student.id] >= 0
         ]
 
     def _construct_team_from_allocation(self) -> TeamSet:
@@ -97,27 +93,24 @@ class GeneralizedEnvyGraphAlgorithm(Algorithm):
         return new_team_set
 
     def generate(self, students: List[Student]) -> TeamSet:
-        self.envy_graph = EnvyGraph(self.projects, students)
-        self.utilities = self._calculate_utilities(students)
+        self.envy_graph = EnvyGraph(self.teams, students)
         self.allocation: Dict[int, List[int]] = {
-            project.id: [] for project in self.projects
+            team.project_id: [] for team in self.teams
         }
         self.trace_dictionary = {student.id: student for student in students}
 
         i_star: int = -1
         for student in students:
-            positive_utilities = self._get_projects_with_positive_utilities(
-                self.projects, student
-            )
+            positive_utilities = self._get_team_with_positive_utilities(student)
             if len(positive_utilities) != 0:
                 for project in positive_utilities:
                     if self.envy_graph.is_source(project.id):
                         i_star = project.id
                         break
             else:
-                for project in self.projects:
-                    if self.envy_graph.is_sink(project.id):
-                        i_star = project.id
+                for team in self.teams:
+                    if self.envy_graph.is_sink(team.project_id):
+                        i_star = team.project_id
                         break
 
             if i_star == -1:
