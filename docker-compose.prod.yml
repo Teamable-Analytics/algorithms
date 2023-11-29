@@ -19,3 +19,6 @@ services:
     expose:
       - 8000
     restart: 'on-failure'
+
+networks:
+  api:
