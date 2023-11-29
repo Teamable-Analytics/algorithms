@@ -1,6 +1,10 @@
 import json
 import os
+import re
+import shutil
+import sys
 from datetime import datetime
+from functools import cached_property
 from os import path
 from typing import List, Dict, Any, TYPE_CHECKING
 
@@ -11,6 +15,9 @@ from api.models.team_set.serializer import TeamSetSerializer
 
 if TYPE_CHECKING:
     from benchmarking.simulation.simulation import SimulationArtifact
+
+
+FRAGMENT_FILE_NAME_PATTERN = r"(fragment_\d+)\.json"
 
 
 class SimulationCache:
@@ -32,10 +39,28 @@ class SimulationCache:
         }
         """
 
+    def is_fragmented(self) -> bool:
+        maybe_cache_fragment_directory = SimulationCache.cache_key_parent_directory(
+            self.cache_key
+        )
+        if not path.exists(maybe_cache_fragment_directory):
+            return False
+        if len(os.listdir(maybe_cache_fragment_directory)) < 1:
+            print(f"[WARNING]: Empty directory @ {maybe_cache_fragment_directory}")
+            return False
+
+        for f in os.listdir(maybe_cache_fragment_directory):
+            if re.match(FRAGMENT_FILE_NAME_PATTERN, f):
+                return True
+
+        return False
+
     def exists(self) -> bool:
         """
         Checks if the cache_key is in the cache.
         """
+        if self.is_fragmented():
+            return True
         return path.exists(self._get_file())
 
     def get_simulation_artifact(self) -> "SimulationArtifact":
@@ -74,11 +99,23 @@ class SimulationCache:
         # Get metadata
         metadata = metadata or {}
         # Epoch time, num seconds since 1970, no timezone (utc)
-        metadata["timestamp"] = datetime.utcnow().timestamp()
+        metadata["timestamp"] = (
+            metadata.get("timestamp") or datetime.utcnow().timestamp()
+        )
         # Get latest commit hash. This is so that we can track which commit generated the cache and go back to the code that generated it if needed. Would then be accessible at https://github.com/Teamable-Analytics/algorithms/commit/<commit_hash>
-        metadata["commit_hash"] = git.Repo(
+        current_commit_hash = git.Repo(
             search_parent_directories=True
         ).head.object.hexsha
+        if (
+            metadata.get("commit_hash")
+            and metadata.get("commit_hash") != current_commit_hash
+        ):
+            print(
+                "[WARNING]: The commit hash that you are writing to cache does not match the commit hash of your current branch",
+                file=sys.stderr,
+            )
+
+        metadata["commit_hash"] = metadata.get("commit_hash") or current_commit_hash
 
         # Make dict that will be stored
         cached_data = {
@@ -116,7 +153,13 @@ class SimulationCache:
         Clears the cache.
         """
         if self.exists():
-            os.remove(self._get_file())
+            if self.is_fragmented():
+                # Remove fragments and directory
+                shutil.rmtree(
+                    SimulationCache.cache_key_parent_directory(self.cache_key)
+                )
+            else:
+                os.remove(self._get_file())
         self._data = {}
 
     def _get_file(self) -> str:
@@ -137,13 +180,12 @@ class SimulationCache:
         if not path.exists(full_cache_dir):
             os.makedirs(full_cache_dir)
 
-        # Get file
         return path.join(full_cache_dir, filename)
 
-    def _load_data(self) -> None:
+    def _load_existing_data(self):
         if not self._data:
-            if not self.exists():
-                raise FileNotFoundError("Cache doesn't exist")
+            if not self.exists() and not self.is_fragmented():
+                raise FileNotFoundError("Existing cache data doesn't exist")
 
             # Load json data
             with open(self._get_file(), "r") as f:
@@ -163,3 +205,51 @@ class SimulationCache:
             ]
 
             self._data: Dict[str, Any] = json_data
+
+    def _load_data(self) -> None:
+        if not self._data:
+            if not self.exists():
+                raise FileNotFoundError("Cache doesn't exist")
+
+            if self.is_fragmented():
+                from benchmarking.caching.utils import combine
+
+                combine(self.cache_key)
+
+            # Load json data
+            with open(self._get_file(), "r") as f:
+                json_data = json.load(f)
+            if not json_data:
+                raise ValueError(
+                    f'No json could be loaded from the "{self.cache_key}" cache'
+                )
+
+            # Init data to be the loaded json
+            self._data = json_data
+
+            # Convert json team sets to actual TeamSets
+            self._data["team_sets"] = [
+                TeamSetSerializer().decode(team_set)
+                for team_set in json_data["team_sets"]
+            ]
+
+            self._data: Dict[str, Any] = json_data
+
+    @staticmethod
+    def get_fragment_cache_key(cache_key: str, fragment_id: int):
+        return f"{cache_key}/fragment_{fragment_id}"
+
+    @staticmethod
+    def cache_key_parent_directory(cache_key: str):
+        # Get cache directory
+        cache_dir = path.abspath(
+            path.join(path.dirname(__file__), "..", "..", "simulation_cache")
+        )
+
+        return path.join(cache_dir, cache_key)
+
+    @staticmethod
+    def create_fragment_parent_dir(cache_key: str):
+        full_cache_dir = SimulationCache.cache_key_parent_directory(cache_key)
+        if not path.exists(full_cache_dir):
+            os.makedirs(full_cache_dir)

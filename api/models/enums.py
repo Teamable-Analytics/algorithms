@@ -116,3 +116,11 @@ class Race(AttributeValueEnum):
     Hispanic_or_Latin_American = 7
     Middle_Eastern = 8
     Other = 9
+
+
+class PriorityType(Enum):
+    TOKENIZATION = "tokenization"
+    DIVERSITY = "diversity"
+    PROJECT_PREFERENCE = "project_preference"
+    PROJECT_REQUIREMENT = "project_requirement"
+    SOCIAL_PREFERENCE = "social_preference"

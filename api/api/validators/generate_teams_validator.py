@@ -203,7 +203,7 @@ class GenerateTeamsValidator(Validator):
                 raise SchemaError(f"Student {student.get('id')} has no attributes.")
 
             # Validate if attribute keys integer string
-            Schema({str: list}).validate(attributes)
+            Schema(Or({str: list}, {})).validate(attributes)
 
     def _validate_student_relationships(self, students: List[Dict]):
         student_ids = set([student.get("id") for student in students])
@@ -229,16 +229,19 @@ class GenerateTeamsValidator(Validator):
             [
                 {
                     "id": int,
-                    "attributes": {str: [int]},
+                    "attributes": Or({str: [int]}, {}),
                     Optional("name"): str,
-                    Optional("relationships"): {
-                        str: Or(
-                            *[
-                                get_relationship_str(relationship)
-                                for relationship in Relationship
-                            ]
-                        )
-                    },
+                    Optional("relationships"): Or(
+                        {
+                            str: Or(
+                                *[
+                                    get_relationship_str(relationship)
+                                    for relationship in Relationship
+                                ]
+                            )
+                        },
+                        {},
+                    ),
                     Optional("project_preferences"): [int],
                 }
             ]

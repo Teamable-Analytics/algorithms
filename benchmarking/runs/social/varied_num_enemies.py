@@ -9,7 +9,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.scenarios.give_the_people_what_they_want import (
+from benchmarking.evaluations.scenarios.include_friends_exclude_enemies import (
     IncludeFriendsExcludeEnemies,
 )
 from benchmarking.runs.social.scoial_run import SocialRun
@@ -19,8 +19,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class VariedNumEnemiesSocialRun(SocialRun):
-    @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = False):
+    def start(self, num_trials: int = 10, generate_graphs: bool = False):
         """
         Goal: See how the social algorithm reacts to different numbers of enemies.
 
@@ -39,7 +38,7 @@ class VariedNumEnemiesSocialRun(SocialRun):
 
             student_provider_settings = MockStudentProviderSettings(
                 number_of_students=250,
-                number_of_friends=5,
+                number_of_friends=4,
                 number_of_enemies=num_enemies,
                 friend_distribution="cluster",
             )
@@ -119,4 +118,4 @@ class VariedNumEnemiesSocialRun(SocialRun):
 
 
 if __name__ == "__main__":
-    typer.run(VariedNumEnemiesSocialRun.start)
+    typer.run(VariedNumEnemiesSocialRun().start)

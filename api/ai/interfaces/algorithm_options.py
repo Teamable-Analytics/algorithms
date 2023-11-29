@@ -2,15 +2,19 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import List, Union, Dict, Any, Optional
 
-from schema import Schema, SchemaError, Const, Or, Optional as SchemaOptional
+from schema import Schema, SchemaError, Const, Or, Optional as SchemaOptional, And
 
 from api.ai.priority_algorithm.priority.interfaces import Priority
-from api.ai.priority_algorithm.priority.priority import TokenizationPriority
+from api.ai.priority_algorithm.priority.priority import (
+    TokenizationPriority,
+    get_priority_from_type,
+)
 from api.models.enums import (
     RelationshipBehaviour,
     DiversifyType,
     TokenizationConstraintDirection,
     AlgorithmType,
+    PriorityType,
 )
 from api.models.project import Project
 
@@ -179,18 +183,10 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
                 "algorithm_type": Const(AlgorithmType.PRIORITY.value),
                 "max_project_preferences": int,
                 "priorities": [
-                    {
-                        "attribute_id": int,
-                        "strategy": Or(*[strategy.value for strategy in DiversifyType]),
-                        "direction": Or(
-                            *[
-                                direction.value
-                                for direction in TokenizationConstraintDirection
-                            ]
-                        ),
-                        "threshold": int,
-                        "value": int,
-                    }
+                    And(
+                        dict,
+                        lambda _data: PriorityAlgorithmOptions.validate_priority(_data),
+                    )
                 ],
                 SchemaOptional("requirement_weight"): int,
                 SchemaOptional("social_weight"): int,
@@ -206,6 +202,20 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
                 SchemaOptional("attributes_to_concentrate"): List[int],
             }
         )
+
+    @staticmethod
+    def validate_priority(priority_data: Dict):
+        if "priority_type" not in priority_data:
+            raise SchemaError("Priority type not specified.")
+        priority_type = priority_data.pop("priority_type")
+        Schema(Or(*[pri.value for pri in PriorityType])).validate(priority_type)
+
+        priority_cls = get_priority_from_type(PriorityType(priority_type))
+        if priority_cls is None:
+            raise SchemaError("Priority type not supported.")
+
+        priority_cls.get_schema().validate(priority_data)
+        return True
 
 
 @dataclass
