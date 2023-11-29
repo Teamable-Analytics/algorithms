@@ -88,7 +88,9 @@ class Team(TeamShell):
 
     def remove_student(self, student_to_remove: "Student"):
         if self.is_locked:
-            raise ValueError(f"Cannot remove student ({student_to_remove.id}) from team {self.id}.")
+            raise ValueError(
+                f"Cannot remove student ({student_to_remove.id}) from team {self.id}."
+            )
 
         flag = False
         student_idx = 0
@@ -98,7 +100,9 @@ class Team(TeamShell):
                 break
         if flag:
             self.students.pop(student_idx)
-        raise ValueError(f"Student ({student_to_remove.id}) not found in team {self.id}.")
+        raise ValueError(
+            f"Student ({student_to_remove.id}) not found in team {self.id}."
+        )
 
     def todict(self) -> Dict:
         return {

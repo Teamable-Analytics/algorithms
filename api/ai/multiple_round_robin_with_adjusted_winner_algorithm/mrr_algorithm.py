@@ -130,7 +130,9 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         while len(assigned_students) < num_students:
             if self._has_student_with_positive_value(values_heap):
                 # Add dummy students
-                num_dummy_students = len(allocation_heap) - (len(students) % len(allocation_heap))
+                num_dummy_students = len(allocation_heap) - (
+                    len(students) % len(allocation_heap)
+                )
                 students.extend(self._get_dummy_students(num_dummy_students))
 
             updated_teams = []
@@ -178,7 +180,9 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
             for team_j in team_set.teams:
                 if team_i is team_j:
                     continue
-                if is_ordered_envy_freeness_up_to_one_item(team_i, team_j, self.utility_function):
+                if is_ordered_envy_freeness_up_to_one_item(
+                    team_i, team_j, self.utility_function
+                ):
                     continue
 
                 for student in team_j.students:

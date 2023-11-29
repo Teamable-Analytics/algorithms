@@ -44,27 +44,31 @@ class GeneralizedEnvyGraphAlgorithm(Algorithm):
 
         self.allocation: Dict[int, List[int]] = {}
         self.utilities: Dict[int, Dict[int, int]] = {}
-        self.project_ids_to_projects = {
-            team.project_id: team for team in self.teams
-        }
-        self.utilities = self._calculate_utilities(students=algorithm_options.students,
-                                                   utility_function=algorithm_options.utility_function)
+        self.project_ids_to_projects = {team.project_id: team for team in self.teams}
+        self.utilities = self._calculate_utilities(
+            students=algorithm_options.students,
+            utility_function=algorithm_options.utility_function,
+        )
 
     def _calculate_utilities(
-            self, students: List[Student], utility_function: Callable[[Student, TeamShell], float]
+        self,
+        students: List[Student],
+        utility_function: Callable[[Student, TeamShell], float],
     ) -> Dict[int, Dict[int, float]]:
-        utilities: Dict[int, Dict[int, float]] = {team.project_id: {} for team in self.teams}
+        utilities: Dict[int, Dict[int, float]] = {
+            team.project_id: {} for team in self.teams
+        }
 
         for team in self.teams:
             for student in students:
                 project_id = team.project_id
-                utilities[project_id][student.id] = utility_function(student, team.to_shell())
+                utilities[project_id][student.id] = utility_function(
+                    student, team.to_shell()
+                )
 
         return utilities
 
-    def _get_team_with_positive_utilities(
-            self, student: Student
-    ) -> List[Team]:
+    def _get_team_with_positive_utilities(self, student: Student) -> List[Team]:
         """
         This run in O(N)
         """

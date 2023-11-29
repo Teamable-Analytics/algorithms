@@ -5,7 +5,12 @@ from api.models.team import Team, TeamShell
 
 
 class StudentProjectValue:
-    def __init__(self, student: Student, team: Team, utility_function: Callable[[Student, TeamShell], float]):
+    def __init__(
+        self,
+        student: Student,
+        team: Team,
+        utility_function: Callable[[Student, TeamShell], float],
+    ):
         self.student = student
         self.value = utility_function(student, team.to_shell())
 
@@ -15,12 +20,16 @@ class StudentProjectValue:
 
 
 class TeamWithValues(Team):
-    def __init__(self, team: Team, utility_function: Callable[[Student, TeamShell], float]):
-        super().__init__(_id=team.id,
-                         students=team.students,
-                         requirements=team.requirements,
-                         project_id=team.project_id,
-                         name=team.name)
+    def __init__(
+        self, team: Team, utility_function: Callable[[Student, TeamShell], float]
+    ):
+        super().__init__(
+            _id=team.id,
+            students=team.students,
+            requirements=team.requirements,
+            project_id=team.project_id,
+            name=team.name,
+        )
         self.value = 0
         self.utility_function = utility_function
 

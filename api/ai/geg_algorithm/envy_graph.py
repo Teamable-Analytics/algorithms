@@ -5,10 +5,12 @@ from api.models.team import Team, TeamShell
 
 
 class EnvyGraph:
-    def __init__(self,
-                 teams: List[Team],
-                 students: List[Student],
-                 utility_function: Callable[[Student, TeamShell], float]):
+    def __init__(
+        self,
+        teams: List[Team],
+        students: List[Student],
+        utility_function: Callable[[Student, TeamShell], float],
+    ):
         """
         Initialize an envy graph
         """
