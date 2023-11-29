@@ -249,13 +249,15 @@ class SocialAlgorithmOptions(WeightAlgorithmOptions):
 
 @dataclass
 class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
-    projects: List[Project]
+    utility_function: Callable[[Student, TeamShell], float]
+    students: List[Student]
 
     def validate(self):
         super().validate()
-        Schema([Project]).validate(self.projects)
-        if len(self.projects) == 0:
-            raise SchemaError("Project list cannot be empty.")
+
+        Schema([Student]).validate(self.students)
+        if len(self.students) == 0:
+            raise SchemaError("Student list cannot be empty")
 
     @staticmethod
     def parse_json(_: Dict[str, Any]):
