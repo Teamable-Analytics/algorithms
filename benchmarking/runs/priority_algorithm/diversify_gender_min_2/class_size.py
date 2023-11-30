@@ -32,9 +32,9 @@ class DiversifyGenderMin2ClassSize(DiversifyGenderMin2PriorityAlgorithm):
 
         if generate_graphs:
             graph_names = {
-                Insight.KEY_RUNTIMES: "Diversify Gender With Min of Two Runtimes with Varied Class Size",
-                "AverageGiniIndex": "Diversify Gender With Min of Two Average Gini Index with Varied Class Size",
-                "PrioritySatisfaction": "Diversity Gender With Min of Two Satisfied Priorities with Varied Class Size",
+                Insight.KEY_RUNTIMES: "Diversify Gender With Min of Two \n Runtimes with Varied Class Size",
+                "AverageGiniIndex": "Diversify Gender With Min of Two \n Average Gini Index with Varied Class Size",
+                "PrioritySatisfaction": "Diversity Gender With Min of Two \n Satisfied Priorities with Varied Class Size",
             }
             self.generate_graphs(
                 artifacts=artifacts, x_label="Class Size", graph_names=graph_names

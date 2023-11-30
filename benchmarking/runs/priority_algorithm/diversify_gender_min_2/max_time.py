@@ -28,9 +28,9 @@ class DiversifyGenderMin2MaxTime(DiversifyGenderMin2PriorityAlgorithm):
 
         if generate_graphs:
             graph_names = {
-                Insight.KEY_RUNTIMES: "Diversify Gender With Min of Two Runtimes with Varied Max Time",
-                "AverageGiniIndex": "Diversify Gender With Min of Two Average Gini Index with Varied Max Time",
-                "PrioritySatisfaction": "Diversity Gender With Min of Two Satisfied Priorities with Varied Max Time",
+                Insight.KEY_RUNTIMES: "Diversify Gender With Min of Two \n Runtimes with Varied Max Time",
+                "AverageGiniIndex": "Diversify Gender With Min of Two \n Average Gini Index with Varied Max Time",
+                "PrioritySatisfaction": "Diversity Gender With Min of Two \n Satisfied Priorities with Varied Max Time",
             }
             self.generate_graphs(
                 artifacts=artifacts,
