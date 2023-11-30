@@ -119,8 +119,8 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         """
 
         # O(N)
-        allocation_heap = []
-        for team in enumerate(self.teams):
+        allocation_heap: List[TeamWithValues] = []
+        for team in self.teams:
             heappush(allocation_heap, TeamWithValues(team, self.utility_function))
 
         # O(max(N, H))
@@ -143,7 +143,7 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
                 # O(log(max(N, H)))
                 current_team = heappop(allocation_heap)
 
-                current_heap = values_heap[current_team.project.id]
+                current_heap = values_heap[current_team.project_id]
 
                 # O(log(max(N, H)) * max(N, H))
                 while (

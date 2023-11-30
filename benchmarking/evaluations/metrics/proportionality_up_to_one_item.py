@@ -45,6 +45,9 @@ class ProportionalityUpToOneItem(TeamSetMetric):
                         Team(
                             _id=team.id,
                             students=team.students + [student],
+                            requirements=team.requirements,
+                            project_id=team.project_id,
+                            name=team.name,
                         ),
                         all_students,
                         team_set.num_teams,
@@ -75,6 +78,9 @@ class ProportionalityUpToOneItem(TeamSetMetric):
                                     for student_in_team in team.students
                                     if student_in_team.id != student.id
                                 ],
+                                requirements=team.requirements,
+                                project_id=team.project_id,
+                                name=team.name,
                             ),
                             all_students,
                             team_set.num_teams,

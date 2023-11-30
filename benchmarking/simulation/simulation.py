@@ -140,5 +140,5 @@ def run_trial_batch(
                 batch_cache.add_run(team_set, run_time)
 
         return batch_team_sets, batch_run_times
-    except Exception:
+    except Exception as e:
         return [], []

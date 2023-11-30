@@ -26,12 +26,6 @@ class RandomAlgorithm(ChooseAlgorithm):
     def generate(self, students: List[Student]) -> TeamSet:
         return generate_with_choose(self, students, self.teams)
 
-    def prepare(self, students: List[Student]) -> None:
-        """
-        This part is used to set up the algorithm before running the generation without affecting run time
-        """
-        pass
-
     def choose(
         self, teams: List[Team], students: List[Student]
     ) -> Tuple[Optional[Team], Optional[Student]]:

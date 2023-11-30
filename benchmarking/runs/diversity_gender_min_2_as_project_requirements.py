@@ -38,7 +38,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 class DiversifyGenderMin2AsProjectRequirementRun(Run):
     @staticmethod
-    def start(num_trials: int = 20, generate_graphs: bool = True):
+    def start(num_trials: int = 10, generate_graphs: bool = True):
         """
         Goal: Run diversify gender scenario, measure average EF, EF1, PROP, and PROP1
         """
@@ -262,6 +262,8 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
 
     @staticmethod
     def get_team_utility(students: List[Student], team: TeamShell) -> float:
+        if (len(students) == 0):
+            return 0.0
         return sum(
             [
                 DiversifyGenderMin2AsProjectRequirementRun.get_student_utility(student, team)
@@ -273,7 +275,7 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
     def get_student_utility(student: Student, team: TeamShell) -> float:
         return sum(
             [
-                1.0 if student.meets_requirement(requirement) else -1.0
+                1.0 if student.meets_requirement(requirement) else 0.0
                 for requirement in team.requirements
             ]
         ) / float(len(team.requirements))

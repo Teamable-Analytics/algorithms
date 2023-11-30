@@ -68,7 +68,7 @@ class DoubleRoundRobinAlgorithm(Algorithm):
         utilities = {team.project_id: {} for team in teams}
         for team in teams:
             for student in students:
-                self.utilities[team.project_id][student.id] = Utility(
+                utilities[team.project_id][student.id] = Utility(
                     student=student,
                     project_id=team.project_id,
                     value=utility_function(student, team.to_shell()),

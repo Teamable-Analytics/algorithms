@@ -102,7 +102,7 @@ class GeneralizedEnvyGraphAlgorithm(Algorithm):
         return new_team_set
 
     def generate(self, students: List[Student]) -> TeamSet:
-        self.envy_graph = EnvyGraph(self.teams, students)
+        self.envy_graph = EnvyGraph(self.teams, students, self.utility_function)
         self.allocation: Dict[int, List[int]] = {
             team.project_id: [] for team in self.teams
         }
