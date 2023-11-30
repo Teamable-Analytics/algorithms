@@ -23,7 +23,7 @@ from benchmarking.evaluations.goals import (
     WeightGoal,
     PreferenceGoal,
     DiversityGoal,
-    ProjectRequirementGoal, ProjectsGoal,
+    ProjectRequirementGoal, UtilityGoal,
 )
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.simulation.goal_to_priority import (
@@ -35,7 +35,7 @@ from utils.dictionaries import prune_dictionary_keys
 class MockAlgorithm:
     @staticmethod
     def get_team_generation_options(
-        num_students: int, num_teams: int, initial_teams: List[TeamShell] = None
+            num_students: int, num_teams: int, initial_teams: List[TeamShell] = None
     ) -> TeamGenerationOptions:
         _num_teams = len(initial_teams) if initial_teams else num_teams
         min_team_size = num_students // _num_teams
@@ -51,7 +51,7 @@ class MockAlgorithm:
 
     @staticmethod
     def algorithm_options_class(
-        algorithm_type: AlgorithmType,
+            algorithm_type: AlgorithmType,
     ) -> Type[AnyAlgorithmOptions]:
         if algorithm_type == AlgorithmType.RANDOM:
             return RandomAlgorithmOptions
@@ -70,7 +70,7 @@ class MockAlgorithm:
 
     @staticmethod
     def field_names_for_algorithm_type_options(
-        algorithm_type: AlgorithmType,
+            algorithm_type: AlgorithmType,
     ) -> List[str]:
         algorithm_options_cls = MockAlgorithm.algorithm_options_class(algorithm_type)
         return [_.name for _ in dataclasses.fields(algorithm_options_cls)]
@@ -88,7 +88,7 @@ class MockAlgorithm:
 
     @staticmethod
     def algorithm_options_from_scenario(
-        algorithm_type: AlgorithmType, scenario: Scenario, max_project_preferences: int
+            algorithm_type: AlgorithmType, scenario: Scenario, max_project_preferences: int
     ) -> AnyAlgorithmOptions:
         kwargs = {}
         attributes_to_diversify = []
@@ -121,8 +121,8 @@ class MockAlgorithm:
                     attributes_to_concentrate.append(goal.attribute)
             if isinstance(goal, ProjectRequirementGoal):
                 has_project_requirement_goal = True
-            if isinstance(goal, ProjectsGoal):
-                kwargs.update({"projects": goal.projects})
+            if isinstance(goal, UtilityGoal):
+                kwargs.update({"utility_function": goal.utility_function})
 
         if not has_weight_goal:
             # set default weights if no weights are explicitly given in the scenario

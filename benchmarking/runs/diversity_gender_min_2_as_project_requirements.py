@@ -101,7 +101,9 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
                 for i in range(1, number_of_teams + 1)
             ]
 
-            scenario = DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value, projects=projects)
+            scenario = DiversifyGenderMin2Female(
+                value_of_female=Gender.FEMALE.value,
+                utility_function=DiversifyGenderMin2AsProjectRequirementRun.get_student_utility)
 
             initialTeamsProviderSettings = MockInitialTeamsProviderSettings(projects=projects)
             initialTeamsProvider = MockInitialTeamsProvider(settings=initialTeamsProviderSettings)
@@ -262,11 +264,19 @@ class DiversifyGenderMin2AsProjectRequirementRun(Run):
     def get_team_utility(students: List[Student], team: TeamShell) -> float:
         return sum(
             [
-                1.0 if student.meets_requirement(requirement) else -1.0
-                for requirement in team.requirements
+                DiversifyGenderMin2AsProjectRequirementRun.get_student_utility(student, team)
                 for student in students
             ]
-        )
+        ) / float(len(students))
+
+    @staticmethod
+    def get_student_utility(student: Student, team: TeamShell) -> float:
+        return sum(
+            [
+                1.0 if student.meets_requirement(requirement) else -1.0
+                for requirement in team.requirements
+            ]
+        ) / float(len(team.requirements))
 
 
 if __name__ == "__main__":

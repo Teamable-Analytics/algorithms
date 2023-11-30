@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from typing import Optional, List
+from typing import Optional, Callable
 
-from api.models.project import Project
+from api.models.student import Student
+from api.models.team import TeamShell
 from benchmarking.evaluations.enums import (
     PreferenceDirection,
     PreferenceSubject,
@@ -27,8 +28,8 @@ class PreferenceGoal(Goal):
 
     def validate(self):
         if (
-            self.subject == PreferenceSubject.PROJECTS
-            and not self.max_project_preferences
+                self.subject == PreferenceSubject.PROJECTS
+                and not self.max_project_preferences
         ):
             raise ValueError(
                 "Using the projects preference subject requires the specification of "
@@ -52,5 +53,5 @@ class WeightGoal(Goal):
 
 
 @dataclass
-class ProjectsGoal(Goal):
-    projects: List[Project]
+class UtilityGoal(Goal):
+    utility_function: Callable[[Student, TeamShell], float]

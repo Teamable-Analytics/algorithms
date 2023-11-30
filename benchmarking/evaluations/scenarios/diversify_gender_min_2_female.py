@@ -1,23 +1,24 @@
-from typing import List
+from typing import List, Callable
 
 from api.models.enums import (
     DiversifyType,
     ScenarioAttribute,
     TokenizationConstraintDirection,
 )
-from api.models.project import Project
+from api.models.student import Student
+from api.models.team import TeamShell
 from benchmarking.evaluations.interfaces import (
     Scenario,
     Goal,
 )
-from benchmarking.evaluations.goals import DiversityGoal, WeightGoal, ProjectsGoal
+from benchmarking.evaluations.goals import DiversityGoal, WeightGoal, UtilityGoal
 from api.models.tokenization_constraint import TokenizationConstraint
 
 
 class DiversifyGenderMin2Female(Scenario):
-    def __init__(self, value_of_female: int, projects: List[Project] = None):
+    def __init__(self, value_of_female: int, utility_function: Callable[[Student, TeamShell], float]):
         self.value_of_female = value_of_female
-        self.projects = projects
+        self.utility_function = utility_function
 
     @property
     def name(self):
@@ -36,5 +37,5 @@ class DiversifyGenderMin2Female(Scenario):
                 ),
             ),
             WeightGoal(diversity_goal_weight=1),
-            ProjectsGoal(projects=self.projects),
+            UtilityGoal(utility_function=self.utility_function),
         ]
