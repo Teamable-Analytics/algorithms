@@ -226,7 +226,7 @@ class DiversifyGenderMin2PriorityAlgorithm(Run):
                 title=graph_names.get(Insight.KEY_RUNTIMES),
                 data=list(graph_runtime_dict.values()),
                 save_graph=False,
-                file_name="run_times"
+                file_name="run_times",
             )
         )
 
@@ -240,7 +240,7 @@ class DiversifyGenderMin2PriorityAlgorithm(Run):
                     *self.metrics["AverageGiniIndex"].theoretical_range
                 ),
                 save_graph=False,
-                file_name="average_gini"
+                file_name="average_gini",
             )
         )
 
@@ -254,6 +254,6 @@ class DiversifyGenderMin2PriorityAlgorithm(Run):
                     *self.metrics["PrioritySatisfaction"].theoretical_range
                 ),
                 save_graph=False,
-                file_name="priorities_satisfied"
+                file_name="priorities_satisfied",
             )
         )

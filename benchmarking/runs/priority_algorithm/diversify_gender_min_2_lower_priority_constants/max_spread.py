@@ -8,7 +8,7 @@ from benchmarking.simulation.simulation_set import SimulationSetArtifact
 
 
 class DiversifyGenderMin2MaxKeep(DiversifyGenderMin2LowerPriorityConstants):
-    def start(self, num_trials: int = 10, generate_graphs: bool = True):
+    def start(self, num_trials: int = 100, generate_graphs: bool = False):
         """
         Goal: Run diversify gender scenario while varying the maximum spread argument for the priority algorithm.
         The constants for the priority algorithm are also reduced compared to the original diversify_gender_min_2 runs.
@@ -29,9 +29,9 @@ class DiversifyGenderMin2MaxKeep(DiversifyGenderMin2LowerPriorityConstants):
 
         if generate_graphs:
             graph_names = {
-                Insight.KEY_RUNTIMES: "Diversify Gender With Min of Two Runtimes with Varied Max Spread",
-                "AverageGiniIndex": "Diversify Gender With Min of Two Average Gini Index with Varied Max Spread",
-                "PrioritySatisfaction": "Diversity Gender With Min of Two Satisfied Priorities with Varied Max Spread",
+                Insight.KEY_RUNTIMES: "Diversify Gender With Min of Two \n Runtimes with Varied Max Spread",
+                "AverageGiniIndex": "Diversify Gender With Min of Two \n Average Gini Index with Varied Max Spread",
+                "PrioritySatisfaction": "Diversity Gender With Min of Two \n Satisfied Priorities with Varied Max Spread",
             }
             self.generate_graphs(
                 artifacts=artifacts,
