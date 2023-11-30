@@ -90,7 +90,6 @@ class DiversifyGenderMin2LowerPriorityConstants(Run):
         max_time = kwargs.get("max_time", self.MAX_TIME)
         max_keep = kwargs.get("max_keep", self.MAX_KEEP)
         num_teams = kwargs.get("number_of_teams", self.NUMBER_OF_TEAMS)
-        print(f"Max iterate: {max_iterate}, max spread: {max_spread}")
         return SimulationSet(
             settings=SimulationSettings(
                 num_teams=num_teams,
