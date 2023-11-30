@@ -122,6 +122,7 @@ def run_trial_batch(
         for _ in range(0, num_runs_for_batch):
             students = settings.student_provider.get()
 
+            runner.prepare(students)
             start_time = time.time()
             team_set = runner.generate(students)
             end_time = time.time()

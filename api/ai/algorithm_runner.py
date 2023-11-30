@@ -59,6 +59,13 @@ class AlgorithmRunner:
         )
         return algorithm.generate(students)
 
+    def prepare(self, students: List[Student]) -> None:
+        self.algorithm_cls(
+            team_generation_options=self.team_generation_options,
+            algorithm_options=self.algorithm_options,
+            algorithm_config=self.algorithm_config,
+        ).prepare(students)
+
     @staticmethod
     def get_algorithm_from_type(algorithm_type: AlgorithmType):
         if algorithm_type == AlgorithmType.RANDOM:

@@ -250,14 +250,9 @@ class SocialAlgorithmOptions(WeightAlgorithmOptions):
 @dataclass
 class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
     utility_function: Callable[[Student, TeamShell], float]
-    students: List[Student]
 
     def validate(self):
         super().validate()
-
-        Schema([Student]).validate(self.students)
-        if len(self.students) == 0:
-            raise SchemaError("Student list cannot be empty")
 
     @staticmethod
     def parse_json(_: Dict[str, Any]):
@@ -273,14 +268,9 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
 @dataclass
 class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
     utility_function: Callable[[Student, TeamShell], float]
-    students: List[Student]
 
     def validate(self):
         super().validate()
-
-        Schema([Student]).validate(self.students)
-        if len(self.students) == 0:
-            raise SchemaError("Student list cannot be empty")
 
     @staticmethod
     def parse_json(_: Dict[str, Any]):
@@ -296,14 +286,9 @@ class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
 @dataclass
 class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
     utility_function: Callable[[Student, TeamShell], float]
-    students: List[Student]
 
     def validate(self):
         super().validate()
-
-        Schema([Student]).validate(self.students)
-        if len(self.students) == 0:
-            raise SchemaError("Student list cannot be empty")
 
     @staticmethod
     def parse_json(_: Dict[str, Any]):

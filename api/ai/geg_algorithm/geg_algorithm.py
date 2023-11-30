@@ -45,9 +45,12 @@ class GeneralizedEnvyGraphAlgorithm(Algorithm):
         self.allocation: Dict[int, List[int]] = {}
         self.utilities: Dict[int, Dict[int, int]] = {}
         self.project_ids_to_projects = {team.project_id: team for team in self.teams}
+        self.utility_function = algorithm_options.utility_function
+
+    def prepare(self, students: List[Student]) -> None:
         self.utilities = self._calculate_utilities(
-            students=algorithm_options.students,
-            utility_function=algorithm_options.utility_function,
+            students=students,
+            utility_function=self.utility_function,
         )
 
     def _calculate_utilities(
