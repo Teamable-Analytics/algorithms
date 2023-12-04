@@ -5,6 +5,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - 443:80
+    volumes:
+      - /etc/ssl/certs:/etc/ssl/certs
+      - /etc/pki/tls/private:/etc/pki/tls/private
     depends_on:
       - api
     restart: 'on-failure'
