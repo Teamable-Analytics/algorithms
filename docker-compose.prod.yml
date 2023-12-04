@@ -4,7 +4,7 @@ services:
       context: nginx
       dockerfile: Dockerfile
     ports:
-      - 443:80
+      - 443:443
     volumes:
       - /etc/ssl/certs:/etc/ssl/certs
       - /etc/pki/tls/private:/etc/pki/tls/private
