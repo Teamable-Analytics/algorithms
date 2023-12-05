@@ -58,6 +58,15 @@ def line_graph(graph_data: LineGraphMetadata):
         )
         color = curr_data.line_color
 
+        plt.errorbar(
+            curr_data.x_data,
+            curr_data.y_data,
+            linestyle=line_style,
+            marker=marker,
+            color=color,
+            yerr=curr_data.error_bars,
+        )
+
         # Plot line
         plt.plot(
             curr_data.x_data,
