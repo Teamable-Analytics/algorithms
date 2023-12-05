@@ -6,8 +6,8 @@ services:
     ports:
       - 443:443
     volumes:
-      - /etc/ssl/certs:/etc/ssl/certs
-      - /etc/pki/tls/private:/etc/pki/tls/private
+      - ${NGINX_SSL_CERT_PATH}:${NGINX_SSL_CERT_PATH}
+      - ${NGINX_SSL_CERT_KEY_PATH}:${NGINX_SSL_CERT_KEY_PATH}
     env_file:
       - ./.env.prod
     depends_on:
