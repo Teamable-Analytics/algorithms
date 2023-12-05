@@ -1,3 +1,5 @@
+import json
+
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
@@ -42,6 +44,7 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
 
         serialized_team_set = TeamSetSerializer().encode(team_set)
 
+        response_data = json.loads(serialized_team_set)
         return ResponseWithMetadata(
-            data_label="teams", data=serialized_team_set, status=200
+            data_label="teams", data=response_data, status=200
         )
