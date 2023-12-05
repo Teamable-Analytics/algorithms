@@ -8,6 +8,8 @@ services:
     volumes:
       - /etc/ssl/certs:/etc/ssl/certs
       - /etc/pki/tls/private:/etc/pki/tls/private
+    env_file:
+      - ./.env.prod
     depends_on:
       - api
     restart: 'on-failure'
