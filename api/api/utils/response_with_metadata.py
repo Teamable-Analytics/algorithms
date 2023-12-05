@@ -1,4 +1,3 @@
-import json
 import time
 
 from rest_framework.response import Response
@@ -20,10 +19,8 @@ class ResponseWithMetadata(Response):
         super().__init__(data, status, template_name, headers, exception, content_type)
 
         data_label = data_label if data_label else "data"
-        data = data if type(data) is dict else json.loads(data)
-
         self.data = {
-            data_label: data,
+            data_label: self.data,
             "metadata": {
                 "version": "v0.1.0",
                 "timestamp": timestamp if timestamp else time.time(),
