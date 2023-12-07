@@ -59,6 +59,18 @@ class Insight:
         return averages_output
 
     @staticmethod
+    def metric_stdev(
+        insight_output_set: Dict[str, InsightOutput],
+        metric_name: str,
+    ) -> Dict[str, float]:
+        return {
+            item: 0
+            if len(insight_output[metric_name]) < 2
+            else statistics.stdev(insight_output[metric_name])
+            for item, insight_output in insight_output_set.items()
+        }
+
+    @staticmethod
     def get_output_set(
         artifact: SimulationSetArtifact, metrics: List[TeamSetMetric]
     ) -> Dict[str, InsightOutput]:
