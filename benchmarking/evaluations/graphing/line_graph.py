@@ -66,6 +66,7 @@ def line_graph(graph_data: LineGraphMetadata):
             marker=marker,
             color=color,
             yerr=curr_data.error_bars,
+            capsize=3.0,
         )
 
         # Add line to legend
