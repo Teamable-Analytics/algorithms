@@ -23,7 +23,7 @@ class InitialTeamsProvider(ABC):
 
 class StudentProvider(ABC):
     @abstractmethod
-    def get(self) -> List[Student]:
+    def get(self, seed: int = None) -> List[Student]:
         raise NotImplementedError
 
     @property

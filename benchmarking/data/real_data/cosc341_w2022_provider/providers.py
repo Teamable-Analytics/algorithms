@@ -14,7 +14,7 @@ class COSC341W2022InitialTeamsProvider(InitialTeamsProvider):
 
 
 class COSC341W2022StudentProvider(StudentProvider):
-    def get(self) -> List[Student]:
+    def get(self, seed: int = None) -> List[Student]:
         pass
 
     @property
