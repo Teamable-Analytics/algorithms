@@ -64,7 +64,7 @@ class MockStudentProvider(StudentProvider):
     def __init__(self, settings: MockStudentProviderSettings):
         self.settings = settings
 
-    def get(self) -> List[Student]:
+    def get(self, seed: int = None) -> List[Student]:
         mock_students = create_mock_students(
             self.settings.number_of_students,
             self.settings.number_of_friends,
