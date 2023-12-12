@@ -1,5 +1,4 @@
 import os
-import re
 import time
 import uuid
 from multiprocessing import Pool
@@ -38,27 +37,33 @@ class Simulation:
         self.team_sets = []
         self.run_times = []
 
-    def run(self, num_runs: int, seeds: List[int]) -> SimulationArtifact:
-        if len(seeds) != num_runs:
+    def run(self, num_runs: int, seeds: List[int] = None) -> SimulationArtifact:
+        if seeds and len(seeds) != num_runs:
             raise ValueError("Must provide a seed for each run")
 
+        cache = None
+        num_completed_runs = 0
         if self.settings.cache_key:
             cache = SimulationCache(self.settings.cache_key)
             if cache.exists():
                 cached_team_sets, cached_run_times = cache.get_simulation_artifact()
                 self.team_sets = cached_team_sets
                 self.run_times = cached_run_times
+                num_completed_runs = len(cached_team_sets)
                 if len(self.team_sets) >= num_runs:
                     return self.team_sets[:num_runs], self.run_times[:num_runs]
                 else:
                     num_runs -= len(cached_team_sets)
 
-        completed_run_indexes = []
-        for team_set in self.team_sets:
-            team_set_id = team_set._id
-            match = re.search(r"run_index_(\d+)", team_set_id)
-            if match:
-                completed_run_indexes.append(int(match.group(1)))
+        if cache and cache.exists():
+            metadata = cache.get_metadata()
+            completed_run_indexes = metadata.get("used_seed_indexes") or []
+
+            # Use as fallback
+            if len(completed_run_indexes) != num_completed_runs:
+                completed_run_indexes = list(range(num_completed_runs))
+        else:
+            completed_run_indexes = list(range(num_completed_runs))
 
         custom_initial_teams = (
             self.settings.initial_teams_provider.get()
@@ -98,7 +103,7 @@ class Simulation:
                 while index in completed_run_indexes:
                     index += 1
                 batch_indexes.append(index)
-                assert index < len(seeds)
+                assert not seeds or index < len(seeds)
                 index += 1
             run_indexes_per_worker.append(batch_indexes)
 
@@ -146,7 +151,10 @@ def run_trial_batch(
         batch_run_times = []
 
         for run_index in run_indexes_for_batch:
-            students = settings.student_provider.get(seeds[run_index])
+            if seeds:
+                students = settings.student_provider.get(seeds[run_index])
+            else:
+                students = settings.student_provider.get()
 
             start_time = time.time()
             team_set = runner.generate(students)
@@ -157,6 +165,8 @@ def run_trial_batch(
             # Give the generated team set a unique id
             team_set._id = (
                 f"{uuid.uuid4()}--run_index_{run_index}--seed_{seeds[run_index]}"
+                if seeds
+                else f"{uuid.uuid4()}--run_index_{run_index}"
             )
 
             batch_team_sets.append(team_set)
@@ -166,6 +176,25 @@ def run_trial_batch(
             if batch_cache is not None:
                 batch_cache.add_run(team_set, run_time)
 
+                if seeds:
+                    if batch_cache.exists():
+                        metadata = batch_cache.get_metadata()
+                    else:
+                        metadata = {}
+                    used_seed_indexes = metadata.get("used_seed_indexes") or []
+                    used_seeds = metadata.get("used_seeds") or []
+
+                    used_seed_indexes.append(run_index)
+                    used_seeds.append(seeds[run_index])
+
+                    batch_cache.update_metadata(
+                        {
+                            "used_seed_indexes": used_seed_indexes,
+                            "used_seeds": used_seeds,
+                        }
+                    )
+
         return batch_team_sets, batch_run_times
-    except Exception:
+    except Exception as e:
+        print(e)
         return [], []

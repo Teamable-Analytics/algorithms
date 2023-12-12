@@ -82,6 +82,6 @@ def _get_seeds(num_seeds: int, cache_key: str) -> List[int]:
     rng = np.random.default_rng(seed_generator_seed)
     return [
         # Arbitrary upper bound. Big number, so we have lower chance of duplicate seed.
-        rng.integers(0, 1_000_000_000)
+        int(rng.integers(0, 1_000_000_000))
         for _ in range(num_seeds)
     ]
