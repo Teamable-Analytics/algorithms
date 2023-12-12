@@ -1,5 +1,7 @@
 from typing import List, Dict
 
+import numpy as np
+
 from api.ai.interfaces.algorithm_config import AlgorithmConfig
 from api.models.enums import AlgorithmType
 from benchmarking.simulation.simulation import SimulationArtifact, Simulation
@@ -31,6 +33,9 @@ class SimulationSet:
         self.basic_simulation_set_artifact: SimulationSetArtifact = {}
 
     def run(self, num_runs: int) -> SimulationSetArtifact:
+        # Generate `num_runs` seeds
+        seeds = _get_seeds(num_runs, self.base_cache_key)
+
         for algorithm in self.algorithm_types:
             for config in self.algorithm_set[algorithm]:
                 self.basic_simulation_set_artifact[
@@ -42,7 +47,8 @@ class SimulationSet:
                     ),
                     config=config,
                 ).run(
-                    num_runs
+                    num_runs,
+                    seeds,
                 )
 
         return self.basic_simulation_set_artifact
@@ -69,3 +75,13 @@ class SimulationSet:
         name: str,
     ) -> SimulationArtifact:
         return config_simulation_set_artifact.get(name, ([], []))
+
+
+def _get_seeds(num_seeds: int, cache_key: str) -> List[int]:
+    seed_generator_seed = abs(hash(cache_key)) if cache_key else None
+    rng = np.random.default_rng(seed_generator_seed)
+    return [
+        # Arbitrary upper bound. Big number, so we have lower chance of duplicate seed.
+        int(rng.integers(0, 1_000_000_000))
+        for _ in range(num_seeds)
+    ]

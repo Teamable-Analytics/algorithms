@@ -109,7 +109,22 @@ def combine(cache_key: str):
         result_cache["metadata"].update(existing_metadata)
 
     for fragment in sorted_fragment_data:
+        old_used_seed_indexes = result_cache["metadata"].get("used_seed_indexes")
+        old_used_seeds = result_cache["metadata"].get("used_seeds")
+        new_used_seed_indexes = fragment["metadata"].get("used_seed_indexes")
+        new_used_seeds = fragment["metadata"].get("used_seeds")
+
         result_cache["metadata"].update(fragment["metadata"])
+
+        if old_used_seed_indexes or new_used_seed_indexes:
+            result_cache["metadata"]["used_seed_indexes"] = (
+                old_used_seed_indexes or []
+            ) + (new_used_seed_indexes or [])
+        if old_used_seeds or new_used_seeds:
+            result_cache["metadata"]["used_seeds"] = (old_used_seeds or []) + (
+                new_used_seeds or []
+            )
+
         result_cache["team_sets"].extend(fragment["team_sets"])
         result_cache["runtimes"].extend(fragment["runtimes"])
 
