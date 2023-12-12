@@ -415,17 +415,23 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
         test_range_1 = (1, 1000)
         for _ in range(50):
             rng = np.random.default_rng(1)
-            num_values_for_attribute_values.append(num_values_for_attribute(test_range_1, generator=rng))
+            num_values_for_attribute_values.append(
+                num_values_for_attribute(test_range_1, generator=rng)
+            )
         self.assertEqual(len(set(num_values_for_attribute_values)), 1)
 
         random_choice_values = []
         for _ in range(50):
             rng = np.random.default_rng(1)
-            random_choice_values.extend(random_choice([_ for _ in range(1000)], generator=rng))
+            random_choice_values.extend(
+                random_choice([_ for _ in range(1000)], generator=rng)
+            )
         self.assertEqual(len(set(random_choice_values)), 1)
 
         random_choice_2_values = []
         for _ in range(50):
             rng = np.random.default_rng(1)
-            random_choice_2_values.extend(random_choice([_ for _ in range(1000)], size=3, generator=rng))
+            random_choice_2_values.extend(
+                random_choice([_ for _ in range(1000)], size=3, generator=rng)
+            )
         self.assertEqual(len(set(random_choice_2_values)), 3)
