@@ -3,12 +3,24 @@ name: Run Tests
 on: [push]
 
 jobs:
-  lint:
+  build:
+    needs: lint
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [ "3.8" ]
         os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip && python -m pip install -r  requirements.txt
+
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.8" ]
 
     steps:
       - uses: actions/checkout@v3
@@ -18,7 +30,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip && python -m pip install -r requirements.txt
+          python -m pip install --upgrade pip && python -m pip install black==23.7.0
       - name: Lint with Black
         run: |
           python -m black . --check
