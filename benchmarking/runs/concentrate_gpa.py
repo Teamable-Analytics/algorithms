@@ -30,13 +30,13 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class ConcentrateGpaRun(Run):
-    def start(self, num_trials: int = 100, generate_graphs: bool = False):
+    def start(self, num_trials: int = 10, generate_graphs: bool = True):
         """
         Goal: Run concentrate GPA scenario, and measure the average, maximum, and minimum gini scores for gpa
         """
 
         # Define changing values
-        class_sizes = list(range(50, 100, 50))
+        class_sizes = list(range(50, 501, 50))
         ratio_of_a_students = 0.25
         ratio_of_b_students = 0.50
         ratio_of_c_students = 0.25
@@ -86,6 +86,15 @@ class ConcentrateGpaRun(Run):
                 ),
                 algorithm_set={
                     AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
+                    AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
+                    AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
+                    AlgorithmType.PRIORITY: [
+                        PriorityAlgorithmConfig(),
+                        PriorityAlgorithmConfig(
+                            name="local_max",
+                            MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
+                        ),
+                    ],
                 },
             ).run(num_runs=num_trials)
             artifacts[class_size] = simulation_set_artifact
