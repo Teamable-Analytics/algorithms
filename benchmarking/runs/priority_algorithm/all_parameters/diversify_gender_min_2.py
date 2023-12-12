@@ -1,3 +1,4 @@
+import re
 from typing import Dict, Tuple
 
 import matplotlib
@@ -17,6 +18,7 @@ from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
+from benchmarking.simulation.simulation import SimulationArtifact
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
@@ -65,9 +67,6 @@ class DiversifyGenderMin2(Run):
             ),
         }
 
-        # Use as `artifacts[max_keep][max_spread][max_iterations]`
-        artifacts: Dict[Tuple[int, int, int], SimulationSetArtifact] = {}
-
         # Ranges
         max_keep_range = list(
             range(
@@ -91,41 +90,48 @@ class DiversifyGenderMin2(Run):
             )
         )
 
-        for max_keep in max_keep_range:
-            for max_spread in max_spread_range:
-                for max_iterations in max_iterations_range:
-                    print(
-                        f"max_keep: {max_keep}, max_spread: {max_spread}, max_iterations: {max_iterations}"
+        artifact: SimulationSetArtifact = SimulationSet(
+            settings=SimulationSettings(
+                num_teams=num_teams,
+                scenario=scenario,
+                student_provider=MockStudentProvider(student_provider_settings),
+                cache_key=f"priority_algorithm/all_parameters/diversify_gender_min_2/",
+            ),
+            algorithm_set={
+                AlgorithmType.PRIORITY: [
+                    PriorityAlgorithmConfig(
+                        MAX_KEEP=max_keep,
+                        MAX_SPREAD=max_spread,
+                        MAX_ITERATE=max_iterations,
+                        MAX_TIME=10000000,
+                        name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}",
                     )
-                    artifacts[(max_keep, max_spread, max_iterations)] = SimulationSet(
-                        settings=SimulationSettings(
-                            num_teams=num_teams,
-                            scenario=scenario,
-                            student_provider=MockStudentProvider(
-                                student_provider_settings
-                            ),
-                            cache_key=f"priority_algorithm/all_parameters/diversify_gender_min_2/max_keep_{max_keep}/max_spread_{max_spread}/max_iterations_{max_iterations}",
-                        ),
-                        algorithm_set={
-                            AlgorithmType.PRIORITY: [
-                                PriorityAlgorithmConfig(
-                                    MAX_KEEP=max_keep,
-                                    MAX_SPREAD=max_spread,
-                                    MAX_ITERATE=max_iterations,
-                                    MAX_TIME=10000000,
-                                )
-                            ]
-                        },
-                    ).run(num_runs=num_trials)
+                    for max_keep in max_keep_range
+                    for max_spread in max_spread_range
+                    for max_iterations in max_iterations_range
+                ]
+            },
+        ).run(num_runs=num_trials)
+
+        artifacts: Dict[Tuple[int, int, int], SimulationArtifact] = {}
+        for name, simulation_artifact in artifact.items():
+            match = re.search(
+                r"max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+)", name
+            )
+            if match:
+                max_keep = int(match.group(1))
+                max_spread = int(match.group(2))
+                max_iterations = int(match.group(3))
+                artifacts[(max_keep, max_spread, max_iterations)] = simulation_artifact
 
         if generate_graphs:
             # Process data and plot
             for metric_name, metric in metrics.items():
-                # Dict with points[(x, y, z)] = color (value between 0-1 as position on color map)
+                # Dict with points[(x, y, z)] = avg metric value (between 0-1)
                 points: Dict[Tuple[int, int, int], float] = {}
                 for point_location, simulation_artifact in artifacts.items():
                     insight_set = Insight.get_output_set(
-                        artifact=simulation_artifact,
+                        artifact={"arbitrary_name": simulation_artifact},
                         metrics=[metric],
                     )
 
@@ -136,13 +142,16 @@ class DiversifyGenderMin2(Run):
 
                     # Get first value, assumes only one algorithm being run
                     value = list(value_dict.values())[0]
-                    points[point_location] = value
+                    if 0.85 <= value:
+                        points[point_location] = value
 
                 # Graph data
                 fig = plt.figure()
                 ax = fig.add_subplot(projection="3d")
                 cmap = plt.get_cmap("Blues")
-                c_norm = matplotlib.colors.Normalize(vmin=0, vmax=1)
+                c_norm = matplotlib.colors.Normalize(
+                    vmin=min(list(points.values())), vmax=max(list(points.values()))
+                )
                 scalar_map = cm.ScalarMappable(norm=c_norm, cmap=cmap)
 
                 values = list(points.values())
@@ -164,7 +173,6 @@ class DiversifyGenderMin2(Run):
                 fig.colorbar(scalar_map, ax=ax, pad=0.15)
 
                 plt.show()
-                plt.close()
 
 
 if __name__ == "__main__":
