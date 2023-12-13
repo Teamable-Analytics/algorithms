@@ -8,10 +8,10 @@ from benchmarking.evaluations.interfaces import TeamSetMetric
 
 class ProportionalityUpToOneItem(TeamSetMetric):
     def __init__(
-            self,
-            calculate_utilities: Callable[[List[Student], TeamShell], float],
-            *args,
-            **kwargs
+        self,
+        calculate_utilities: Callable[[List[Student], TeamShell], float],
+        *args,
+        **kwargs
     ):
         super().__init__(theoretical_range=(0, 1), *args, **kwargs)
         self.calculate_utilities = calculate_utilities
@@ -20,9 +20,9 @@ class ProportionalityUpToOneItem(TeamSetMetric):
         all_students = [student for team in team_set.teams for student in team.students]
 
         return (
-                self._is_proportional(team_set, all_students)
-                or self._is_proportional_with_one_extra_student(team_set, all_students)
-                or self._is_proportional_with_one_less_student(team_set, all_students)
+            self._is_proportional(team_set, all_students)
+            or self._is_proportional_with_one_extra_student(team_set, all_students)
+            or self._is_proportional_with_one_less_student(team_set, all_students)
         )
 
     def _is_proportional(self, team_set: TeamSet, all_students: List[Student]) -> bool:
@@ -34,7 +34,7 @@ class ProportionalityUpToOneItem(TeamSetMetric):
         )
 
     def _is_proportional_with_one_extra_student(
-            self, team_set: TeamSet, all_students: List[Student]
+        self, team_set: TeamSet, all_students: List[Student]
     ) -> bool:
         for team in team_set.teams:
             students_in_team = set([student.id for student in team.students])
@@ -60,7 +60,7 @@ class ProportionalityUpToOneItem(TeamSetMetric):
         return True
 
     def _is_proportional_with_one_less_student(
-            self, team_set: TeamSet, all_students: List[Student]
+        self, team_set: TeamSet, all_students: List[Student]
     ) -> bool:
         for team in team_set.teams:
             is_new_team_proportional = any(
@@ -89,7 +89,7 @@ class ProportionalityUpToOneItem(TeamSetMetric):
         return True
 
     def _is_team_proportional(
-            self, team: Team, all_students: List[Student], num_teams: int
+        self, team: Team, all_students: List[Student], num_teams: int
     ) -> bool:
         class_utility = self.calculate_utilities(all_students, team.to_shell())
         team.utility = self.calculate_utilities(team.students, team.to_shell())

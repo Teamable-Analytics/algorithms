@@ -5,7 +5,9 @@ from api.models.project import ProjectRequirement
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
-from benchmarking.evaluations.metrics.proportionality_up_to_one_item import ProportionalityUpToOneItem
+from benchmarking.evaluations.metrics.proportionality_up_to_one_item import (
+    ProportionalityUpToOneItem,
+)
 
 
 class TestProportionalityUpToOneItem(unittest.TestCase):
@@ -102,7 +104,7 @@ class TestProportionalityUpToOneItem(unittest.TestCase):
                                 0: [1],
                             },
                         ),
-                    ]
+                    ],
                 ),
                 Team(
                     _id=1,
@@ -128,7 +130,7 @@ class TestProportionalityUpToOneItem(unittest.TestCase):
                         ),
                     ],
                 ),
-            ]
+            ],
         )
 
         # Even when remove 1 student from Team 0, it is still not proportional
@@ -163,7 +165,7 @@ class TestProportionalityUpToOneItem(unittest.TestCase):
                                 0: [1],
                             },
                         ),
-                    ]
+                    ],
                 ),
                 Team(
                     _id=1,
@@ -195,7 +197,7 @@ class TestProportionalityUpToOneItem(unittest.TestCase):
                         ),
                     ],
                 ),
-            ]
+            ],
         )
 
     def test_calculate__should_return_1_when_prop(self):
@@ -212,11 +214,18 @@ class TestProportionalityUpToOneItem(unittest.TestCase):
 
     def test_is_proportional__should_return_true_when_all_teams_are_proportional(self):
         metric = ProportionalityUpToOneItem(self.additive_utility_function)
-        all_students = [student for team in self.prop_teamset.teams for student in team.students]
+        all_students = [
+            student for team in self.prop_teamset.teams for student in team.students
+        ]
         self.assertTrue(metric._is_proportional(self.prop_teamset, all_students))
 
     def test_is_team_proportional__should_return_true_when_team_is_proportional(self):
         metric = ProportionalityUpToOneItem(self.additive_utility_function)
-        all_students = [student for team in self.prop_teamset.teams for student in team.students]
+        all_students = [
+            student for team in self.prop_teamset.teams for student in team.students
+        ]
         self.assertTrue(
-            metric._is_team_proportional(self.prop_teamset.teams[0], all_students, self.prop_teamset.num_teams))
+            metric._is_team_proportional(
+                self.prop_teamset.teams[0], all_students, self.prop_teamset.num_teams
+            )
+        )
