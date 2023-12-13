@@ -41,4 +41,6 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
         team_set = runner.generate(input_data.students)
 
         serialized_team_set = TeamSetSerializer().default(team_set)
-        return ResponseWithMetadata(data_label="teams", data=serialized_team_set, status=200)
+        return ResponseWithMetadata(
+            data_label="teams", data=serialized_team_set, status=200
+        )
