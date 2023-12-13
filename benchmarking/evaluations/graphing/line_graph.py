@@ -59,12 +59,14 @@ def line_graph(graph_data: LineGraphMetadata):
         color = curr_data.line_color
 
         # Plot line
-        plt.plot(
+        plt.errorbar(
             curr_data.x_data,
             curr_data.y_data,
             linestyle=line_style,
             marker=marker,
             color=color,
+            yerr=curr_data.error_bars,
+            capsize=3.0,
         )
 
         # Add line to legend
@@ -116,3 +118,4 @@ def line_graph(graph_data: LineGraphMetadata):
         plt.savefig(file_save_location)
     else:
         plt.show()
+    plt.close()

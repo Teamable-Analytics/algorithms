@@ -6,7 +6,7 @@ from api.models.team import Team
 
 @dataclass
 class TeamSet:
-    _id: int = None
+    _id: str = None
     name: str = None
     teams: List[Team] = field(default_factory=list)
 

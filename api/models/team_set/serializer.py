@@ -14,5 +14,10 @@ class TeamSetSerializer(JSONEncoder, ModelDecoder):
 
     def decode(self, json_dict: Dict[str, Any]) -> TeamSet:
         team_serializer = TeamSerializer()
-        teams = [team_serializer.decode(team) for team in json_dict["teams"]]
-        return TeamSet(_id=json_dict["_id"], name=json_dict["name"], teams=teams)
+        teams = [team_serializer.decode(team) for team in json_dict.get("teams", [])]
+        return TeamSet(
+            # TODO: After fixing no _id in teamset, add integer casting
+            _id=json_dict.get("id", json_dict.get("_id")),
+            name=json_dict.get("name"),
+            teams=teams,
+        )

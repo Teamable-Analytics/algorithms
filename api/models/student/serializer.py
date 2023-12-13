@@ -4,6 +4,7 @@ from typing import Dict, Union, List, Any
 from api.models.enums import Relationship
 from api.models.interfaces import ModelDecoder
 from api.models.student import Student
+from api.api.utils.relationship import get_relationship
 
 
 class StudentSerializer(JSONEncoder, ModelDecoder):
@@ -26,14 +27,16 @@ class StudentSerializer(JSONEncoder, ModelDecoder):
 
     def decode(self, json_dict: Dict[str, Any]) -> Student:
         return Student(
-            _id=json_dict["_id"],
-            name=json_dict["name"],
+            _id=int(json_dict.get("id", json_dict.get("_id"))),
+            name=json_dict.get("name"),
             attributes={
                 int(key): value for key, value in json_dict["attributes"].items()
             },
             relationships={
                 int(key): Relationship(value)
+                if isinstance(value, float) or isinstance(value, int)
+                else get_relationship(value)
                 for key, value in json_dict["relationships"].items()
             },
-            project_preferences=json_dict["project_preferences"],
+            project_preferences=json_dict.get("project_preferences"),
         )
