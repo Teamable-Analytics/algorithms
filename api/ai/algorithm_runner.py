@@ -66,10 +66,10 @@ class AlgorithmRunner:
             algorithm_options=self.algorithm_options,
             algorithm_config=self.algorithm_config,
         )
+        self.algorithm = algorithm
 
         try:
             algorithm.prepare(students)
-            self.algorithm = algorithm
         except NotImplementedError:
             # some algorithms do not require a prepare step
             return
