@@ -32,8 +32,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class ConcentrateManyAttributesRun(Run):
-    @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = True):
+    def start(self, num_trials: int = 10, generate_graphs: bool = True):
         """
         Goal: Run concentrate on many attributes scenario (6 attributes), measure average gini index across many attributes
         """
@@ -162,4 +161,4 @@ class ConcentrateManyAttributesRun(Run):
 
 
 if __name__ == "__main__":
-    typer.run(ConcentrateManyAttributesRun.start)
+    typer.run(ConcentrateManyAttributesRun().start)

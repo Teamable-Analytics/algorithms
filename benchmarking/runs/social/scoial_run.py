@@ -61,6 +61,5 @@ class SocialRun(Run):
             AlgorithmType.SOCIAL: [SocialAlgorithmConfig()],
         }
 
-    @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = False):
+    def start(self, num_trials: int = 10, generate_graphs: bool = False):
         raise NotImplementedError

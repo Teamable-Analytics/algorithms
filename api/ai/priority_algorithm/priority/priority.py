@@ -10,10 +10,12 @@ from api.models.enums import (
     TokenizationConstraintDirection,
     RequirementsCriteria,
     PriorityType,
+    Relationship,
 )
 from api.models.student import Student
 from api.models.team import TeamShell
 from benchmarking.evaluations.enums import PreferenceDirection
+from utils.math import change_range
 
 
 @dataclass
@@ -204,6 +206,49 @@ class ProjectPreferencePriority(Priority):
         )
 
 
+@dataclass
+class SocialPreferencePriority(Priority):
+    max_num_friends: int
+    max_num_enemies: int
+
+    def validate(self):
+        super().validate()
+
+    def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
+        num_students = len(students)
+        student_ids = [s.id for s in students]
+        # bidirectional friendship for all team members
+        theoretical_min = (
+            num_students * self.max_num_friends * Relationship.FRIEND.value
+        )
+        # bidirectional enemies for all team members
+        theoretical_max = num_students * self.max_num_enemies * Relationship.ENEMY.value
+
+        total = 0
+        for student in students:
+            for relation_student_id, relationship in student.relationships.items():
+                if (
+                    relation_student_id in student_ids
+                    and relation_student_id != student.id
+                ):
+                    total += relationship.value
+
+        # subtract the total from 1 because FRIEND is a negative number, meaning the closer we are to the theoretical
+        # min, the better for social satisfaction
+        return 1 - change_range(
+            total, original_range=(theoretical_min, theoretical_max), new_range=(0, 1)
+        )
+
+    @staticmethod
+    def get_schema() -> Schema:
+        return Schema(
+            {
+                "max_num_friends": int,
+                "max_num_enemies": int,
+            }
+        )
+
+
 def get_priority_from_type(priority_type: PriorityType):
     if priority_type == PriorityType.TOKENIZATION:
         return TokenizationPriority
@@ -213,4 +258,6 @@ def get_priority_from_type(priority_type: PriorityType):
         return RequirementPriority
     if priority_type == PriorityType.PROJECT_PREFERENCE:
         return ProjectPreferencePriority
+    if priority_type == PriorityType.SOCIAL_PREFERENCE:
+        return SocialPreferencePriority
     raise NotImplementedError()

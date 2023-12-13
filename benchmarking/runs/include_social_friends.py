@@ -35,8 +35,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class IncludeSocialFriendsRun(Run):
-    @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = True):
+    def start(self, num_trials: int = 10, generate_graphs: bool = True):
         """
         Goal: Run including social friends, measure average social satisfied team
         (a team socially satisfied when all member is happy)
@@ -140,4 +139,4 @@ class IncludeSocialFriendsRun(Run):
 
 
 if __name__ == "__main__":
-    typer.run(IncludeSocialFriendsRun.start)
+    typer.run(IncludeSocialFriendsRun().start)

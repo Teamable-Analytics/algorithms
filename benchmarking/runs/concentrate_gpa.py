@@ -30,8 +30,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class ConcentrateGpaRun(Run):
-    @staticmethod
-    def start(num_trials: int = 10, generate_graphs: bool = True):
+    def start(self, num_trials: int = 10, generate_graphs: bool = True):
         """
         Goal: Run concentrate GPA scenario, and measure the average, maximum, and minimum gini scores for gpa
         """
@@ -174,4 +173,4 @@ class ConcentrateGpaRun(Run):
 
 
 if __name__ == "__main__":
-    typer.run(ConcentrateGpaRun.start)
+    typer.run(ConcentrateGpaRun().start)
