@@ -29,6 +29,12 @@ class Algorithm(ABC):
     def generate(self, students: List[Student]) -> TeamSet:
         raise NotImplementedError
 
+    def prepare(self, students: List[Student]) -> None:
+        """
+        This part is used to set up the algorithm before running the generation without affecting run time
+        """
+        raise NotImplementedError
+
     def get_remaining_students(self, students: List[Student]) -> List[Student]:
         return [student for student in students if not student.team]
 

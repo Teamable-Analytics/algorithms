@@ -91,18 +91,7 @@ class Team(TeamShell):
             raise ValueError(
                 f"Cannot remove student ({student_to_remove.id}) from team {self.id}."
             )
-
-        flag = False
-        student_idx = 0
-        for student_idx, student in enumerate(self.students):
-            if student_to_remove.id == student.id:
-                flag = True
-                break
-        if flag:
-            self.students.pop(student_idx)
-        raise ValueError(
-            f"Student ({student_to_remove.id}) not found in team {self.id}."
-        )
+        self.students.remove(student_to_remove)
 
     def todict(self) -> Dict:
         return {

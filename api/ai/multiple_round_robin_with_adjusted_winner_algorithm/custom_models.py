@@ -24,7 +24,7 @@ class TeamWithValues(Team):
         self, team: Team, utility_function: Callable[[Student, TeamShell], float]
     ):
         super().__init__(
-            _id=team.id,
+            _id=team._id,
             students=team.students,
             requirements=team.requirements,
             project_id=team.project_id,

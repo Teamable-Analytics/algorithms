@@ -78,3 +78,18 @@ class PriorityAlgorithmConfig(AlgorithmConfig):
             raise ValueError(
                 "The total number of outputted team sets from specified mutations =/= MAX_SPREAD!"
             )
+
+
+class MultipleRoundRobinAlgorithmConfig(AlgorithmConfig):
+    def validate(self):
+        super().validate()
+
+
+class DoubleRoundRobinAlgorithmConfig(AlgorithmConfig):
+    def validate(self):
+        super().validate()
+
+
+class GeneralizedEnvyGraphAlgorithmConfig(AlgorithmConfig):
+    def validate(self):
+        super().validate()
