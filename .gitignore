@@ -13,3 +13,6 @@ __pycache__/
 
 # Environment variables
 env/.env*
+
+# Nginx
+logs/nginx/
