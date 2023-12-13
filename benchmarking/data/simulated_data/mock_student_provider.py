@@ -64,7 +64,7 @@ class MockStudentProvider(StudentProvider):
     def __init__(self, settings: MockStudentProviderSettings):
         self.settings = settings
 
-    def get(self) -> List[Student]:
+    def get(self, seed: int = None) -> List[Student]:
         mock_students = create_mock_students(
             self.settings.number_of_students,
             self.settings.number_of_friends,
@@ -99,6 +99,7 @@ def create_mock_students(
     num_values_per_attribute: Dict[int, NumValuesConfig],
     project_preference_options: List[int],
     num_project_preferences_per_student: int,
+    random_seed: int = None,
 ) -> List[Student]:
     students = []
     n = number_of_students
@@ -109,6 +110,12 @@ def create_mock_students(
         raise ValueError(
             "Cannot request more friends/enemies than there are people in the class"
         )
+
+    rng = (
+        np.random.default_rng(seed=random_seed)
+        if random_seed
+        else np.random.default_rng()
+    )
 
     for i in range(n):
         relationships = {}
@@ -123,13 +130,24 @@ def create_mock_students(
             ]
         else:
             other_people = [_ for _ in range(0, n) if _ != i]
-            friends = random.sample(other_people, min(f, len(other_people)))
+            friends = random_choice(
+                possible_values=other_people,
+                size=min(f, len(other_people)),
+                replace=False,
+                generator=rng,
+            )
         for friend_id in friends:
             relationships[friend_id] = Relationship.FRIEND
 
         # Pick enemies
         eligible_enemies = [_ for _ in range(0, n) if _ not in [i, *friends]]
-        enemies = random.sample(eligible_enemies, min(e, len(eligible_enemies)))
+        enemies = random_choice(
+            possible_values=eligible_enemies,
+            size=min(e, len(eligible_enemies)),
+            replace=False,
+            generator=rng,
+        )
+
         for enemy_id in enemies:
             relationships[enemy_id] = Relationship.ENEMY
 
@@ -137,16 +155,20 @@ def create_mock_students(
         for attribute_id, attribute_range_config in attribute_ranges.items():
             num_value_config = num_values_per_attribute.get(attribute_id, None)
             num_values = (
-                num_values_for_attribute(num_value_config) if num_value_config else None
+                num_values_for_attribute(num_value_config, generator=rng)
+                if num_value_config
+                else None
             )
             attributes[attribute_id] = attribute_values_from_range(
-                attribute_range_config, num_values
+                attribute_range_config, num_values, generator=rng
             )
 
         project_preferences = None
         if project_preference_options and num_project_preferences_per_student:
             project_preferences = random_choice(
-                project_preference_options, num_project_preferences_per_student
+                project_preference_options,
+                num_project_preferences_per_student,
+                generator=rng,
             )
 
         students.append(
@@ -160,38 +182,50 @@ def create_mock_students(
     return students
 
 
-def num_values_for_attribute(num_values_config: NumValuesConfig) -> int:
+def num_values_for_attribute(num_values_config: NumValuesConfig, generator=None) -> int:
     if isinstance(num_values_config, int):
         return num_values_config
 
+    _generator = generator or np.random.default_rng()
+
     min_choices, max_choices = num_values_config
-    return random.randrange(min_choices, max_choices)
+    return int(_generator.integers(low=min_choices, high=max_choices))
 
 
 def random_choice(
-    possible_values: List, size=None, replace=False, weights=None
+    possible_values: List, size=None, replace=False, weights=None, generator=None
 ) -> List[int]:
     """
     Uses np.random.choice() but always returns a list of int
     (np.random.choice return numpy.int64 if size=1 and ndarray otherwise)
     """
+    if not possible_values:
+        return []
+
+    _generator = generator or np.random.default_rng()
+
     size = size or 1
-    values = np.random.choice(possible_values, size=size, replace=replace, p=weights)
+    values = _generator.choice(possible_values, size=size, replace=replace, p=weights)
+
     if size == 1:
         return [int(values)]
     return [int(val) for val in values]
 
 
 def attribute_values_from_range(
-    range_config: AttributeRangeConfig, num_values: Optional[int] = 1
+    range_config: AttributeRangeConfig, num_values: Optional[int] = 1, generator=None
 ) -> List[int]:
+    _generator = generator or np.random.default_rng()
+
     if isinstance(range_config[0], (int, AttributeValueEnum)):
         if isinstance(range_config[0], int):
             possible_values = range_config
         else:
             # .value accounts for AttributeValueEnum in the range config
             possible_values = [enum.value for enum in range_config]
-        return random_choice(possible_values, size=num_values, replace=False)
+        return random_choice(
+            possible_values, size=num_values, replace=False, generator=_generator
+        )
 
     # config is a list of (value, % chance) tuples
     if isinstance(range_config[0][0], int):
@@ -201,5 +235,9 @@ def attribute_values_from_range(
 
     weights = [_[1] for _ in range_config]
     return random_choice(
-        possible_values, weights=weights, size=num_values, replace=False
+        possible_values,
+        weights=weights,
+        size=num_values,
+        replace=False,
+        generator=_generator,
     )

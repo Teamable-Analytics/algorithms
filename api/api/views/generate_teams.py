@@ -1,5 +1,3 @@
-import json
-
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
@@ -42,7 +40,5 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
         )
         team_set = runner.generate(input_data.students)
 
-        serialized_team_set = TeamSetSerializer().encode(team_set)
-
-        response_data = json.loads(serialized_team_set)
-        return ResponseWithMetadata(data_label="teams", data=response_data, status=200)
+        serialized_team_set = TeamSetSerializer().default(team_set)
+        return ResponseWithMetadata(data_label="teams", data=serialized_team_set, status=200)
