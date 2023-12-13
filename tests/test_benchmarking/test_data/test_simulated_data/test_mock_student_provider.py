@@ -1,7 +1,9 @@
 import unittest
 from typing import Literal, List
 
-from api.models.enums import Gpa, ScenarioAttribute, Relationship
+import numpy as np
+
+from api.models.enums import Gpa, Relationship
 from api.models.student import Student
 from benchmarking.data.simulated_data.mock_student_provider import (
     attribute_values_from_range,
@@ -9,6 +11,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     random_choice,
     MockStudentProviderSettings,
+    num_values_for_attribute,
 )
 from utils.validation import is_unique
 
@@ -287,6 +290,43 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
 
         self.assertEqual(3, len(cliques))
 
+    def test_create_mock_students__students_are_reproducible(self):
+        dist_types: List[Literal["random", "cluster"]] = ["random", "cluster"]
+        for dist_type in dist_types:
+            students_1 = create_mock_students(
+                number_of_students=4,
+                number_of_friends=2,
+                number_of_enemies=1,
+                friend_distribution=dist_type,
+                attribute_ranges={},
+                num_values_per_attribute={},
+                project_preference_options=[],
+                num_project_preferences_per_student=0,
+                random_seed=1,
+            )
+
+            students_2 = create_mock_students(
+                number_of_students=4,
+                number_of_friends=2,
+                number_of_enemies=1,
+                friend_distribution=dist_type,
+                attribute_ranges={},
+                num_values_per_attribute={},
+                project_preference_options=[],
+                num_project_preferences_per_student=0,
+                random_seed=1,
+            )
+
+            self.assertListEqual(students_1, students_2)
+
+    def test_num_values_for_attribute__returns_int_within_range(self):
+        test_range = (5, 12)
+        for _ in range(50):
+            value = num_values_for_attribute(test_range)
+            self.assertIsInstance(value, int)
+            self.assertGreaterEqual(value, 5)
+            self.assertLessEqual(value, 12)
+
     def test_random_choice__always_returns_list_of_int(self):
         values_1 = random_choice(possible_values=[1, 2, 3], size=1)
         values_2 = random_choice(possible_values=[1, 2, 3], size=2)
@@ -369,3 +409,29 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
     def test_attribute_values_from_range__errors_with_empty_range_config(self):
         with self.assertRaises(Exception):
             attribute_values_from_range([])
+
+    def test_all__reproducible_with_seed(self):
+        num_values_for_attribute_values = []
+        test_range_1 = (1, 1000)
+        for _ in range(50):
+            rng = np.random.default_rng(1)
+            num_values_for_attribute_values.append(
+                num_values_for_attribute(test_range_1, generator=rng)
+            )
+        self.assertEqual(len(set(num_values_for_attribute_values)), 1)
+
+        random_choice_values = []
+        for _ in range(50):
+            rng = np.random.default_rng(1)
+            random_choice_values.extend(
+                random_choice([_ for _ in range(1000)], generator=rng)
+            )
+        self.assertEqual(len(set(random_choice_values)), 1)
+
+        random_choice_2_values = []
+        for _ in range(50):
+            rng = np.random.default_rng(1)
+            random_choice_2_values.extend(
+                random_choice([_ for _ in range(1000)], size=3, generator=rng)
+            )
+        self.assertEqual(len(set(random_choice_2_values)), 3)

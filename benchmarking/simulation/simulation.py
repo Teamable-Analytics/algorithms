@@ -1,5 +1,4 @@
 import os
-import random
 import time
 import uuid
 from multiprocessing import Pool
@@ -38,17 +37,33 @@ class Simulation:
         self.team_sets = []
         self.run_times = []
 
-    def run(self, num_runs: int) -> SimulationArtifact:
+    def run(self, num_runs: int, seeds: List[int] = None) -> SimulationArtifact:
+        if seeds and len(seeds) != num_runs:
+            raise ValueError("Must provide a seed for each run")
+
+        cache = None
+        num_completed_runs = 0
         if self.settings.cache_key:
             cache = SimulationCache(self.settings.cache_key)
             if cache.exists():
                 cached_team_sets, cached_run_times = cache.get_simulation_artifact()
                 self.team_sets = cached_team_sets
                 self.run_times = cached_run_times
+                num_completed_runs = len(cached_team_sets)
                 if len(self.team_sets) >= num_runs:
                     return self.team_sets[:num_runs], self.run_times[:num_runs]
                 else:
                     num_runs -= len(cached_team_sets)
+
+        if cache and cache.exists():
+            metadata = cache.get_metadata()
+            completed_run_indexes = metadata.get("used_seed_indexes") or []
+
+            # Use as fallback
+            if len(completed_run_indexes) != num_completed_runs:
+                completed_run_indexes = list(range(num_completed_runs))
+        else:
+            completed_run_indexes = list(range(num_completed_runs))
 
         custom_initial_teams = (
             self.settings.initial_teams_provider.get()
@@ -77,14 +92,29 @@ class Simulation:
 
         num_processes = max(1, os.cpu_count() - 2)
         num_runs_per_worker = chunk(num_runs, num_processes)
+
+        # Calculate the run indexes that need to be run by each worker
+        run_indexes_per_worker: List[List[int]] = []
+        index = 0
+        for num_runs_for_batch in num_runs_per_worker:
+            batch_indexes = []
+            for _ in range(num_runs_for_batch):
+                # Search for indexes that have not been completed
+                while index in completed_run_indexes:
+                    index += 1
+                batch_indexes.append(index)
+                assert not seeds or index < len(seeds)
+                index += 1
+            run_indexes_per_worker.append(batch_indexes)
+
         processes: List[ApplyResult] = []
 
         pool = Pool(processes=num_processes)
-        for fragment_id, batch_num_runs in enumerate(num_runs_per_worker):
+        for fragment_id, run_indexes in enumerate(run_indexes_per_worker):
             processes.append(
                 pool.apply_async(
                     run_trial_batch,
-                    args=(fragment_id, batch_num_runs, self.settings, runner),
+                    args=(fragment_id, run_indexes, self.settings, runner, seeds),
                 )
             )
 
@@ -104,9 +134,10 @@ class Simulation:
 
 def run_trial_batch(
     fragment: int,
-    num_runs_for_batch: int,
+    run_indexes_for_batch: List[int],
     settings: SimulationSettings,
     runner: AlgorithmRunner,
+    seeds: List[int],
 ):
     try:
         batch_cache = None
@@ -119,8 +150,11 @@ def run_trial_batch(
         batch_team_sets = []
         batch_run_times = []
 
-        for _ in range(0, num_runs_for_batch):
-            students = settings.student_provider.get()
+        for run_index in run_indexes_for_batch:
+            if seeds:
+                students = settings.student_provider.get(seeds[run_index])
+            else:
+                students = settings.student_provider.get()
 
             runner.prepare(students)
             start_time = time.time()
@@ -130,7 +164,11 @@ def run_trial_batch(
             run_time = end_time - start_time
 
             # Give the generated team set a unique id
-            team_set._id = str(uuid.uuid4())
+            team_set._id = (
+                f"{uuid.uuid4()}--run_index_{run_index}--seed_{seeds[run_index]}"
+                if seeds
+                else f"{uuid.uuid4()}--run_index_{run_index}"
+            )
 
             batch_team_sets.append(team_set)
             batch_run_times.append(run_time)
@@ -139,6 +177,25 @@ def run_trial_batch(
             if batch_cache is not None:
                 batch_cache.add_run(team_set, run_time)
 
+                if seeds:
+                    if batch_cache.exists():
+                        metadata = batch_cache.get_metadata()
+                    else:
+                        metadata = {}
+                    used_seed_indexes = metadata.get("used_seed_indexes") or []
+                    used_seeds = metadata.get("used_seeds") or []
+
+                    used_seed_indexes.append(run_index)
+                    used_seeds.append(seeds[run_index])
+
+                    batch_cache.update_metadata(
+                        {
+                            "used_seed_indexes": used_seed_indexes,
+                            "used_seeds": used_seeds,
+                        }
+                    )
+
         return batch_team_sets, batch_run_times
-    except Exception:
+    except Exception as e:
+        print(e)
         return [], []

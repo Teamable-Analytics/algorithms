@@ -162,6 +162,21 @@ class SimulationCache:
                 os.remove(self._get_file())
         self._data = {}
 
+    def update_metadata(self, metadata: Dict[str, any]):
+        # Check that cache exists
+        if not self.exists():
+            raise ValueError("Cache must exist before updating metadata")
+
+        # Ensure _data is loaded
+        self._load_data()
+
+        if self._data.get("metadata"):
+            self._data["metadata"].update(metadata)
+
+        # Write to json file
+        with open(self._get_file(), "w+") as f:
+            json.dump(self._data, f, cls=TeamSetSerializer)
+
     def _get_file(self) -> str:
         """
         Gets the file associated with the cache_key.

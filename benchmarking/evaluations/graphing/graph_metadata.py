@@ -13,6 +13,7 @@ class GraphData:
     x_data: List[float]
     y_data: List[float]
     name: str
+    error_bars: List[float] = None
     legend_subtitle: Optional[str] = None
     # See https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html for documentation
     line_style: Tuple[int, Tuple[int, ...]] = None

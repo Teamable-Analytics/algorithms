@@ -72,3 +72,19 @@ class TestInsight(unittest.TestCase):
         for key in average_metric_insight.keys():
             # can be an int if the numbers divide perfectly
             self.assertIsInstance(average_metric_insight[key], (int, float))
+
+    def test_metric_stdev__works_with_get_output_set(self):
+        mock_basic_simulation_set: BasicSimulationSetArtifact = {
+            AlgorithmType.RANDOM: (self.team_sets, [1, 1]),
+            AlgorithmType.WEIGHT: (self.team_sets, [1, 1]),
+        }
+
+        insight_output_set = Insight.get_output_set(
+            mock_basic_simulation_set, metrics=self.metrics
+        )
+        metric_stdev_insight = Insight.metric_stdev(insight_output_set, metric_name="A")
+
+        self.assertEqual(len(metric_stdev_insight.keys()), 2)
+        for key in metric_stdev_insight.keys():
+            # can be an int if the numbers divide perfectly
+            self.assertIsInstance(metric_stdev_insight[key], (int, float))
