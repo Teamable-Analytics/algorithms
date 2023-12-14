@@ -13,6 +13,7 @@ COPY . /usr/src/app/
 # install python dependencies
 COPY ./requirements.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
+RUN pip install gunicorn==21.2.0
 
 # copy project
 COPY . .
