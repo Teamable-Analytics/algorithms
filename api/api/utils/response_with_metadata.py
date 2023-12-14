@@ -18,7 +18,7 @@ class ResponseWithMetadata(Response):
     ):
         super().__init__(data, status, template_name, headers, exception, content_type)
 
-        data_label = data_label if data_label else "data"
+        data_label = data_label if data_label else "teams"
         self.data = {
             data_label: self.data,
             "metadata": {
