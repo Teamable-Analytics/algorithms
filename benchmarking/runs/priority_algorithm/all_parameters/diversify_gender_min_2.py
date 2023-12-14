@@ -24,19 +24,9 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class DiversifyGenderMin2(Run):
-    # Bounds
-    MAX_KEEP_UPPER_BOUND = 50
-    MAX_KEEP_LOWER_BOUND = 2
-    MAX_KEEP_INCREMENT = 4
-    MAX_SPREAD_UPPER_BOUND = 50
-    MAX_SPREAD_LOWER_BOUND = 2
-    MAX_SPREAD_INCREMENT = 4
-    MAX_ITERATION_UPPER_BOUND = 500
-    MAX_ITERATION_LOWER_BOUND = 20
-    MAX_ITERATION_INCREMENT = 40
     RATIO_OF_FEMALE_STUDENT = 0.4
 
-    def start(self, num_trials: int = 10, generate_graphs: bool = True):
+    def start(self, num_trials: int = 100, generate_graphs: bool = False):
         """
         Goal:
         - Need to create a run to generate all the data for max spread, max keep, and max iterations
@@ -68,27 +58,9 @@ class DiversifyGenderMin2(Run):
         }
 
         # Ranges
-        max_keep_range = list(
-            range(
-                self.MAX_KEEP_LOWER_BOUND,
-                self.MAX_KEEP_UPPER_BOUND + 1,
-                self.MAX_KEEP_INCREMENT,
-            )
-        )
-        max_spread_range = list(
-            range(
-                self.MAX_SPREAD_LOWER_BOUND,
-                self.MAX_SPREAD_UPPER_BOUND + 1,
-                self.MAX_SPREAD_INCREMENT,
-            )
-        )
-        max_iterations_range = list(
-            range(
-                self.MAX_ITERATION_LOWER_BOUND,
-                self.MAX_ITERATION_UPPER_BOUND + 1,
-                self.MAX_ITERATION_INCREMENT,
-            )
-        )
+        max_keep_range = [10, 500, 1000, 1500, 2000, 2500]
+        max_spread_range = [1, 10, 20, 30, 40, 50]
+        max_iterations_range = [10, 250, 500, 750, 1000]
 
         artifact: SimulationSetArtifact = SimulationSet(
             settings=SimulationSettings(
