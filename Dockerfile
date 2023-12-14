@@ -16,5 +16,3 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 
 # copy project
 COPY . .
-
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "api.api.wsgi:application"]
