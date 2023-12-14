@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-load_dotenv('../../../env/.env.prod')
+
+load_dotenv("../../../env/.env.prod")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -52,7 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "api.api.urls"
@@ -93,9 +94,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # CORS
-CORS_ALLOWED_ORIGINS = [
-    "*"
-]
+CORS_ALLOWED_ORIGINS = ["*"]
 
 
 # Internationalization

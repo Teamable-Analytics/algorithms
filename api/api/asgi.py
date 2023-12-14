@@ -11,6 +11,7 @@ import os
 
 from django.core.asgi import get_asgi_application
 from dotenv import load_dotenv
+
 load_dotenv()
 
 APP_ENV = os.environ.get("APP_ENV", "dev")
