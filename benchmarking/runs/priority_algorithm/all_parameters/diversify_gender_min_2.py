@@ -1,7 +1,8 @@
 import re
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
 
 import matplotlib
+import numpy as np
 import typer
 from matplotlib import pyplot as plt, cm
 
@@ -26,7 +27,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 class DiversifyGenderMin2(Run):
     RATIO_OF_FEMALE_STUDENT = 0.4
 
-    def start(self, num_trials: int = 100, generate_graphs: bool = False):
+    def start(self, num_trials: int = 5, generate_graphs: bool = True):
         """
         Goal:
         - Need to create a run to generate all the data for max spread, max keep, and max iterations
@@ -58,9 +59,9 @@ class DiversifyGenderMin2(Run):
         }
 
         # Ranges
-        max_keep_range = [10, 500, 1000, 1500, 2000, 2500]
-        max_spread_range = [1, 10, 20, 30, 40, 50]
-        max_iterations_range = [10, 250, 500, 750, 1000]
+        max_keep_range = [1, 5, 10]
+        max_spread_range = [1, 2, 3]
+        max_iterations_range = [10, 30, 50]
 
         artifact: SimulationSetArtifact = SimulationSet(
             settings=SimulationSettings(
@@ -114,37 +115,52 @@ class DiversifyGenderMin2(Run):
 
                     # Get first value, assumes only one algorithm being run
                     value = list(value_dict.values())[0]
-                    if 0.85 <= value:
-                        points[point_location] = value
+                    points[point_location] = value
 
-                # Graph data
-                fig = plt.figure()
-                ax = fig.add_subplot(projection="3d")
-                cmap = plt.get_cmap("Blues")
-                c_norm = matplotlib.colors.Normalize(
-                    vmin=min(list(points.values())), vmax=max(list(points.values()))
-                )
-                scalar_map = cm.ScalarMappable(norm=c_norm, cmap=cmap)
+                wireframe = True
+                for max_iterations in max_iterations_range:
+                    # Filter
+                    plotted_points = [
+                        (keep, spread, score)
+                        for (keep, spread, iterations), score in points.items()
+                        if iterations == max_iterations
+                    ]
 
-                values = list(points.values())
+                    # Format data
+                    plotted_points = np.array(plotted_points)
+                    x = plotted_points[:, 0]
+                    y = plotted_points[:, 1]
+                    z = plotted_points[:, 2]
+                    unique_x = np.unique(x)
+                    unique_y = np.unique(y)
+                    X, Y = np.meshgrid(unique_x, unique_y)
+                    Z = np.zeros_like(X)
+                    for xi, yi, zi in plotted_points:
+                        Z[
+                            np.where(unique_y == yi)[0][0],
+                            np.where(unique_x == xi)[0][0],
+                        ] = zi
 
-                ax.scatter(
-                    [x for x, y, z in points.keys()],
-                    [y for x, y, z in points.keys()],
-                    [z for x, y, z in points.keys()],
-                    c=scalar_map.to_rgba(values),
-                )
+                    # Plot the surface
+                    fig = plt.figure()
+                    ax = fig.add_subplot(projection="3d")
+                    surface = (
+                        ax.plot_wireframe(X, Y, Z)
+                        if wireframe
+                        else ax.plot_surface(
+                            X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False
+                        )
+                    )
+                    if not wireframe:
+                        fig.colorbar(surface, shrink=0.5, aspect=8, pad=0.15)
 
-                ax.set_title("Priority Algorithm Parameters vs Priorities Satisfied")
-                ax.set_xlabel("Children to Keep")
-                ax.set_ylabel("Spread")
-                ax.set_zlabel("Number of Iterations")
-
-                # Plot color scale
-                scalar_map.set_array(values)
-                fig.colorbar(scalar_map, ax=ax, pad=0.15)
-
-                plt.show()
+                    ax.set_title(
+                        f"Priority Algorithm Parameters vs Priorities Satisfied\n~{max_iterations} iterations~"
+                    )
+                    ax.set_xlabel("MAX_KEEP")
+                    ax.set_ylabel("MAX_SPREAD")
+                    ax.set_zlabel("Score")
+                    plt.show()
 
 
 if __name__ == "__main__":
