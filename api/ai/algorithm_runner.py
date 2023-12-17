@@ -52,7 +52,6 @@ class AlgorithmRunner:
     def generate(self, students: List[Student]) -> TeamSet:
         # the algorithm classes internally track generated teams, so a new instance of the
         #   algorithm class MUST be created to run a new generation without side effects
-        # This generated instance is initialized in the prepare method
         algorithm = self.algorithm_cls(
             team_generation_options=self.team_generation_options,
             algorithm_options=self.algorithm_options,
