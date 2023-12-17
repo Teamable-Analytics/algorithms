@@ -37,8 +37,6 @@ if TYPE_CHECKING:
 
 
 class AlgorithmRunner:
-    algorithm: "Algorithm"
-
     def __init__(
         self,
         algorithm_type: AlgorithmType,
@@ -55,24 +53,15 @@ class AlgorithmRunner:
         # the algorithm classes internally track generated teams, so a new instance of the
         #   algorithm class MUST be created to run a new generation without side effects
         # This generated instance is initialized in the prepare method
-        return self.algorithm.generate(students)
-
-    def prepare(self, students: List[Student]) -> None:
-        """
-        Find the algorithm class and run prepare if possible
-        """
         algorithm = self.algorithm_cls(
             team_generation_options=self.team_generation_options,
             algorithm_options=self.algorithm_options,
             algorithm_config=self.algorithm_config,
         )
-        self.algorithm = algorithm
 
-        try:
-            algorithm.prepare(students)
-        except NotImplementedError:
-            # some algorithms do not require a prepare step
-            return
+        algorithm.prepare(students)
+
+        return algorithm.generate(students)
 
     @staticmethod
     def get_algorithm_from_type(algorithm_type: AlgorithmType):

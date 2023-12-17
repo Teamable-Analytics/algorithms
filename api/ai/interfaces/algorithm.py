@@ -33,7 +33,7 @@ class Algorithm(ABC):
         """
         This part is used to set up the algorithm before running the generation without affecting run time
         """
-        raise NotImplementedError
+        pass
 
     def get_remaining_students(self, students: List[Student]) -> List[Student]:
         return [student for student in students if not student.team]
