@@ -30,6 +30,7 @@ from typing import List, Dict, Set, Callable
 
 from api.ai.double_round_robin_algorithm.custom_models import Utility
 from api.ai.interfaces.algorithm import Algorithm
+from api.ai.interfaces.algorithm_config import DoubleRoundRobinAlgorithmConfig
 from api.ai.interfaces.algorithm_options import DoubleRoundRobinAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.models.student import Student
@@ -44,6 +45,7 @@ class DoubleRoundRobinAlgorithm(Algorithm):
         self,
         algorithm_options: DoubleRoundRobinAlgorithmOptions,
         team_generation_options: TeamGenerationOptions,
+        algorithm_config: DoubleRoundRobinAlgorithmConfig,
         *args,
         **kwargs,
     ):
@@ -52,7 +54,7 @@ class DoubleRoundRobinAlgorithm(Algorithm):
         self.project_ids_tracer = {
             team.project_id: team_idx for team_idx, team in enumerate(self.teams)
         }
-        self.utility_function = algorithm_options.utility_function
+        self.utility_function = algorithm_config.utility_function
 
     def prepare(self, student: List[Student]) -> None:
         self.utilities = self._calculate_utilities(

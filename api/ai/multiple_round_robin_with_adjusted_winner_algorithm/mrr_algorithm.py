@@ -31,6 +31,7 @@ from heapq import heappush, heappop
 from typing import List, Dict
 
 from api.ai.interfaces.algorithm import Algorithm
+from api.ai.interfaces.algorithm_config import MultipleRoundRobinAlgorithmConfig
 from api.ai.interfaces.algorithm_options import MultipleRoundRobinAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.multiple_round_robin_with_adjusted_winner_algorithm.custom_models import (
@@ -49,11 +50,12 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         self,
         algorithm_options: MultipleRoundRobinAlgorithmOptions,
         team_generation_options: TeamGenerationOptions,
+        algorithm_config: MultipleRoundRobinAlgorithmConfig,
         *args,
         **kwargs,
     ):
         super().__init__(algorithm_options, team_generation_options)
-        self.utility_function = algorithm_options.utility_function
+        self.utility_function = algorithm_config.utility_function
 
     def _get_values_heap(
         self, students: List[Student], teams_heap: List[TeamWithValues]

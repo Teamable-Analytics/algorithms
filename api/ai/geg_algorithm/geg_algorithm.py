@@ -18,6 +18,7 @@ from typing import List, Dict, Callable
 
 from api.ai.geg_algorithm.envy_graph import EnvyGraph
 from api.ai.interfaces.algorithm import Algorithm
+from api.ai.interfaces.algorithm_config import GeneralizedEnvyGraphAlgorithmConfig
 from api.ai.interfaces.algorithm_options import GeneralizedEnvyGraphAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.models.student import Student
@@ -39,13 +40,16 @@ class GeneralizedEnvyGraphAlgorithm(Algorithm):
         self,
         algorithm_options: GeneralizedEnvyGraphAlgorithmOptions,
         team_generation_options: TeamGenerationOptions,
+        algorithm_config: GeneralizedEnvyGraphAlgorithmConfig,
+        *args,
+        **kwargs,
     ):
         super().__init__(algorithm_options, team_generation_options)
 
         self.allocation: Dict[int, List[int]] = {}
         self.utilities: Dict[int, Dict[int, int]] = {}
         self.project_ids_to_projects = {team.project_id: team for team in self.teams}
-        self.utility_function = algorithm_options.utility_function
+        self.utility_function = algorithm_config.utility_function
 
     def prepare(self, students: List[Student]) -> None:
         self.utilities = self._calculate_utilities(

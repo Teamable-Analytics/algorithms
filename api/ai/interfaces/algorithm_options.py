@@ -249,8 +249,6 @@ class SocialAlgorithmOptions(WeightAlgorithmOptions):
 
 @dataclass
 class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
-    utility_function: Callable[[Student, TeamShell], float]
-
     def validate(self):
         super().validate()
 
@@ -267,8 +265,6 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
 
 @dataclass
 class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
-    utility_function: Callable[[Student, TeamShell], float]
-
     def validate(self):
         super().validate()
 
@@ -285,8 +281,6 @@ class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
 
 @dataclass
 class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
-    utility_function: Callable[[Student, TeamShell], float]
-
     def validate(self):
         super().validate()
 
