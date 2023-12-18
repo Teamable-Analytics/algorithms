@@ -1,7 +1,7 @@
+import os
 import re
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple
 
-import matplotlib
 import numpy as np
 import typer
 from matplotlib import pyplot as plt, cm
@@ -27,7 +27,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 class DiversifyGenderMin2(Run):
     RATIO_OF_FEMALE_STUDENT = 0.4
 
-    def start(self, num_trials: int = 5, generate_graphs: bool = True):
+    def start(self, num_trials: int = 100, generate_graphs: bool = True):
         """
         Goal:
         - Need to create a run to generate all the data for max spread, max keep, and max iterations
@@ -59,9 +59,37 @@ class DiversifyGenderMin2(Run):
         }
 
         # Ranges
-        max_keep_range = [1, 5, 10]
-        max_spread_range = [1, 2, 3]
-        max_iterations_range = [10, 30, 50]
+        max_keep_range = [10, 500, 1000, 1500, 2000, 2500]
+        max_spread_range = [1, 10, 20, 30, 40, 50]
+        max_iterations_range = [10, 250, 500, 750, 1000]
+
+        # Find completed simulations
+        completed_configs = []
+        files = os.listdir(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'simulation_cache', 'priority_algorithm', 'all_parameters', 'diversify_gender_min_2'))
+        for file in files:
+            if file.endswith('.json'):
+                match = re.match(r'AlgorithmType.PRIORITY-max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+).json', file)
+                if match:
+                    max_keep = match.group(1)
+                    max_spread = match.group(2)
+                    max_iterations = match.group(3)
+                    completed_configs.append((int(max_keep), int(max_spread), int(max_iterations)))
+
+        algorithm_set = {
+            AlgorithmType.PRIORITY: [
+                PriorityAlgorithmConfig(
+                    MAX_KEEP=max_keep,
+                    MAX_SPREAD=max_spread,
+                    MAX_ITERATE=max_iterations,
+                    MAX_TIME=10000000,
+                    name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}",
+                )
+                for max_keep in max_keep_range
+                for max_spread in max_spread_range
+                for max_iterations in max_iterations_range
+                if (max_keep, max_spread, max_iterations) in completed_configs
+            ]
+        }
 
         artifact: SimulationSetArtifact = SimulationSet(
             settings=SimulationSettings(
@@ -70,20 +98,7 @@ class DiversifyGenderMin2(Run):
                 student_provider=MockStudentProvider(student_provider_settings),
                 cache_key=f"priority_algorithm/all_parameters/diversify_gender_min_2/",
             ),
-            algorithm_set={
-                AlgorithmType.PRIORITY: [
-                    PriorityAlgorithmConfig(
-                        MAX_KEEP=max_keep,
-                        MAX_SPREAD=max_spread,
-                        MAX_ITERATE=max_iterations,
-                        MAX_TIME=10000000,
-                        name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}",
-                    )
-                    for max_keep in max_keep_range
-                    for max_spread in max_spread_range
-                    for max_iterations in max_iterations_range
-                ]
-            },
+            algorithm_set=algorithm_set,
         ).run(num_runs=num_trials)
 
         artifacts: Dict[Tuple[int, int, int], SimulationArtifact] = {}
@@ -130,7 +145,6 @@ class DiversifyGenderMin2(Run):
                     plotted_points = np.array(plotted_points)
                     x = plotted_points[:, 0]
                     y = plotted_points[:, 1]
-                    z = plotted_points[:, 2]
                     unique_x = np.unique(x)
                     unique_y = np.unique(y)
                     X, Y = np.meshgrid(unique_x, unique_y)
@@ -140,6 +154,23 @@ class DiversifyGenderMin2(Run):
                             np.where(unique_y == yi)[0][0],
                             np.where(unique_x == xi)[0][0],
                         ] = zi
+
+
+                    ##### \/ \/ \/ \/ TEMP. REMOVE LATER \/ \/ \/ \/ #####
+                    remove_missing_points = True
+                    if remove_missing_points:
+                        # Find the index where the first zero appears in each row
+                        zero_indices = np.argmax(Z == 0, axis=1)
+
+                        # Find the index where the first zero appears in any row
+                        first_zero_index = np.argmax(zero_indices > 0)
+
+                        # Remove rows with zeros
+                        X = X[:first_zero_index, :]
+                        Y = Y[:first_zero_index, :]
+                        Z = Z[:first_zero_index, :]
+
+                    ##### /\ /\ /\ /\ TEMP. REMOVE LATER /\ /\ /\ /\ #####
 
                     # Plot the surface
                     fig = plt.figure()
@@ -160,6 +191,7 @@ class DiversifyGenderMin2(Run):
                     ax.set_xlabel("MAX_KEEP")
                     ax.set_ylabel("MAX_SPREAD")
                     ax.set_zlabel("Score")
+                    ax.set_zlim(np.min(Z), np.max(Z))
                     plt.show()
 
 
