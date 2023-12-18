@@ -27,7 +27,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 class DiversifyGenderMin2(Run):
     RATIO_OF_FEMALE_STUDENT = 0.4
 
-    def start(self, num_trials: int = 100, generate_graphs: bool = True):
+    def start(self, num_trials: int = 100, generate_graphs: bool = False):
         """
         Goal:
         - Need to create a run to generate all the data for max spread, max keep, and max iterations
@@ -37,7 +37,7 @@ class DiversifyGenderMin2(Run):
         """
 
         scenario = DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value)
-        class_size = 120
+        class_size = 100
         team_size = 5
         num_teams = class_size // team_size
 
@@ -65,15 +65,32 @@ class DiversifyGenderMin2(Run):
 
         # Find completed simulations
         completed_configs = []
-        files = os.listdir(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'simulation_cache', 'priority_algorithm', 'all_parameters', 'diversify_gender_min_2'))
+        files = os.listdir(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "..",
+                "simulation_cache",
+                "priority_algorithm",
+                "all_parameters",
+                "diversify_gender_min_2",
+            )
+        )
         for file in files:
-            if file.endswith('.json'):
-                match = re.match(r'AlgorithmType.PRIORITY-max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+).json', file)
+            if file.endswith(".json"):
+                match = re.match(
+                    r"AlgorithmType.PRIORITY-max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+).json",
+                    file,
+                )
                 if match:
                     max_keep = match.group(1)
                     max_spread = match.group(2)
                     max_iterations = match.group(3)
-                    completed_configs.append((int(max_keep), int(max_spread), int(max_iterations)))
+                    completed_configs.append(
+                        (int(max_keep), int(max_spread), int(max_iterations))
+                    )
 
         algorithm_set = {
             AlgorithmType.PRIORITY: [
@@ -155,9 +172,8 @@ class DiversifyGenderMin2(Run):
                             np.where(unique_x == xi)[0][0],
                         ] = zi
 
-
                     ##### \/ \/ \/ \/ TEMP. REMOVE LATER \/ \/ \/ \/ #####
-                    remove_missing_points = True
+                    remove_missing_points = False
                     if remove_missing_points:
                         # Find the index where the first zero appears in each row
                         zero_indices = np.argmax(Z == 0, axis=1)
