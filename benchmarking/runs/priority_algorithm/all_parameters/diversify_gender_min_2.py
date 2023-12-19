@@ -27,7 +27,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 class DiversifyGenderMin2(Run):
     RATIO_OF_FEMALE_STUDENT = 0.4
 
-    def start(self, num_trials: int = 10, generate_graphs: bool = False):
+    def start(self, num_trials: int = 15, generate_graphs: bool = False):
         """
         Goal:
         - Need to create a run to generate all the data for max spread, max keep, and max iterations
