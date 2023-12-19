@@ -1,7 +1,8 @@
+import os
 import re
 from typing import Dict, Tuple
 
-import matplotlib
+import numpy as np
 import typer
 from matplotlib import pyplot as plt, cm
 
@@ -36,7 +37,7 @@ class DiversifyGenderMin2(Run):
         """
 
         scenario = DiversifyGenderMin2Female(value_of_female=Gender.FEMALE.value)
-        class_size = 120
+        class_size = 100
         team_size = 5
         num_teams = class_size // team_size
 
@@ -62,6 +63,51 @@ class DiversifyGenderMin2(Run):
         max_spread_range = [1, 10, 20, 30, 40, 50]
         max_iterations_range = [10, 250, 500, 750, 1000]
 
+        # Find completed simulations
+        completed_configs = []
+        files = os.listdir(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "..",
+                "simulation_cache",
+                "priority_algorithm",
+                "all_parameters",
+                "diversify_gender_min_2",
+            )
+        )
+        for file in files:
+            if file.endswith(".json"):
+                match = re.match(
+                    r"AlgorithmType.PRIORITY-max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+).json",
+                    file,
+                )
+                if match:
+                    max_keep = match.group(1)
+                    max_spread = match.group(2)
+                    max_iterations = match.group(3)
+                    completed_configs.append(
+                        (int(max_keep), int(max_spread), int(max_iterations))
+                    )
+
+        algorithm_set = {
+            AlgorithmType.PRIORITY: [
+                PriorityAlgorithmConfig(
+                    MAX_KEEP=max_keep,
+                    MAX_SPREAD=max_spread,
+                    MAX_ITERATE=max_iterations,
+                    MAX_TIME=10000000,
+                    name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}",
+                )
+                for max_keep in max_keep_range
+                for max_spread in max_spread_range
+                for max_iterations in max_iterations_range
+                if (max_keep, max_spread, max_iterations) in completed_configs
+            ]
+        }
+
         artifact: SimulationSetArtifact = SimulationSet(
             settings=SimulationSettings(
                 num_teams=num_teams,
@@ -69,20 +115,7 @@ class DiversifyGenderMin2(Run):
                 student_provider=MockStudentProvider(student_provider_settings),
                 cache_key=f"priority_algorithm/all_parameters/diversify_gender_min_2/",
             ),
-            algorithm_set={
-                AlgorithmType.PRIORITY: [
-                    PriorityAlgorithmConfig(
-                        MAX_KEEP=max_keep,
-                        MAX_SPREAD=max_spread,
-                        MAX_ITERATE=max_iterations,
-                        MAX_TIME=10000000,
-                        name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}",
-                    )
-                    for max_keep in max_keep_range
-                    for max_spread in max_spread_range
-                    for max_iterations in max_iterations_range
-                ]
-            },
+            algorithm_set=algorithm_set,
         ).run(num_runs=num_trials)
 
         artifacts: Dict[Tuple[int, int, int], SimulationArtifact] = {}
@@ -114,37 +147,68 @@ class DiversifyGenderMin2(Run):
 
                     # Get first value, assumes only one algorithm being run
                     value = list(value_dict.values())[0]
-                    if 0.85 <= value:
-                        points[point_location] = value
+                    points[point_location] = value
 
-                # Graph data
-                fig = plt.figure()
-                ax = fig.add_subplot(projection="3d")
-                cmap = plt.get_cmap("Blues")
-                c_norm = matplotlib.colors.Normalize(
-                    vmin=min(list(points.values())), vmax=max(list(points.values()))
-                )
-                scalar_map = cm.ScalarMappable(norm=c_norm, cmap=cmap)
+                wireframe = True
+                for max_iterations in max_iterations_range:
+                    # Filter
+                    plotted_points = [
+                        (keep, spread, score)
+                        for (keep, spread, iterations), score in points.items()
+                        if iterations == max_iterations
+                    ]
 
-                values = list(points.values())
+                    # Format data
+                    plotted_points = np.array(plotted_points)
+                    x = plotted_points[:, 0]
+                    y = plotted_points[:, 1]
+                    unique_x = np.unique(x)
+                    unique_y = np.unique(y)
+                    X, Y = np.meshgrid(unique_x, unique_y)
+                    Z = np.zeros_like(X)
+                    for xi, yi, zi in plotted_points:
+                        Z[
+                            np.where(unique_y == yi)[0][0],
+                            np.where(unique_x == xi)[0][0],
+                        ] = zi
 
-                ax.scatter(
-                    [x for x, y, z in points.keys()],
-                    [y for x, y, z in points.keys()],
-                    [z for x, y, z in points.keys()],
-                    c=scalar_map.to_rgba(values),
-                )
+                    ##### \/ \/ \/ \/ TEMP. REMOVE LATER \/ \/ \/ \/ #####
+                    remove_missing_points = False
+                    if remove_missing_points:
+                        # Find the index where the first zero appears in each row
+                        zero_indices = np.argmax(Z == 0, axis=1)
 
-                ax.set_title("Priority Algorithm Parameters vs Priorities Satisfied")
-                ax.set_xlabel("Children to Keep")
-                ax.set_ylabel("Spread")
-                ax.set_zlabel("Number of Iterations")
+                        # Find the index where the first zero appears in any row
+                        first_zero_index = np.argmax(zero_indices > 0)
 
-                # Plot color scale
-                scalar_map.set_array(values)
-                fig.colorbar(scalar_map, ax=ax, pad=0.15)
+                        # Remove rows with zeros
+                        X = X[:first_zero_index, :]
+                        Y = Y[:first_zero_index, :]
+                        Z = Z[:first_zero_index, :]
 
-                plt.show()
+                    ##### /\ /\ /\ /\ TEMP. REMOVE LATER /\ /\ /\ /\ #####
+
+                    # Plot the surface
+                    fig = plt.figure()
+                    ax = fig.add_subplot(projection="3d")
+                    surface = (
+                        ax.plot_wireframe(X, Y, Z)
+                        if wireframe
+                        else ax.plot_surface(
+                            X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False
+                        )
+                    )
+                    if not wireframe:
+                        fig.colorbar(surface, shrink=0.5, aspect=8, pad=0.15)
+
+                    ax.set_title(
+                        f"Priority Algorithm Parameters vs Priorities Satisfied\n~{max_iterations} iterations~"
+                    )
+                    ax.set_xlabel("MAX_KEEP")
+                    ax.set_ylabel("MAX_SPREAD")
+                    ax.set_zlabel("Score")
+                    ax.set_zlim(np.min(Z), np.max(Z))
+                    plt.show()
 
 
 if __name__ == "__main__":
