@@ -27,7 +27,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 class DiversifyGenderMin2(Run):
     RATIO_OF_FEMALE_STUDENT = 0.4
 
-    def start(self, num_trials: int = 100, generate_graphs: bool = False):
+    def start(self, num_trials: int = 10, generate_graphs: bool = False):
         """
         Goal:
         - Need to create a run to generate all the data for max spread, max keep, and max iterations
@@ -40,7 +40,6 @@ class DiversifyGenderMin2(Run):
         class_size = 100
         team_size = 5
         num_teams = class_size // team_size
-
         student_provider_settings = MockStudentProviderSettings(
             number_of_students=class_size,
             attribute_ranges={
@@ -64,33 +63,33 @@ class DiversifyGenderMin2(Run):
         max_iterations_range = [10, 250, 500, 750, 1000]
 
         # Find completed simulations
-        completed_configs = []
-        files = os.listdir(
-            os.path.join(
-                os.path.dirname(__file__),
-                "..",
-                "..",
-                "..",
-                "..",
-                "simulation_cache",
-                "priority_algorithm",
-                "all_parameters",
-                "diversify_gender_min_2",
-            )
-        )
-        for file in files:
-            if file.endswith(".json"):
-                match = re.match(
-                    r"AlgorithmType.PRIORITY-max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+).json",
-                    file,
-                )
-                if match:
-                    max_keep = match.group(1)
-                    max_spread = match.group(2)
-                    max_iterations = match.group(3)
-                    completed_configs.append(
-                        (int(max_keep), int(max_spread), int(max_iterations))
-                    )
+        # completed_configs = []
+        # files = os.listdir(
+        #     os.path.join(
+        #         os.path.dirname(__file__),
+        #         "..",
+        #         "..",
+        #         "..",
+        #         "..",
+        #         "simulation_cache",
+        #         "priority_algorithm",
+        #         "all_parameters",
+        #         "diversify_gender_min_2",
+        #     )
+        # )
+        # for file in files:
+        #     if file.endswith(".json"):
+        #         match = re.match(
+        #             r"AlgorithmType.PRIORITY-max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+).json",
+        #             file,
+        #         )
+        #         if match:
+        #             max_keep = match.group(1)
+        #             max_spread = match.group(2)
+        #             max_iterations = match.group(3)
+        #             completed_configs.append(
+        #                 (int(max_keep), int(max_spread), int(max_iterations))
+        #             )
 
         algorithm_set = {
             AlgorithmType.PRIORITY: [
@@ -99,12 +98,12 @@ class DiversifyGenderMin2(Run):
                     MAX_SPREAD=max_spread,
                     MAX_ITERATE=max_iterations,
                     MAX_TIME=10000000,
-                    name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}",
+                    name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}_weight_start",
                 )
                 for max_keep in max_keep_range
                 for max_spread in max_spread_range
                 for max_iterations in max_iterations_range
-                if (max_keep, max_spread, max_iterations) in completed_configs
+                # if (max_keep, max_spread, max_iterations) in completed_configs
             ]
         }
 
