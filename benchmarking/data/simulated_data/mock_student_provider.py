@@ -246,7 +246,11 @@ def attribute_values_from_range(
         )
 
     if not allow_probabilistic_generation:
-        return [probabilistic_attribute_values.pop()] if probabilistic_attribute_values else []
+        return (
+            [probabilistic_attribute_values.pop()]
+            if probabilistic_attribute_values
+            else []
+        )
 
     # config is a list of (value, % chance) tuples
     if isinstance(range_config[0][0], int):

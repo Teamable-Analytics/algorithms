@@ -344,7 +344,9 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             # FIXME: This test is (technically) a little flaky 😬
             # run this multiple times so that this test cannot accidentally
             #   pass even if the values are selected with replacement
-            values_1 = attribute_values_from_range([10, 20, 30], num_values=3, allow_probabilistic_generation=True)
+            values_1 = attribute_values_from_range(
+                [10, 20, 30], num_values=3, allow_probabilistic_generation=True
+            )
             self.assertListEqual([10, 20, 30], sorted(values_1))
 
             values_2 = attribute_values_from_range(
@@ -352,13 +354,17 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             )
             self.assertListEqual([10, 20, 30], sorted(values_2))
 
-            values_3 = attribute_values_from_range([Gpa.A, Gpa.B, Gpa.C], num_values=3, allow_probabilistic_generation=True)
+            values_3 = attribute_values_from_range(
+                [Gpa.A, Gpa.B, Gpa.C], num_values=3, allow_probabilistic_generation=True
+            )
             self.assertListEqual(
                 sorted([Gpa.A.value, Gpa.B.value, Gpa.C.value]), sorted(values_3)
             )
 
             values_4 = attribute_values_from_range(
-                [(Gpa.A, 0.2), (Gpa.B, 0.3), (Gpa.C, 0.5)], num_values=3, allow_probabilistic_generation=True
+                [(Gpa.A, 0.2), (Gpa.B, 0.3), (Gpa.C, 0.5)],
+                num_values=3,
+                allow_probabilistic_generation=True,
             )
             self.assertListEqual(
                 sorted([Gpa.A.value, Gpa.B.value, Gpa.C.value]), sorted(values_4)
@@ -377,13 +383,11 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             ]
             """
             self.assertEqual(
-                len(attribute_values_from_range([10, 20, 30], num_values=num_values, allow_probabilistic_generation=True)),
-                num_values,
-            )
-            self.assertEqual(
                 len(
                     attribute_values_from_range(
-                        [(10, 0.2), (20, 0.3), (30, 0.5)], num_values=num_values, allow_probabilistic_generation=True
+                        [10, 20, 30],
+                        num_values=num_values,
+                        allow_probabilistic_generation=True,
                     )
                 ),
                 num_values,
@@ -391,7 +395,19 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             self.assertEqual(
                 len(
                     attribute_values_from_range(
-                        [Gpa.A, Gpa.B, Gpa.C], num_values=num_values, allow_probabilistic_generation=True
+                        [(10, 0.2), (20, 0.3), (30, 0.5)],
+                        num_values=num_values,
+                        allow_probabilistic_generation=True,
+                    )
+                ),
+                num_values,
+            )
+            self.assertEqual(
+                len(
+                    attribute_values_from_range(
+                        [Gpa.A, Gpa.B, Gpa.C],
+                        num_values=num_values,
+                        allow_probabilistic_generation=True,
                     )
                 ),
                 num_values,
