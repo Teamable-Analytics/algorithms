@@ -45,8 +45,8 @@ class MockStudentProviderSettings:
                 f"number_of_enemies ({self.number_of_enemies}) must be a non-negative integer."
             )
         if (
-                len(self.project_preference_options)
-                < self.num_project_preferences_per_student
+            len(self.project_preference_options)
+            < self.num_project_preferences_per_student
         ):
             raise ValueError(
                 f"num_project_preferences_per_student ({self.num_project_preferences_per_student}) cannot "
@@ -94,16 +94,16 @@ class MockStudentProvider(StudentProvider):
 
 
 def create_mock_students(
-        number_of_students: int,
-        number_of_friends: int,
-        number_of_enemies: int,
-        friend_distribution: Literal["cluster", "random"],
-        attribute_ranges: Dict[int, AttributeRangeConfig],
-        num_values_per_attribute: Dict[int, NumValuesConfig],
-        project_preference_options: List[int],
-        num_project_preferences_per_student: int,
-        allow_probabilistic_generation: bool,
-        random_seed: int = None,
+    number_of_students: int,
+    number_of_friends: int,
+    number_of_enemies: int,
+    friend_distribution: Literal["cluster", "random"],
+    attribute_ranges: Dict[int, AttributeRangeConfig],
+    num_values_per_attribute: Dict[int, NumValuesConfig],
+    project_preference_options: List[int],
+    num_project_preferences_per_student: int,
+    allow_probabilistic_generation: bool,
+    random_seed: int = None,
 ) -> List[Student]:
     students = []
     n = number_of_students
@@ -121,8 +121,11 @@ def create_mock_students(
         else np.random.default_rng()
     )
 
-    probabilistic_attributes = {} if allow_probabilistic_generation else (
-        _generate_attribute_values_without_probability(attribute_ranges, n))
+    probabilistic_attributes = (
+        {}
+        if allow_probabilistic_generation
+        else (_generate_attribute_values_without_probability(attribute_ranges, n))
+    )
 
     for i in range(n):
         relationships = {}
@@ -204,7 +207,7 @@ def num_values_for_attribute(num_values_config: NumValuesConfig, generator=None)
 
 
 def random_choice(
-        possible_values: List, size=None, replace=False, weights=None, generator=None
+    possible_values: List, size=None, replace=False, weights=None, generator=None
 ) -> List[int]:
     """
     Uses np.random.choice() but always returns a list of int
@@ -224,11 +227,11 @@ def random_choice(
 
 
 def attribute_values_from_range(
-        range_config: AttributeRangeConfig,
-        num_values: Optional[int] = 1,
-        allow_probabilistic_generation: bool = False,
-        probabilistic_attribute_values: List[int] = None,
-        generator=None,
+    range_config: AttributeRangeConfig,
+    num_values: Optional[int] = 1,
+    allow_probabilistic_generation: bool = False,
+    probabilistic_attribute_values: List[int] = None,
+    generator=None,
 ) -> List[int]:
     _generator = generator or np.random.default_rng()
 
@@ -261,7 +264,9 @@ def attribute_values_from_range(
     )
 
 
-def _generate_attribute_values_without_probability(attribute_ranges: Dict[int, AttributeRangeConfig], class_size: int):
+def _generate_attribute_values_without_probability(
+    attribute_ranges: Dict[int, AttributeRangeConfig], class_size: int
+):
     probabilistic_attributes = {}
     for attribute_id, attribute_range_config in attribute_ranges.items():
         if isinstance(attribute_range_config[0], (int, AttributeValueEnum)):
