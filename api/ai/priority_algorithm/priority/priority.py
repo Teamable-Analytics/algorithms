@@ -43,11 +43,27 @@ class TokenizationPriority(Priority):
         raise NotImplementedError()
 
     def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
-        blau_index = _blau_index(students, self.attribute_id)
-        general_diversity = (
-            blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)
-        )
+        """
+        The score here is intended to reflect the following cases:
 
+            1. Diversification with min k of x (team size is T)
+                - If num_tokenized_students == k | score == 1
+                - If 0 < num_tokenized_students < k | score == 0
+                - If num_tokenized_students == 0 | score == ?
+                    + score would be equivalent to as if num_tokenized_students == T
+                - If num_tokenized_students > k | score == ?
+                    + score should DECREASE as num_tokenized_students INCREASES:
+                    i.e. score(num_tokenized_students == k + 1) >> score(num_tokenized_students == T)
+
+            2. Concentration with max k of x (team size is T)
+                - If num_tokenized_students == k | score == 1
+                - If k < num_tokenized_students < T | score == 0
+                - If num_tokenized_students == 0 | score == ?
+                    + score would be equivalent to as if num_tokenized_students == 1
+                - If num_tokenized_students < k | score == ?
+                    + score should DECREASE as num_tokenized_students DECREASES:
+                    i.e. score(num_tokenized_students == k - 1) >> score(num_tokenized_students == 1)
+        """
         tokenized_student_count = 0
         for student in students:
             tokenized_student_count += self.value in student.attributes.get(
@@ -58,12 +74,26 @@ class TokenizationPriority(Priority):
         if not meets_threshold:
             return 0
 
-        if meets_threshold and tokenized_student_count > 0:
-            return 0.8 + 0.2 * general_diversity
+        if tokenized_student_count == self.threshold:
+            return 1
 
-        # a slight boost is given so that even teams that are not diverse/concentrated are considered over
-        #   teams that break the tokenization constraint
-        return (general_diversity + 0.1) / 1.1
+        team_size = len(students)
+        adjusted_tokenized_student_count = tokenized_student_count
+        if tokenized_student_count == 0:
+            # when tokenized_student_count == 0, we treat as the worst non-zero score possible
+            if self.strategy == DiversifyType.DIVERSIFY:
+                # the worst non-zero score is when the entire team is of the tokenized type
+                adjusted_tokenized_student_count = team_size
+            if self.strategy == DiversifyType.CONCENTRATE:
+                # the worst non-zero score is when only 1 individual in the team is of the tokenized type
+                adjusted_tokenized_student_count = 1
+
+        if self.strategy == DiversifyType.DIVERSIFY:
+            return ((team_size + 1) - adjusted_tokenized_student_count) / (
+                (team_size + 1) - self.threshold
+            )
+        if self.strategy == DiversifyType.CONCENTRATE:
+            return adjusted_tokenized_student_count / self.threshold
 
     def student_count_meets_threshold(self, count: int) -> bool:
         if count == 0:
