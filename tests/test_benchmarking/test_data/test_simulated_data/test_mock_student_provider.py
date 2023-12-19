@@ -350,7 +350,9 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             self.assertListEqual([10, 20, 30], sorted(values_1))
 
             values_2 = attribute_values_from_range(
-                [(10, 0.2), (20, 0.3), (30, 0.5)], num_values=3
+                [(10, 0.2), (20, 0.3), (30, 0.5)],
+                num_values=3,
+                allow_probabilistic_generation=True,
             )
             self.assertListEqual([10, 20, 30], sorted(values_2))
 
