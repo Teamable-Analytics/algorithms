@@ -25,6 +25,7 @@ class MockStudentProviderSettings:
     number_of_friends: int = 0
     number_of_enemies: int = 0
     friend_distribution: Literal["cluster", "random"] = "random"
+    allow_probabilistic_generation: bool = False
 
     def __post_init__(self):
         self.validate()
@@ -74,6 +75,8 @@ class MockStudentProvider(StudentProvider):
             self.settings.num_values_per_attribute,
             self.settings.project_preference_options,
             self.settings.num_project_preferences_per_student,
+            self.settings.allow_probabilistic_generation,
+            seed,
         )
         # the students must be shuffled here because certain algorithms
         #   perform better/worse based on the ordering of students.
@@ -99,6 +102,7 @@ def create_mock_students(
     num_values_per_attribute: Dict[int, NumValuesConfig],
     project_preference_options: List[int],
     num_project_preferences_per_student: int,
+    allow_probabilistic_generation: bool = False,
     random_seed: int = None,
 ) -> List[Student]:
     students = []
@@ -115,6 +119,12 @@ def create_mock_students(
         np.random.default_rng(seed=random_seed)
         if random_seed
         else np.random.default_rng()
+    )
+
+    probabilistic_attributes = (
+        {}
+        if allow_probabilistic_generation
+        else (_generate_attribute_values_without_probability(attribute_ranges, n))
     )
 
     for i in range(n):
@@ -160,7 +170,11 @@ def create_mock_students(
                 else None
             )
             attributes[attribute_id] = attribute_values_from_range(
-                attribute_range_config, num_values, generator=rng
+                attribute_range_config,
+                num_values,
+                allow_probabilistic_generation,
+                probabilistic_attributes.get(attribute_id, []),
+                generator=rng,
             )
 
         project_preferences = None
@@ -213,7 +227,11 @@ def random_choice(
 
 
 def attribute_values_from_range(
-    range_config: AttributeRangeConfig, num_values: Optional[int] = 1, generator=None
+    range_config: AttributeRangeConfig,
+    num_values: Optional[int] = 1,
+    allow_probabilistic_generation: bool = False,
+    probabilistic_attribute_values: List[int] = None,
+    generator=None,
 ) -> List[int]:
     _generator = generator or np.random.default_rng()
 
@@ -225,6 +243,13 @@ def attribute_values_from_range(
             possible_values = [enum.value for enum in range_config]
         return random_choice(
             possible_values, size=num_values, replace=False, generator=_generator
+        )
+
+    if not allow_probabilistic_generation:
+        return (
+            [probabilistic_attribute_values.pop()]
+            if probabilistic_attribute_values
+            else []
         )
 
     # config is a list of (value, % chance) tuples
@@ -241,3 +266,30 @@ def attribute_values_from_range(
         replace=False,
         generator=_generator,
     )
+
+
+def _generate_attribute_values_without_probability(
+    attribute_ranges: Dict[int, AttributeRangeConfig], class_size: int
+):
+    probabilistic_attributes = {}
+    for attribute_id, attribute_range_config in attribute_ranges.items():
+        if isinstance(attribute_range_config[0], (int, AttributeValueEnum)):
+            continue
+
+        # Assume if the range is probabilistic, the number of value per attribute is 0
+        if (sum([_[1] for _ in attribute_range_config])) != 1:
+            raise ValueError(f"Probabilistic attribute range must sum to 100$")
+
+        probabilistic_attributes[attribute_id] = []
+        for attribute_range in attribute_range_config:
+            probabilistic_attributes[attribute_id].extend(
+                [
+                    attribute_range[0]
+                    if isinstance(attribute_range[0], int)
+                    else attribute_range[0].value
+                    for _ in range(int(attribute_range[1] * class_size))
+                ]
+            )
+        random.shuffle(probabilistic_attributes[attribute_id])
+
+    return probabilistic_attributes
