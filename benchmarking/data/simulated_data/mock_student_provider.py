@@ -102,7 +102,7 @@ def create_mock_students(
     num_values_per_attribute: Dict[int, NumValuesConfig],
     project_preference_options: List[int],
     num_project_preferences_per_student: int,
-    allow_probabilistic_generation: bool,
+    allow_probabilistic_generation: bool = False,
     random_seed: int = None,
 ) -> List[Student]:
     students = []
@@ -246,7 +246,7 @@ def attribute_values_from_range(
         )
 
     if not allow_probabilistic_generation:
-        return [probabilistic_attribute_values.pop()]
+        return [probabilistic_attribute_values.pop()] if probabilistic_attribute_values else []
 
     # config is a list of (value, % chance) tuples
     if isinstance(range_config[0][0], int):
