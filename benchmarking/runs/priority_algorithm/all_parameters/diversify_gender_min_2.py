@@ -98,7 +98,7 @@ class DiversifyGenderMin2(Run):
                     MAX_SPREAD=max_spread,
                     MAX_ITERATE=max_iterations,
                     MAX_TIME=10000000,
-                    name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}_weight_start",
+                    name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}_random_start",
                 )
                 for max_keep in max_keep_range
                 for max_spread in max_spread_range

@@ -5,9 +5,10 @@ from api.ai.interfaces.algorithm import Algorithm
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.ai.interfaces.algorithm_options import (
     PriorityAlgorithmOptions,
-    WeightAlgorithmOptions,
+    WeightAlgorithmOptions, RandomAlgorithmOptions,
 )
 from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
+from api.ai.random_algorithm.random_algorithm import RandomAlgorithm
 from api.ai.utils import save_students_to_team
 from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.models.student import Student
@@ -31,14 +32,18 @@ class PriorityAlgorithm(Algorithm):
         self.student_dict: Dict[int, Student] = {}
 
     def generate_initial_team_set(
-        self,
-        students: List[Student],
+            self,
+            students: List[Student],
     ) -> PriorityTeamSet:
-        team_set = WeightAlgorithm(
-            algorithm_options=weight_options_from_priority_options(
-                self.algorithm_options
-            ),
-            team_generation_options=self.team_generation_options,
+        # team_set = WeightAlgorithm(
+        #     algorithm_options=weight_options_from_priority_options(
+        #         self.algorithm_options
+        #     ),
+        #     team_generation_options=self.team_generation_options,
+        # ).generate(students)
+        team_set = RandomAlgorithm(
+            algorithm_options=RandomAlgorithmOptions(),
+            team_generation_options=self.team_generation_options
         ).generate(students)
 
         return PriorityTeamSet(
@@ -59,8 +64,8 @@ class PriorityAlgorithm(Algorithm):
         team_sets = [self.generate_initial_team_set(students)]
 
         while (
-            time.time() - start_time < self.algorithm_config.MAX_TIME
-            and iteration < self.algorithm_config.MAX_ITERATE
+                time.time() - start_time < self.algorithm_config.MAX_TIME
+                and iteration < self.algorithm_config.MAX_ITERATE
         ):
             new_team_sets: List[PriorityTeamSet] = []
             for team_set in team_sets:
@@ -125,7 +130,7 @@ def create_student_dict(students: List[Student]) -> Dict[int, Student]:
 
 
 def weight_options_from_priority_options(
-    options: PriorityAlgorithmOptions,
+        options: PriorityAlgorithmOptions,
 ) -> WeightAlgorithmOptions:
     return WeightAlgorithmOptions(
         requirement_weight=options.requirement_weight,
