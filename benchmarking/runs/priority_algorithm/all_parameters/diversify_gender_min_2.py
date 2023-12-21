@@ -6,7 +6,10 @@ import numpy as np
 import typer
 from matplotlib import pyplot as plt, cm
 
-from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
+from api.ai.interfaces.algorithm_config import (
+    PriorityAlgorithmConfig,
+    WeightAlgorithmConfig,
+)
 from api.models.enums import Gender, ScenarioAttribute, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
@@ -25,7 +28,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class DiversifyGenderMin2(Run):
-    RATIO_OF_FEMALE_STUDENT = 0.4
+    RATIO_OF_FEMALE_STUDENT = 0.2
 
     def start(self, num_trials: int = 15, generate_graphs: bool = True):
         """
@@ -137,6 +140,28 @@ class DiversifyGenderMin2(Run):
                     artifacts_dict[start_type][
                         (max_keep, max_spread, max_iterations)
                     ] = simulation_artifact
+
+        # Run Weight algorithm for comparison
+        weight_artifact: SimulationSetArtifact = SimulationSet(
+            settings=SimulationSettings(
+                num_teams=num_teams,
+                scenario=scenario,
+                student_provider=MockStudentProvider(student_provider_settings),
+                cache_key=f"priority_algorithm/all_parameters/diversify_gender_min_2/",
+            ),
+            algorithm_set={
+                AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
+                AlgorithmType.PRIORITY: [PriorityAlgorithmConfig()],
+            },
+        ).run(num_runs=num_trials)
+        insight_output_set = Insight.get_output_set(
+            weight_artifact, list(metrics.values())
+        )
+        avg_metric_output = Insight.average_metric(
+            insight_output_set=insight_output_set, metric_name="PrioritySatisfaction"
+        )
+
+        print("avg_metric_output:", avg_metric_output)
 
         if generate_graphs:
             # Process data and plot
