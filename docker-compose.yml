@@ -1,0 +1,24 @@
+services:
+  nginx:
+    image: nginx:latest
+    env_file:
+      - ./env/.env.prod
+    ports:
+      - 8000:8000
+    volumes:
+      - ./env/nginx.conf:/etc/nginx/nginx.conf
+      - ./logs/nginx:/var/log/nginx/
+    depends_on:
+      - api
+    restart: 'always'
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: gunicorn api.api.wsgi:application --bind 0.0.0.0:8000
+    env_file:
+      - ./env/.env.prod
+    expose:
+      - 8000
+    restart: 'always'

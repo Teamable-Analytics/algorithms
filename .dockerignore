@@ -10,9 +10,3 @@ __pycache__/
 
 .DS_Store
 .env.prod
-
-# Environment variables
-env/.env*
-
-# Nginx
-logs/nginx/
