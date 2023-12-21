@@ -65,6 +65,8 @@ class TokenizationPriority(Priority):
                     i.e. score(num_tokenized_students == k - 1) >> score(num_tokenized_students == 1)
         """
         tokenized_student_count = 0
+        _THETA = 0.2
+
         for student in students:
             tokenized_student_count += self.value in student.attributes.get(
                 self.attribute_id, []
@@ -78,22 +80,19 @@ class TokenizationPriority(Priority):
             return 1
 
         team_size = len(students)
-        adjusted_tokenized_student_count = tokenized_student_count
-        if tokenized_student_count == 0:
-            # when tokenized_student_count == 0, we treat as the worst non-zero score possible
-            if self.strategy == DiversifyType.DIVERSIFY:
-                # the worst non-zero score is when the entire team is of the tokenized type
-                adjusted_tokenized_student_count = team_size
-            if self.strategy == DiversifyType.CONCENTRATE:
-                # the worst non-zero score is when only 1 individual in the team is of the tokenized type
-                adjusted_tokenized_student_count = 1
-
         if self.strategy == DiversifyType.DIVERSIFY:
-            return ((team_size + 1) - adjusted_tokenized_student_count) / (
-                (team_size + 1) - self.threshold
-            )
+            if tokenized_student_count == 0 or tokenized_student_count == team_size:
+                return _THETA
+            return ((2 * _THETA - 1) / (team_size - self.threshold - 1)) * (
+                tokenized_student_count - team_size
+            ) + _THETA
+
         if self.strategy == DiversifyType.CONCENTRATE:
-            return adjusted_tokenized_student_count / self.threshold
+            if tokenized_student_count == 0 or tokenized_student_count == 1:
+                return _THETA
+            return ((1 - 2 * _THETA) / (self.threshold - 2)) * (
+                tokenized_student_count - 1
+            ) + _THETA
 
     def student_count_meets_threshold(self, count: int) -> bool:
         if count == 0:
