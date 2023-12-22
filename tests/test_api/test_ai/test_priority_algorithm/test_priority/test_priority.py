@@ -28,7 +28,7 @@ class TestTokenizationPriority(unittest.TestCase):
     def setUpClass(cls):
         cls.trivial_team_shell = TeamShell(_id=1)
         cls.tokenized_attribute = 1
-        cls.tokenized_attribute_value = 4
+        cls.tokenized_attribute_value = 100
         cls.student_a = Student(
             _id=1,
             attributes={
@@ -47,6 +47,12 @@ class TestTokenizationPriority(unittest.TestCase):
                 cls.tokenized_attribute: [3],
             },
         )
+        cls.student_d = Student(
+            _id=2,
+            attributes={
+                cls.tokenized_attribute: [4],
+            },
+        )
         cls.tokenized_student = Student(
             _id=3,
             attributes={
@@ -58,68 +64,166 @@ class TestTokenizationPriority(unittest.TestCase):
         tokenization_priority = TokenizationPriority(
             attribute_id=self.tokenized_attribute,
             strategy=DiversifyType.DIVERSIFY,
-            threshold=2,
+            threshold=3,
             direction=TokenizationConstraintDirection.MIN_OF,
             value=self.tokenized_attribute_value,
         )
 
+        highest_satisfaction = tokenization_priority.satisfaction(
+            [
+                self.student_a,
+                self.student_a,
+                self.tokenized_student,
+                self.tokenized_student,
+                self.tokenized_student,
+            ],
+            self.trivial_team_shell,
+        )
         high_satisfaction = tokenization_priority.satisfaction(
             [
                 self.student_a,
-                self.student_b,
+                self.tokenized_student,
+                self.tokenized_student,
                 self.tokenized_student,
                 self.tokenized_student,
             ],
             self.trivial_team_shell,
         )
         medium_satisfaction = tokenization_priority.satisfaction(
-            [self.student_a, self.student_b, self.student_c], self.trivial_team_shell
+            [
+                self.tokenized_student,
+                self.tokenized_student,
+                self.tokenized_student,
+                self.tokenized_student,
+                self.tokenized_student,
+            ],
+            self.trivial_team_shell,
         )
         medium_satisfaction_2 = tokenization_priority.satisfaction(
-            [self.tokenized_student, self.tokenized_student, self.tokenized_student],
+            [
+                self.student_a,
+                self.student_a,
+                self.student_a,
+                self.student_a,
+                self.student_a,
+            ],
+            self.trivial_team_shell,
+        )
+        # all we care about is tokenized_student vs non, differences between non_tokenized_students do not matter
+        medium_satisfaction_3 = tokenization_priority.satisfaction(
+            [
+                self.student_a,
+                self.student_b,
+                self.student_c,
+                self.student_d,
+                self.student_a,
+            ],
             self.trivial_team_shell,
         )
         low_satisfaction = tokenization_priority.satisfaction(
-            [self.student_a, self.student_a, self.student_a], self.trivial_team_shell
+            [
+                self.student_a,
+                self.student_a,
+                self.student_a,
+                self.tokenized_student,
+                self.tokenized_student,
+            ],
+            self.trivial_team_shell,
         )
-        lowest_satisfaction = tokenization_priority.satisfaction(
-            [self.student_a, self.student_b, self.tokenized_student],
+        low_satisfaction_2 = tokenization_priority.satisfaction(
+            [
+                self.student_a,
+                self.student_a,
+                self.student_a,
+                self.student_a,
+                self.tokenized_student,
+            ],
             self.trivial_team_shell,
         )
 
-        self.assertGreaterEqual(high_satisfaction, medium_satisfaction)
-        self.assertGreater(high_satisfaction, medium_satisfaction_2)
+        self.assertEqual(highest_satisfaction, 1)
+        self.assertGreater(highest_satisfaction, high_satisfaction)
+        self.assertGreater(high_satisfaction, medium_satisfaction)
+        self.assertEqual(medium_satisfaction, medium_satisfaction_2)
+        self.assertEqual(medium_satisfaction_2, medium_satisfaction_3)
         self.assertGreater(medium_satisfaction, low_satisfaction)
-        self.assertGreater(medium_satisfaction_2, lowest_satisfaction)
-        self.assertGreater(low_satisfaction, lowest_satisfaction)
+        self.assertEqual(low_satisfaction, low_satisfaction_2)
+        self.assertEqual(low_satisfaction, 0)
 
     def test_satisfaction__concentrate_with_max_of_tokenization(self):
         tokenization_priority = TokenizationPriority(
             attribute_id=self.tokenized_attribute,
             strategy=DiversifyType.CONCENTRATE,
-            threshold=2,
+            threshold=3,
             direction=TokenizationConstraintDirection.MAX_OF,
             value=self.tokenized_attribute_value,
         )
 
+        highest_satisfaction = tokenization_priority.satisfaction(
+            [
+                self.student_a,
+                self.student_a,
+                self.tokenized_student,
+                self.tokenized_student,
+                self.tokenized_student,
+            ],
+            self.trivial_team_shell,
+        )
         high_satisfaction = tokenization_priority.satisfaction(
-            [self.student_a, self.student_a, self.student_a], self.trivial_team_shell
+            [
+                self.student_a,
+                self.student_a,
+                self.student_a,
+                self.tokenized_student,
+                self.tokenized_student,
+            ],
+            self.trivial_team_shell,
         )
         medium_satisfaction = tokenization_priority.satisfaction(
             [
                 self.student_a,
                 self.student_a,
+                self.student_a,
+                self.student_a,
+                self.tokenized_student,
+            ],
+            self.trivial_team_shell,
+        )
+        medium_satisfaction_2 = tokenization_priority.satisfaction(
+            [
+                self.student_a,
+                self.student_a,
+                self.student_a,
+                self.student_a,
+                self.student_a,
+            ],
+            self.trivial_team_shell,
+        )
+        # all we care about is tokenized_student vs non, differences between non_tokenized_students do not matter
+        medium_satisfaction_3 = tokenization_priority.satisfaction(
+            [
+                self.student_a,
+                self.student_b,
+                self.student_c,
+                self.student_d,
+                self.student_a,
+            ],
+            self.trivial_team_shell,
+        )
+        low_satisfaction = tokenization_priority.satisfaction(
+            [
+                self.student_a,
+                self.tokenized_student,
+                self.tokenized_student,
                 self.tokenized_student,
                 self.tokenized_student,
             ],
             self.trivial_team_shell,
         )
-        low_satisfaction = tokenization_priority.satisfaction(
-            [self.student_a, self.student_b, self.student_c], self.trivial_team_shell
-        )
-        lowest_satisfaction = tokenization_priority.satisfaction(
+        low_satisfaction_2 = tokenization_priority.satisfaction(
             [
-                self.student_a,
+                self.tokenized_student,
+                self.tokenized_student,
                 self.tokenized_student,
                 self.tokenized_student,
                 self.tokenized_student,
@@ -127,9 +231,14 @@ class TestTokenizationPriority(unittest.TestCase):
             self.trivial_team_shell,
         )
 
-        self.assertGreaterEqual(high_satisfaction, medium_satisfaction)
+        self.assertEqual(highest_satisfaction, 1)
+        self.assertGreater(highest_satisfaction, high_satisfaction)
+        self.assertGreater(high_satisfaction, medium_satisfaction)
+        self.assertEqual(medium_satisfaction, medium_satisfaction_2)
+        self.assertEqual(medium_satisfaction_2, medium_satisfaction_3)
         self.assertGreater(medium_satisfaction, low_satisfaction)
-        self.assertGreater(low_satisfaction, lowest_satisfaction)
+        self.assertEqual(low_satisfaction, low_satisfaction_2)
+        self.assertEqual(low_satisfaction, 0)
 
 
 class TestRequirementPriority(unittest.TestCase):
