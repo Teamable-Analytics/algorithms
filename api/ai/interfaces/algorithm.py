@@ -31,7 +31,8 @@ class Algorithm(ABC):
 
     def prepare(self, students: List[Student]) -> None:
         """
-        This part is used to set up the algorithm before running the generation without affecting run time
+        This method is called before generate(). Used for any pre-processing that needs to be done before generate().
+        Run time of this method is still included in the total run time.
         """
         pass
 
