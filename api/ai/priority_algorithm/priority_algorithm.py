@@ -5,9 +5,10 @@ from api.ai.interfaces.algorithm import Algorithm
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.ai.interfaces.algorithm_options import (
     PriorityAlgorithmOptions,
-    WeightAlgorithmOptions,
+    WeightAlgorithmOptions, RandomAlgorithmOptions,
 )
 from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
+from api.ai.random_algorithm.random_algorithm import RandomAlgorithm
 from api.ai.utils import save_students_to_team
 from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.models.student import Student
@@ -40,6 +41,10 @@ class PriorityAlgorithm(Algorithm):
             ),
             team_generation_options=self.team_generation_options,
         ).generate(students)
+        # team_set = RandomAlgorithm(
+        #     algorithm_options=RandomAlgorithmOptions(),
+        #     team_generation_options=self.team_generation_options
+        # ).generate(students)
 
         return PriorityTeamSet(
             priority_teams=[
