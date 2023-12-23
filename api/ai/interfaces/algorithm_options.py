@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import List, Union, Dict, Any, Optional
+from typing import List, Union, Dict, Any, Callable
 
 from schema import Schema, SchemaError, Const, Or, Optional as SchemaOptional, And
 
@@ -17,6 +17,8 @@ from api.models.enums import (
     PriorityType,
 )
 from api.models.project import Project
+from api.models.student import Student
+from api.models.team import TeamShell
 
 
 class AlgorithmOptions(ABC):
@@ -247,13 +249,8 @@ class SocialAlgorithmOptions(WeightAlgorithmOptions):
 
 @dataclass
 class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
-    projects: List[Project]
-
     def validate(self):
         super().validate()
-        Schema([Project]).validate(self.projects)
-        if len(self.projects) == 0:
-            raise SchemaError("Project list cannot be empty.")
 
     @staticmethod
     def parse_json(_: Dict[str, Any]):
@@ -268,20 +265,18 @@ class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
 
 @dataclass
 class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
-    projects: List[Project]
-
     def validate(self):
         super().validate()
-
-        Schema([Project]).validate(self.projects)
-        if len(self.projects) == 0:
-            raise SchemaError("Project list cannot be empty")
 
     @staticmethod
     def parse_json(_: Dict[str, Any]):
         raise AttributeError(
             "GeneralizedEnvyGraphAlgorithmOptions does not support parsing from json."
         )
+
+    @staticmethod
+    def get_schema() -> Schema:
+        raise NotImplementedError
 
 
 @dataclass
@@ -294,6 +289,10 @@ class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
         raise AttributeError(
             "DoubleRoundRobinAlgorithmOptions does not support parsing from json."
         )
+
+    @staticmethod
+    def get_schema() -> Schema:
+        raise NotImplementedError
 
 
 AnyAlgorithmOptions = Union[

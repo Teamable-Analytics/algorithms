@@ -29,6 +29,13 @@ class Algorithm(ABC):
     def generate(self, students: List[Student]) -> TeamSet:
         raise NotImplementedError
 
+    def prepare(self, students: List[Student]) -> None:
+        """
+        This method is called before generate(). Used for any pre-processing that needs to be done before generate().
+        Run time of this method is still included in the total run time.
+        """
+        pass
+
     def get_remaining_students(self, students: List[Student]) -> List[Student]:
         return [student for student in students if not student.team]
 

@@ -18,7 +18,7 @@ from api.ai.interfaces.algorithm_options import (
     DoubleRoundRobinAlgorithmOptions,
 )
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.ai.multiple_round_robin_with_adjusted_winner.mrr_algorithm import (
+from api.ai.multiple_round_robin_with_adjusted_winner_algorithm.mrr_algorithm import (
     MultipleRoundRobinWithAdjustedWinnerAlgorithm,
 )
 from api.ai.priority_algorithm.priority_algorithm import PriorityAlgorithm
@@ -57,6 +57,9 @@ class AlgorithmRunner:
             algorithm_options=self.algorithm_options,
             algorithm_config=self.algorithm_config,
         )
+
+        algorithm.prepare(students)
+
         return algorithm.generate(students)
 
     @staticmethod

@@ -2,7 +2,7 @@ from api.models.student import Student
 
 
 class Utility:
-    def __init__(self, value: int, student: Student, project_id: int):
+    def __init__(self, value: float, student: Student, project_id: int):
         self.value = value
         self.student = student
         self.project_id = project_id

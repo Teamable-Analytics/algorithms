@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Callable, Tuple, List
 
+from api.models.student import Student
+from api.models.team import TeamShell
+
 
 @dataclass
 class AlgorithmConfig(ABC):
@@ -78,3 +81,24 @@ class PriorityAlgorithmConfig(AlgorithmConfig):
             raise ValueError(
                 "The total number of outputted team sets from specified mutations =/= MAX_SPREAD!"
             )
+
+
+class MultipleRoundRobinAlgorithmConfig(AlgorithmConfig):
+    utility_function: Callable[[Student, TeamShell], float]
+
+    def validate(self):
+        super().validate()
+
+
+class DoubleRoundRobinAlgorithmConfig(AlgorithmConfig):
+    utility_function: Callable[[Student, TeamShell], float]
+
+    def validate(self):
+        super().validate()
+
+
+class GeneralizedEnvyGraphAlgorithmConfig(AlgorithmConfig):
+    utility_function: Callable[[Student, TeamShell], float]
+
+    def validate(self):
+        super().validate()
