@@ -11,10 +11,18 @@ class PrioritySatisfaction(TeamSetMetric):
     Calculates the number of priorities satisfied by the algorithm
     """
 
-    def __init__(self, priorities: List[Priority], is_linear: bool, *args, **kwargs):
+    def __init__(
+        self,
+        priorities: List[Priority],
+        is_linear: bool,
+        exponent_base: int = 2,
+        *args,
+        **kwargs
+    ):
         super().__init__(theoretical_range=(0, 1), *args, **kwargs)
         self.priorities = priorities
         self.is_linear = is_linear
+        self.exponent_base = exponent_base
 
     def calculate(self, team_set: TeamSet) -> float:
         weights = (
@@ -42,7 +50,10 @@ class PrioritySatisfaction(TeamSetMetric):
 
     def computer_exponential_weights(self) -> List[float]:
         k = len(self.priorities)
-        weights = [(2 ** (k - i)) / ((2**k) - 1) for i in range(1, k + 1)]
+        weights = [
+            (self.exponent_base ** (k - i)) / ((self.exponent_base**k) - 1)
+            for i in range(1, k + 1)
+        ]
         return weights
 
     def priorities_satisfied(self, team: Team) -> List[float]:
