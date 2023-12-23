@@ -45,8 +45,8 @@ class MockStudentProviderSettings:
                 f"number_of_enemies ({self.number_of_enemies}) must be a non-negative integer."
             )
         if (
-            len(self.project_preference_options)
-            < self.num_project_preferences_per_student
+                len(self.project_preference_options)
+                < self.num_project_preferences_per_student
         ):
             raise ValueError(
                 f"num_project_preferences_per_student ({self.num_project_preferences_per_student}) cannot "
@@ -94,16 +94,16 @@ class MockStudentProvider(StudentProvider):
 
 
 def create_mock_students(
-    number_of_students: int,
-    number_of_friends: int,
-    number_of_enemies: int,
-    friend_distribution: Literal["cluster", "random"],
-    attribute_ranges: Dict[int, AttributeRangeConfig],
-    num_values_per_attribute: Dict[int, NumValuesConfig],
-    project_preference_options: List[int],
-    num_project_preferences_per_student: int,
-    allow_probabilistic_generation: bool = False,
-    random_seed: int = None,
+        number_of_students: int,
+        number_of_friends: int,
+        number_of_enemies: int,
+        friend_distribution: Literal["cluster", "random"],
+        attribute_ranges: Dict[int, AttributeRangeConfig],
+        num_values_per_attribute: Dict[int, NumValuesConfig],
+        project_preference_options: List[int],
+        num_project_preferences_per_student: int,
+        allow_probabilistic_generation: bool = False,
+        random_seed: int = None,
 ) -> List[Student]:
     students = []
     n = number_of_students
@@ -124,7 +124,7 @@ def create_mock_students(
     probabilistic_attributes = (
         {}
         if allow_probabilistic_generation
-        else (_generate_attribute_values_without_probability(attribute_ranges, n))
+        else (_generate_attribute_values_without_probability(attribute_ranges, n, num_values_per_attribute))
     )
 
     for i in range(n):
@@ -169,13 +169,17 @@ def create_mock_students(
                 if num_value_config
                 else None
             )
-            attributes[attribute_id] = attribute_values_from_range(
-                attribute_range_config,
-                num_values,
-                allow_probabilistic_generation,
-                probabilistic_attributes.get(attribute_id, []),
-                generator=rng,
-            )
+
+            if allow_probabilistic_generation:
+                attributes[attribute_id] = probabilistic_attribute_values_from_range(
+                    attribute_range_config,
+                    num_values,
+                    generator=rng,
+                )
+            else:
+                attributes[attribute_id] = attribute_value_from_range(
+                    probabilistic_attribute_values=probabilistic_attributes[attribute_id],
+                )
 
         project_preferences = None
         if project_preference_options and num_project_preferences_per_student:
@@ -207,7 +211,7 @@ def num_values_for_attribute(num_values_config: NumValuesConfig, generator=None)
 
 
 def random_choice(
-    possible_values: List, size=None, replace=False, weights=None, generator=None
+        possible_values: List, size=None, replace=False, weights=None, generator=None
 ) -> List[int]:
     """
     Uses np.random.choice() but always returns a list of int
@@ -226,12 +230,10 @@ def random_choice(
     return [int(val) for val in values]
 
 
-def attribute_values_from_range(
-    range_config: AttributeRangeConfig,
-    num_values: Optional[int] = 1,
-    allow_probabilistic_generation: bool = False,
-    probabilistic_attribute_values: List[int] = None,
-    generator=None,
+def probabilistic_attribute_values_from_range(
+        range_config: AttributeRangeConfig,
+        num_values: Optional[int] = 1,
+        generator=None,
 ) -> List[int]:
     _generator = generator or np.random.default_rng()
 
@@ -243,13 +245,6 @@ def attribute_values_from_range(
             possible_values = [enum.value for enum in range_config]
         return random_choice(
             possible_values, size=num_values, replace=False, generator=_generator
-        )
-
-    if not allow_probabilistic_generation:
-        return (
-            [probabilistic_attribute_values.pop()]
-            if probabilistic_attribute_values
-            else []
         )
 
     # config is a list of (value, % chance) tuples
@@ -268,28 +263,71 @@ def attribute_values_from_range(
     )
 
 
+def attribute_value_from_range(probabilistic_attribute_values: List[int], num_value: int) -> List[int]:
+    """
+    Returns a list of attribute values of num_value length from the probabilistic_attribute_values.
+
+    if num_value is None, returns a list of all values from probabilistic_attribute_values
+    """
+    if not probabilistic_attribute_values or len(probabilistic_attribute_values) == 0:
+        return []
+
+    if num_value is None:
+        return [probabilistic_attribute_values.pop()]
+
+    if num_value > len(probabilistic_attribute_values):
+        # This case theoretically should never happen because we generate enough values
+        # in probabilistic_attribute_values to satisfy the number of values requested
+        raise ValueError(
+            f"Cannot generate {num_value} values from {len(probabilistic_attribute_values)} possible values"
+        )
+
+    attribute_values = []
+    for _ in range(num_value):
+        attribute_values.append(probabilistic_attribute_values.pop())
+
+    # Remove duplicates
+    attribute_values = list(set(attribute_values))
+
+    return attribute_values
+
+
 def _generate_attribute_values_without_probability(
-    attribute_ranges: Dict[int, AttributeRangeConfig], class_size: int
-):
+        attribute_ranges: Dict[int, AttributeRangeConfig], class_size: int,
+        num_values_per_attribute: Dict[int, NumValuesConfig], rng=None
+) -> Dict[int, List[int]]:
     probabilistic_attributes = {}
     for attribute_id, attribute_range_config in attribute_ranges.items():
         if isinstance(attribute_range_config[0], (int, AttributeValueEnum)):
             continue
 
-        # Assume if the range is probabilistic, the number of value per attribute is 0
         if (sum([_[1] for _ in attribute_range_config])) != 1:
-            raise ValueError(f"Probabilistic attribute range must sum to 100$")
+            raise ValueError(f"Probabilistic attribute ranges must sum to 100%")
+
+        num_value = num_values_per_attribute.get(attribute_id, 1)
+        if not isinstance(num_value, int):
+            raise ValueError(
+                f"Cannot generate more than one value for attribute {attribute_id}"
+            )
 
         probabilistic_attributes[attribute_id] = []
         for attribute_range in attribute_range_config:
+            attribute_value, attribute_probability = attribute_range
+
+            total_attribute_values = attribute_probability * class_size * num_value
+            if total_attribute_values != int(total_attribute_values):
+                raise ValueError(
+                    f"The number of attribute values must be an integer."
+                )
+
             probabilistic_attributes[attribute_id].extend(
                 [
-                    attribute_range[0]
-                    if isinstance(attribute_range[0], int)
-                    else attribute_range[0].value
-                    for _ in range(int(attribute_range[1] * class_size))
+                    attribute_value if isinstance(attribute_value, int) else attribute_value.value
+                    for _ in range(total_attribute_values)
                 ]
             )
-        random.shuffle(probabilistic_attributes[attribute_id])
+
+        random_generator = rng or np.random.default_rng()
+        random_generator.shuffle(probabilistic_attributes[attribute_id])
 
     return probabilistic_attributes
