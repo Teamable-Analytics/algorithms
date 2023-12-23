@@ -179,6 +179,7 @@ def create_mock_students(
             else:
                 attributes[attribute_id] = attribute_value_from_range(
                     probabilistic_attribute_values=probabilistic_attributes[attribute_id],
+                    num_value=num_values,
                 )
 
         project_preferences = None
