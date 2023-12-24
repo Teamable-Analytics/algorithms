@@ -4,7 +4,7 @@ from typing import Literal, List, Dict, Optional
 
 import numpy as np
 
-from api.models.enums import Relationship, AttributeValueEnum, ScenarioAttribute
+from api.models.enums import Relationship, AttributeValueEnum
 from api.models.student import Student
 from benchmarking.data.interfaces import (
     StudentProvider,
@@ -308,8 +308,17 @@ def _generate_attribute_values_without_probability(
     rng=None,
 ) -> Dict[int, List[int]]:
     probabilistic_attributes = {}
+    random_generator = rng or np.random.default_rng()
     for attribute_id, attribute_range_config in attribute_ranges.items():
         if isinstance(attribute_range_config[0], (int, AttributeValueEnum)):
+            if isinstance(attribute_range_config[0], int):
+                probabilistic_attributes[attribute_id] = attribute_range_config
+            else:
+                # .value accounts for AttributeValueEnum in the range config
+                probabilistic_attributes[attribute_id] = [
+                    enum.value for enum in attribute_range_config
+                ]
+            random_generator.shuffle(probabilistic_attributes[attribute_id])
             continue
 
         if (sum([_[1] for _ in attribute_range_config])) != 1:
@@ -337,8 +346,6 @@ def _generate_attribute_values_without_probability(
                     for _ in range(total_attribute_values)
                 ]
             )
-
-        random_generator = rng or np.random.default_rng()
         random_generator.shuffle(probabilistic_attributes[attribute_id])
 
     return probabilistic_attributes
