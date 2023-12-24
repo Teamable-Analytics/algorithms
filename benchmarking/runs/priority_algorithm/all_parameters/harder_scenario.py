@@ -44,7 +44,7 @@ class HarderScenario(Run):
         scenario = CustomScenario(
             value_of_female=Gender.FEMALE.value,
             value_of_gpa=Gpa.A.value,
-            value_of_age=Age._20.value,
+            value_of_age=Age._21.value,
         )
         class_size = 100
         team_size = 5
