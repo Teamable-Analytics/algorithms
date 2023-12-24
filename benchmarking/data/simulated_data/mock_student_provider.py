@@ -121,15 +121,18 @@ def create_mock_students(
         else np.random.default_rng()
     )
 
-    probabilistic_attributes = (
-        {}
-        if allow_probabilistic_generation
-        else (
-            _generate_attribute_values_without_probability(
-                attribute_ranges, n, num_values_per_attribute
+    fixed_num_values_per_attribute: Dict[int, int] = {}
+    randomized_attributes = {}
+    if not allow_probabilistic_generation:
+        fixed_num_values_per_attribute = {
+            attribute_id: _get_num_value_of_attribute(
+                num_values_per_attribute, attribute_id, rng
             )
+            for attribute_id, _ in attribute_ranges.items()
+        }
+        randomized_attributes = _generate_attribute_values_without_probability(
+            attribute_ranges, n, fixed_num_values_per_attribute, rng=rng
         )
-    )
 
     for i in range(n):
         relationships = {}
@@ -167,24 +170,19 @@ def create_mock_students(
 
         attributes = {}
         for attribute_id, attribute_range_config in attribute_ranges.items():
-            num_value_config = num_values_per_attribute.get(attribute_id, None)
-            num_values = (
-                num_values_for_attribute(num_value_config, generator=rng)
-                if num_value_config
-                else None
-            )
-
             if allow_probabilistic_generation:
+                num_values = _get_num_value_of_attribute(
+                    num_values_per_attribute, attribute_id, rng
+                )
                 attributes[attribute_id] = probabilistic_attribute_values_from_range(
                     attribute_range_config,
                     num_values,
                     generator=rng,
                 )
             else:
+                num_values = fixed_num_values_per_attribute[attribute_id]
                 attributes[attribute_id] = attribute_value_from_range(
-                    probabilistic_attribute_values=probabilistic_attributes[
-                        attribute_id
-                    ],
+                    probabilistic_attribute_values=randomized_attributes[attribute_id],
                     num_value=num_values,
                 )
 
@@ -295,9 +293,6 @@ def attribute_value_from_range(
     for _ in range(num_value):
         attribute_values.append(probabilistic_attribute_values.pop())
 
-    # Remove duplicates
-    attribute_values = list(set(attribute_values))
-
     return attribute_values
 
 
@@ -310,21 +305,29 @@ def _generate_attribute_values_without_probability(
     probabilistic_attributes = {}
     random_generator = rng or np.random.default_rng()
     for attribute_id, attribute_range_config in attribute_ranges.items():
+        num_value = num_values_per_attribute.get(attribute_id, 1)
+
         if isinstance(attribute_range_config[0], (int, AttributeValueEnum)):
             if isinstance(attribute_range_config[0], int):
-                probabilistic_attributes[attribute_id] = attribute_range_config
+                # create num_values deep duplicates of the range config, but flatten the list
+                probabilistic_attributes[attribute_id] = []
+                for _ in range(num_value + 1):
+                    probabilistic_attributes[attribute_id].extend(
+                        attribute_range_config[:]
+                    )
             else:
                 # .value accounts for AttributeValueEnum in the range config
-                probabilistic_attributes[attribute_id] = [
-                    enum.value for enum in attribute_range_config
-                ]
+                probabilistic_attributes[attribute_id] = []
+                for _ in range(num_value + 1):
+                    probabilistic_attributes[attribute_id].extend(
+                        [enum.value for enum in attribute_range_config]
+                    )
             random_generator.shuffle(probabilistic_attributes[attribute_id])
             continue
 
         if (sum([_[1] for _ in attribute_range_config])) != 1:
             raise ValueError(f"Probabilistic attribute ranges must sum to 100%")
 
-        num_value = num_values_per_attribute.get(attribute_id, 1)
         if not isinstance(num_value, int):
             raise ValueError(
                 f"Cannot generate more than one value for attribute {attribute_id}"
@@ -349,3 +352,14 @@ def _generate_attribute_values_without_probability(
         random_generator.shuffle(probabilistic_attributes[attribute_id])
 
     return probabilistic_attributes
+
+
+def _get_num_value_of_attribute(
+    num_values_per_attribute: Dict[int, NumValuesConfig], attribute_id: int, generator
+) -> Optional[int]:
+    num_value_config = num_values_per_attribute.get(attribute_id, None)
+    return (
+        num_values_for_attribute(num_value_config, generator=generator)
+        if num_value_config
+        else None
+    )
