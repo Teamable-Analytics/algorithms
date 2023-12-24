@@ -5,7 +5,8 @@ from api.ai.interfaces.algorithm import Algorithm
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.ai.interfaces.algorithm_options import (
     PriorityAlgorithmOptions,
-    WeightAlgorithmOptions, RandomAlgorithmOptions,
+    WeightAlgorithmOptions,
+    RandomAlgorithmOptions,
 )
 from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
 from api.ai.random_algorithm.random_algorithm import RandomAlgorithm

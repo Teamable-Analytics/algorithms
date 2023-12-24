@@ -58,9 +58,9 @@ class HarderScenario(Run):
         }
 
         # Ranges
-        max_keep_range = [1]  # [10, 500, 1000, 1500, 2000, 2500]
-        max_spread_range = [1]  # [1, 10, 20, 30, 40, 50]
-        max_iterations_range = [10]  # [10, 250, 500, 750, 1000]
+        max_keep_range = [10, 500, 1000, 1500, 2000, 2500]
+        max_spread_range = [1, 10, 20, 30, 40, 50]
+        max_iterations_range = [10, 250, 500, 750, 1000]
 
         # Find completed simulations
         completed_configs_dict = {
