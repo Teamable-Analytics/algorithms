@@ -1,3 +1,4 @@
+import collections
 import unittest
 from typing import Literal, List
 
@@ -6,12 +7,13 @@ import numpy as np
 from api.models.enums import Gpa, Relationship
 from api.models.student import Student
 from benchmarking.data.simulated_data.mock_student_provider import (
-    attribute_values_from_range,
     create_mock_students,
     MockStudentProvider,
     random_choice,
     MockStudentProviderSettings,
     num_values_for_attribute,
+    ProbabilisticAttributeValuesMaker,
+    ExactAttributeRatiosMaker,
 )
 from utils.validation import is_unique
 
@@ -56,6 +58,7 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             },
             project_preference_options=[],
             num_project_preferences_per_student=0,
+            ensure_exact_attribute_ratios=False,
         )
 
         student = students[0]
@@ -64,20 +67,22 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
         self.assertEqual(len(student.attributes[3]), 1)
 
     def test_create_mock_students__students_have_correct_project_preferences(self):
-        students = create_mock_students(
-            number_of_students=1,
-            number_of_friends=0,
-            number_of_enemies=0,
-            friend_distribution="random",
-            attribute_ranges={},
-            num_values_per_attribute={},
-            project_preference_options=[1, 2, 3],
-            num_project_preferences_per_student=3,
-        )
+        for ensure_exact_attribute_ratios in [True, False]:
+            students = create_mock_students(
+                number_of_students=1,
+                number_of_friends=0,
+                number_of_enemies=0,
+                friend_distribution="random",
+                attribute_ranges={},
+                num_values_per_attribute={},
+                project_preference_options=[1, 2, 3],
+                num_project_preferences_per_student=3,
+                ensure_exact_attribute_ratios=ensure_exact_attribute_ratios,
+            )
 
-        student = students[0]
-        self.assertEqual(len(student.project_preferences), 3)
-        self.assertTrue(is_unique(student.project_preferences))
+            student = students[0]
+            self.assertEqual(len(student.project_preferences), 3)
+            self.assertTrue(is_unique(student.project_preferences))
 
     def test_create_mock_students__student_has_num_values_for_attribute_within_range(
         self,
@@ -99,6 +104,7 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             },
             project_preference_options=[],
             num_project_preferences_per_student=0,
+            ensure_exact_attribute_ratios=False,
         )
 
         for student in students:
@@ -107,38 +113,40 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             self.assertTrue(3 <= len(student.attributes[3]) < 4)
 
     def test_create_mock_students__students_have_correct_friend_and_enemy_count(self):
-        for i in [1, 5, 10]:
-            students = create_mock_students(
-                number_of_students=i * 2 + 1,
-                number_of_friends=i,
-                number_of_enemies=i,
-                friend_distribution="random",
-                attribute_ranges={},
-                num_values_per_attribute={},
-                project_preference_options=[],
-                num_project_preferences_per_student=0,
-            )
-            for student in students:
-                self.assertGreaterEqual(
-                    i,
-                    len(
-                        [
-                            r
-                            for r in student.relationships.values()
-                            if r == Relationship.FRIEND
-                        ]
-                    ),
+        for ensure_exact_attribute_ratios in [True, False]:
+            for i in [1, 5, 10]:
+                students = create_mock_students(
+                    number_of_students=i * 2 + 1,
+                    number_of_friends=i,
+                    number_of_enemies=i,
+                    friend_distribution="random",
+                    attribute_ranges={},
+                    num_values_per_attribute={},
+                    project_preference_options=[],
+                    num_project_preferences_per_student=0,
+                    ensure_exact_attribute_ratios=ensure_exact_attribute_ratios,
                 )
-                self.assertGreaterEqual(
-                    i,
-                    len(
-                        [
-                            r
-                            for r in student.relationships.values()
-                            if r == Relationship.ENEMY
-                        ]
-                    ),
-                )
+                for student in students:
+                    self.assertGreaterEqual(
+                        i,
+                        len(
+                            [
+                                r
+                                for r in student.relationships.values()
+                                if r == Relationship.FRIEND
+                            ]
+                        ),
+                    )
+                    self.assertGreaterEqual(
+                        i,
+                        len(
+                            [
+                                r
+                                for r in student.relationships.values()
+                                if r == Relationship.ENEMY
+                            ]
+                        ),
+                    )
 
     def test_create_mock_students__each_student_has_correct_num_friends_and_enemies(
         self,
@@ -154,6 +162,7 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 num_values_per_attribute={},
                 project_preference_options=[],
                 num_project_preferences_per_student=0,
+                ensure_exact_attribute_ratios=False,
             )
 
             for student in students:
@@ -189,6 +198,7 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 num_values_per_attribute={},
                 project_preference_options=[],
                 num_project_preferences_per_student=0,
+                ensure_exact_attribute_ratios=False,
             )
 
             for student in students:
@@ -222,6 +232,7 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 num_values_per_attribute={},
                 project_preference_options=[],
                 num_project_preferences_per_student=0,
+                ensure_exact_attribute_ratios=False,
             ),
         )
 
@@ -237,6 +248,7 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 num_values_per_attribute={},
                 project_preference_options=[],
                 num_project_preferences_per_student=0,
+                ensure_exact_attribute_ratios=False,
             )
 
             for student in students:
@@ -264,6 +276,7 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             num_values_per_attribute={},
             project_preference_options=[],
             num_project_preferences_per_student=0,
+            ensure_exact_attribute_ratios=False,
         )
 
         cliques: List[List[int]] = []
@@ -293,31 +306,33 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
     def test_create_mock_students__students_are_reproducible(self):
         dist_types: List[Literal["random", "cluster"]] = ["random", "cluster"]
         for dist_type in dist_types:
-            students_1 = create_mock_students(
-                number_of_students=4,
-                number_of_friends=2,
-                number_of_enemies=1,
-                friend_distribution=dist_type,
-                attribute_ranges={},
-                num_values_per_attribute={},
-                project_preference_options=[],
-                num_project_preferences_per_student=0,
-                random_seed=1,
-            )
+            config = {
+                "number_of_students": 4,
+                "number_of_friends": 2,
+                "number_of_enemies": 1,
+                "friend_distribution": dist_type,
+                "attribute_ranges": {
+                    1: [1, 2, 3, 4],
+                    2: [(100, 0.5), (200, 0.5)],
+                    3: [Gpa.A, Gpa.B, Gpa.C],
+                    4: [(Gpa.A, 0.25), (Gpa.B, 0.5), (Gpa.C, 0.25)],
+                    5: [1000],
+                },
+                "num_values_per_attribute": {},
+                "project_preference_options": [],
+                "num_project_preferences_per_student": 0,
+                "random_seed": 1,
+                "ensure_exact_attribute_ratios": False,
+            }
 
-            students_2 = create_mock_students(
-                number_of_students=4,
-                number_of_friends=2,
-                number_of_enemies=1,
-                friend_distribution=dist_type,
-                attribute_ranges={},
-                num_values_per_attribute={},
-                project_preference_options=[],
-                num_project_preferences_per_student=0,
-                random_seed=1,
-            )
+            students_1 = create_mock_students(**config)
+
+            students_2 = create_mock_students(**config)
+            students_3 = create_mock_students(**{**config, "random_seed": 2})
 
             self.assertListEqual(students_1, students_2)
+
+            self.assertNotEqual(students_1, students_3)
 
     def test_num_values_for_attribute__returns_int_within_range(self):
         test_range = (5, 12)
@@ -336,79 +351,6 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             self.assertIsInstance(value, list)
             self.assertIsInstance(value[0], int)
             self.assertIsInstance(value[-1], int)
-
-    def test_attribute_values_from_range__multiple_values_for_attribute_are_selected_without_replacement(
-        self,
-    ):
-        for _ in range(100):
-            # FIXME: This test is (technically) a little flaky 😬
-            # run this multiple times so that this test cannot accidentally
-            #   pass even if the values are selected with replacement
-            values_1 = attribute_values_from_range([10, 20, 30], num_values=3)
-            self.assertListEqual([10, 20, 30], sorted(values_1))
-
-            values_2 = attribute_values_from_range(
-                [(10, 0.2), (20, 0.3), (30, 0.5)], num_values=3
-            )
-            self.assertListEqual([10, 20, 30], sorted(values_2))
-
-            values_3 = attribute_values_from_range([Gpa.A, Gpa.B, Gpa.C], num_values=3)
-            self.assertListEqual(
-                sorted([Gpa.A.value, Gpa.B.value, Gpa.C.value]), sorted(values_3)
-            )
-
-            values_4 = attribute_values_from_range(
-                [(Gpa.A, 0.2), (Gpa.B, 0.3), (Gpa.C, 0.5)], num_values=3
-            )
-            self.assertListEqual(
-                sorted([Gpa.A.value, Gpa.B.value, Gpa.C.value]), sorted(values_4)
-            )
-
-    def test_attribute_values_from_range__always_returns_correctly_sized_list(self):
-        num_values_list = [1, 2, 3]
-        for num_values in num_values_list:
-            """
-            Test for each of the union types of AttributeRangeConfig
-            AttributeRangeConfig = Union[
-                List[int],
-                List[Tuple[int, float]],
-                List[AttributeValueEnum],
-                List[Tuple[AttributeValueEnum, float]],
-            ]
-            """
-            self.assertEqual(
-                len(attribute_values_from_range([10, 20, 30], num_values=num_values)),
-                num_values,
-            )
-            self.assertEqual(
-                len(
-                    attribute_values_from_range(
-                        [(10, 0.2), (20, 0.3), (30, 0.5)], num_values=num_values
-                    )
-                ),
-                num_values,
-            )
-            self.assertEqual(
-                len(
-                    attribute_values_from_range(
-                        [Gpa.A, Gpa.B, Gpa.C], num_values=num_values
-                    )
-                ),
-                num_values,
-            )
-            self.assertEqual(
-                len(
-                    attribute_values_from_range(
-                        [(Gpa.A, 0.2), (Gpa.B, 0.3), (Gpa.C, 0.5)],
-                        num_values=num_values,
-                    )
-                ),
-                num_values,
-            )
-
-    def test_attribute_values_from_range__errors_with_empty_range_config(self):
-        with self.assertRaises(Exception):
-            attribute_values_from_range([])
 
     def test_all__reproducible_with_seed(self):
         num_values_for_attribute_values = []
@@ -435,3 +377,128 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
                 random_choice([_ for _ in range(1000)], size=3, generator=rng)
             )
         self.assertEqual(len(set(random_choice_2_values)), 3)
+
+
+class TestProbabilisticAttributeValuesMaker(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.attribute_ranges = {
+            1: [1, 2, 3, 4],
+            2: [(100, 0.5), (200, 0.25), (300, 0.25)],
+            3: [Gpa.A, Gpa.B, Gpa.C],
+            4: [(Gpa.A, 0.25), (Gpa.B, 0.5), (Gpa.C, 0.25)],
+        }
+
+    def test_get__errors_with_empty_range_config(self):
+        maker = ProbabilisticAttributeValuesMaker(
+            attribute_ranges=self.attribute_ranges
+        )
+        with self.assertRaises(Exception):
+            maker.get(2000, num_values=1)
+
+    def test_get__always_returns_correctly_sized_list(self):
+        num_values_list = [1, 2, 3]
+        maker = ProbabilisticAttributeValuesMaker(
+            attribute_ranges=self.attribute_ranges
+        )
+        for num_values in num_values_list:
+            for attribute_id in self.attribute_ranges.keys():
+                self.assertEqual(
+                    len(maker.get(attribute_id=attribute_id, num_values=num_values)),
+                    num_values,
+                )
+
+    def test_get__multiple_values_for_attribute_are_selected_without_replacement(
+        self,
+    ):
+        attribute_ranges = {
+            1: [1, 2, 3],
+            2: [(100, 0.5), (200, 0.25), (300, 0.25)],
+            3: [Gpa.A, Gpa.B, Gpa.C],
+            4: [(Gpa.A, 0.25), (Gpa.B, 0.5), (Gpa.C, 0.25)],
+        }
+        maker = ProbabilisticAttributeValuesMaker(attribute_ranges=attribute_ranges)
+        for _ in range(100):
+            # FIXME: This test is (technically) a little flaky 😬
+            # run this multiple times so that this test cannot accidentally
+            #   pass even if the values are selected with replacement
+            values_1 = maker.get(1, num_values=3)
+            self.assertListEqual([1, 2, 3], sorted(values_1))
+
+            values_2 = maker.get(2, num_values=3)
+            self.assertListEqual([100, 200, 300], sorted(values_2))
+
+            values_3 = maker.get(3, num_values=3)
+            self.assertListEqual(
+                [Gpa.A.value, Gpa.B.value, Gpa.C.value], sorted(values_3)
+            )
+
+            values_4 = maker.get(4, num_values=3)
+            self.assertListEqual(
+                [Gpa.A.value, Gpa.B.value, Gpa.C.value], sorted(values_4)
+            )
+
+    def test_get__always_returns_list_of_integers(self):
+        maker = ProbabilisticAttributeValuesMaker(
+            attribute_ranges=self.attribute_ranges
+        )
+        for attribute_id in self.attribute_ranges.keys():
+            value_list = maker.get(attribute_id=attribute_id, num_values=1)
+            for value in value_list:
+                self.assertIsInstance(value, int)
+
+
+class TestExactAttributeRatiosMaker(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.attribute_ranges = {
+            1: [1, 2, 3, 4],
+            2: [(100, 0.5), (200, 0.25), (300, 0.25)],
+            3: [Gpa.A, Gpa.B, Gpa.C],
+            4: [(Gpa.A, 0.25), (Gpa.B, 0.5), (Gpa.C, 0.25)],
+        }
+        cls.class_size = 100
+
+    def test_get__errors_with_empty_range_config(self):
+        maker = ExactAttributeRatiosMaker(
+            number_of_students=self.class_size, attribute_ranges=self.attribute_ranges
+        )
+        with self.assertRaises(Exception):
+            maker.get(2000, num_values=1)
+
+    def test_get__always_returns_correctly_sized_list(self):
+        maker = ExactAttributeRatiosMaker(
+            number_of_students=self.class_size, attribute_ranges=self.attribute_ranges
+        )
+        for attribute_id in self.attribute_ranges.keys():
+            self.assertEqual(len(maker.get(attribute_id=attribute_id, num_values=1)), 1)
+
+    def test_init__exact_attribute_ratios_are_computed(self):
+        NUM_RUN = 100  # Ensure probabilities are correct over many runs
+        for _ in range(NUM_RUN):
+            attribute_ranges = {
+                1: [(100, 0.5), (200, 0.3), (300, 0.2)],
+            }
+            class_size = 100
+            maker = ExactAttributeRatiosMaker(
+                number_of_students=class_size, attribute_ranges=attribute_ranges
+            )
+            output_values = []
+            for _ in range(class_size):
+                value = maker.get(attribute_id=1, num_values=1)  # [100] | [200] | [300]
+                output_values.extend(value)
+
+            counter = collections.Counter(output_values)
+
+            self.assertEqual(counter[100], 50)
+            self.assertEqual(counter[200], 30)
+            self.assertEqual(counter[300], 20)
+
+    def test_get__always_returns_list_of_integers(self):
+        maker = ExactAttributeRatiosMaker(
+            number_of_students=self.class_size, attribute_ranges=self.attribute_ranges
+        )
+        for attribute_id in self.attribute_ranges.keys():
+            value_list = maker.get(attribute_id=attribute_id, num_values=1)
+            for value in value_list:
+                self.assertIsInstance(value, int)

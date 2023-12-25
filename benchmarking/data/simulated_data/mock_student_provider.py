@@ -1,8 +1,10 @@
 import random
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Literal, List, Dict, Optional
 
 import numpy as np
+from numpy.random import Generator
 
 from api.models.enums import Relationship, AttributeValueEnum, ScenarioAttribute
 from api.models.student import Student
@@ -25,6 +27,7 @@ class MockStudentProviderSettings:
     number_of_friends: int = 0
     number_of_enemies: int = 0
     friend_distribution: Literal["cluster", "random"] = "random"
+    ensure_exact_attribute_ratios: bool = True
 
     def __post_init__(self):
         self.validate()
@@ -58,6 +61,21 @@ class MockStudentProviderSettings:
             )
         if not is_unique(self.project_preference_options):
             raise ValueError(f"project_preference_options must be unique if specified.")
+        if self.ensure_exact_attribute_ratios and self.num_values_per_attribute:
+            raise ValueError(
+                "Cannot ensure exact attribute ratios when specifying num_values_per_attribute"
+            )
+
+        if self.attribute_ranges and not isinstance(
+            self.attribute_ranges[0], (int, AttributeValueEnum)
+        ):
+            # Validate when attribute ranges are specified as a list of (value, % chance) tuples
+            for attribute_id, range_config in self.attribute_ranges.items():
+                total_chance = sum([_[1] for _ in range_config])
+                if not total_chance == 1:
+                    raise ValueError(
+                        f"attribute_ranges[{attribute_id}] must sum to 1. Found {total_chance}"
+                    )
 
 
 class MockStudentProvider(StudentProvider):
@@ -74,6 +92,8 @@ class MockStudentProvider(StudentProvider):
             self.settings.num_values_per_attribute,
             self.settings.project_preference_options,
             self.settings.num_project_preferences_per_student,
+            self.settings.ensure_exact_attribute_ratios,
+            random_seed=seed,
         )
         # the students must be shuffled here because certain algorithms
         #   perform better/worse based on the ordering of students.
@@ -99,6 +119,7 @@ def create_mock_students(
     num_values_per_attribute: Dict[int, NumValuesConfig],
     project_preference_options: List[int],
     num_project_preferences_per_student: int,
+    ensure_exact_attribute_ratios: bool,
     random_seed: int = None,
 ) -> List[Student]:
     students = []
@@ -111,10 +132,27 @@ def create_mock_students(
             "Cannot request more friends/enemies than there are people in the class"
         )
 
+    if ensure_exact_attribute_ratios and num_values_per_attribute:
+        raise ValueError(
+            "Cannot ensure exact attribute ratios when specifying num_values_per_attribute"
+        )
+
     rng = (
         np.random.default_rng(seed=random_seed)
         if random_seed
         else np.random.default_rng()
+    )
+
+    attribute_value_maker = (
+        ExactAttributeRatiosMaker(
+            number_of_students=number_of_students,
+            attribute_ranges=attribute_ranges,
+            generator=rng,
+        )
+        if ensure_exact_attribute_ratios
+        else ProbabilisticAttributeValuesMaker(
+            attribute_ranges=attribute_ranges, generator=rng
+        )
     )
 
     for i in range(n):
@@ -153,14 +191,19 @@ def create_mock_students(
 
         attributes = {}
         for attribute_id, attribute_range_config in attribute_ranges.items():
-            num_value_config = num_values_per_attribute.get(attribute_id, None)
-            num_values = (
-                num_values_for_attribute(num_value_config, generator=rng)
-                if num_value_config
-                else None
-            )
-            attributes[attribute_id] = attribute_values_from_range(
-                attribute_range_config, num_values, generator=rng
+            # We only need to retrieve the num_values per attribute dynamically when ensure_exact_attribute_ratios == False
+            if not ensure_exact_attribute_ratios:
+                num_value_config = num_values_per_attribute.get(attribute_id, None)
+                num_values = (
+                    num_values_for_attribute(num_value_config, generator=rng)
+                    if num_value_config
+                    else None
+                )
+            else:
+                num_values = 1
+
+            attributes[attribute_id] = attribute_value_maker.get(
+                attribute_id, num_values
             )
 
         project_preferences = None
@@ -212,32 +255,115 @@ def random_choice(
     return [int(val) for val in values]
 
 
-def attribute_values_from_range(
-    range_config: AttributeRangeConfig, num_values: Optional[int] = 1, generator=None
-) -> List[int]:
-    _generator = generator or np.random.default_rng()
+class AttributeValueMaker(ABC):
+    def __init__(
+        self,
+        attribute_ranges: Dict[int, AttributeRangeConfig],
+        generator: Generator = None,
+    ):
+        self.attribute_ranges = attribute_ranges
+        self.generator = generator or np.random.default_rng()
 
-    if isinstance(range_config[0], (int, AttributeValueEnum)):
-        if isinstance(range_config[0], int):
-            possible_values = range_config
-        else:
-            # .value accounts for AttributeValueEnum in the range config
-            possible_values = [enum.value for enum in range_config]
-        return random_choice(
-            possible_values, size=num_values, replace=False, generator=_generator
+    @abstractmethod
+    def get(self, range_config: AttributeRangeConfig, num_values: int = 1) -> List[int]:
+        raise NotImplementedError
+
+
+class ExactAttributeRatiosMaker(AttributeValueMaker):
+    def __init__(
+        self,
+        attribute_ranges: Dict[int, AttributeRangeConfig],
+        number_of_students: int,
+        generator: Generator = None,
+    ):
+        super().__init__(attribute_ranges, generator)
+        self.options: Dict[int, List[int]] = self._setup_fixed_attribute_value_pool(
+            number_of_students, attribute_ranges
         )
 
-    # config is a list of (value, % chance) tuples
-    if isinstance(range_config[0][0], int):
-        possible_values = [_[0] for _ in range_config]
-    else:
-        possible_values = [_[0].value for _ in range_config]
+    def _setup_fixed_attribute_value_pool(
+        self, number_of_students: int, attribute_ranges: Dict[int, AttributeRangeConfig]
+    ) -> Dict[int, List[int]]:
+        options = {}
+        for attribute_id, range_config in attribute_ranges.items():
+            if isinstance(range_config[0], (int, AttributeValueEnum)):
+                # config is a list either int or AttributeValueEnum
+                self.generator.shuffle(range_config)
+                options_for_attribute = [
+                    range_config[i % len(range_config)]
+                    for i in range(number_of_students)
+                ]
+            else:
+                # config is a list of (int | AttributeValueEnum, % chance) tuples
+                options_for_attribute = []
+                for value, chance in range_config:
+                    number_of_students_with_value = chance * number_of_students
+                    if number_of_students_with_value != int(
+                        number_of_students_with_value
+                    ):
+                        raise ValueError(
+                            f"Cannot ensure exact attribute ratios when specifying num_values_per_attribute. "
+                            f"Found chance of {chance} with class size of {number_of_students} for attribute {attribute_id}"
+                        )
 
-    weights = [_[1] for _ in range_config]
-    return random_choice(
-        possible_values,
-        weights=weights,
-        size=num_values,
-        replace=False,
-        generator=_generator,
-    )
+                    options_for_attribute.extend(
+                        [value for _ in range(int(number_of_students_with_value))]
+                    )
+
+            options[attribute_id] = options_for_attribute
+        return options
+
+    def get(self, attribute_id: int, num_values: int = 1) -> List[int]:
+        if num_values != 1:
+            raise ValueError(
+                "Cannot use ExactAttributeRatiosMaker when num_values != 1"
+            )
+
+        value = self.options.get(attribute_id).pop()
+        if isinstance(value, AttributeValueEnum):
+            return [value.value]
+        return [value]
+
+
+class ProbabilisticAttributeValuesMaker(AttributeValueMaker):
+    def __init__(
+        self,
+        attribute_ranges: Dict[int, AttributeRangeConfig],
+        generator: Generator = None,
+    ):
+        super().__init__(attribute_ranges, generator)
+
+    def get(self, attribute_id: int, num_values: int = 1) -> List[int]:
+        range_config = self.attribute_ranges.get(attribute_id)
+        if not range_config:
+            # todo: finish
+            raise ValueError
+
+        # config is a list either int or AttributeValueEnum
+        if isinstance(range_config[0], (int, AttributeValueEnum)):
+            if isinstance(range_config[0], int):
+                possible_values = range_config
+            else:
+                # .value accounts for AttributeValueEnum in the range config
+                possible_values = [enum.value for enum in range_config]
+            return random_choice(
+                possible_values,
+                size=num_values,
+                replace=False,
+                generator=self.generator,
+            )
+
+        # config is a list of (value, % chance) tuples
+        if isinstance(range_config[0][0], int):
+            possible_values = [_[0] for _ in range_config]
+        else:
+            possible_values = [_[0].value for _ in range_config]
+
+        weights = [_[1] for _ in range_config]
+        return random_choice(
+            possible_values,
+            weights=weights,
+            size=num_values,
+            replace=False,
+            generator=self.generator,
+        )
