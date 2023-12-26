@@ -1,6 +1,6 @@
-from old.algorithm_sandbox.metrics.project_metric import satisfied_requirements
 from api.models.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
+from benchmarking.evaluations.metrics.utils.team_calculations import num_satisfied_requirements
 
 
 class NumRequirementsSatisfied(TeamSetMetric):
@@ -12,4 +12,4 @@ class NumRequirementsSatisfied(TeamSetMetric):
         super().__init__(*args, **kwargs)
 
     def calculate(self, team_set: TeamSet) -> float:
-        return sum([satisfied_requirements(team) for team in team_set.teams])
+        return sum([num_satisfied_requirements(team) for team in team_set.teams])

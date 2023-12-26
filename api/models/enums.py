@@ -118,6 +118,14 @@ class Race(AttributeValueEnum):
     Other = 9
 
 
+class Major(AttributeValueEnum):
+    Computer_Science = 1
+    Engineering = 2
+    Arts = 3
+    Science = 4
+    Other = 5
+
+
 class PriorityType(Enum):
     TOKENIZATION = "tokenization"
     DIVERSITY = "diversity"

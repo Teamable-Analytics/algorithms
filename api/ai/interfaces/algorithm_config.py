@@ -75,8 +75,8 @@ class PriorityAlgorithmConfig(AlgorithmConfig):
     def validate(self):
         super().validate()
         if (
-            self.MUTATIONS
-            and sum([output for _, output in self.MUTATIONS]) != self.MAX_SPREAD
+                self.MUTATIONS
+                and sum([output for _, output in self.MUTATIONS]) != self.MAX_SPREAD
         ):
             raise ValueError(
                 "The total number of outputted team sets from specified mutations =/= MAX_SPREAD!"
@@ -86,6 +86,10 @@ class PriorityAlgorithmConfig(AlgorithmConfig):
 class MultipleRoundRobinAlgorithmConfig(AlgorithmConfig):
     utility_function: Callable[[Student, TeamShell], float]
 
+    def __init__(self, utility_function: Callable[[Student, TeamShell], float]):
+        super().__init__()
+        self.utility_function = utility_function
+
     def validate(self):
         super().validate()
 
@@ -93,12 +97,20 @@ class MultipleRoundRobinAlgorithmConfig(AlgorithmConfig):
 class DoubleRoundRobinAlgorithmConfig(AlgorithmConfig):
     utility_function: Callable[[Student, TeamShell], float]
 
+    def __init__(self, utility_function: Callable[[Student, TeamShell], float]):
+        super().__init__()
+        self.utility_function = utility_function
+
     def validate(self):
         super().validate()
 
 
 class GeneralizedEnvyGraphAlgorithmConfig(AlgorithmConfig):
     utility_function: Callable[[Student, TeamShell], float]
+
+    def __init__(self, utility_function: Callable[[Student, TeamShell], float]):
+        super().__init__()
+        self.utility_function = utility_function
 
     def validate(self):
         super().validate()
