@@ -9,69 +9,43 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="{% static 'css/bootstrap/v5.1.3/bootstrap.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
-
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
 </head>
 
 <body>
-<header class="d-flex flex-row align-items-center p-3">
-    <div class="img-container">
-        <a href="index.html"><img src="{% static 'assets/img/logo-transparent-blue.png' %}"
-                                  alt="Teamable Analytics Logo"/></a>
-    </div>
-    <span class="title"><a href="index.html">Teamable Analytics</a></span>
+<header>
+    <a href=href="https://teamableanalytics.ok.ubc.ca/homepage/" class="d-flex flex-row align-items-center p-3">
+        <div class="img-container">
+            <img src="{% static 'assets/img/logo-transparent-blue.png' %}" alt="Teamable Analytics Logo"/>
+        </div>
+        <span class="title">Teamable Analytics</span>
+    </a>
 </header>
 
 <main class="container d-flex flex-column gap-1 my-5">
     <h1>Teamable Analytics API</h1>
 
     <section>
-        <h2>About our API</h2>
+        <h2>About the API</h2>
         <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer malesuada quam et efficitur lacinia.
-            Suspendisse justo massa, congue ut nulla eleifend, laoreet eleifend sem. Nam interdum quam lorem. Vestibulum
-            sed est a ex sodales rhoncus nec non nisl. Pellentesque habitant morbi tristique senectus et netus et
-            malesuada fames ac turpis egestas. Vestibulum non nisi enim. Proin sit amet orci non metus lacinia ultrices.
-            Nam sit amet tortor a augue mollis ornare a eu sapien. Nunc fermentum tincidunt dolor, eu hendrerit metus.
-            Sed hendrerit pretium metus ac finibus. Aenean id sem sapien. Donec bibendum nisl nisl, ac facilisis nisl
-            varius at. Pellentesque at tincidunt lacus, eget accumsan lectus.<br/><br/>
-            Mauris venenatis commodo lacus, et vestibulum metus imperdiet vel. Mauris elementum enim vitae tellus
-            faucibus, vitae auctor velit suscipit. Mauris venenatis porttitor convallis. Vestibulum egestas eros vel
-            sodales malesuada. Etiam nec lacus euismod, consequat lectus sit amet, sagittis mauris. Orci varius natoque
-            penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque interdum tristique mauris ac
-            interdum. Mauris in sollicitudin libero. Etiam congue egestas sapien, id interdum diam posuere vel. Maecenas
-            vestibulum orci eu sapien pellentesque aliquam. Cras ac laoreet nisi. Proin in nunc dui. Mauris ultrices
-            scelerisque ante id ultricies.<br/><br/>
-            Phasellus pharetra risus eget volutpat eleifend. In ac orci quis neque semper pharetra rutrum vitae nulla.
-            Morbi mollis urna id suscipit venenatis. Curabitur laoreet, nunc auctor fermentum iaculis, quam nisl
-            vestibulum libero, in auctor ipsum orci eget lacus. Aenean auctor nisi eget iaculis imperdiet. Sed molestie
-            nisi et pulvinar lobortis. Etiam quis tempor eros. Ut consequat tortor commodo nisl cursus condimentum
-            maximus at urna. Nullam nec purus nibh. Nunc a convallis augue, ac placerat risus.
+{#            Generate English for me plz#}
+            This is the API for the Teamable Analytics project. View project at <a href="https://teamableanalytics.ok.ubc.ca/homepage/">project homepage</a>.<br/>
+            The API provides a simple interface for generating teams with advanced options such as:
+            <ul style="margin-top: -1rem">
+                <li>Flexible team size</li>
+                <li>Variety of team member attributes</li>
+                <li>Different algorithms choice</li>
+            </ul>
         </p>
     </section>
     <section>
         <h2>How to use it</h2>
         <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer malesuada quam et efficitur lacinia.
-            Suspendisse justo massa, congue ut nulla eleifend, laoreet eleifend sem. Nam interdum quam lorem. Vestibulum
-            sed est a ex sodales rhoncus nec non nisl. Pellentesque habitant morbi tristique senectus et netus et
-            malesuada fames ac turpis egestas. Vestibulum non nisi enim. Proin sit amet orci non metus lacinia ultrices.
-            Nam sit amet tortor a augue mollis ornare a eu sapien. Nunc fermentum tincidunt dolor, eu hendrerit metus.
-            Sed hendrerit pretium metus ac finibus. Aenean id sem sapien. Donec bibendum nisl nisl, ac facilisis nisl
-            varius at. Pellentesque at tincidunt lacus, eget accumsan lectus.<br/><br/>
-            Mauris venenatis commodo lacus, et vestibulum metus imperdiet vel. Mauris elementum enim vitae tellus
-            faucibus, vitae auctor velit suscipit. Mauris venenatis porttitor convallis. Vestibulum egestas eros vel
-            sodales malesuada. Etiam nec lacus euismod, consequat lectus sit amet, sagittis mauris. Orci varius natoque
-            penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque interdum tristique mauris ac
-            interdum. Mauris in sollicitudin libero. Etiam congue egestas sapien, id interdum diam posuere vel. Maecenas
-            vestibulum orci eu sapien pellentesque aliquam. Cras ac laoreet nisi. Proin in nunc dui. Mauris ultrices
-            scelerisque ante id ultricies.<br/><br/>
-            Phasellus pharetra risus eget volutpat eleifend. In ac orci quis neque semper pharetra rutrum vitae nulla.
-            Morbi mollis urna id suscipit venenatis. Curabitur laoreet, nunc auctor fermentum iaculis, quam nisl
-            vestibulum libero, in auctor ipsum orci eget lacus. Aenean auctor nisi eget iaculis imperdiet. Sed molestie
-            nisi et pulvinar lobortis. Etiam quis tempor eros. Ut consequat tortor commodo nisl cursus condimentum
-            maximus at urna. Nullam nec purus nibh. Nunc a convallis augue, ac placerat risus.
+            <ol>
+        <li>Contact our Project Manager <a href="mailto:bowen.hui@ubc.ca"><b>Bowen Hui</b></a> to get an API key.</li>
+                <li>Learn more about our architecture at our <a href="https://teamableanalytics.ok.ubc.ca/homepage/">detailed documentations page</a>.</li>
+                <li>Use the playground below to test out the API.</li>
+            </ol>
         </p>
     </section>
     <section>
