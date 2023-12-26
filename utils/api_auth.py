@@ -3,6 +3,7 @@ from bcrypt import hashpw, gensalt, checkpw
 
 from pathlib import Path
 import dotenv
+
 env_file = next((Path(__file__).parent.parent / "env").glob("*.env"))
 dotenv.load_dotenv(dotenv_path=env_file)
 
@@ -31,4 +32,6 @@ def is_api_key_valid(api_key):
     Validates the API key by checking if it is in the database.
     """
     allowed_api_keys = os.getenv("API_AUTH_ALLOWED_KEYS").split(" ")
-    return any(check_hash(api_key, allowed_api_key) for allowed_api_key in allowed_api_keys)
+    return any(
+        check_hash(api_key, allowed_api_key) for allowed_api_key in allowed_api_keys
+    )

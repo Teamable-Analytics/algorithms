@@ -32,9 +32,7 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
             request_headers = dict(request.headers)
             api_key = request_headers.get("X-Api-Key")
             if not api_key:
-                return ResponseWithMetadata(
-                    error="No API key provided", status=400
-                )
+                return ResponseWithMetadata(error="No API key provided", status=400)
             if not is_api_key_valid(api_key):
                 return ResponseWithMetadata(
                     error="Invalid API key provided", status=401
