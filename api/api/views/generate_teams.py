@@ -7,6 +7,7 @@ from api.api.utils.generate_teams_data_loader import GenerateTeamsDataLoader
 from api.api.utils.response_with_metadata import ResponseWithMetadata
 from api.api.validators.generate_teams_validator import GenerateTeamsValidator
 from api.models.team_set.serializer import TeamSetSerializer
+from utils.api_auth import is_api_key_valid
 
 
 class GenerateTeamsViewSet(viewsets.GenericViewSet):
@@ -28,6 +29,17 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
         6. Return JSON to a happy user :) 🚀!
         """
         try:
+            request_headers = dict(request.headers)
+            api_key = request_headers.get("X-Api-Key")
+            if not api_key:
+                return ResponseWithMetadata(
+                    error="No API key provided", status=400
+                )
+            if not is_api_key_valid(api_key):
+                return ResponseWithMetadata(
+                    error="Invalid API key provided", status=401
+                )
+
             request_data = dict(request.data)
 
             # validate data schema
