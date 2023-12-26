@@ -28,24 +28,28 @@
     <section>
         <h2>About the API</h2>
         <p>
-{#            Generate English for me plz#}
-            This is the API for the Teamable Analytics project. View project at <a href="https://teamableanalytics.ok.ubc.ca/homepage/">project homepage</a>.<br/>
+            {#            Generate English for me plz#}
+            This is the API for the Teamable Analytics project. View project at <a
+                href="https://teamableanalytics.ok.ubc.ca/homepage/">project homepage</a>.<br/>
             The API provides a simple interface for generating teams with advanced options such as:
-            <ul style="margin-top: -1rem">
-                <li>Flexible team size</li>
-                <li>Variety of team member attributes</li>
-                <li>Different algorithms choice</li>
-            </ul>
+        <ul style="margin-top: -1rem">
+            <li>Flexible team size</li>
+            <li>Variety of team member attributes</li>
+            <li>Different algorithms choice</li>
+        </ul>
         </p>
     </section>
     <section>
         <h2>How to use it</h2>
         <p>
-            <ol>
-        <li>Contact our Project Manager <a href="mailto:bowen.hui@ubc.ca"><b>Bowen Hui</b></a> to get an API key.</li>
-                <li>Learn more about our architecture at our <a href="https://teamableanalytics.ok.ubc.ca/homepage/">detailed documentations page</a>.</li>
-                <li>Use the playground below to test out the API.</li>
-            </ol>
+        <ol>
+            <li>Contact our Project Manager <a href="mailto:bowen.hui@ubc.ca"><b>Bowen Hui</b></a> to get an API key.
+            </li>
+            <li>Learn more about our architecture at our <a href="https://teamableanalytics.ok.ubc.ca/homepage/">detailed
+                documentations page</a>.
+            </li>
+            <li>Use the playground below to test out the API.</li>
+        </ol>
         </p>
     </section>
     <section>
@@ -56,7 +60,14 @@
                 <input class="border rounded-2 w-50" style="height: 2.5rem; padding: 0 1rem" type="text" id="demo-url"
                        value="https://api.teamableanalytics.ok.ubc.ca/api/generate/teams/" disabled>
                 <button class="btn btn-primary" type="button" id="run-button">Run</button>
-                <button class="btn btn-secondary" type="button" id="copy-url-button">Copy request as CURL</button>
+                <button class="btn btn-secondary text-nowrap" type="button" id="copy-url-button">Copy request as CURL
+                </button>
+            </div>
+            <div class="d-flex flex-column align-items-start justify-content-center">
+                <label for="demo-api-key" class="text-nowrap">API Key</label>
+                <input class="border rounded-2 w-100 text-muted"
+                       style="height: 2.5rem; padding: 0 1rem; font-family: 'Inconsolata', monospace"
+                       id="demo-api-key"/>
             </div>
 
             <div>
@@ -69,7 +80,7 @@
 
             <!-- Only show output when there is output -->
             <div id="demo-output-wrapper">
-                <label for="demo-output">Response</label>
+                <label for="demo-output" class="text-nowrap">Response</label>
                 <textarea class="border rounded-2 w-100 text-muted"
                           style="height: 20rem; padding: 1rem; font-family: 'Inconsolata', monospace; margin-bottom: 5rem;"
                           disabled
@@ -104,7 +115,8 @@
         const url = document.getElementById("demo-url").value;
         const rawBody = document.getElementById("demo-input").value;
         const body = jsonBodyToStr(rawBody);
-        const curl = `curl -X POST -H "Content-Type: application/json" -d '${body}' ${url}`;
+        const apiKey = document.getElementById("demo-api-key").value;
+        const curl = `curl -X POST -H "Content-Type: application/json; charset=utf-8" -H "Accept: application/json" -H "X-CSRFToken: csrftoken" -H "X-Api-Key: ${apiKey}" -d '${body}' ${url}`;
         navigator.clipboard.writeText(curl).then((a) => {
             alert("Copied to clipboard!");
         }).catch((e) => {
@@ -124,6 +136,7 @@
             return;
         }
 
+        const apiKey = document.getElementById("demo-api-key").value;
         const output = document.getElementById("demo-output");
         output.value = "Loading...";
         fetch(url, {
@@ -132,6 +145,7 @@
                 "Content-Type": "application/json",
                 "Accept": "application/json",
                 "X-CSRFToken": "csrftoken",
+                "X-Api-Key": apiKey,
             },
             body: body,
         }).then((response) => {
