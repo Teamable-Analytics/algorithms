@@ -1,0 +1,108 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600;700&display=swap');
+body {
+  background-color: white;
+  margin: 0;
+  color: #1b1b1b;
+  font-family: "Manrope", sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  height: 100vh;
+}
+
+.icon-link {
+  -webkit-transition: all 0.3s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  -moz-transition: all 0.3s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  -o-transition: all 0.3s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  transition: all 0.3s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  color: #1b1b1b;
+}
+.icon-link:hover {
+  color: #3799FF;
+}
+
+.items-proportional > * {
+  flex: 1 1 0;
+}
+
+.stack-items-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.img-responsive {
+  width: 100%;
+  min-width: 100px;
+  height: auto;
+}
+
+header {
+  gap: 0.5rem;
+  background-color: white;
+  color: #3799FF;
+  box-shadow: 0 0.2rem 0.5rem rgba(27, 27, 27, 0.05);
+}
+header a {
+  color: #3799FF;
+  text-decoration: none;
+}
+header a:hover {
+  color: #3799FF;
+}
+header .title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+header .img-container {
+  display: flex;
+  justify-content: center;
+}
+header .img-container img {
+  height: 48px;
+  width: 48px;
+}
+
+#hero-section .hero-text .hero-phrase {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+#benefits-section .benefits-card {
+  -webkit-transition: all 0.3s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  -moz-transition: all 0.3s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  -o-transition: all 0.3s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  transition: all 0.3s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  color: #3799FF;
+  padding: 1rem 2rem 2rem;
+  border: 0.2rem solid #3799FF;
+  border-radius: 0.5rem;
+  box-shadow: 0.4rem 0.4rem 0 #3799FF;
+}
+#benefits-section .benefits-card i {
+  font-size: 3rem;
+}
+#benefits-section .benefits-card:hover {
+  color: #1b1b1b;
+}
+
+footer {
+  font-size: 0.95rem;
+  color: white;
+  width: 100%;
+  background-color: #3799FF;
+}
+footer a {
+  color: white;
+}
+footer a:hover {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+}
+footer ul {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+/*# sourceMappingURL=styles.css.map */
