@@ -32,6 +32,9 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 def get_students_utility(students: List[Student], team: TeamShell) -> float:
+    if len(students) == 0:
+        return 0.0
+
     return sum(
         [
             get_student_utility(student, team)
@@ -53,8 +56,8 @@ def get_student_utility(student: Student, team: TeamShell) -> float:
 
 
 class StudentSatisfyProjectRequirements(Run):
-    def start(self, num_trials: int = 10, generate_graphs: bool = True):
-        class_sizes = list(range(50, 51, 50))
+    def start(self, num_trials: int = 30, generate_graphs: bool = True):
+        class_sizes = list(range(50, 3001, 50))
         NUM_PROJECTS = 5
         STUDENTS_PER_TEAM = 5
 
@@ -223,15 +226,15 @@ class StudentSatisfyProjectRequirements(Run):
                     )
                 ),
                 algorithm_set={
-                    # AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
-                    # AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
-                    # AlgorithmType.PRIORITY: [
-                    #     PriorityAlgorithmConfig(),
-                    #     PriorityAlgorithmConfig(
-                    #         name="local_max",
-                    #         MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
-                    #     ),
-                    # ],
+                    AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
+                    AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
+                    AlgorithmType.PRIORITY: [
+                        PriorityAlgorithmConfig(),
+                        PriorityAlgorithmConfig(
+                            name="local_max",
+                            MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
+                        ),
+                    ],
                     AlgorithmType.GEG: [GeneralizedEnvyGraphAlgorithmConfig(utility_function=get_student_utility)],
                     AlgorithmType.MRR: [MultipleRoundRobinAlgorithmConfig(utility_function=get_student_utility)],
                     AlgorithmType.DRR: [DoubleRoundRobinAlgorithmConfig(utility_function=get_student_utility)],
