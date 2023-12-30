@@ -1,11 +1,12 @@
 import itertools
-import math
 import os
+import numpy as np
+import matplotlib.pyplot as plt
 import re
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import typer
-
+from matplotlib import cm
 from api.ai.interfaces.algorithm_config import RandomAlgorithmConfig, WeightAlgorithmConfig, PriorityAlgorithmConfig, \
     GeneralizedEnvyGraphAlgorithmConfig, MultipleRoundRobinAlgorithmConfig, DoubleRoundRobinAlgorithmConfig
 from api.ai.priority_algorithm.mutations import mutate_local_max, mutate_random_swap
@@ -13,6 +14,7 @@ from api.models.enums import ScenarioAttribute, RequirementOperator, Major, Gend
 from api.models.project import Project, ProjectRequirement
 from api.models.student import Student
 from api.models.team import TeamShell
+from benchmarking.caching.utils import SimulationArtifact
 from benchmarking.data.simulated_data.mock_initial_teams_provider import MockInitialTeamsProvider, \
     MockInitialTeamsProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProviderSettings, MockStudentProvider
@@ -74,8 +76,6 @@ class StudentSatisfyProjectRequirements(Run):
             "ProportionalityUpToOneItem": ProportionalityUpToOneItem(calculate_utilities=get_students_utility),
         }
 
-        artifacts: Dict[int, SimulationSetArtifact] = {}
-
         # Ranges
         max_keep_range = [10, 500, 1000, 1500, 2000, 2500]
         max_spread_range = [1, 10, 20, 30, 40, 50]
@@ -86,23 +86,25 @@ class StudentSatisfyProjectRequirements(Run):
             # "random": [],
         }
 
-        # files = os.listdir(
-        #     os.path.join(
-        #         os.path.dirname(__file__),
-        #         "..",
-        #         "..",
-        #         "..",
-        #         "..",
-        #         "simulation_cache",
-        #         "priority_algorithm",
-        #         "all_parameters",
-        #         "project_scenario",
-        #     )
-        # )
+        # files = []
+        # for start_type in completed_configs_dict.keys():
+        #     files.extend(os.listdir(
+        #         os.path.join(
+        #             os.path.dirname(__file__),
+        #             "..",
+        #             "..",
+        #             "..",
+        #             "..",
+        #             "simulation_cache",
+        #             f"student_attributes_satisfy_project_requirements_{start_type}_start",
+        #
+        #         )
+        #     ))
+        #
         # for file in files:
         #     if file.endswith(".json"):
         #         match = re.match(
-        #             r"AlgorithmType.PRIORITY-project_scenario-max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+)_(\w+)_start.json",
+        #             r"AlgorithmType.PRIORITY-max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+)_(\w+)_start.json",
         #             file,
         #         )
         #         if match:
@@ -222,6 +224,7 @@ class StudentSatisfyProjectRequirements(Run):
             )
             team_idx += 1
 
+        artifacts_dict = {}
         for start_type, completed_configs in completed_configs_dict.items():
             student_provider_settings = MockStudentProviderSettings(
                 number_of_students=class_size,
@@ -263,14 +266,15 @@ class StudentSatisfyProjectRequirements(Run):
                     for max_keep in max_keep_range
                     for max_spread in max_spread_range
                     for max_iterations in max_iterations_range
+                    # if (max_keep, max_spread, max_iterations) in completed_configs
                 ],
             }
 
-            simulation_set_artifact = SimulationSet(
+            artifact: SimulationSetArtifact = SimulationSet(
                 settings=SimulationSettings(
                     scenario=scenario,
                     student_provider=MockStudentProvider(student_provider_settings),
-                    cache_key=f"student_attributes_satisfy_project_requirements_{num_teams}_{start_type}_start",
+                    cache_key=f"student_attributes_satisfy_project_requirements_{start_type}_start",
                     initial_teams_provider=MockInitialTeamsProvider(
                         MockInitialTeamsProviderSettings(
                             projects=projects,
@@ -279,80 +283,121 @@ class StudentSatisfyProjectRequirements(Run):
                 ),
                 algorithm_set=algorithm_set,
             ).run(num_runs=num_trials)
-            artifacts[class_size] = simulation_set_artifact
 
-        # if generate_graphs:
-        #     for class_size, artifact in artifacts.items():
-        #         insight_set: Dict[str, Dict[str, List[float]]] = Insight.get_output_set(
-        #             artifact=artifact, metrics=list(metrics.values())
-        #         )
+            artifacts_dict[start_type]: Dict[
+                Tuple[int, int, int], SimulationArtifact
+            ] = {}
+            for name, simulation_artifact in artifact.items():
+                match = re.search(
+                    r"max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+)", name
+                )
+                if match:
+                    max_keep = int(match.group(1))
+                    max_spread = int(match.group(2))
+                    max_iterations = int(match.group(3))
+                    artifacts_dict[start_type][
+                        (max_keep, max_spread, max_iterations)
+                    ] = simulation_artifact
 
-                # Data processing for graph
-                # for i, metric in enumerate(metric_values):
-                #     for name, data in metric.items():
-                #         if name not in graph_dicts[i]:
-                #             graph_dicts[i][name] = GraphData(
-                #                 x_data=[class_size],
-                #                 y_data=[data],
-                #                 name=name,
-                #             )
-                #         else:
-                #             graph_dicts[i][name].x_data.append(class_size)
-                #             graph_dicts[i][name].y_data.append(data)
-                #
-                # line_graph(
-                #     LineGraphMetadata(
-                #         x_label="Class size",
-                #         y_label="Run time (seconds)",
-                #         title="Student Satisfy Project Requirements Runtimes",
-                #         data=list(graph_runtime_dict.values()),
-                #     )
-                # )
-                #
-                # line_graph(
-                #     LineGraphMetadata(
-                #         x_label="Class size",
-                #         y_label="Satisfied Requirements",
-                #         title="Student Satisfy Project Requirements Satisfied Requirements",
-                #         data=list(graph_satisfied_requirements_dict.values()),
-                #     )
-                # )
-                #
-                # line_graph(
-                #     LineGraphMetadata(
-                #         x_label="Class size",
-                #         y_label="Envy Freeness",
-                #         title="Student Satisfy Project Requirements Envy Freeness",
-                #         data=list(graph_envy_freeness_dict.values()),
-                #     )
-                # )
-                #
-                # line_graph(
-                #     LineGraphMetadata(
-                #         x_label="Class size",
-                #         y_label="Envy Freeness Up To One Item",
-                #         title="Student Satisfy Project Requirements Envy Freeness Up To One Item",
-                #         data=list(graph_envy_freeness_up_to_one_item_dict.values()),
-                #     )
-                # )
-                #
-                # line_graph(
-                #     LineGraphMetadata(
-                #         x_label="Class size",
-                #         y_label="Proportionality",
-                #         title="Student Satisfy Project Requirements Proportionality",
-                #         data=list(graph_proportionality_dict.values()),
-                #     )
-                # )
-                #
-                # line_graph(
-                #     LineGraphMetadata(
-                #         x_label="Class size",
-                #         y_label="Proportionality Up To One Item",
-                #         title="Student Satisfy Project Requirements Proportionality Up To One Item",
-                #         data=list(graph_proportionality_up_to_one_item_dict.values()),
-                #     )
-                # )
+        if generate_graphs:
+            for metric_name, metric in metrics.items():
+                points_dict = {}
+                for start_type, artifacts in artifacts_dict.items():
+                    # Dict with points[(x, y, z)] = avg metric value (between 0-1)
+                    points: Dict[Tuple[int, int, int], float] = {}
+                    for point_location, simulation_artifact in artifacts.items():
+                        insight_set = Insight.get_output_set(
+                            artifact={"arbitrary_name": simulation_artifact},
+                            metrics=[metric],
+                        )
+
+                        # Returns a dict[algorithm, value]
+                        value_dict = Insight.average_metric(
+                            insight_output_set=insight_set, metric_name=metric_name
+                        )
+
+                        # Get first value, assumes only one algorithm being run
+                        value = list(value_dict.values())[0]
+                        points[point_location] = value
+                    points_dict[start_type] = points
+
+                wireframe = True
+                for max_iterations in max_iterations_range:
+                    fig = plt.figure()
+                    ax = fig.add_subplot(projection="3d")
+                    for start_type, points in points_dict.items():
+                        # Filter
+                        plotted_points = [
+                            (keep, spread, score)
+                            for (keep, spread, iterations), score in points.items()
+                            if iterations == max_iterations
+                        ]
+
+                        # Format data
+                        plotted_points = np.array(plotted_points)
+                        x = plotted_points[:, 0]
+                        y = plotted_points[:, 1]
+                        unique_x = np.unique(x)
+                        unique_y = np.unique(y)
+                        X, Y = np.meshgrid(unique_x, unique_y)
+                        Z = np.zeros_like(X)
+                        for xi, yi, zi in plotted_points:
+                            Z[
+                                np.where(unique_y == yi)[0][0],
+                                np.where(unique_x == xi)[0][0],
+                            ] = zi
+
+                        ##### \/ \/ \/ \/ TEMP. REMOVE LATER \/ \/ \/ \/ #####
+                        remove_missing_points = False
+                        if remove_missing_points:
+                            # Find the index where the first zero appears in each row
+                            zero_indices = np.argmax(Z == 0, axis=1)
+
+                            # Find the index where the first zero appears in any row
+                            first_zero_index = np.argmax(zero_indices > 0)
+
+                            # Remove rows with zeros
+                            X = X[:first_zero_index, :]
+                            Y = Y[:first_zero_index, :]
+                            Z = Z[:first_zero_index, :]
+
+                        ##### /\ /\ /\ /\ TEMP. REMOVE LATER /\ /\ /\ /\ #####
+
+                        # Plot the surface
+                        print(X, Y, Z)
+                        surface = (
+                            ax.plot_wireframe(
+                                X,
+                                Y,
+                                Z,
+                                color=("blue" if start_type == "weight" else "red"),
+                                label=f"{start_type} start".title(),
+                            )
+                            if wireframe
+                            else ax.plot_surface(
+                                X,
+                                Y,
+                                Z,
+                                cmap=cm.coolwarm,
+                                linewidth=0,
+                                antialiased=False,
+                            )
+                        )
+
+                    if not wireframe:
+                        fig.colorbar(surface, shrink=0.5, aspect=8, pad=0.15)
+
+                    ax.set_title(
+                        f"Priority Algorithm Parameters vs Priorities Satisfied\n~{max_iterations} iterations~"
+                    )
+                    ax.set_xlabel("MAX_KEEP")
+                    ax.set_ylabel("MAX_SPREAD")
+                    ax.set_zlabel("Score")
+                    ax.legend()
+                    ax.set_zlim(0, 1)
+                    plt.show()
+
+
 
 
 if __name__ == "__main__":
