@@ -63,58 +63,49 @@ def get_student_utility(student: Student, team: TeamShell) -> float:
 
 class StudentSatisfyProjectRequirements(Run):
     def start(self, num_trials: int = 10, generate_graphs: bool = True):
-        class_sizes = list(range(50, 3001, 50))
         NUM_PROJECTS = 5
-        STUDENTS_PER_TEAM = 5
 
         scenario = StudentAttributesSatisfyProjectRequirements()
-        metrics: Dict[str, TeamSetMetric] = {
-            "NumRequirementsSatisfied": NumRequirementsSatisfied(),
-            "EnvyFreeness": EnvyFreeness(calculate_utilities=get_students_utility),
-            "EnvyFreenessUpToOneItem": EnvyFreenessUpToOneItem(calculate_utilities=get_students_utility),
-            "Proportionality": Proportionality(calculate_utilities=get_students_utility),
-            "ProportionalityUpToOneItem": ProportionalityUpToOneItem(calculate_utilities=get_students_utility),
-        }
 
         # Ranges
-        max_keep_range = [10, 500, 1000, 1500, 2000, 2500]
-        max_spread_range = [1, 10, 20, 30, 40, 50]
-        max_iterations_range = [10, 250, 500, 750, 1000]
+        max_keep_range = [5, 500, 1000, 1500, 2000, 2500]
+        max_spread_range = [1, 25, 50, 75, 100]
+        max_iterations_range = [10]
 
         completed_configs_dict = {
             "weight": [],
-            "random": [],
+            # "random": [],
         }
 
-        files = []
-        for start_type in completed_configs_dict.keys():
-            files.extend(os.listdir(
-                os.path.join(
-                    os.path.dirname(__file__),
-                    "..",
-                    "..",
-                    "..",
-                    "..",
-                    "simulation_cache",
-                    f"student_attributes_satisfy_project_requirements_{start_type}_start",
-
-                )
-            ))
-
-        for file in files:
-            if file.endswith(".json"):
-                match = re.match(
-                    r"AlgorithmType.PRIORITY-max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+)_(\w+)_start.json",
-                    file,
-                )
-                if match:
-                    max_keep = match.group(1)
-                    max_spread = match.group(2)
-                    max_iterations = match.group(3)
-                    start = match.group(4)
-                    completed_configs_dict[start].append(
-                        (int(max_keep), int(max_spread), int(max_iterations))
-                    )
+        # files = []
+        # for start_type in completed_configs_dict.keys():
+        #     files.extend(os.listdir(
+        #         os.path.join(
+        #             os.path.dirname(__file__),
+        #             "..",
+        #             "..",
+        #             "..",
+        #             "..",
+        #             "simulation_cache",
+        #             f"student_attributes_satisfy_project_requirements_{start_type}_start",
+        #
+        #         )
+        #     ))
+        #
+        # for file in files:
+        #     if file.endswith(".json"):
+        #         match = re.match(
+        #             r"AlgorithmType.PRIORITY-max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+)_(\w+)_start.json",
+        #             file,
+        #         )
+        #         if match:
+        #             max_keep = match.group(1)
+        #             max_spread = match.group(2)
+        #             max_iterations = match.group(3)
+        #             start = match.group(4)
+        #             completed_configs_dict[start].append(
+        #                 (int(max_keep), int(max_spread), int(max_iterations))
+        #             )
 
         class_size = 100
         team_size = 5
@@ -266,7 +257,7 @@ class StudentSatisfyProjectRequirements(Run):
                     for max_keep in max_keep_range
                     for max_spread in max_spread_range
                     for max_iterations in max_iterations_range
-                    if (max_keep, max_spread, max_iterations) in completed_configs
+                    # if (max_keep, max_spread, max_iterations) in completed_configs
                 ],
             }
 
