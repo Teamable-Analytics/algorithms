@@ -35,17 +35,17 @@ class PriorityAlgorithm(Algorithm):
         self,
         students: List[Student],
     ) -> PriorityTeamSet:
-        # team_set = WeightAlgorithm(
-        #     algorithm_options=weight_options_from_priority_options(
-        #         self.algorithm_options
-        #     ),
-        #     team_generation_options=self.team_generation_options,
-        # ).generate(students)
-
-        team_set = RandomAlgorithm(
-            algorithm_options=RandomAlgorithmOptions(),
+        team_set = WeightAlgorithm(
+            algorithm_options=weight_options_from_priority_options(
+                self.algorithm_options
+            ),
             team_generation_options=self.team_generation_options,
         ).generate(students)
+
+        # team_set = RandomAlgorithm(
+        #     algorithm_options=RandomAlgorithmOptions(),
+        #     team_generation_options=self.team_generation_options,
+        # ).generate(students)
 
         return PriorityTeamSet(
             priority_teams=[
