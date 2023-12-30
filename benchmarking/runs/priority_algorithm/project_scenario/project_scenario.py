@@ -318,8 +318,12 @@ class StudentSatisfyProjectRequirements(Run):
         avg_metric_output = Insight.average_metric(
             insight_output_set=insight_output_set, metric_name="PrioritySatisfaction"
         )
+        avg_run_time = Insight.average_metric(
+            insight_output_set=insight_output_set, metric_name=Insight.KEY_RUNTIMES
+        )
 
         print("avg_metric_output:", avg_metric_output)
+        print("avg_run_time:", avg_run_time)
 
         if generate_graphs:
             for metric_name, metric in metrics.items():
@@ -370,7 +374,7 @@ class StudentSatisfyProjectRequirements(Run):
                             ] = zi
 
                         ##### \/ \/ \/ \/ TEMP. REMOVE LATER \/ \/ \/ \/ #####
-                        remove_missing_points = False
+                        remove_missing_points = True
                         if remove_missing_points:
                             # Find the index where the first zero appears in each row
                             zero_indices = np.argmax(Z == 0, axis=1)
