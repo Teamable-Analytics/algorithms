@@ -82,8 +82,8 @@ class StudentSatisfyProjectRequirements(Run):
         max_iterations_range = [10, 250, 500, 750, 1000]
 
         completed_configs_dict = {
-            "weight": [],
-            # "random": [],
+            # "weight": [],
+            "random": [],
         }
 
         # files = []
