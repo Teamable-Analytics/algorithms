@@ -82,39 +82,39 @@ class StudentSatisfyProjectRequirements(Run):
         max_iterations_range = [10, 250, 500, 750, 1000]
 
         completed_configs_dict = {
-            # "weight": [],
+            "weight": [],
             "random": [],
         }
 
-        # files = []
-        # for start_type in completed_configs_dict.keys():
-        #     files.extend(os.listdir(
-        #         os.path.join(
-        #             os.path.dirname(__file__),
-        #             "..",
-        #             "..",
-        #             "..",
-        #             "..",
-        #             "simulation_cache",
-        #             f"student_attributes_satisfy_project_requirements_{start_type}_start",
-        #
-        #         )
-        #     ))
-        #
-        # for file in files:
-        #     if file.endswith(".json"):
-        #         match = re.match(
-        #             r"AlgorithmType.PRIORITY-max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+)_(\w+)_start.json",
-        #             file,
-        #         )
-        #         if match:
-        #             max_keep = match.group(1)
-        #             max_spread = match.group(2)
-        #             max_iterations = match.group(3)
-        #             start = match.group(4)
-        #             completed_configs_dict[start].append(
-        #                 (int(max_keep), int(max_spread), int(max_iterations))
-        #             )
+        files = []
+        for start_type in completed_configs_dict.keys():
+            files.extend(os.listdir(
+                os.path.join(
+                    os.path.dirname(__file__),
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "simulation_cache",
+                    f"student_attributes_satisfy_project_requirements_{start_type}_start",
+
+                )
+            ))
+
+        for file in files:
+            if file.endswith(".json"):
+                match = re.match(
+                    r"AlgorithmType.PRIORITY-max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+)_(\w+)_start.json",
+                    file,
+                )
+                if match:
+                    max_keep = match.group(1)
+                    max_spread = match.group(2)
+                    max_iterations = match.group(3)
+                    start = match.group(4)
+                    completed_configs_dict[start].append(
+                        (int(max_keep), int(max_spread), int(max_iterations))
+                    )
 
         class_size = 100
         team_size = 5
@@ -224,36 +224,36 @@ class StudentSatisfyProjectRequirements(Run):
             )
             team_idx += 1
 
+        student_provider_settings = MockStudentProviderSettings(
+            number_of_students=class_size,
+            attribute_ranges={
+                ScenarioAttribute.GPA.value: [
+                    (80, 0.2),
+                    (60, 0.3),
+                    (40, 0.5),
+                ],
+                ScenarioAttribute.MAJOR.value: [
+                    (Major.Computer_Science.value, 0.2),
+                    (Major.Engineering.value, 0.2),
+                    (Major.Science.value, 0.2),
+                    (Major.Other.value, 0.4),
+                ],
+                ScenarioAttribute.YEAR_LEVEL.value: [
+                    (1, 0.24),
+                    (2, 0.22),
+                    (3, 0.22),
+                    (4, 0.24),
+                    (5, 0.08),
+                ],
+                ScenarioAttribute.GENDER.value: [
+                    (Gender.MALE.value, 0.5),
+                    (Gender.FEMALE.value, 0.5),
+                ],
+            },
+        )
+
         artifacts_dict = {}
         for start_type, completed_configs in completed_configs_dict.items():
-            student_provider_settings = MockStudentProviderSettings(
-                number_of_students=class_size,
-                attribute_ranges={
-                    ScenarioAttribute.GPA.value: [
-                        (80, 0.2),
-                        (60, 0.3),
-                        (40, 0.5),
-                    ],
-                    ScenarioAttribute.MAJOR.value: [
-                        (Major.Computer_Science.value, 0.2),
-                        (Major.Engineering.value, 0.2),
-                        (Major.Science.value, 0.2),
-                        (Major.Other.value, 0.4),
-                    ],
-                    ScenarioAttribute.YEAR_LEVEL.value: [
-                        (1, 0.24),
-                        (2, 0.22),
-                        (3, 0.22),
-                        (4, 0.24),
-                        (5, 0.08),
-                    ],
-                    ScenarioAttribute.GENDER.value: [
-                        (Gender.MALE.value, 0.5),
-                        (Gender.FEMALE.value, 0.5),
-                    ],
-                },
-            )
-
             algorithm_set = {
                 AlgorithmType.PRIORITY: [
                     PriorityAlgorithmConfig(
@@ -266,7 +266,7 @@ class StudentSatisfyProjectRequirements(Run):
                     for max_keep in max_keep_range
                     for max_spread in max_spread_range
                     for max_iterations in max_iterations_range
-                    # if (max_keep, max_spread, max_iterations) in completed_configs
+                    if (max_keep, max_spread, max_iterations) in completed_configs
                 ],
             }
 
@@ -298,6 +298,28 @@ class StudentSatisfyProjectRequirements(Run):
                     artifacts_dict[start_type][
                         (max_keep, max_spread, max_iterations)
                     ] = simulation_artifact
+
+        # Run Weight algorithm for comparison
+        weight_artifact: SimulationSetArtifact = SimulationSet(
+            settings=SimulationSettings(
+                num_teams=num_teams,
+                scenario=scenario,
+                student_provider=MockStudentProvider(student_provider_settings),
+                cache_key=f"student_attributes_satisfy_project_requirements_default",
+            ),
+            algorithm_set={
+                AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
+                AlgorithmType.PRIORITY: [PriorityAlgorithmConfig()],
+            },
+        ).run(num_runs=num_trials)
+        insight_output_set = Insight.get_output_set(
+            weight_artifact, list(metrics.values())
+        )
+        avg_metric_output = Insight.average_metric(
+            insight_output_set=insight_output_set, metric_name="PrioritySatisfaction"
+        )
+
+        print("avg_metric_output:", avg_metric_output)
 
         if generate_graphs:
             for metric_name, metric in metrics.items():
@@ -364,7 +386,7 @@ class StudentSatisfyProjectRequirements(Run):
                         ##### /\ /\ /\ /\ TEMP. REMOVE LATER /\ /\ /\ /\ #####
 
                         # Plot the surface
-                        print(X, Y, Z)
+                        # print(X, Y, Z)
                         surface = (
                             ax.plot_wireframe(
                                 X,
