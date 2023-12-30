@@ -16,8 +16,7 @@ class StudentAttributesSatisfyProjectRequirements(Scenario):
     @property
     def goals(self) -> List[Goal]:
         return [
-            DiversityGoal(DiversifyType.DIVERSIFY, ScenarioAttribute.GENDER.value),
             ProjectRequirementGoal(
-                criteria=RequirementsCriteria.STUDENT_ATTRIBUTES_ARE_RELEVANT
+                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
             ),
         ]
