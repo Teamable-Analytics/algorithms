@@ -75,7 +75,6 @@ class ScenarioAttribute(Enum):
     YEAR_LEVEL = 6
     TIMESLOT_AVAILABILITY = 7
     LOCATION = 8
-    EFFORT_LEVEL = 9
 
 
 class AttributeValueEnum(Enum):

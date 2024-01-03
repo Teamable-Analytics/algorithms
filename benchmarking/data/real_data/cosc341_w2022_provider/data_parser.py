@@ -63,7 +63,7 @@ if __name__ == "__main__":
                         ScenarioAttribute.GENDER.value: student_gender,
                         ScenarioAttribute.TIMESLOT_AVAILABILITY.value: timeslot_availability,
                         ScenarioAttribute.YEAR_LEVEL.value: year_level,
-                        ScenarioAttribute.EFFORT_LEVEL.value: effort_level,
+                        100: effort_level,
                     },
                     relationships=relationships,
                 )

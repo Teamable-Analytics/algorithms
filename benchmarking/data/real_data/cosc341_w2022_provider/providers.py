@@ -28,7 +28,7 @@ class COSC341W2021T2StudentProvider(StudentProvider):
     def get(self, seed: int = None) -> List[Student]:
         """
         Returns a list of the students in COSC 341/51 in the W2021T2 semester.
-        Includes their friend/enemy relationships, gender, timeslot availability, year level, and intended effort level.
+        Includes their friend/enemy relationships, gender (1), timeslot availability (7), year level (6), and intended effort level (100).
 
         Seed shuffles student order.
         """
@@ -39,16 +39,14 @@ class COSC341W2021T2StudentProvider(StudentProvider):
             students: List[Student] = [
                 StudentSerializer().decode(student) for student in json_data["students"]
             ]
-            if seed:
-                """
-                Unnecessarily complicated to shuffle since shuffle() requires
-                a MutableSequence, which it doesn't seem like it recognizes
-                a regular List[Student] as MutableSequence.
-                """
-                order = np.random.default_rng(seed=seed).permutation(len(students))
-                return [students[i] for i in order]
-            else:
-                return students
+
+            """
+            Unnecessarily complicated to shuffle since shuffle() requires
+            a MutableSequence, which it doesn't seem like it recognizes
+            a regular List[Student] as MutableSequence.
+            """
+            order = np.random.default_rng(seed=seed).permutation(len(students))
+            return [students[i] for i in order]
 
     @property
     def num_students(self) -> int:
