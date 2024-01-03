@@ -49,7 +49,7 @@ class StudentSatisfyProjectRequirements(Run):
         #             "..",
         #             "..",
         #             "simulation_cache",
-        #             f"student_attributes_satisfy_project_requirements_{start_type}_start",
+        #             f"student_attributes_satisfy_project_requirements_imperfect_case_{start_type}_start",
         #
         #         )
         #     ))
@@ -182,14 +182,14 @@ class StudentSatisfyProjectRequirements(Run):
             attribute_ranges={
                 ScenarioAttribute.GPA.value: [
                     (80, 0.2),
-                    (60, 0.3),
-                    (40, 0.5),
+                    (60, 0.2),
+                    (40, 0.6),
                 ],
                 ScenarioAttribute.MAJOR.value: [
-                    (Major.Computer_Science.value, 0.2),
+                    (Major.Computer_Science.value, 0.1),
                     (Major.Engineering.value, 0.2),
                     (Major.Science.value, 0.2),
-                    (Major.Other.value, 0.4),
+                    (Major.Other.value, 0.5),
                 ],
                 ScenarioAttribute.YEAR_LEVEL.value: [
                     (1, 0.24),
@@ -199,8 +199,9 @@ class StudentSatisfyProjectRequirements(Run):
                     (5, 0.08),
                 ],
                 ScenarioAttribute.GENDER.value: [
-                    (Gender.MALE.value, 0.5),
-                    (Gender.FEMALE.value, 0.5),
+                    (Gender.MALE.value, 0.6),
+                    (Gender.FEMALE.value, 0.3),
+                    (Gender.OTHER.value, 0.1),
                 ],
             },
         )
@@ -227,7 +228,7 @@ class StudentSatisfyProjectRequirements(Run):
                 settings=SimulationSettings(
                     scenario=scenario,
                     student_provider=MockStudentProvider(student_provider_settings),
-                    cache_key=f"student_attributes_satisfy_project_requirements_{start_type}_start",
+                    cache_key=f"student_attributes_satisfy_project_requirements_imperfect_case_{start_type}_start",
                     initial_teams_provider=MockInitialTeamsProvider(
                         MockInitialTeamsProviderSettings(
                             projects=projects,
@@ -258,7 +259,7 @@ class StudentSatisfyProjectRequirements(Run):
                 num_teams=num_teams,
                 scenario=scenario,
                 student_provider=MockStudentProvider(student_provider_settings),
-                cache_key=f"student_attributes_satisfy_project_requirements_default",
+                cache_key=f"student_attributes_satisfy_project_requirements_imperfect_case_default",
             ),
             algorithm_set={
                 AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
