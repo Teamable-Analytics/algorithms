@@ -43,16 +43,25 @@ class TestCOSC341W2021T2StudentProvider(unittest.TestCase):
     def test_get__seed_shuffles_list(self):
         students = self.provider.get()
         students_seeded = self.provider.get(seed=5)
+        students_seeded_2 = self.provider.get(seed=5)
+        students_seeded_3 = self.provider.get(seed=100)
 
         ids = [_.id for _ in students]
         ids_seeded = [_.id for _ in students_seeded]
+        ids_seeded_2 = [_.id for _ in students_seeded_2]
+        ids_seeded_3 = [_.id for _ in students_seeded_3]
 
         # Same students
         self.assertListEqual(sorted(ids), sorted(ids_seeded))
 
         # But different order
-        for a, b in zip(ids, ids_seeded):
-            self.assertNotEqual(a, b)
+        self.assertFalse(all([a == b for a, b in zip(ids, ids_seeded)]))
+
+        # And the same seed produces the same order
+        self.assertListEqual(ids_seeded, ids_seeded_2)
+
+        # And different seed produces different order
+        self.assertFalse(all([a == b for a, b in zip(ids_seeded_2, ids_seeded_3)]))
 
     def test_num_students__is_same_as_len_of_get(self):
         self.assertEqual(self.provider.num_students, len(self.provider.get()))
