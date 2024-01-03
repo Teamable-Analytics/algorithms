@@ -124,3 +124,11 @@ class PriorityType(Enum):
     PROJECT_PREFERENCE = "project_preference"
     PROJECT_REQUIREMENT = "project_requirement"
     SOCIAL_PREFERENCE = "social_preference"
+
+
+class Major(AttributeValueEnum):
+    Computer_Science = 1
+    Engineering = 2
+    Arts = 3
+    Science = 4
+    Other = 5

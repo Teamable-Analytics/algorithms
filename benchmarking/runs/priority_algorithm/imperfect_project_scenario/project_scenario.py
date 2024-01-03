@@ -1,5 +1,4 @@
 import itertools
-import os
 import numpy as np
 import matplotlib.pyplot as plt
 import re
@@ -7,27 +6,15 @@ from typing import Dict, List, Tuple
 
 import typer
 from matplotlib import cm
-from api.ai.interfaces.algorithm_config import RandomAlgorithmConfig, WeightAlgorithmConfig, PriorityAlgorithmConfig, \
-    GeneralizedEnvyGraphAlgorithmConfig, MultipleRoundRobinAlgorithmConfig, DoubleRoundRobinAlgorithmConfig
-from api.ai.priority_algorithm.mutations import mutate_local_max, mutate_random_swap
+from api.ai.interfaces.algorithm_config import WeightAlgorithmConfig, PriorityAlgorithmConfig
 from api.models.enums import ScenarioAttribute, RequirementOperator, Major, Gender, AlgorithmType
 from api.models.project import Project, ProjectRequirement
-from api.models.student import Student
 from api.models.team import TeamShell
 from benchmarking.caching.utils import SimulationArtifact
 from benchmarking.data.simulated_data.mock_initial_teams_provider import MockInitialTeamsProvider, \
     MockInitialTeamsProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProviderSettings, MockStudentProvider
-from benchmarking.evaluations.graphing.graph_metadata import GraphData
-from benchmarking.evaluations.graphing.line_graph import line_graph
-from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.interfaces import TeamSetMetric
-from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
-from benchmarking.evaluations.metrics.envy_freeness import EnvyFreeness
-from benchmarking.evaluations.metrics.num_requirements_satisfied import NumRequirementsSatisfied
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.metrics.proportionality import Proportionality
-from benchmarking.evaluations.metrics.proportionality_up_to_one_item import ProportionalityUpToOneItem
 from benchmarking.evaluations.scenarios.student_attributes_satisfy_project_requirements import \
     StudentAttributesSatisfyProjectRequirements
 from benchmarking.runs.interfaces import Run
@@ -35,31 +22,6 @@ from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
-
-
-def get_students_utility(students: List[Student], team: TeamShell) -> float:
-    if len(students) == 0:
-        return 0.0
-
-    return sum(
-        [
-            get_student_utility(student, team)
-            for student in students
-        ]
-    ) / float(len(students))
-
-
-def get_student_utility(student: Student, team: TeamShell) -> float:
-    if len(team.requirements) == 0:
-        return 1.0
-
-    return sum(
-        [
-            1.0 if student.meets_requirement(requirement) else 0.0
-            for requirement in team.requirements
-        ]
-    ) / float(len(team.requirements))
-
 
 class StudentSatisfyProjectRequirements(Run):
     def start(self, num_trials: int = 10, generate_graphs: bool = True):
