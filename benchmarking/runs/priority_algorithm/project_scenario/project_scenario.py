@@ -68,9 +68,9 @@ class StudentSatisfyProjectRequirements(Run):
         scenario = StudentAttributesSatisfyProjectRequirements()
 
         # Ranges
-        max_keep_range = [5, 100, 250, 500, 750, 1000]
-        max_spread_range = [1, 25, 50, 75, 100]
-        max_iterations_range = [750]
+        max_keep_range = [1, 5, 10, 50]
+        max_spread_range = [1, 5, 10, 50]
+        max_iterations_range = [1500]
 
         completed_configs_dict = {
             "weight": [],
