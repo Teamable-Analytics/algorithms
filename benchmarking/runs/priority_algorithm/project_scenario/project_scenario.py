@@ -68,7 +68,7 @@ class StudentSatisfyProjectRequirements(Run):
         scenario = StudentAttributesSatisfyProjectRequirements()
 
         # Ranges
-        max_keep_range = [5, 500, 1000, 1500, 2000, 2500]
+        max_keep_range = [5, 100, 250, 500, 750, 1000]
         max_spread_range = [1, 25, 50, 75, 100]
         max_iterations_range = [10]
 
