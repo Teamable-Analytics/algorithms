@@ -1,5 +1,8 @@
+import itertools
+import random
+
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig, WeightAlgorithmConfig
-from api.models.enums import ScenarioAttribute, RequirementOperator, Gpa, AlgorithmType
+from api.models.enums import ScenarioAttribute, RequirementOperator, Gpa, AlgorithmType, Gender, Race
 from api.models.project import Project, ProjectRequirement
 from benchmarking.data.simulated_data.mock_initial_teams_provider import MockInitialTeamsProvider, \
     MockInitialTeamsProviderSettings
@@ -13,18 +16,19 @@ from benchmarking.simulation.simulation_set import SimulationSetArtifact, Simula
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class SmallClassSize(Run):
-    CLASS_SIZE = 12
-    NUMBER_OF_TEAMS = 3
-    NUMBER_OF_STUDENTS_PER_TEAM = 4
+class RegularClassSize(Run):
+    CLASS_SIZE = 120
+    NUMBER_OF_TEAMS = 24
+    NUMBER_OF_STUDENTS_PER_TEAM = 5
     NUMBER_OF_PROJECTS = 3
+    CACHE_KEY = "priority_algorithm/project_scenario/regular_class_size/regular_class_size/"
 
-    def run(self, num_trials: int = 30):
+    def run(self, num_trials: int = 100):
         scenario = SatisfyProjectRequirements()
 
-        projects = [
+        all_projects = [
             Project(
-                _id=0,
+                _id=-1,
                 name="Project 1",
                 requirements=[
                     ProjectRequirement(
@@ -35,7 +39,7 @@ class SmallClassSize(Run):
                 ],
             ),
             Project(
-                _id=1,
+                _id=-2,
                 name="Project 2",
                 requirements=[
                     ProjectRequirement(
@@ -46,7 +50,7 @@ class SmallClassSize(Run):
                 ],
             ),
             Project(
-                _id=2,
+                _id=-3,
                 name="Project 3",
                 requirements=[
                     ProjectRequirement(
@@ -58,15 +62,49 @@ class SmallClassSize(Run):
             )
         ]
 
+        random.shuffle(all_projects)
+        projects = []
+        for idx, proj in enumerate(itertools.cycle(all_projects)):
+            projects.append(Project(
+                _id=idx,
+                name=f'{proj.name} - {idx}',
+                requirements=proj.requirements,
+            ))
+
+            if len(projects) == self.NUMBER_OF_TEAMS:
+                break
+
+
+        initial_teams_provider = MockInitialTeamsProvider(
+            settings=MockInitialTeamsProviderSettings(
+                projects=projects,
+            )
+        )
+
         student_provider_settings = MockStudentProviderSettings(
             number_of_students=self.CLASS_SIZE,
             attribute_ranges={
                 ScenarioAttribute.GPA.value: [
-                    (Gpa.A, 0.08333333333333333),   # 1/12 (1 person)
-                    (Gpa.B, 0.08333333333333333),   # 1/12 (1 person)
-                    (Gpa.C, 0.08333333333333333),   # 1/12 (1 person)
-                    (Gpa.D, 0.75),                  # 9/12 (9 people)
-                ]
+                    (Gpa.A, 0.06666666666666667),
+                    (Gpa.B, 0.06666666666666667),
+                    (Gpa.C, 0.06666666666666667),
+                    (Gpa.D, 0.8),
+                ],
+                ScenarioAttribute.GENDER.value: [
+                    (Gender.MALE, 0.7),
+                    (Gender.FEMALE, 0.3),
+                ],
+                ScenarioAttribute.RACE.value: [
+                    (Race.African, 0.1),
+                    (Race.European, 0.1),
+                    (Race.East_Asian, 0.1),
+                    (Race.South_Asian, 0.1),
+                    (Race.South_East_Asian, 0.1),
+                    (Race.First_Nations_or_Indigenous, 0.1),
+                    (Race.Hispanic_or_Latin_American, 0.1),
+                    (Race.Middle_Eastern, 0.1),
+                    (Race.Other, 0.2),
+                ],
             },
         )
 
@@ -81,16 +119,14 @@ class SmallClassSize(Run):
             settings=SimulationSettings(
                 scenario=scenario,
                 student_provider=MockStudentProvider(student_provider_settings),
-                cache_key=f"priority_algorithm/project_scenario/small_class_size/small_project/",
-                initial_teams_provider=MockInitialTeamsProvider(
-                    settings=MockInitialTeamsProviderSettings(
-                        projects=projects,
-                    )
-                ),
+                cache_key=self.CACHE_KEY,
+                initial_teams_provider=initial_teams_provider,
             ),
             algorithm_set={
-                AlgorithmType.PRIORITY: [PriorityAlgorithmConfig()],
                 AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
+                AlgorithmType.PRIORITY: [
+                    PriorityAlgorithmConfig(),
+                ],
             },
         ).run(num_runs=num_trials)
 
@@ -116,4 +152,4 @@ class SmallClassSize(Run):
 
 
 if __name__ == "__main__":
-    SmallClassSize().run()
+    RegularClassSize().run()
