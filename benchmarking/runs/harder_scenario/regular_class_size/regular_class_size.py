@@ -26,7 +26,7 @@ class RegularClassSize(Run):
     MAX_KEEP_RANGES = [3, 5, 10, 20, 50, 100]
     MAX_ITERATIONS_RANGES = [750, 1000, 1500, 2000]
 
-    def run(self, num_trials: int = 100):
+    def run(self, num_trials: int = 30):
         scenario = SatisfyProjectRequirements()
 
         all_projects = [
