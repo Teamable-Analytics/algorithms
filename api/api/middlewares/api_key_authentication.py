@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 
 from utils.api_auth import is_api_key_valid
-from rest_framework.response import Response
 
 
 class APIKeyAuthenticationMiddleware:
