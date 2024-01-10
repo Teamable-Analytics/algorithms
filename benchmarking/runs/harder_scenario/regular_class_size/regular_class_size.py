@@ -118,6 +118,7 @@ class RegularClassSize(Run):
                         MAX_SPREAD=max_spread,
                         MAX_KEEP=max_keep,
                         MAX_ITERATE=max_iterate,
+                        name=f'priority-max_spread_{max_spread}-max_keep_{max_keep}-max_iterate_{max_iterate}'
                     ) for max_spread, max_keep, max_iterate in itertools.product(
                         self.MAX_SPREAD_RANGES,
                         self.MAX_KEEP_RANGES,
