@@ -8,7 +8,7 @@ env_file = next((Path(__file__).parent.parent / "env").glob("*.env"))
 dotenv.load_dotenv(dotenv_path=env_file)
 
 
-def encrypt_api_auth_token(api_token):
+def encrypt_api_auth_token(api_token) -> bytes:
     """
     Encrypts the API token using bcrypt.
 
@@ -20,14 +20,17 @@ def encrypt_api_auth_token(api_token):
     )
 
 
-def check_hash(api_token, encrypted_api_token):
+def check_hash(api_token, encrypted_api_token) -> bool:
+    """
+    Checks if the API token matches the encrypted API token.
+    """
     return checkpw(
         password=api_token.encode("utf-8"),
         hashed_password=encrypted_api_token.encode("utf-8"),
     )
 
 
-def is_api_key_valid(api_key):
+def is_api_key_valid(api_key) -> bool:
     """
     Validates the API key by checking if it is in the database.
     """
