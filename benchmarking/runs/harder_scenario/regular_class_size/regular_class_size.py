@@ -33,7 +33,7 @@ class RegularClassSize(Run):
     MAX_KEEP_RANGES = [3, 5, 10, 20, 50, 100]
     MAX_ITERATIONS_RANGES = [750, 1000, 1500, 2000]
 
-    def run(self, num_trials: int = 30, generate_graphs: bool = True):
+    def run(self, num_trials: int = 30, generate_graphs: bool = False):
         scenario = SatisfyProjectRequirements()
 
         all_projects = [
@@ -125,6 +125,7 @@ class RegularClassSize(Run):
                         MAX_SPREAD=max_spread,
                         MAX_KEEP=max_keep,
                         MAX_ITERATE=max_iterate,
+                        MAX_TIME=10000000,
                         name=f'priority-max_spread_{max_spread}-max_keep_{max_keep}-max_iterate_{max_iterate}'
                     ) for max_spread, max_keep, max_iterate in itertools.product(
                         self.MAX_SPREAD_RANGES,
