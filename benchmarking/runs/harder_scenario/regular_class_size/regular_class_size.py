@@ -4,6 +4,7 @@ import re
 from typing import Dict, Tuple
 
 import numpy as np
+import typer
 from matplotlib import pyplot as plt, cm
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig, WeightAlgorithmConfig
@@ -240,4 +241,4 @@ class RegularClassSize(Run):
 
 
 if __name__ == "__main__":
-    RegularClassSize().run()
+    typer.run(RegularClassSize().start)
