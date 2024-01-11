@@ -1,9 +1,15 @@
 import itertools
 import random
+import re
+from typing import Dict, Tuple
+
+import numpy as np
+from matplotlib import pyplot as plt, cm
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig, WeightAlgorithmConfig
 from api.models.enums import ScenarioAttribute, RequirementOperator, Gpa, AlgorithmType
 from api.models.project import Project, ProjectRequirement
+from benchmarking.caching.utils import SimulationArtifact
 from benchmarking.data.simulated_data.mock_initial_teams_provider import MockInitialTeamsProvider, \
     MockInitialTeamsProviderSettings
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProviderSettings, MockStudentProvider
@@ -26,7 +32,7 @@ class RegularClassSize(Run):
     MAX_KEEP_RANGES = [3, 5, 10, 20, 50, 100]
     MAX_ITERATIONS_RANGES = [750, 1000, 1500, 2000]
 
-    def run(self, num_trials: int = 30):
+    def run(self, num_trials: int = 30, generate_graphs: bool = True):
         scenario = SatisfyProjectRequirements()
 
         all_projects = [
@@ -128,25 +134,109 @@ class RegularClassSize(Run):
             },
         ).run(num_runs=num_trials)
 
+        artifacts_dict: Dict[
+            Tuple[int, int, int], SimulationArtifact
+        ] = {}
         for name, simulation_artifact in artifact.items():
+            match = re.search(
+                r"max_spread_(\d+)-max_keep_(\d+)-max_iterate_(\d+)", name
+            )
+            if match:
+                max_keep = int(match.group(1))
+                max_spread = int(match.group(2))
+                max_iterations = int(match.group(3))
+                artifacts_dict[(max_keep, max_spread, max_iterations)] = simulation_artifact
+
+        if generate_graphs:
+            points: Dict[Tuple[int, int, int], float] = {}
             for metric_name, metric in metrics.items():
-                insight_set = Insight.get_output_set(
-                    artifact={name: simulation_artifact},
-                    metrics=[metric],
-                )
+                for point_location, simulation_artifact in artifacts_dict.items():
+                    insight_set = Insight.get_output_set(
+                        artifact={"arbitrary_name": simulation_artifact},
+                        metrics=[metric],
+                    )
 
-                # Returns a dict[algorithm, value]
-                value_dict = Insight.average_metric(
-                    insight_output_set=insight_set, metric_name=metric_name
-                )
+                    # Returns a dict[algorithm, value]
+                    value_dict = Insight.average_metric(
+                        insight_output_set=insight_set, metric_name=metric_name
+                    )
 
-                # Runtime
-                runtime_dict = Insight.average_metric(
-                    insight_output_set=insight_set, metric_name=Insight.KEY_RUNTIMES
-                )
+                    # Get first value, assumes only one algorithm being run
+                    value = list(value_dict.values())[0]
+                    points[point_location] = value
 
-                print(f"{name} {metric_name}: {value_dict[name]}")
-                print(f"{name} runtime: {runtime_dict[name]}")
+                wireframe = True
+                for max_iterations in self.MAX_ITERATIONS_RANGES:
+                    fig = plt.figure()
+                    ax = fig.add_subplot(projection="3d")
+
+                    # Filter
+                    plotted_points = [
+                        (keep, spread, score)
+                        for (keep, spread, iterations), score in points.items()
+                        if iterations == max_iterations
+                    ]
+
+                    # Format data
+                    plotted_points = np.array(plotted_points)
+                    x = plotted_points[:, 0]
+                    y = plotted_points[:, 1]
+                    unique_x = np.unique(x)
+                    unique_y = np.unique(y)
+                    X, Y = np.meshgrid(unique_x, unique_y)
+                    Z = np.zeros_like(X)
+                    for xi, yi, zi in plotted_points:
+                        Z[
+                            np.where(unique_y == yi)[0][0],
+                            np.where(unique_x == xi)[0][0],
+                        ] = zi
+
+                    ##### \/ \/ \/ \/ TEMP. REMOVE LATER \/ \/ \/ \/ #####
+                    remove_missing_points = False
+                    if remove_missing_points:
+                        # Find the index where the first zero appears in each row
+                        zero_indices = np.argmax(Z == 0, axis=1)
+
+                        # Find the index where the first zero appears in any row
+                        first_zero_index = np.argmax(zero_indices > 0)
+
+                        # Remove rows with zeros
+                        X = X[:first_zero_index, :]
+                        Y = Y[:first_zero_index, :]
+                        Z = Z[:first_zero_index, :]
+
+                    ##### /\ /\ /\ /\ TEMP. REMOVE LATER /\ /\ /\ /\ #####
+
+                    # Plot the surface
+                    surface = (
+                        ax.plot_wireframe(
+                            X,
+                            Y,
+                            Z,
+                            color="red",
+                        )
+                        if wireframe
+                        else ax.plot_surface(
+                            X,
+                            Y,
+                            Z,
+                            cmap=cm.coolwarm,
+                            linewidth=0,
+                            antialiased=False,
+                        )
+                    )
+
+                    if not wireframe:
+                        fig.colorbar(surface, shrink=0.5, aspect=8, pad=0.15)
+
+                    ax.set_title(
+                        f"Priority Algorithm Parameters vs Priorities Satisfied\n~{max_iterations} iterations~"
+                    )
+                    ax.set_xlabel("MAX_KEEP")
+                    ax.set_ylabel("MAX_SPREAD")
+                    ax.set_zlabel("Score")
+                    ax.set_zlim(np.min(Z), np.max(Z))
+                    plt.show()
 
 
 if __name__ == "__main__":
