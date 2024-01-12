@@ -28,7 +28,7 @@ class RegularClassSize(Run):
     NUMBER_OF_STUDENTS_PER_TEAM = 4
     NUMBER_OF_TEAMS = CLASS_SIZE // NUMBER_OF_STUDENTS_PER_TEAM
     NUMBER_OF_PROJECTS = 3
-    CACHE_KEY = "priority_algorithm/harder_scenario/regular_class_size/regular_class_size/"
+    CACHE_KEY = "priority_algorithm/harder_scenario/regular_class_size/regular_class_size/new/"
     MAX_SPREAD_RANGES = [3, 5, 10, 20, 50, 100]
     MAX_KEEP_RANGES = [3, 5, 10, 20, 50, 100]
     MAX_ITERATIONS_RANGES = [750, 1000, 1500, 2000]
