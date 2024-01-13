@@ -23,7 +23,9 @@ from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.runs.interfaces import Run
 from benchmarking.runs.priority_algorithm.simple_runs._data import SimpleRunData as data
-from benchmarking.runs.priority_algorithm.simple_runs.custom_student_providers import Major
+from benchmarking.runs.priority_algorithm.simple_runs.custom_student_providers import (
+    Major,
+)
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
