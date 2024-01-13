@@ -3,7 +3,7 @@ from typing import Dict, Tuple
 
 import numpy as np
 import typer
-from matplotlib import pyplot as plt, cm
+from matplotlib import pyplot as plt
 
 from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
@@ -14,9 +14,8 @@ from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import (
     DiversifyGenderMin2Female,
 )
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.simple_runs._data import SimpleRunData as data
+from benchmarking.runs.priority_algorithm.simple_runs._data import SimpleRunData as data
 from benchmarking.simulation.insight import Insight
-from benchmarking.simulation.simulation import SimulationArtifact
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 

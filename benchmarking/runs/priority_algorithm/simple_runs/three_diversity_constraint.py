@@ -16,27 +16,21 @@ from api.models.enums import (
     ScenarioAttribute,
     TokenizationConstraintDirection,
     Gpa,
-    Race,
 )
 from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.simple_runs._data import SimpleRunData as data
-from benchmarking.runs.simple_runs.custom_student_providers import Major
+from benchmarking.runs.priority_algorithm.simple_runs._data import SimpleRunData as data
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class FiveDiversityConstraint(Run):
-    def start(self, num_trials: int = 30, generate_graphs: bool = False):
-        scenario = FiveDiversityConstraintScenario(
-            value_of_female=Gender.FEMALE.value,
-            value_of_a=Gpa.A.value,
-            value_of_21=21,
-            value_of_math=Major.MATH.value,
-            value_of_european=Race.European.value,
+class ThreeDiversityConstraint(Run):
+    def start(self, num_trials: int = 1, generate_graphs: bool = True):
+        scenario = ThreeDiversityConstraintScenario(
+            value_of_female=Gender.FEMALE.value, value_of_a=Gpa.A.value, value_of_21=21
         )
         metrics = data.get_metrics(scenario)
         start_types = [
@@ -55,7 +49,7 @@ class FiveDiversityConstraint(Run):
                         num_teams=data.num_teams,
                         scenario=scenario,
                         student_provider=data.student_providers[class_size],
-                        cache_key=f"priority_algorithm/simple_runs/class_size_{class_size}/five_diversity_constraint/",
+                        cache_key=f"priority_algorithm/simple_runs/class_size_{class_size}/three_diversity_constraint/",
                     ),
                     algorithm_set={
                         AlgorithmType.PRIORITY: [
@@ -162,7 +156,7 @@ class FiveDiversityConstraint(Run):
                             )
 
                         ax.set_title(
-                            f"Priority Algorithm Parameters vs Priorities Satisfied\n~Five Diversity Constraint, {max_iterations} iterations, {class_size} students~"
+                            f"Priority Algorithm Parameters vs Priorities Satisfied\n~Three Diversity Constraint, {max_iterations} iterations, {class_size} students~"
                         )
                         ax.set_xlabel("MAX_KEEP")
                         ax.set_ylabel("MAX_SPREAD")
@@ -172,20 +166,11 @@ class FiveDiversityConstraint(Run):
                         plt.show()
 
 
-class FiveDiversityConstraintScenario(Scenario):
-    def __init__(
-        self,
-        value_of_female: int,
-        value_of_a: int,
-        value_of_21: int,
-        value_of_math: int,
-        value_of_european: int,
-    ):
+class ThreeDiversityConstraintScenario(Scenario):
+    def __init__(self, value_of_female: int, value_of_a: int, value_of_21: int):
         self.value_of_female = value_of_female
         self.value_of_a = value_of_a
         self.value_of_21 = value_of_21
-        self.value_of_math = value_of_math
-        self.value_of_european = value_of_european
 
     @property
     def name(self):
@@ -221,27 +206,9 @@ class FiveDiversityConstraintScenario(Scenario):
                     value=self.value_of_21,
                 ),
             ),
-            DiversityGoal(
-                DiversifyType.DIVERSIFY,
-                ScenarioAttribute.MAJOR.value,
-                tokenization_constraint=TokenizationConstraint(
-                    direction=TokenizationConstraintDirection.MIN_OF,
-                    threshold=2,
-                    value=self.value_of_math,
-                ),
-            ),
-            DiversityGoal(
-                DiversifyType.DIVERSIFY,
-                ScenarioAttribute.RACE.value,
-                tokenization_constraint=TokenizationConstraint(
-                    direction=TokenizationConstraintDirection.MIN_OF,
-                    threshold=2,
-                    value=self.value_of_european,
-                ),
-            ),
             WeightGoal(diversity_goal_weight=1),
         ]
 
 
 if __name__ == "__main__":
-    typer.run(FiveDiversityConstraint().start)
+    typer.run(ThreeDiversityConstraint().start)

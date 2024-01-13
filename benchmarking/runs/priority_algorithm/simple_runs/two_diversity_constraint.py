@@ -18,7 +18,7 @@ from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.simple_runs._data import SimpleRunData as data
+from benchmarking.runs.priority_algorithm.simple_runs._data import SimpleRunData as data
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation import SimulationArtifact
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet

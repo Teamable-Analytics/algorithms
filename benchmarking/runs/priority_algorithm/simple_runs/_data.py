@@ -3,7 +3,7 @@ from typing import Dict
 from benchmarking.data.interfaces import StudentProvider
 from benchmarking.evaluations.interfaces import Scenario
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.runs.simple_runs.custom_student_providers import (
+from benchmarking.runs.priority_algorithm.simple_runs.custom_student_providers import (
     CustomTwelveStudentProvider,
     CustomFifteenStudentProvider,
 )
