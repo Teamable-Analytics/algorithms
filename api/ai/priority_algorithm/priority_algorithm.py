@@ -2,12 +2,17 @@ import time
 from typing import cast, Dict, List
 
 from api.ai.interfaces.algorithm import Algorithm
-from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
+from api.ai.interfaces.algorithm_config import (
+    PriorityAlgorithmConfig,
+    PriorityAlgorithmStartType,
+)
 from api.ai.interfaces.algorithm_options import (
     PriorityAlgorithmOptions,
     WeightAlgorithmOptions,
+    RandomAlgorithmOptions,
 )
 from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
+from api.ai.random_algorithm.random_algorithm import RandomAlgorithm
 from api.ai.utils import save_students_to_team
 from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.models.student import Student
@@ -34,12 +39,18 @@ class PriorityAlgorithm(Algorithm):
         self,
         students: List[Student],
     ) -> PriorityTeamSet:
-        team_set = WeightAlgorithm(
-            algorithm_options=weight_options_from_priority_options(
-                self.algorithm_options
-            ),
-            team_generation_options=self.team_generation_options,
-        ).generate(students)
+        if self.algorithm_config.START_TYPE == PriorityAlgorithmStartType.RANDOM:
+            team_set = RandomAlgorithm(
+                algorithm_options=RandomAlgorithmOptions(),
+                team_generation_options=self.team_generation_options,
+            ).generate(students)
+        else:
+            team_set = WeightAlgorithm(
+                algorithm_options=weight_options_from_priority_options(
+                    self.algorithm_options
+                ),
+                team_generation_options=self.team_generation_options,
+            ).generate(students)
 
         return PriorityTeamSet(
             priority_teams=[

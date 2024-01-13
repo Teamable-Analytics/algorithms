@@ -38,6 +38,7 @@ class SimulationSet:
 
         for algorithm in self.algorithm_types:
             for config in self.algorithm_set[algorithm]:
+                print(f"Running {str(algorithm)}-{config.name}")
                 self.basic_simulation_set_artifact[
                     f"{str(algorithm)}-{config.name}"
                 ] = Simulation(
