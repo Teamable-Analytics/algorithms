@@ -30,7 +30,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class FiveDiversityConstraint(Run):
-    def start(self, num_trials: int = 1, generate_graphs: bool = True):
+    def start(self, num_trials: int = 30, generate_graphs: bool = False):
         scenario = FiveDiversityConstraintScenario(
             value_of_female=Gender.FEMALE.value,
             value_of_a=Gpa.A.value,
