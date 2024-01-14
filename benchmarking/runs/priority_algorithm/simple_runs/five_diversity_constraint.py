@@ -32,7 +32,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class FiveDiversityConstraint(Run):
-    def start(self, num_trials: int = 30, generate_graphs: bool = False):
+    def start(self, num_trials: int = 30, generate_graphs: bool = True):
         scenario = FiveDiversityConstraintScenario(
             value_of_female=Gender.FEMALE.value,
             value_of_a=Gpa.A.value,
@@ -115,6 +115,9 @@ class FiveDiversityConstraint(Run):
                         fig = plt.figure()
                         ax = fig.add_subplot(projection="3d")
                         for start_type, points in points_dict.items():
+                            # if start_type == PriorityAlgorithmStartType.WEIGHT:
+                            #     continue
+
                             # Filter
                             plotted_points = [
                                 (keep, spread, score)
