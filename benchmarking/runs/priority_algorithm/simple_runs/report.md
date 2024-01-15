@@ -37,7 +37,7 @@ We see that the weight start helps a lot, so it's going to be better to look at 
 
 Even with only 3 iterations, priority is able to pretty much solve the scenario. And with 5 iterations, it has the max score with all but the worst settings:
 
-<img alt="imgs/img_4.png" height="" src="imgs/img_4.png" width="400"/> <img alt="imgs/img_6.png" src="imgs/img_6.png" width="400"/>
+<img alt="imgs/img_4.png" src="imgs/img_4.png" height="400"/> <img alt="imgs/img_6.png" src="imgs/img_6.png" height="400"/>
 
 **The most interesting results are with only 1 iteration.**
 
