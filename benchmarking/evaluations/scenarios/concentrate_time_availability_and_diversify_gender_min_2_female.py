@@ -28,14 +28,14 @@ class ConcentrateTimeAvailabilityDiversifyGenderMin2Female(Scenario):
                 DiversifyType.CONCENTRATE,
                 ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
             ),
-            # DiversityGoal(
-            #     DiversifyType.DIVERSIFY,
-            #     ScenarioAttribute.GENDER.value,
-            #     tokenization_constraint=TokenizationConstraint(
-            #         direction=TokenizationConstraintDirection.MIN_OF,
-            #         threshold=2,
-            #         value=self.value_of_female,
-            #     ),
-            # ),
+            DiversityGoal(
+                DiversifyType.DIVERSIFY,
+                ScenarioAttribute.GENDER.value,
+                tokenization_constraint=TokenizationConstraint(
+                    direction=TokenizationConstraintDirection.MIN_OF,
+                    threshold=2,
+                    value=self.value_of_female,
+                ),
+            ),
             WeightGoal(diversity_goal_weight=1),
         ]
