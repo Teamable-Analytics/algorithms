@@ -223,7 +223,7 @@ def run_and_save_multithreads():
             run_and_save(idx)
 
 
-    num_threads = 25
+    num_threads = 1000
 
     step = 1000 // num_threads
     ranges = [(i * step, (i + 1) * step) for i in range(num_threads)]
