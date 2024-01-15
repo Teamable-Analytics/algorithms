@@ -11,7 +11,7 @@ Constraints:
 - Diversify major min 2
 - Diversify race min 2
 
-Class size: 12 (and 15, not shown here)
+Class size: 12 (and 15, not shown here) \
 Team size: 4
 
 Students were hard coded in order to guarantee a max score of 1.0 and to ensure that the solution is not trivial.
