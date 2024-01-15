@@ -213,7 +213,7 @@ def run_and_save(idx):
                 student.attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value])
 
     df = pd.DataFrame.from_dict(ok_dict)
-    df.to_csv(f'our_data/our{idx + 1}.csv')
+    df.to_csv(f'/home/phngtuki/algorithms/benchmarking/runs/our_data/our{idx + 1}.csv')
 
 
 import threading
