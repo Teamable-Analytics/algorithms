@@ -150,8 +150,7 @@ def load_data():
 
 
 def run_and_save(idx):
-    df = pd.read_csv(f'their_data/out-private-{idx + 1}.csv')
-    print(df)
+    df = pd.read_csv(f'/home/phngtuki/algorithms/benchmarking/runs/their_data/out-private-{idx + 1}.csv')
     teams = {}
     for _, row in df.iterrows():
         new_student = Student(
@@ -217,12 +216,27 @@ def run_and_save(idx):
     df.to_csv(f'our_data/our{idx + 1}.csv')
 
 
+import threading
 def run_and_save_multithreads():
-    import concurrent.futures
-    with concurrent.futures.ThreadPoolExecutor(max_workers=30) as executor:
-        futures = [executor.submit(run_and_save, i) for i in range(1000)]
-        concurrent.futures.wait(futures)
+    def worker(start, end):
+        for idx in range(start, end):
+            run_and_save(idx)
 
+
+    num_threads = 25
+
+    step = 1000 // num_threads
+    ranges = [(i * step, (i + 1) * step) for i in range(num_threads)]
+
+    threads = []
+    for start, end in ranges:
+        thread = threading.Thread(target=worker, args=(start, end))
+        thread.start()
+        threads.append(thread)
+
+
+    for thread in threads:
+        thread.join()
 
 if __name__ == "__main__":
     # load_data()
