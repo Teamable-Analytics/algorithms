@@ -30,30 +30,21 @@ Gender: Female, GPA: A, Age: 21, Major: CompSci, Race: European
 
 Below we see the results of this run:
 
-<img height='360px' src='imgs/img.png' alt="imgs/img.png">
-<img height='360px' src='imgs/img_1.png' alt="imgs/img_1.png">
-<br>
-<img height='360px' src='imgs/img_2.png' alt="imgs/img_2.png">
-<img height="360px" src="imgs/img_3.png" alt="imgs/img_3.png">
+<img height='360px' width='480px' src='imgs/img.png' alt="imgs/img.png"> <img height='360px' width='480px' src='imgs/img_1.png' alt="imgs/img_1.png">
+<img height='360px' width='480px' src='imgs/img_2.png' alt="imgs/img_2.png"> <img height="360px" width='480px' src="imgs/img_3.png" alt="imgs/img_3.png">
 
 We see that the weight start helps a lot, so it's going to be better to look at the random start in order to see how well the priority algorithm does by itself.
 
-Even with only 3 iterations, priority is able to pretty much solve the scenario
+Even with only 3 iterations, priority is able to pretty much solve the scenario. And with 5 iterations, it has the max score with all but the worst settings:
 
-<img alt="imgs/img_4.png" height="" src="imgs/img_4.png" width="400"/>
-
-And with 5 iterations, it has the max score with all but the worst settings:
-
-<img alt="imgs/img_6.png" src="imgs/img_6.png" width="400"/>
+<img alt="imgs/img_4.png" height="" src="imgs/img_4.png" width="400"/> <img alt="imgs/img_6.png" src="imgs/img_6.png" width="400"/>
 
 **The most interesting results are with only 1 iteration.**
 
 We see a clear correlation between higher `MAX_SPREAD` and a higher score, but the same is not true of `MAX_KEEP`
 
-<img alt="imgs/img_7.png" src="imgs/img_7.png" height="400"/>
-<img alt="imgs/img_8.png" src="imgs/img_8.png" height="400"/>
+<img alt="imgs/img_7.png" src="imgs/img_7.png" height="400"/> <img alt="imgs/img_8.png" src="imgs/img_8.png" height="400"/>
 
 We see the same thing in the 3 iteration graph:
 
-<img alt="imgs/img_9.png" height="400" src="imgs/img_9.png"/>
-<img alt="imgs/img_10.png" height="400" src="imgs/img_10.png"/>
+<img alt="imgs/img_9.png" height="400" src="imgs/img_9.png"/> <img alt="imgs/img_10.png" height="400" src="imgs/img_10.png"/>
