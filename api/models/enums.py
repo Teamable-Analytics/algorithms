@@ -124,3 +124,104 @@ class PriorityType(Enum):
     PROJECT_PREFERENCE = "project_preference"
     PROJECT_REQUIREMENT = "project_requirement"
     SOCIAL_PREFERENCE = "social_preference"
+
+
+# From paper: https://sigcse2023.sigcse.org/details/sigcse-ts-2023-papers/163/Inclusive-study-group-formation-at-scale
+class AlRace(AttributeValueEnum):
+    White = "White"
+    Asian = "Asian"
+    Hispanic = "Hispanic"
+    Black_Or_African_American = "Black/African American"
+    Indegenous = "Indegenous"
+    Middle_Eastern = "Middle-Eastern"
+    Multiple_Races = "Multiple races"
+
+
+class AlYearLevel(AttributeValueEnum):
+    Freshman = "freshman"
+    Sophomore = "sophomore"
+    Junior = "junior"
+    Senior = "senior"
+    Graduate = "graduate"
+
+
+class AlGender(AttributeValueEnum):
+    Female = "Female"
+    Male = "Male"
+    Other = "Other"
+
+def fromGenderToAlGender(gender: Gender) -> AlGender:
+    if gender == Gender.MALE:
+        return AlGender.Male
+    if gender == Gender.FEMALE:
+        return  AlGender.Female
+    return AlGender.Other
+
+def fromAlGenderToGender(alGenderNum: int) -> Gender:
+    if alGenderNum == 0:
+        return Gender.FEMALE
+    if alGenderNum == 1:
+        return Gender.MALE
+    return Gender.OTHER
+
+def fromRaceToAlRace(race: Race) -> AlRace:
+    if race == Race.European:
+        return AlRace.White
+    if race == Race.South_Asian or race == Race.East_Asian or race == Race.South_East_Asian:
+        return AlRace.Asian
+    if race == Race.Hispanic_or_Latin_American:
+        return AlRace.Hispanic
+    if race == Race.African:
+        return AlRace.Black_Or_African_American
+    if race == Race.First_Nations_or_Indigenous:
+        return AlRace.Indegenous
+    if race == Race.Middle_Eastern:
+        return AlRace.Middle_Eastern
+    if race == Race.Other:
+        return AlRace.Multiple_Races
+
+def fromAlRaceToRace(alRaceNum: int) -> Race:
+    if alRaceNum == 0:
+        return Race.European
+    if alRaceNum == 1:
+        return Race.South_Asian
+    if alRaceNum == 2:
+        return Race.Hispanic_or_Latin_American
+    if alRaceNum == 3:
+        return Race.African
+    if alRaceNum == 4:
+        return Race.First_Nations_or_Indigenous
+    if alRaceNum == 5:
+        return Race.Middle_Eastern
+    if alRaceNum == 6:
+        return Race.Other
+
+
+
+def fromYearLevelToAlYearLevel(yearLevel: int) -> AlYearLevel:
+    if yearLevel == 0:
+        return AlYearLevel.Freshman
+    if yearLevel == 1:
+        return AlYearLevel.Sophomore
+    if yearLevel == 2:
+        return AlYearLevel.Junior
+    if yearLevel == 3:
+        return AlYearLevel.Senior
+    return AlYearLevel.Graduate
+
+def fromNumbersToTimeSlots(numbers: List[int]) -> List[str]:
+    return [fromNumberToTimeslot(number) for number in numbers]
+
+def fromNumberToTimeslot(number: int) -> str:
+    if number == 1:
+        return "1-2 M/W"
+    if number == 2:
+        return "2-3 M/W"
+    if number == 3:
+        return "3-4 M/W"
+    if number == 4:
+        return "4-5 M/W"
+    if number == 5:
+        return "10-11 M/W"
+    if number == 6:
+        return "11-12 M/W"

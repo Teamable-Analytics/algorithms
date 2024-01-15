@@ -1,0 +1,101 @@
+group_num,email,sid,first_name,last_name,year,want_group,is_existing,timezone,disc_with_group,disc_times_options,groupmember2,groupmember3,groupmember4,groupmember5,groupmember6,remote,race,gender
+0,wcantrell@example.org,66,Anthony,Baker,1,True,False,1,False,"[2, 4]",,,,,,True,0,1
+0,austinjose@example.com,72,Anthony,Johnson,1,True,False,1,False,"[2, 4]",,,,,,True,0,1
+0,heathergarcia@example.org,86,Jennifer,Walters,1,True,False,1,False,"[2, 4]",,,,,,True,0,1
+0,pthompson@example.org,84,Anthony,Bauer,1,True,False,1,False,[2],,,,,,True,0,1
+1,evancook@example.net,97,Sarah,Maxwell,1,True,False,1,False,"[1, 2, 4]",,,,,,True,3,1
+1,fjones@example.net,95,Stephanie,Matthews,1,True,False,1,False,"[1, 4]",,,,,,True,3,1
+1,david85@example.org,60,Jordan,Leblanc,1,True,False,1,False,"[1, 2]",,,,,,True,0,1
+1,muellererica@example.net,75,Kaitlyn,Wilson,1,True,False,1,False,"[1, 4]",,,,,,True,0,1
+1,raymondnguyen@example.org,63,Zachary,Gaines,1,True,False,1,False,"[1, 2]",,,,,,True,0,1
+2,pbailey@example.com,98,Lisa,Garcia,1,True,False,1,False,"[5, 2]",,,,,,True,3,1
+2,zbrown@example.org,93,Samantha,Bowen,1,True,False,1,False,"[5, 1, 4]",,,,,,True,3,1
+2,aaron78@example.net,99,John,Castaneda,1,True,False,1,False,"[5, 1, 4]",,,,,,True,3,1
+2,rmullins@example.org,91,Richard,Lucas,1,True,False,1,False,"[5, 1, 4]",,,,,,True,3,1
+2,hornalyssa@example.com,68,Kim,Webb,1,True,False,1,False,"[5, 2]",,,,,,True,0,1
+2,stephanie55@example.org,76,Brenda,Harris,1,True,False,1,False,"[5, 2, 4]",,,,,,True,0,1
+3,angela56@example.net,92,Brianna,Hickman,1,True,False,1,False,"[5, 6, 4]",,,,,,True,3,1
+3,austinjennifer@example.net,90,Brandy,Palmer,1,True,False,1,False,"[5, 6, 2]",,,,,,True,3,1
+3,psmith@example.org,71,Anthony,Davis,1,True,False,1,False,"[5, 6, 1, 4]",,,,,,True,0,1
+3,fitzgeraldvalerie@example.net,61,Shelly,Wilson,1,True,False,1,False,"[6, 1, 4]",,,,,,True,0,1
+4,pshields@example.org,77,Amy,Parker,1,True,False,1,False,"[5, 6, 1, 2]",,,,,,True,0,1
+4,jennifer98@example.com,64,David,Cooper,1,True,False,1,False,"[6, 1, 4]",,,,,,True,0,1
+4,khiggins@example.net,82,Kimberly,Castillo,1,True,False,1,False,"[6, 1]",,,,,,True,0,1
+4,garzahannah@example.net,81,Larry,Coleman,1,True,False,1,False,"[5, 6]",,,,,,True,0,1
+5,chrisweber@example.com,85,Sarah,Tran,1,True,False,1,False,"[5, 6, 1, 2, 3]",,,,,,True,0,1
+5,curtis31@example.com,89,Joseph,York,1,True,False,1,False,"[5, 6, 1, 3]",,,,,,True,0,1
+5,jamesduke@example.net,80,Christine,Wheeler,1,True,False,1,False,"[5, 1, 3, 4]",,,,,,True,0,1
+5,raymondherrera@example.net,69,Jason,Jenkins,1,True,False,1,False,"[6, 1, 2, 3]",,,,,,True,0,1
+6,hartedward@example.net,74,Richard,Hess,1,True,False,1,False,"[6, 2, 3]",,,,,,True,0,1
+6,joanne84@example.net,83,Brendan,Carr,1,True,False,1,False,"[5, 6, 2, 3]",,,,,,True,0,1
+6,nrich@example.com,88,Hayley,Ross,1,True,False,1,False,"[3, 4]",,,,,,True,0,1
+7,aguirreshelly@example.net,70,Shawn,Garcia,1,True,False,1,False,"[1, 3]",,,,,,True,0,1
+7,kmoody@example.com,73,James,Knight,1,True,False,1,False,"[6, 1, 2, 3]",,,,,,True,0,1
+7,mcguirecorey@example.net,67,Samantha,Faulkner,1,True,False,1,False,"[6, 1, 3, 4]",,,,,,True,0,1
+7,ulutz@example.net,79,Michelle,Smith,1,True,False,1,False,"[1, 2, 3, 4]",,,,,,True,0,1
+7,cchapman@example.com,94,Holly,Burch,1,True,False,1,False,"[2, 3, 4]",,,,,,True,3,1
+7,reedmary@example.org,96,Michele,Douglas,1,True,False,1,False,"[5, 2, 3, 4]",,,,,,True,3,1
+8,christopherpratt@example.org,62,Robert,Kelly,1,True,False,1,False,"[5, 3]",,,,,,True,0,1
+8,grahamvirginia@example.com,78,Donald,Stewart,1,True,False,1,False,"[5, 6, 1, 3]",,,,,,True,0,1
+8,reneesanchez@example.com,65,John,Fields,1,True,False,1,False,"[6, 1, 2, 3]",,,,,,True,0,1
+8,jessicahall@example.net,87,Hannah,Johnson,1,True,False,1,False,"[5, 6, 3]",,,,,,True,0,1
+9,garyferguson@example.net,48,John,Dawson,2,True,False,1,False,"[5, 4]",,,,,,True,1,1
+9,robertgonzalez@example.org,49,Christian,Phillips,2,True,False,1,False,"[5, 1, 4]",,,,,,True,1,1
+9,reidangela@example.net,40,Benjamin,Kennedy,2,True,False,1,False,"[5, 1, 4]",,,,,,True,1,1
+9,toddmendoza@example.net,56,Joseph,Raymond,2,True,False,1,False,[5],,,,,,True,5,1
+10,dianecampbell@example.org,59,Daniel,Velasquez,2,True,False,1,False,"[5, 6, 4]",,,,,,True,5,1
+10,ejones@example.net,50,Kristin,Salas,2,True,False,1,False,"[5, 6, 4]",,,,,,True,5,1
+10,zkelly@example.net,54,Mark,Dixon,2,True,False,1,False,"[6, 1, 2]",,,,,,True,5,1
+10,ronaldwilliamson@example.com,53,Patrick,Fletcher,2,True,False,1,False,"[2, 4]",,,,,,True,5,1
+11,ginacalhoun@example.net,44,Ashley,Page,2,True,False,1,False,"[6, 1, 2]",,,,,,True,1,1
+11,lgalloway@example.net,41,Kimberly,Young,2,True,False,1,False,"[5, 6, 1]",,,,,,True,1,1
+11,loribaldwin@example.org,43,Shane,Davis,2,True,False,1,False,"[1, 2, 4]",,,,,,True,1,1
+11,vglover@example.org,47,Travis,Stewart,2,True,False,1,False,"[2, 4]",,,,,,True,1,1
+12,acrosby@example.org,51,Rebecca,Davis,2,True,False,1,False,"[6, 1, 2, 3, 4]",,,,,,True,5,1
+12,wchristian@example.net,52,Fernando,Bailey,2,True,False,1,False,"[6, 1, 3, 4]",,,,,,True,5,1
+12,jay53@example.org,58,John,Barton,2,True,False,1,False,"[6, 3, 4]",,,,,,True,5,1
+12,acrawford@example.com,57,Timothy,Fisher,2,True,False,1,False,"[5, 1, 2, 3]",,,,,,True,5,1
+12,lori25@example.org,55,Ashley,Grant,2,True,False,1,False,"[5, 1, 2, 3]",,,,,,True,5,1
+13,josephjackson@example.org,42,Andrew,Boyd,2,True,False,1,False,"[2, 3, 4]",,,,,,True,1,1
+13,wmartin@example.org,46,Jason,Erickson,2,True,False,1,False,"[1, 3, 4]",,,,,,True,1,1
+13,jesse90@example.net,45,Sarah,Palmer,2,True,False,1,False,"[6, 1, 3]",,,,,,True,1,1
+14,qluna@example.com,35,Joyce,Ortiz,3,True,False,1,False,"[1, 2, 3]",,,,,,True,1,1
+14,tiffany67@example.net,34,Daniel,Nguyen,3,True,False,1,False,"[6, 1, 2, 4]",,,,,,True,1,1
+14,elarson@example.org,25,Kyle,Reyes,3,True,False,1,False,"[1, 4]",,,,,,True,2,0
+14,omar22@example.org,26,Kimberly,Reese,3,True,False,1,False,"[5, 1, 2]",,,,,,True,2,0
+14,terrance91@example.org,28,Brian,Roberts,3,True,False,1,False,"[6, 4]",,,,,,True,2,0
+15,xphillips@example.org,0,Sara,Spencer,4,True,False,1,False,"[6, 2, 4]",,,,,,True,6,2
+15,sharonjames@example.net,10,Christine,Johnson,4,True,False,1,False,"[5, 6, 2]",,,,,,True,6,0
+15,daughertysarah@example.net,8,Stephen,Reyes,4,True,False,1,False,"[5, 6, 2]",,,,,,True,6,2
+15,mcdowelltimothy@example.net,4,Greg,Jones,4,True,False,1,False,"[5, 4]",,,,,,True,6,2
+16,heathersmith@example.com,19,Christian,Palmer,4,True,False,1,False,"[6, 2, 4]",,,,,,True,6,0
+16,cathywilliams@example.org,12,Michael,Torres,4,True,False,1,False,"[6, 4]",,,,,,True,6,0
+16,dale10@example.org,13,Shawn,Schultz,4,True,False,1,False,"[5, 6]",,,,,,True,6,0
+16,oconnorrobert@example.org,18,Jeffrey,Rowe,4,True,False,1,False,"[5, 2, 4]",,,,,,True,6,0
+17,angelamiller@example.org,17,Ruben,Lopez,4,True,False,1,False,"[5, 6, 1, 2]",,,,,,True,6,0
+17,smorris@example.net,14,Breanna,Chandler,4,True,False,1,False,"[5, 1, 2]",,,,,,True,6,0
+17,myersvictoria@example.net,6,Angela,Young,4,True,False,1,False,"[5, 1]",,,,,,True,6,2
+17,joycemary@example.net,3,Maria,Lewis,4,True,False,1,False,"[5, 6, 1]",,,,,,True,6,2
+17,jamie84@example.org,2,Levi,Richards,4,True,False,1,False,"[5, 1, 4]",,,,,,True,6,2
+17,igibbs@example.org,5,Dr.,Michael,4,True,False,1,False,"[6, 1, 2, 4]",,,,,,True,6,2
+18,scottrachel@example.org,7,Samuel,Rubio,4,True,False,1,False,"[1, 2, 3]",,,,,,True,6,2
+18,lopezbrenda@example.com,1,Joshua,Ryan,4,True,False,1,False,"[2, 3, 4]",,,,,,True,6,2
+18,sheila06@example.net,9,Andrew,Martin,4,True,False,1,False,"[2, 3]",,,,,,True,6,2
+18,gmoore@example.com,11,Tracy,Singh,4,True,False,1,False,"[1, 3, 4]",,,,,,True,6,0
+18,melissahull@example.net,15,Andrea,Erickson,4,True,False,1,False,"[6, 1, 3]",,,,,,True,6,0
+18,claudiasmith@example.net,16,Stephanie,Acosta,4,True,False,1,False,"[1, 2, 3]",,,,,,True,6,0
+19,sperry@example.com,31,Richard,Murray,3,True,False,1,False,"[5, 6, 4]",,,,,,True,1,1
+19,douglas09@example.com,39,Steven,Sanders,3,True,False,1,False,"[5, 6, 4]",,,,,,True,1,1
+19,vlopez@example.com,32,Angela,Simpson,3,True,False,1,False,"[5, 6, 4]",,,,,,True,1,1
+19,arnoldamanda@example.com,22,Jesse,Walters,3,True,False,1,False,[5],,,,,,True,2,0
+20,umoore@example.net,38,Nathan,Davis,3,True,False,1,False,"[2, 4]",,,,,,True,1,1
+20,fisherrobin@example.org,29,Robert,Hernandez,3,True,False,1,False,"[5, 6, 2, 4]",,,,,,True,2,0
+20,barbara84@example.net,27,Tonya,Hernandez,3,True,False,1,False,"[5, 6, 2]",,,,,,True,2,0
+20,georgeking@example.org,23,Steve,Washington,3,True,False,1,False,"[5, 2, 4]",,,,,,True,2,0
+20,tammy09@example.com,20,Marvin,Allen,3,True,False,1,False,"[5, 6, 2]",,,,,,True,2,0
+21,anthonysolis@example.org,30,Hannah,Cooper,3,True,False,1,False,"[5, 6, 2, 3, 4]",,,,,,True,1,1
+21,jlee@example.net,37,Sharon,Hall,3,True,False,1,False,"[5, 2, 3]",,,,,,True,1,1
+21,villanuevamichele@example.com,36,Tonya,Wolfe,3,True,False,1,False,"[5, 3, 4]",,,,,,True,1,1
+21,johnstonhector@example.com,33,Patricia,Montes,3,True,False,1,False,"[5, 6, 3, 4]",,,,,,True,1,1
+21,cameronblair@example.com,24,Jeffrey,Hernandez,3,True,False,1,False,"[6, 2, 3]",,,,,,True,2,0
+21,amysampson@example.org,21,Christine,Thornton,3,True,False,1,False,"[5, 6, 3]",,,,,,True,2,0
