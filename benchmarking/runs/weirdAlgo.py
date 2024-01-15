@@ -151,6 +151,7 @@ def load_data():
 
 def run_and_save(idx):
     df = pd.read_csv(f'their_data/out-private-{idx + 1}.csv')
+    print(df)
     teams = {}
     for _, row in df.iterrows():
         new_student = Student(
