@@ -219,7 +219,8 @@ def run_and_save(idx):
 def run_and_save_multithreads():
     import concurrent.futures
     with concurrent.futures.ThreadPoolExecutor(max_workers=30) as executor:
-        executor.map(run_and_save, range(1000))
+        futures = [executor.submit(run_and_save, i) for i in range(1000)]
+        concurrent.futures.wait(futures)
 
 
 if __name__ == "__main__":
