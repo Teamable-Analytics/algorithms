@@ -54,6 +54,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "api.api.middlewares.api_key_authentication.APIKeyAuthenticationMiddleware",
 ]
 
 ROOT_URLCONF = "api.api.urls"
