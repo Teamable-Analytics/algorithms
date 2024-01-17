@@ -1,30 +1,25 @@
-import itertools
-import random
 import re
+from typing import Dict, Tuple, List
 
 import numpy as np
-import typer
 from matplotlib import pyplot as plt
 
-from api.ai.interfaces.algorithm_config import (
-    PriorityAlgorithmConfig,
-    WeightAlgorithmConfig,
-)
+from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.models.enums import (
-    ScenarioAttribute,
-    RequirementOperator,
     AlgorithmType,
-    AttributeValueEnum,
+    DiversifyType,
+    ScenarioAttribute,
+    TokenizationConstraintDirection,
+    RequirementsCriteria,
 )
-from api.models.project import Project, ProjectRequirement
-from benchmarking.data.simulated_data.mock_initial_teams_provider import (
-    MockInitialTeamsProvider,
-    MockInitialTeamsProviderSettings,
+from api.models.tokenization_constraint import TokenizationConstraint
+from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
+from benchmarking.evaluations.goals import (
+    DiversityGoal,
+    ProjectRequirementGoal,
+    WeightGoal,
 )
-from benchmarking.data.simulated_data.mock_student_provider import (
-    MockStudentProviderSettings,
-    MockStudentProvider,
-)
+from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
@@ -32,117 +27,15 @@ from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
-from typing import List, Dict, Tuple
 
-from api.models.enums import RequirementsCriteria
-from benchmarking.evaluations.goals import ProjectRequirementGoal
-from benchmarking.evaluations.interfaces import Scenario, Goal
-
-
-class Gpa(AttributeValueEnum):
-    A = 1
-    B = 2
-    C = 3
-    D = 4
-
-
-class SatisfyProjectRequirements(Scenario):
-    @property
-    def name(self) -> str:
-        return "Students Meet Project Requirements"
-
-    @property
-    def goals(self) -> List[Goal]:
-        return [
-            ProjectRequirementGoal(
-                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
-            ),
-        ]
-
-
-class RegularClassSize(Run):
-    CLASS_SIZE = 120
-    NUMBER_OF_TEAMS = 24
-    NUMBER_OF_STUDENTS_PER_TEAM = 5
-    NUMBER_OF_PROJECTS = 3
-    CACHE_KEY = "priority_algorithm/larger_simple_runs/"
-
+class CombinedProjectsAndDiversityRun(Run):
     def start(self, num_trials: int = 30, generate_graphs: bool = False):
         # Ranges
         max_keep_range = [1] + list(range(5, 31, 5))
         max_spread_range = [1] + list(range(5, 31, 5))
         max_iterations_range = [1, 5, 10, 20, 30]
 
-        scenario = SatisfyProjectRequirements()
-
-        all_projects = [
-            Project(
-                _id=-1,
-                name="Project 1",
-                requirements=[
-                    ProjectRequirement(
-                        attribute=ScenarioAttribute.GPA.value,
-                        operator=RequirementOperator.EXACTLY,
-                        value=Gpa.A.value,
-                    ),
-                ],
-            ),
-            Project(
-                _id=-2,
-                name="Project 2",
-                requirements=[
-                    ProjectRequirement(
-                        attribute=ScenarioAttribute.GPA.value,
-                        operator=RequirementOperator.EXACTLY,
-                        value=Gpa.B.value,
-                    ),
-                ],
-            ),
-            Project(
-                _id=-3,
-                name="Project 3",
-                requirements=[
-                    ProjectRequirement(
-                        attribute=ScenarioAttribute.GPA.value,
-                        operator=RequirementOperator.EXACTLY,
-                        value=Gpa.C.value,
-                    )
-                ],
-            ),
-        ]
-
-        random.shuffle(all_projects)
-        projects = []
-        for idx, proj in enumerate(itertools.cycle(all_projects)):
-            projects.append(
-                Project(
-                    _id=idx,
-                    name=f"{proj.name} - {idx}",
-                    requirements=proj.requirements,
-                )
-            )
-
-            if len(projects) == self.NUMBER_OF_TEAMS:
-                break
-
-        initial_teams_provider = MockInitialTeamsProvider(
-            settings=MockInitialTeamsProviderSettings(
-                projects=projects,
-            )
-        )
-
-        student_provider_settings = MockStudentProviderSettings(
-            number_of_students=self.CLASS_SIZE,
-            attribute_ranges={
-                ScenarioAttribute.GPA.value: [
-                    (Gpa.A.value, float(1 / 15)),
-                    (Gpa.B.value, float(1 / 15)),
-                    (Gpa.C.value, float(1 / 15)),
-                    (Gpa.D.value, float(12 / 15)),
-                ],
-            },
-        )
-
+        scenario = DiversityAndProjectsScenario()
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
                 goals_to_priorities(scenario.goals),
@@ -154,7 +47,7 @@ class RegularClassSize(Run):
             settings=SimulationSettings(
                 scenario=scenario,
                 student_provider=MockStudentProvider(student_provider_settings),
-                cache_key=f"priority_algorithm/larger_simple_runs/class_size_120/projects_run/",
+                cache_key=f"priority_algorithm/larger_simple_runs/class_size_120/combined_run/",
                 initial_teams_provider=initial_teams_provider,
             ),
             algorithm_set={
@@ -264,5 +157,51 @@ class RegularClassSize(Run):
                 plt.show()
 
 
-if __name__ == "__main__":
-    typer.run(RegularClassSize().start)
+class DiversityAndProjectsScenario(Scenario):
+    def __init__(self, value_of_female, value_of_math, value_of_21):
+        self.value_of_female = value_of_female
+        self.value_of_math = value_of_math
+        self.value_of_21 = value_of_21
+
+    @property
+    def name(self):
+        return "Diversify constraints with project constrains"
+
+    @property
+    def goals(self) -> List[Goal]:
+        return [
+            DiversityGoal(
+                DiversifyType.DIVERSIFY,
+                ScenarioAttribute.GENDER.value,
+                tokenization_constraint=TokenizationConstraint(
+                    direction=TokenizationConstraintDirection.MIN_OF,
+                    threshold=2,
+                    value=self.value_of_female,
+                ),
+            ),
+            DiversityGoal(
+                DiversifyType.DIVERSIFY,
+                ScenarioAttribute.MAJOR.value,
+                tokenization_constraint=TokenizationConstraint(
+                    direction=TokenizationConstraintDirection.MIN_OF,
+                    threshold=2,
+                    value=self.value_of_math,
+                ),
+            ),
+            DiversityGoal(
+                DiversifyType.DIVERSIFY,
+                ScenarioAttribute.AGE.value,
+                tokenization_constraint=TokenizationConstraint(
+                    direction=TokenizationConstraintDirection.MIN_OF,
+                    threshold=2,
+                    value=self.value_of_21,
+                ),
+            ),
+            ProjectRequirementGoal(
+                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
+            ),
+            WeightGoal(
+                project_requirement_weight=1,
+                diversity_goal_weight=2,
+            ),
+        ]
