@@ -197,20 +197,26 @@ def run_and_save(idx):
 
     our_teamset = priority_algorithm.generate(all_students)
 
-    ok_dict = {}
+    ok_dict = {
+        'sid': [],
+        'group_num': [],
+        'first_name': [],
+        'last_name': [],
+        'year': [],
+        'gender': [],
+        'race': [],
+        'disc_times_options': [],
+    }
     for team in our_teamset.teams:
         for student in team.students:
-            ok_dict['sid'] = student.id
-            ok_dict['group_num'] = team.id
-            ok_dict['first_name'] = student.name.split(' ')[0]
-            ok_dict['last_name'] = student.name.split(' ')[1]
-            ok_dict['year'] = fromYearLevelToAlYearLevel(
-                student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]).value
-            ok_dict['gender'] = fromGenderToAlGender(
-                Gender(student.attributes[ScenarioAttribute.GENDER.value][0])).value
-            ok_dict['race'] = fromRaceToAlRace(Race(student.attributes[ScenarioAttribute.RACE.value][0])).value
-            ok_dict['disc_times_options'] = fromNumbersToTimeSlots(
-                student.attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value])
+            ok_dict['sid'].append(student.id)
+            ok_dict['group_num'].append(team.id)
+            ok_dict['first_name'].append(student.name.split(' ')[0])
+            ok_dict['last_name'].append(student.name.split(' ')[1])
+            ok_dict['year'].append(fromYearLevelToAlYearLevel(student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]).value)
+            ok_dict['gender'].append(fromGenderToAlGender(Gender(student.attributes[ScenarioAttribute.GENDER.value][0])).value)
+            ok_dict['race'].append(fromRaceToAlRace(Race(student.attributes[ScenarioAttribute.RACE.value][0])).value)
+            ok_dict['disc_times_options'].append(fromNumbersToTimeSlots(student.attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value]))
 
     df = pd.DataFrame.from_dict(ok_dict)
     df.to_csv(f'/home/phngtuki/algorithms/benchmarking/runs/our_correct_data/our{idx + 1}.csv')
