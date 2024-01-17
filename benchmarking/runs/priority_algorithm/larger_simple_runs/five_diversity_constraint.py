@@ -79,7 +79,7 @@ class FiveDiversityConstraint(Run):
                         num_teams=num_teams,
                         scenario=scenario,
                         student_provider=student_providers[class_size],
-                        cache_key=f"priority_algorithm/larger_simple_runs/class_size_{class_size}/five_diversity_constraint/",
+                        cache_key=f"priority_algorithm/larger_simple_runs/class_size_{class_size}/five_diversity_constraint/please_work",
                     ),
                     algorithm_set={
                         AlgorithmType.PRIORITY: [
@@ -87,7 +87,7 @@ class FiveDiversityConstraint(Run):
                                 MAX_KEEP=max_keep,
                                 MAX_SPREAD=max_spread,
                                 MAX_ITERATE=max_iterations,
-                                MAX_TIME=99999999999,
+                                MAX_TIME=1000001,
                                 START_TYPE=start_type,
                                 name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}-{start_type.value}_start",
                             )
