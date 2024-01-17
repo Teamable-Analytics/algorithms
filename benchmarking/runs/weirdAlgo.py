@@ -1,5 +1,6 @@
 import csv
 import random
+from typing import List
 
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -9,16 +10,20 @@ from api.ai.interfaces.algorithm_options import PriorityAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.priority_algorithm.priority_algorithm import PriorityAlgorithm
 from api.models.enums import ScenarioAttribute, Gender, Race, fromAlRaceToRace, fromAlGenderToGender, fromRaceToAlRace, \
-    fromGenderToAlGender, fromYearLevelToAlYearLevel, fromNumbersToTimeSlots
+    fromGenderToAlGender, fromYearLevelToAlYearLevel, fromNumbersToTimeSlots, AlgorithmType
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
+from benchmarking.data.interfaces import StudentProvider
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProviderSettings, MockStudentProvider
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.concentrate_time_availability_and_diversify_gender_min_2_female import \
     ConcentrateTimeAvailabilityDiversifyGenderMin2Female
 from benchmarking.evaluations.scenarios.diversify_gender_min_2_female import DiversifyGenderMin2Female
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
+from benchmarking.simulation.simulation import Simulation
+from benchmarking.simulation.simulation_set import SimulationSet
+from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 def generate_data():
@@ -173,53 +178,64 @@ def run_and_save(idx):
     all_students = [student for team in weird_algo_teamset.teams for student in team.students]
     random.shuffle(all_students)
 
+    class CoolStudentProvider(StudentProvider):
+        def get(self, seed: int = None) -> List[Student]:
+            return self.students
+
+        def __init__(self, students):
+            self.students = students
+
+        def num_students(self):
+            return len(self.students)
+
+        def max_project_preferences_per_student(self) -> int:
+            pass
+
+
     scenario = ConcentrateTimeAvailabilityDiversifyGenderMin2Female(Gender.FEMALE.value)
-    priority_algorithm = PriorityAlgorithm(
-        algorithm_options=PriorityAlgorithmOptions(
-            priorities=goals_to_priorities(scenario.goals),
-            attributes_to_concentrate=[ScenarioAttribute.TIMESLOT_AVAILABILITY.value],
-            attributes_to_diversify=[ScenarioAttribute.GENDER.value],
-            max_project_preferences=0,
+
+    sim_result = SimulationSet(
+        settings=SimulationSettings(
+            scenario=scenario,
+            student_provider=CoolStudentProvider(all_students),
+            num_teams=weird_algo_teamset.num_teams,
+            cache_key=f'weirdAlgo/our_data-{idx + 1}',
         ),
-        algorithm_config=PriorityAlgorithmConfig(
-            MAX_KEEP=100,
-            MAX_SPREAD=100,
-            MAX_ITERATE=1500,
-            MAX_TIME=10000,
-        ),
-        team_generation_options=TeamGenerationOptions(
-            max_team_size=6,
-            min_team_size=3,
-            total_teams=weird_algo_teamset.num_teams,
-            initial_teams=[],
-        )
-    )
+        algorithm_set={
+            AlgorithmType.PRIORITY: [
+                PriorityAlgorithmConfig(
+                    MAX_KEEP=50,
+                    MAX_SPREAD=50,
+                    MAX_ITERATE=1000,
+                    MAX_TIME=10000,
+                )
+            ],
+        }
+    ).run(num_runs=30)
 
-    our_teamset = priority_algorithm.generate(all_students)
-
-    ok_dict = {
-        'sid': [],
-        'group_num': [],
-        'first_name': [],
-        'last_name': [],
-        'year': [],
-        'gender': [],
-        'race': [],
-        'disc_times_options': [],
-    }
-    for team in our_teamset.teams:
-        for student in team.students:
-            ok_dict['sid'].append(student.id)
-            ok_dict['group_num'].append(team.id)
-            ok_dict['first_name'].append(student.name.split(' ')[0])
-            ok_dict['last_name'].append(student.name.split(' ')[1])
-            ok_dict['year'].append(fromYearLevelToAlYearLevel(student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]).value)
-            ok_dict['gender'].append(fromGenderToAlGender(Gender(student.attributes[ScenarioAttribute.GENDER.value][0])).value)
-            ok_dict['race'].append(fromRaceToAlRace(Race(student.attributes[ScenarioAttribute.RACE.value][0])).value)
-            ok_dict['disc_times_options'].append(fromNumbersToTimeSlots(student.attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value]))
-
-    df = pd.DataFrame.from_dict(ok_dict)
-    df.to_csv(f'/home/phngtuki/algorithms/benchmarking/runs/our_correct_data/our{idx + 1}.csv')
+    # ok_dict = {
+    #     'sid': [],
+    #     'group_num': [],
+    #     'first_name': [],
+    #     'last_name': [],
+    #     'year': [],
+    #     'gender': [],
+    #     'race': [],
+    #     'disc_times_options': [],
+    # }
+    # for team in our_teamset.teams:
+    #     for student in team.students:
+    #         ok_dict['sid'].append(student.id)
+    #         ok_dict['group_num'].append(team.id)
+    #         ok_dict['first_name'].append(student.name.split(' ')[0])
+    #         ok_dict['last_name'].append(student.name.split(' ')[1])
+    #         ok_dict['year'].append(fromYearLevelToAlYearLevel(student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]).value)
+    #         ok_dict['gender'].append(fromGenderToAlGender(Gender(student.attributes[ScenarioAttribute.GENDER.value][0])).value)
+    #         ok_dict['race'].append(fromRaceToAlRace(Race(student.attributes[ScenarioAttribute.RACE.value][0])).value)
+    #         ok_dict['disc_times_options'].append(fromNumbersToTimeSlots(student.attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value]))
+    #
+    # df = pd.DataFrame.from_dict(ok_dict)
+    # df.to_csv(f'/home/phngtuki/algorithms/benchmarking/runs/our_correct_data/our{idx + 1}.csv')
 
 
 import threading
