@@ -161,7 +161,7 @@ def load_data():
 
 def run_and_save(idx):
     # df = pd.read_csv(f'/home/phngtuki/algorithms/benchmarking/runs/their_data/out-private-{idx + 1}.csv')
-    df = pd.read_csv(f'their_data/out-private-{idx + 1}.csv')
+    df = pd.read_csv(f'/home/phngtuki/algorithms/benchmarking/runs/data/their_data/out-private-{idx + 1}.csv')
     student_provider = CoolStudentProvider(idx)
     teams = {}
     for _, row in df.iterrows():
@@ -232,7 +232,7 @@ class CoolStudentProvider(StudentProvider):
 
     def __init__(self, idx):
         self.idx = idx
-        df = pd.read_csv(f'data/weird{idx}.csv', delimiter=';')
+        df = pd.read_csv(f'/home/phngtuki/algorithms/benchmarking/runs/data/weird{idx}.csv', delimiter=';')
         self.students = [Student(
             _id=row['SID'],
             name=row['First name'] + ' ' + row['Last name'],
