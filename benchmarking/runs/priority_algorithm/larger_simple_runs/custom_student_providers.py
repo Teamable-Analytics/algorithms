@@ -139,13 +139,14 @@ class CustomOneHundredAndTwentyStudentProvider(StudentProvider):
         ]
 
         students = [
-            Student(_id=i * 10 + student.id, attributes=student.attributes)
+            Student(_id=(12 * i + student.id), attributes=student.attributes)
             for student in student_template
             for i in range(1, 11)
         ]
 
         order = np.random.default_rng(seed=seed).permutation(len(students))
-        return [students[i] for i in order]
+        the_real_student_list = [students[i] for i in order]
+        return the_real_student_list
 
     @property
     def num_students(self) -> int:
