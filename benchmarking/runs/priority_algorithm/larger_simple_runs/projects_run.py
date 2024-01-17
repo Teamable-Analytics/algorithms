@@ -67,11 +67,11 @@ class RegularClassSize(Run):
     NUMBER_OF_PROJECTS = 3
     CACHE_KEY = "priority_algorithm/larger_simple_runs/"
 
-    def start(self, num_trials: int = 1, generate_graphs: bool = True):
+    def start(self, num_trials: int = 30, generate_graphs: bool = False):
         # Ranges
-        max_keep_range = [1, 2]  # [1] + list(range(5, 31, 5))
-        max_spread_range = [1, 2]  # [1] + list(range(5, 31, 5))
-        max_iterations_range = [1, 2]  # [1, 5, 10, 20, 30]
+        max_keep_range = [1] + list(range(5, 31, 5))
+        max_spread_range = [1] + list(range(5, 31, 5))
+        max_iterations_range = [1, 5, 10, 20, 30]
 
         scenario = SatisfyProjectRequirements()
 
