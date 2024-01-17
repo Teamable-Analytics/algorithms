@@ -7,7 +7,7 @@ from api.models.student import Student
 if TYPE_CHECKING:
     from api.ai.priority_algorithm.custom_models import PriorityTeam
 
-NUM_BUCKETS = 25
+NUM_BUCKETS = 2
 
 
 def get_priority_satisfaction_array(
