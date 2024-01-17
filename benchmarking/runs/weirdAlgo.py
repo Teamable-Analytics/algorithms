@@ -160,8 +160,7 @@ def load_data():
 
 
 def run_and_save(idx):
-    # df = pd.read_csv(f'/home/phngtuki/algorithms/benchmarking/runs/their_data/out-private-{idx + 1}.csv')
-    df = pd.read_csv(f'/home/phngtuki/algorithms/benchmarking/runs/data/their_data/out-private-{idx + 1}.csv')
+    df = pd.read_csv(f'/home/phngtuki/algorithms/benchmarking/runs/their_data/out-private-{idx + 1}.csv')
     student_provider = CoolStudentProvider(idx)
     teams = {}
     for _, row in df.iterrows():
