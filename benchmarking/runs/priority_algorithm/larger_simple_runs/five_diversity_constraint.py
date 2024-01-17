@@ -79,7 +79,7 @@ class FiveDiversityConstraint(Run):
                         num_teams=num_teams,
                         scenario=scenario,
                         student_provider=student_providers[class_size],
-                        cache_key=f"priority_algorithm/larger_simple_runs/class_size_{class_size}/five_diversity_constraint/please_work",
+                        cache_key=f"priority_algorithm/larger_simple_runs/class_size_{class_size}/five_diversity_constraint/25_buckets",
                     ),
                     algorithm_set={
                         AlgorithmType.PRIORITY: [
