@@ -198,7 +198,7 @@ def run_and_save(idx):
         settings=SimulationSettings(
             scenario=scenario,
             student_provider=CoolStudentProvider(all_students),
-            num_teams=weird_algo_teamset.num_teams(),
+            num_teams=weird_algo_teamset.num_teams,
             cache_key=f'weirdAlgo/our_data-{idx + 1}',
         ),
         algorithm_set={
