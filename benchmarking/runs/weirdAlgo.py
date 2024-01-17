@@ -185,9 +185,11 @@ def run_and_save(idx):
         def __init__(self, students):
             self.students = students
 
+        @property
         def num_students(self):
             return len(self.students)
 
+        @property
         def max_project_preferences_per_student(self) -> int:
             pass
 
