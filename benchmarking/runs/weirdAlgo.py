@@ -254,30 +254,10 @@ class CoolStudentProvider(StudentProvider):
         return 0
 
 
-import threading
-
-
-def run_and_save_multithreads():
-    def worker(start, end):
-        for idx in range(start, end):
-            run_and_save(idx)
-
-    num_threads = 1000
-
-    step = 1000 // num_threads
-    ranges = [(i * step, (i + 1) * step) for i in range(num_threads)]
-
-    threads = []
-    for start, end in ranges:
-        thread = threading.Thread(target=worker, args=(start, end))
-        thread.start()
-        threads.append(thread)
-
-    for thread in threads:
-        thread.join()
 
 
 if __name__ == "__main__":
     # load_data()
     # generate_data()
-    run_and_save_multithreads()
+    for idx in range(1000):
+        run_and_save(idx)
