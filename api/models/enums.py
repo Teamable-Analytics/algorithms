@@ -157,10 +157,10 @@ def fromGenderToAlGender(gender: Gender) -> AlGender:
         return  AlGender.Female
     return AlGender.Other
 
-def fromAlGenderToGender(alGenderNum: int) -> Gender:
-    if alGenderNum == 0:
+def fromAlGenderToGender(alGenderNum: int or str) -> Gender:
+    if alGenderNum == 0 or alGenderNum == 'Male':
         return Gender.FEMALE
-    if alGenderNum == 1:
+    if alGenderNum == 1 or alGenderNum == 'Female':
         return Gender.MALE
     return Gender.OTHER
 
@@ -180,20 +180,20 @@ def fromRaceToAlRace(race: Race) -> AlRace:
     if race == Race.Other:
         return AlRace.Multiple_Races
 
-def fromAlRaceToRace(alRaceNum: int) -> Race:
-    if alRaceNum == 0:
+def fromAlRaceToRace(alRaceNum: int or str) -> Race:
+    if alRaceNum == 0 or alRaceNum == "White":
         return Race.European
-    if alRaceNum == 1:
+    if alRaceNum == 1 or alRaceNum == "Asian":
         return Race.South_Asian
-    if alRaceNum == 2:
+    if alRaceNum == 2 or alRaceNum == "Hispanic":
         return Race.Hispanic_or_Latin_American
-    if alRaceNum == 3:
+    if alRaceNum == 3 or alRaceNum == "Black/African American":
         return Race.African
-    if alRaceNum == 4:
+    if alRaceNum == 4 or alRaceNum == "Indegenous":
         return Race.First_Nations_or_Indigenous
-    if alRaceNum == 5:
+    if alRaceNum == 5 or alRaceNum == "Middle-Eastern":
         return Race.Middle_Eastern
-    if alRaceNum == 6:
+    if alRaceNum == 6 or alRaceNum == "Multiple races":
         return Race.Other
 
 
@@ -208,6 +208,19 @@ def fromYearLevelToAlYearLevel(yearLevel: int) -> AlYearLevel:
     if yearLevel == 3:
         return AlYearLevel.Senior
     return AlYearLevel.Graduate
+
+
+def fromAlYearLevelToYearLevel(alYearLevel: str) -> int:
+    if 'freshman' in alYearLevel.lower():
+        return 0
+    if 'sophomore' in alYearLevel.lower():
+        return 1
+    if 'junior' in alYearLevel.lower():
+        return 2
+    if 'senior' in alYearLevel.lower():
+        return 3
+    return 4
+
 
 def fromNumbersToTimeSlots(numbers: List[int]) -> List[str]:
     return [fromNumberToTimeslot(number) for number in numbers]
@@ -225,3 +238,20 @@ def fromNumberToTimeslot(number: int) -> str:
         return "10-11 M/W"
     if number == 6:
         return "11-12 M/W"
+
+def fromTimeslotToNumber(timeslot: str) -> int:
+    if timeslot == "1-2 M/W":
+        return 1
+    if timeslot == "2-3 M/W":
+        return 2
+    if timeslot == "3-4 M/W":
+        return 3
+    if timeslot == "4-5 M/W":
+        return 4
+    if timeslot == "10-11 M/W":
+        return 5
+    if timeslot == "11-12 M/W":
+        return 6
+
+def fromTimeslotsToNumbers(timeslots: List[str]) -> List[int]:
+    return [fromTimeslotToNumber(timeslot) for timeslot in timeslots]

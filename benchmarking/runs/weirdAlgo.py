@@ -10,7 +10,8 @@ from api.ai.interfaces.algorithm_options import PriorityAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.priority_algorithm.priority_algorithm import PriorityAlgorithm
 from api.models.enums import ScenarioAttribute, Gender, Race, fromAlRaceToRace, fromAlGenderToGender, fromRaceToAlRace, \
-    fromGenderToAlGender, fromYearLevelToAlYearLevel, fromNumbersToTimeSlots, AlgorithmType
+    fromGenderToAlGender, fromYearLevelToAlYearLevel, fromNumbersToTimeSlots, AlgorithmType, fromAlYearLevelToYearLevel, \
+    fromTimeslotsToNumbers
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
@@ -64,6 +65,7 @@ def generate_data():
             writer.writeheader()
             writer.writerows(students_weird)
 
+
 def load_data():
     scenario = ConcentrateTimeAvailabilityDiversifyGenderMin2Female(Gender.FEMALE.value)
     metric = PrioritySatisfaction(
@@ -77,7 +79,7 @@ def load_data():
     NUM_DATAPOINT = 1000
 
     for idx in range(NUM_DATAPOINT):
-        df = pd.read_csv(f'their_data/out-private-{idx+1}.csv')
+        df = pd.read_csv(f'their_data/out-private-{idx + 1}.csv')
         teams = {}
         for _, row in df.iterrows():
             new_student = Student(
@@ -87,7 +89,8 @@ def load_data():
                     ScenarioAttribute.YEAR_LEVEL.value: [int(row['year'])],
                     ScenarioAttribute.RACE.value: [fromAlRaceToRace(int(row['race'])).value],
                     ScenarioAttribute.GENDER.value: [fromAlGenderToGender(int(row['gender'])).value],
-                    ScenarioAttribute.TIMESLOT_AVAILABILITY.value: list(map(int, row['disc_times_options'].strip("[']").split(','))),
+                    ScenarioAttribute.TIMESLOT_AVAILABILITY.value: list(
+                        map(int, row['disc_times_options'].strip("[']").split(','))),
                 }
             )
             if row['group_num'] not in teams:
@@ -129,13 +132,16 @@ def load_data():
                 ok_dict['group_num'] = team.id
                 ok_dict['first_name'] = student.name.split(' ')[0]
                 ok_dict['last_name'] = student.name.split(' ')[1]
-                ok_dict['year'] = fromYearLevelToAlYearLevel(student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]).value
-                ok_dict['gender'] = fromGenderToAlGender(Gender(student.attributes[ScenarioAttribute.GENDER.value][0])).value
+                ok_dict['year'] = fromYearLevelToAlYearLevel(
+                    student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]).value
+                ok_dict['gender'] = fromGenderToAlGender(
+                    Gender(student.attributes[ScenarioAttribute.GENDER.value][0])).value
                 ok_dict['race'] = fromRaceToAlRace(Race(student.attributes[ScenarioAttribute.RACE.value][0])).value
-                ok_dict['disc_times_options'] = fromNumbersToTimeSlots(student.attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value])
+                ok_dict['disc_times_options'] = fromNumbersToTimeSlots(
+                    student.attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value])
 
         df = pd.DataFrame.from_dict(ok_dict)
-        df.to_csv(f'our_data/our{idx+1}.csv')
+        df.to_csv(f'our_data/our{idx + 1}.csv')
 
         their_score = metric.calculate(weird_algo_teamset)
         their_scores.append(their_score)
@@ -143,7 +149,6 @@ def load_data():
         our_scores.append(our_score)
 
         print(f'Our score: {our_score}, their score: {their_score}')
-
 
     # plot duo line graphs, y is score, x is idx
     plt.plot(range(NUM_DATAPOINT), their_scores, label='their')
@@ -155,7 +160,9 @@ def load_data():
 
 
 def run_and_save(idx):
-    df = pd.read_csv(f'/home/phngtuki/algorithms/benchmarking/runs/their_data/out-private-{idx + 1}.csv')
+    # df = pd.read_csv(f'/home/phngtuki/algorithms/benchmarking/runs/their_data/out-private-{idx + 1}.csv')
+    df = pd.read_csv(f'their_data/out-private-{idx + 1}.csv')
+    student_provider = CoolStudentProvider(idx)
     teams = {}
     for _, row in df.iterrows():
         new_student = Student(
@@ -175,31 +182,10 @@ def run_and_save(idx):
 
     weird_algo_teamset = TeamSet(teams=list(teams.values()))
 
-    all_students = [student for team in weird_algo_teamset.teams for student in team.students]
-    random.shuffle(all_students)
-
-    class CoolStudentProvider(StudentProvider):
-        def get(self, seed: int = None) -> List[Student]:
-            return self.students
-
-        def __init__(self, students):
-            self.students = students
-
-        @property
-        def num_students(self):
-            return len(self.students)
-
-        @property
-        def max_project_preferences_per_student(self) -> int:
-            pass
-
-
-    scenario = ConcentrateTimeAvailabilityDiversifyGenderMin2Female(Gender.FEMALE.value)
-
     sim_result = SimulationSet(
         settings=SimulationSettings(
-            scenario=scenario,
-            student_provider=CoolStudentProvider(all_students),
+            scenario=ConcentrateTimeAvailabilityDiversifyGenderMin2Female(Gender.FEMALE.value),
+            student_provider=student_provider,
             num_teams=weird_algo_teamset.num_teams,
             cache_key=f'weirdAlgo/our_data-{idx + 1}',
         ),
@@ -240,12 +226,42 @@ def run_and_save(idx):
     # df.to_csv(f'/home/phngtuki/algorithms/benchmarking/runs/our_correct_data/our{idx + 1}.csv')
 
 
+class CoolStudentProvider(StudentProvider):
+    def get(self, seed: int = None) -> List[Student]:
+        return self.students
+
+    def __init__(self, idx):
+        self.idx = idx
+        df = pd.read_csv(f'data/weird{idx}.csv', delimiter=';')
+        self.students = [Student(
+            _id=row['SID'],
+            name=row['First name'] + ' ' + row['Last name'],
+            attributes={
+                ScenarioAttribute.YEAR_LEVEL.value: [fromAlYearLevelToYearLevel(row['What year are you'])],
+                ScenarioAttribute.RACE.value: [
+                    fromAlRaceToRace(row['Which of these options best describes your race?']).value],
+                ScenarioAttribute.GENDER.value: [fromAlGenderToGender(row['How do you self-identify?']).value],
+                ScenarioAttribute.TIMESLOT_AVAILABILITY.value: fromTimeslotsToNumbers(
+                    row['discussion section times'].strip("[']").split(','))
+            }
+        ) for _, row in df.iterrows()]
+
+    @property
+    def num_students(self):
+        return len(self.students)
+
+    @property
+    def max_project_preferences_per_student(self) -> int:
+        return 0
+
+
 import threading
+
+
 def run_and_save_multithreads():
     def worker(start, end):
         for idx in range(start, end):
             run_and_save(idx)
-
 
     num_threads = 1000
 
@@ -258,9 +274,9 @@ def run_and_save_multithreads():
         thread.start()
         threads.append(thread)
 
-
     for thread in threads:
         thread.join()
+
 
 if __name__ == "__main__":
     # load_data()

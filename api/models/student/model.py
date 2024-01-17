@@ -52,7 +52,7 @@ class Student:
             'SID': self.id,
             'First name': self.name.split()[0],
             'Last name': self.name.split()[1],
-            'What year are you': fromYearLevelToAlYearLevel(self.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]),
+            'What year are you': fromYearLevelToAlYearLevel(self.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]).value,
             'Would you like to be part of a course study group?': 'Yes',
             'Do you have an existing study group of size 2-6 in mind': 'No',
             'timezone offset': '-7',  # all the same timezone
