@@ -65,7 +65,6 @@ class RegularClassSize(Run):
     NUMBER_OF_TEAMS = 24
     NUMBER_OF_STUDENTS_PER_TEAM = 5
     NUMBER_OF_PROJECTS = 3
-    CACHE_KEY = "priority_algorithm/larger_simple_runs/"
 
     def start(self, num_trials: int = 30, generate_graphs: bool = False):
         # Ranges
