@@ -13,6 +13,10 @@ from api.models.enums import (
     RequirementsCriteria,
 )
 from api.models.tokenization_constraint import TokenizationConstraint
+from benchmarking.data.simulated_data.mock_initial_teams_provider import (
+    MockInitialTeamsProvider,
+    MockInitialTeamsProviderSettings,
+)
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
 from benchmarking.evaluations.goals import (
     DiversityGoal,
@@ -22,6 +26,12 @@ from benchmarking.evaluations.goals import (
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.runs.interfaces import Run
+from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_projects import (
+    get_custom_projects,
+)
+from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import (
+    CustomOneHundredAndTwentyStudentWithProjectAttributesProvider,
+)
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
@@ -43,10 +53,16 @@ class CombinedProjectsAndDiversityRun(Run):
             ),
         }
 
+        initial_teams_provider = MockInitialTeamsProvider(
+            settings=MockInitialTeamsProviderSettings(
+                projects=get_custom_projects(),
+            )
+        )
+
         artifact: SimulationSetArtifact = SimulationSet(
             settings=SimulationSettings(
                 scenario=scenario,
-                student_provider=MockStudentProvider(student_provider_settings),
+                student_provider=CustomOneHundredAndTwentyStudentWithProjectAttributesProvider(),
                 cache_key=f"priority_algorithm/larger_simple_runs/class_size_120/combined_run/",
                 initial_teams_provider=initial_teams_provider,
             ),
@@ -170,6 +186,9 @@ class DiversityAndProjectsScenario(Scenario):
     @property
     def goals(self) -> List[Goal]:
         return [
+            ProjectRequirementGoal(
+                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
+            ),
             DiversityGoal(
                 DiversifyType.DIVERSIFY,
                 ScenarioAttribute.GENDER.value,
@@ -197,11 +216,8 @@ class DiversityAndProjectsScenario(Scenario):
                     value=self.value_of_21,
                 ),
             ),
-            ProjectRequirementGoal(
-                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
-            ),
             WeightGoal(
-                project_requirement_weight=1,
-                diversity_goal_weight=2,
+                project_requirement_weight=2,
+                diversity_goal_weight=1,
             ),
         ]

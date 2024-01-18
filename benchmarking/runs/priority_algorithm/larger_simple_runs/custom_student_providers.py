@@ -1,11 +1,6 @@
 from enum import Enum
 from typing import List
 
-from api.models.project import Project
-from api.models.project import ProjectRequirement
-import random
-import itertools
-
 import numpy as np
 
 from api.models.enums import (
@@ -25,199 +20,170 @@ class Major(Enum):
     COMP_SCI = 2
 
 
+PROGRAMMING_LANGUAGE = 10
+
+
 class CustomOneHundredAndTwentyStudentWithProjectAttributesProvider(StudentProvider):
     CLASS_SIZE = 120
     NUMBER_OF_TEAMS = 30
 
     def get(self, seed: int = None) -> List[Student]:
+        rng = np.random.default_rng(seed=seed)
+
         student_template = [
-            Student(
-                _id=12,
-                attributes={
-                    ScenarioAttribute.GENDER.value: [Gender.MALE.value],
-                    ScenarioAttribute.GPA.value: [Gpa.A.value],
-                    ScenarioAttribute.AGE.value: [20],
-                    ScenarioAttribute.MAJOR.value: [Major.COMP_SCI.value],
-                    ScenarioAttribute.RACE.value: [Race.European.value],
-                },
-            ),
-            Student(
-                _id=1,
-                attributes={
-                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
-                    ScenarioAttribute.GPA.value: [Gpa.B.value],
-                    ScenarioAttribute.AGE.value: [20],
-                    ScenarioAttribute.MAJOR.value: [Major.MATH.value],
-                    ScenarioAttribute.RACE.value: [Race.African.value],
-                },
-            ),
-            Student(
-                _id=2,
-                attributes={
-                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
-                    ScenarioAttribute.GPA.value: [Gpa.B.value],
-                    ScenarioAttribute.AGE.value: [21],
-                    ScenarioAttribute.MAJOR.value: [Major.MATH.value],
-                    ScenarioAttribute.RACE.value: [Race.European.value],
-                },
-            ),
-            Student(
-                _id=3,
-                attributes={
-                    ScenarioAttribute.GENDER.value: [Gender.MALE.value],
-                    ScenarioAttribute.GPA.value: [Gpa.A.value],
-                    ScenarioAttribute.AGE.value: [21],
-                    ScenarioAttribute.MAJOR.value: [Major.COMP_SCI.value],
-                    ScenarioAttribute.RACE.value: [Race.African.value],
-                },
-            ),
-            Student(
-                _id=4,
-                attributes={
-                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
-                    ScenarioAttribute.GPA.value: [Gpa.A.value],
-                    ScenarioAttribute.AGE.value: [20],
-                    ScenarioAttribute.MAJOR.value: [Major.MATH.value],
-                    ScenarioAttribute.RACE.value: [Race.European.value],
-                },
-            ),
-            Student(
-                _id=5,
-                attributes={
-                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
-                    ScenarioAttribute.GPA.value: [Gpa.B.value],
-                    ScenarioAttribute.AGE.value: [21],
-                    ScenarioAttribute.MAJOR.value: [Major.MATH.value],
-                    ScenarioAttribute.RACE.value: [Race.European.value],
-                },
-            ),
-            Student(
-                _id=6,
-                attributes={
-                    ScenarioAttribute.GENDER.value: [Gender.MALE.value],
-                    ScenarioAttribute.GPA.value: [Gpa.B.value],
-                    ScenarioAttribute.AGE.value: [21],
-                    ScenarioAttribute.MAJOR.value: [Major.COMP_SCI.value],
-                    ScenarioAttribute.RACE.value: [Race.African.value],
-                },
-            ),
-            Student(
-                _id=7,
-                attributes={
-                    ScenarioAttribute.GENDER.value: [Gender.MALE.value],
-                    ScenarioAttribute.GPA.value: [Gpa.A.value],
-                    ScenarioAttribute.AGE.value: [20],
-                    ScenarioAttribute.MAJOR.value: [Major.COMP_SCI.value],
-                    ScenarioAttribute.RACE.value: [Race.African.value],
-                },
-            ),
-            Student(
-                _id=8,
-                attributes={
-                    ScenarioAttribute.GENDER.value: [Gender.MALE.value],
-                    ScenarioAttribute.GPA.value: [Gpa.B.value],
-                    ScenarioAttribute.AGE.value: [20],
-                    ScenarioAttribute.MAJOR.value: [Major.MATH.value],
-                    ScenarioAttribute.RACE.value: [Race.European.value],
-                },
-            ),
-            Student(
-                _id=9,
-                attributes={
-                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
-                    ScenarioAttribute.GPA.value: [Gpa.B.value],
-                    ScenarioAttribute.AGE.value: [21],
-                    ScenarioAttribute.MAJOR.value: [Major.COMP_SCI.value],
-                    ScenarioAttribute.RACE.value: [Race.African.value],
-                },
-            ),
-            Student(
-                _id=10,
-                attributes={
-                    ScenarioAttribute.GENDER.value: [Gender.MALE.value],
-                    ScenarioAttribute.GPA.value: [Gpa.A.value],
-                    ScenarioAttribute.AGE.value: [20],
-                    ScenarioAttribute.MAJOR.value: [Major.MATH.value],
-                    ScenarioAttribute.RACE.value: [Race.African.value],
-                },
-            ),
-            Student(
-                _id=11,
-                attributes={
-                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
-                    ScenarioAttribute.GPA.value: [Gpa.A.value],
-                    ScenarioAttribute.AGE.value: [21],
-                    ScenarioAttribute.MAJOR.value: [Major.COMP_SCI.value],
-                    ScenarioAttribute.RACE.value: [Race.European.value],
-                },
-            ),
+            [
+                Student(
+                    _id=0,
+                    attributes={
+                        ScenarioAttribute.GENDER.value: [Gender.MALE.value],
+                        ScenarioAttribute.GPA.value: [Gpa.A.value],
+                        ScenarioAttribute.AGE.value: [20],
+                        ScenarioAttribute.MAJOR.value: [Major.COMP_SCI.value],
+                        ScenarioAttribute.RACE.value: [Race.European.value],
+                    },
+                ),
+                Student(
+                    _id=1,
+                    attributes={
+                        ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
+                        ScenarioAttribute.GPA.value: [Gpa.B.value],
+                        ScenarioAttribute.AGE.value: [20],
+                        ScenarioAttribute.MAJOR.value: [Major.MATH.value],
+                        ScenarioAttribute.RACE.value: [Race.African.value],
+                    },
+                ),
+                Student(
+                    _id=2,
+                    attributes={
+                        ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
+                        ScenarioAttribute.GPA.value: [Gpa.B.value],
+                        ScenarioAttribute.AGE.value: [21],
+                        ScenarioAttribute.MAJOR.value: [Major.MATH.value],
+                        ScenarioAttribute.RACE.value: [Race.European.value],
+                    },
+                ),
+                Student(
+                    _id=3,
+                    attributes={
+                        ScenarioAttribute.GENDER.value: [Gender.MALE.value],
+                        ScenarioAttribute.GPA.value: [Gpa.A.value],
+                        ScenarioAttribute.AGE.value: [21],
+                        ScenarioAttribute.MAJOR.value: [Major.COMP_SCI.value],
+                        ScenarioAttribute.RACE.value: [Race.African.value],
+                    },
+                ),
+            ],
+            [
+                Student(
+                    _id=4,
+                    attributes={
+                        ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
+                        ScenarioAttribute.GPA.value: [Gpa.A.value],
+                        ScenarioAttribute.AGE.value: [20],
+                        ScenarioAttribute.MAJOR.value: [Major.MATH.value],
+                        ScenarioAttribute.RACE.value: [Race.European.value],
+                    },
+                ),
+                Student(
+                    _id=5,
+                    attributes={
+                        ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
+                        ScenarioAttribute.GPA.value: [Gpa.B.value],
+                        ScenarioAttribute.AGE.value: [21],
+                        ScenarioAttribute.MAJOR.value: [Major.MATH.value],
+                        ScenarioAttribute.RACE.value: [Race.European.value],
+                    },
+                ),
+                Student(
+                    _id=6,
+                    attributes={
+                        ScenarioAttribute.GENDER.value: [Gender.MALE.value],
+                        ScenarioAttribute.GPA.value: [Gpa.B.value],
+                        ScenarioAttribute.AGE.value: [21],
+                        ScenarioAttribute.MAJOR.value: [Major.COMP_SCI.value],
+                        ScenarioAttribute.RACE.value: [Race.African.value],
+                    },
+                ),
+                Student(
+                    _id=7,
+                    attributes={
+                        ScenarioAttribute.GENDER.value: [Gender.MALE.value],
+                        ScenarioAttribute.GPA.value: [Gpa.A.value],
+                        ScenarioAttribute.AGE.value: [20],
+                        ScenarioAttribute.MAJOR.value: [Major.COMP_SCI.value],
+                        ScenarioAttribute.RACE.value: [Race.African.value],
+                    },
+                ),
+            ],
+            [
+                Student(
+                    _id=8,
+                    attributes={
+                        ScenarioAttribute.GENDER.value: [Gender.MALE.value],
+                        ScenarioAttribute.GPA.value: [Gpa.B.value],
+                        ScenarioAttribute.AGE.value: [20],
+                        ScenarioAttribute.MAJOR.value: [Major.MATH.value],
+                        ScenarioAttribute.RACE.value: [Race.European.value],
+                    },
+                ),
+                Student(
+                    _id=9,
+                    attributes={
+                        ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
+                        ScenarioAttribute.GPA.value: [Gpa.B.value],
+                        ScenarioAttribute.AGE.value: [21],
+                        ScenarioAttribute.MAJOR.value: [Major.COMP_SCI.value],
+                        ScenarioAttribute.RACE.value: [Race.African.value],
+                    },
+                ),
+                Student(
+                    _id=10,
+                    attributes={
+                        ScenarioAttribute.GENDER.value: [Gender.MALE.value],
+                        ScenarioAttribute.GPA.value: [Gpa.A.value],
+                        ScenarioAttribute.AGE.value: [20],
+                        ScenarioAttribute.MAJOR.value: [Major.MATH.value],
+                        ScenarioAttribute.RACE.value: [Race.African.value],
+                    },
+                ),
+                Student(
+                    _id=11,
+                    attributes={
+                        ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
+                        ScenarioAttribute.GPA.value: [Gpa.A.value],
+                        ScenarioAttribute.AGE.value: [21],
+                        ScenarioAttribute.MAJOR.value: [Major.COMP_SCI.value],
+                        ScenarioAttribute.RACE.value: [Race.European.value],
+                    },
+                ),
+            ],
         ]
 
         students = []
-        gpas = [Gpa.A.value, Gpa.B.value, Gpa.C.value]
-        for i in range(1, 11):
-            for pos, student in enumerate(student_template):
-                cloned_student = Student(
-                    _id=(12 * i + student.id),
-                    attributes={
-                        **student.attributes,
-                        ScenarioAttribute.GPA.value: [
-                            gpas[pos // 4] if pos % 4 == 0 else Gpa.D.value
-                        ],
-                    },
-                )
-                students.append(cloned_student)
+        for i in range(10):
+            for pos, ideal_team in enumerate(student_template):
+                project_num = i * 3 + pos
 
-        all_projects = [
-            Project(
-                _id=-1,
-                name="Project 1",
-                requirements=[
-                    ProjectRequirement(
-                        attribute=ScenarioAttribute.GPA.value,
-                        operator=RequirementOperator.EXACTLY,
-                        value=Gpa.A.value,
-                    ),
-                ],
-            ),
-            Project(
-                _id=-2,
-                name="Project 2",
-                requirements=[
-                    ProjectRequirement(
-                        attribute=ScenarioAttribute.GPA.value,
-                        operator=RequirementOperator.EXACTLY,
-                        value=Gpa.B.value,
-                    ),
-                ],
-            ),
-            Project(
-                _id=-3,
-                name="Project 3",
-                requirements=[
-                    ProjectRequirement(
-                        attribute=ScenarioAttribute.GPA.value,
-                        operator=RequirementOperator.EXACTLY,
-                        value=Gpa.C.value,
+                # Shuffle team to make a random member have the project attribute
+                order = np.random.default_rng(seed=seed).permutation(len(ideal_team))
+                ideal_team: List[Student] = [ideal_team[_] for _ in order]
+
+                for num, student in enumerate(ideal_team):
+                    cloned_student = Student(
+                        _id=(12 * i + student.id),
+                        attributes={
+                            **student.attributes,
+                        },
                     )
-                ],
-            ),
-        ]
-        random.shuffle(all_projects)
-        projects = []
-        for idx, proj in enumerate(itertools.cycle(all_projects)):
-            projects.append(
-                Project(
-                    _id=idx,
-                    name=f"{proj.name} - {idx}",
-                    requirements=proj.requirements,
-                )
-            )
+                    if num % 4 == 0:
+                        # Give the first member of each ideal team the attribute that satisfies the corresponding project
+                        cloned_student.attributes.update(
+                            {PROGRAMMING_LANGUAGE: [project_num]}
+                        )
 
-            if len(projects) == self.NUMBER_OF_TEAMS:
-                break
+                    students.append(cloned_student)
 
-        order = np.random.default_rng(seed=seed).permutation(len(students))
+        order = rng.permutation(len(students))
         the_real_student_list = [students[i] for i in order]
         return the_real_student_list
 

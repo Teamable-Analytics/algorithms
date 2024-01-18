@@ -36,7 +36,7 @@ from benchmarking.simulation.goal_to_priority import goals_to_priorities
 
 
 class FiveDiversityConstraint(Run):
-    def start(self, num_trials: int = 30, generate_graphs: bool = False):
+    def start(self, num_trials: int = 30, generate_graphs: bool = True):
         class_sizes = [120]
         num_teams = 30
         student_providers: Dict[int, StudentProvider] = {
