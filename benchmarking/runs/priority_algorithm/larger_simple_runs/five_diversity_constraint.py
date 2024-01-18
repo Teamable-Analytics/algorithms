@@ -66,6 +66,7 @@ class FiveDiversityConstraint(Run):
         metrics = get_metrics(scenario)
         start_types = [
             PriorityAlgorithmStartType.WEIGHT,
+            PriorityAlgorithmStartType.RANDOM,
         ]
 
         artifacts_dict = {
