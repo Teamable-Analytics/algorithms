@@ -35,7 +35,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 from typing import List, Dict, Tuple
 
 from api.models.enums import RequirementsCriteria
-from benchmarking.evaluations.goals import ProjectRequirementGoal
+from benchmarking.evaluations.goals import ProjectRequirementGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 
 
@@ -57,6 +57,7 @@ class SatisfyProjectRequirements(Scenario):
             ProjectRequirementGoal(
                 criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
             ),
+            WeightGoal(project_requirement_weight=1),
         ]
 
 
