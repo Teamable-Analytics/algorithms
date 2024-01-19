@@ -2,6 +2,7 @@ import re
 from typing import Dict, Tuple, List
 
 import numpy as np
+import typer
 from matplotlib import pyplot as plt
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
@@ -221,3 +222,7 @@ class DiversityAndProjectsScenario(Scenario):
                 diversity_goal_weight=1,
             ),
         ]
+
+
+if __name__ == "__main__":
+    typer.run(CombinedProjectsAndDiversityRun().start)
