@@ -12,13 +12,13 @@ from api.models.enums import (
     ScenarioAttribute,
     TokenizationConstraintDirection,
     RequirementsCriteria,
+    Gender,
 )
 from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProvider,
     MockInitialTeamsProviderSettings,
 )
-from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
 from benchmarking.evaluations.goals import (
     DiversityGoal,
     ProjectRequirementGoal,
@@ -32,6 +32,7 @@ from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_projects imp
 )
 from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import (
     CustomOneHundredAndTwentyStudentWithProjectAttributesProvider,
+    Major,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -46,7 +47,7 @@ class CombinedProjectsAndDiversityRun(Run):
         max_spread_range = [1] + list(range(5, 31, 5))
         max_iterations_range = [1, 5, 10, 20, 30]
 
-        scenario = DiversityAndProjectsScenario()
+        scenario = DiversityAndProjectsScenario(value_of_female=Gender.FEMALE.value, value_of_math=Major.MATH.value, value_of_21=21)
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
                 goals_to_priorities(scenario.goals),
