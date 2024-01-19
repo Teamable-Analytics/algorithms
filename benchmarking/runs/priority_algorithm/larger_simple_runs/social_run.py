@@ -1,6 +1,5 @@
-import itertools
-import random
 import re
+from typing import Dict, Tuple
 
 import numpy as np
 import typer
@@ -8,64 +7,27 @@ from matplotlib import pyplot as plt
 
 from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
-    WeightAlgorithmConfig,
 )
 from api.models.enums import (
-    ScenarioAttribute,
-    RequirementOperator,
     AlgorithmType,
-    AttributeValueEnum,
-)
-from api.models.project import Project, ProjectRequirement
-from benchmarking.data.simulated_data.mock_initial_teams_provider import (
-    MockInitialTeamsProvider,
-    MockInitialTeamsProviderSettings,
-)
-from benchmarking.data.simulated_data.mock_student_provider import (
-    MockStudentProviderSettings,
-    MockStudentProvider,
 )
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
+from benchmarking.evaluations.scenarios.include_social_friends import (
+    IncludeSocialFriends,
+)
 from benchmarking.runs.interfaces import Run
+from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import \
+    Custom120SocialStudentProvider
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
-from typing import List, Dict, Tuple
 
-from api.models.enums import RequirementsCriteria
-from benchmarking.evaluations.goals import ProjectRequirementGoal, WeightGoal
-from benchmarking.evaluations.interfaces import Scenario, Goal
-
-
-class Gpa(AttributeValueEnum):
-    A = 1
-    B = 2
-    C = 3
-    D = 4
-
-
-class SatisfyProjectRequirements(Scenario):
-    @property
-    def name(self) -> str:
-        return "Students Meet Project Requirements"
-
-    @property
-    def goals(self) -> List[Goal]:
-        return [
-            ProjectRequirementGoal(
-                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
-            ),
-            WeightGoal(project_requirement_weight=1),
-        ]
-
-
-class RegularClassSize(Run):
+class SocialRun(Run):
     CLASS_SIZE = 120
     NUMBER_OF_TEAMS = 30
     NUMBER_OF_STUDENTS_PER_TEAM = 4
-    NUMBER_OF_PROJECTS = 3
 
     def start(self, num_trials: int = 30, generate_graphs: bool = True):
         # Ranges
@@ -73,76 +35,7 @@ class RegularClassSize(Run):
         max_spread_range = [1] + list(range(5, 31, 5))
         max_iterations_range = [1, 5, 10, 20, 30]
 
-        scenario = SatisfyProjectRequirements()
-
-        all_projects = [
-            Project(
-                _id=-1,
-                name="Project 1",
-                requirements=[
-                    ProjectRequirement(
-                        attribute=ScenarioAttribute.GPA.value,
-                        operator=RequirementOperator.EXACTLY,
-                        value=Gpa.A.value,
-                    ),
-                ],
-            ),
-            Project(
-                _id=-2,
-                name="Project 2",
-                requirements=[
-                    ProjectRequirement(
-                        attribute=ScenarioAttribute.GPA.value,
-                        operator=RequirementOperator.EXACTLY,
-                        value=Gpa.B.value,
-                    ),
-                ],
-            ),
-            Project(
-                _id=-3,
-                name="Project 3",
-                requirements=[
-                    ProjectRequirement(
-                        attribute=ScenarioAttribute.GPA.value,
-                        operator=RequirementOperator.EXACTLY,
-                        value=Gpa.C.value,
-                    )
-                ],
-            ),
-        ]
-
-        random.shuffle(all_projects)
-        projects = []
-        for idx, proj in enumerate(itertools.cycle(all_projects)):
-            projects.append(
-                Project(
-                    _id=idx,
-                    name=f"{proj.name} - {idx}",
-                    requirements=proj.requirements,
-                )
-            )
-
-            if len(projects) == self.NUMBER_OF_TEAMS:
-                break
-
-        initial_teams_provider = MockInitialTeamsProvider(
-            settings=MockInitialTeamsProviderSettings(
-                projects=projects,
-            )
-        )
-
-        student_provider_settings = MockStudentProviderSettings(
-            number_of_students=self.CLASS_SIZE,
-            attribute_ranges={
-                ScenarioAttribute.GPA.value: [
-                    (Gpa.A.value, float(1 / 15)),
-                    (Gpa.B.value, float(1 / 15)),
-                    (Gpa.C.value, float(1 / 15)),
-                    (Gpa.D.value, float(12 / 15)),
-                ],
-            },
-        )
-
+        scenario = IncludeSocialFriends()
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
                 goals_to_priorities(scenario.goals),
@@ -153,9 +46,8 @@ class RegularClassSize(Run):
         artifact: SimulationSetArtifact = SimulationSet(
             settings=SimulationSettings(
                 scenario=scenario,
-                student_provider=MockStudentProvider(student_provider_settings),
-                cache_key=f"priority_algorithm/larger_simple_runs/class_size_120/projects_run/",
-                initial_teams_provider=initial_teams_provider,
+                student_provider=Custom120SocialStudentProvider(),
+                cache_key=f"priority_algorithm/larger_simple_runs/class_size_120/simple_social_run/",
             ),
             algorithm_set={
                 AlgorithmType.PRIORITY: [
@@ -255,7 +147,7 @@ class RegularClassSize(Run):
                 )
 
                 ax.set_title(
-                    f"Priority Algorithm Parameters vs Priorities Satisfied\n~3 Project Scenario, {max_iterations} iterations, 120 students~"
+                    f"Priority Algorithm Parameters vs Priorities Satisfied\n~Social Scenario, {max_iterations} iterations, 120 students~"
                 )
                 ax.set_xlabel("MAX_KEEP")
                 ax.set_ylabel("MAX_SPREAD")
@@ -265,4 +157,4 @@ class RegularClassSize(Run):
 
 
 if __name__ == "__main__":
-    typer.run(RegularClassSize().start)
+    typer.run(SocialRun().start)

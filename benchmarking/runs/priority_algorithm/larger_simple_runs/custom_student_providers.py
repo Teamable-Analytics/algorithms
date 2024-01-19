@@ -10,6 +10,7 @@ from api.models.enums import (
     Age,
     Race,
     RequirementOperator,
+    Relationship,
 )
 from api.models.student import Student
 from benchmarking.data.interfaces import StudentProvider
@@ -330,6 +331,27 @@ class CustomOneHundredAndTwentyStudentProvider(StudentProvider):
         order = np.random.default_rng(seed=seed).permutation(len(students))
         the_real_student_list = [students[i] for i in order]
         return the_real_student_list
+
+    @property
+    def num_students(self) -> int:
+        return 120
+
+    @property
+    def max_project_preferences_per_student(self) -> int:
+        return 0
+
+
+class Custom120SocialStudentProvider(StudentProvider):
+    def get(self, seed: int = None) -> List[Student]:
+        return [
+            Student(
+                _id=i,
+                relationships={
+                    i + 1 if i % 2 == 0 else i - 1: Relationship.FRIEND.value
+                },
+            )
+            for i in range(120)
+        ]
 
     @property
     def num_students(self) -> int:
