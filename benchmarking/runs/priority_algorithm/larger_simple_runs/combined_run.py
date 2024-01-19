@@ -47,7 +47,11 @@ class CombinedProjectsAndDiversityRun(Run):
         max_spread_range = [1] + list(range(5, 31, 5))
         max_iterations_range = [1, 5, 10, 20, 30]
 
-        scenario = DiversityAndProjectsScenario(value_of_female=Gender.FEMALE.value, value_of_math=Major.MATH.value, value_of_21=21)
+        scenario = DiversityAndProjectsScenario(
+            value_of_female=Gender.FEMALE.value,
+            value_of_math=Major.MATH.value,
+            value_of_21=21,
+        )
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
                 goals_to_priorities(scenario.goals),
