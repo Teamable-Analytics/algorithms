@@ -255,7 +255,7 @@ class RegularClassSize(Run):
                 )
 
                 ax.set_title(
-                    f"Priority Algorithm Parameters vs Priorities Satisfied\n~Five Diversity Constraint, {max_iterations} iterations, 120 students~"
+                    f"Priority Algorithm Parameters vs Priorities Satisfied\n~3 Project Scenario, {max_iterations} iterations, 120 students~"
                 )
                 ax.set_xlabel("MAX_KEEP")
                 ax.set_ylabel("MAX_SPREAD")

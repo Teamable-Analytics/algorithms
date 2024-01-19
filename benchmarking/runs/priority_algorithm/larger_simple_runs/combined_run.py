@@ -41,7 +41,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class CombinedProjectsAndDiversityRun(Run):
-    def start(self, num_trials: int = 30, generate_graphs: bool = False):
+    def start(self, num_trials: int = 30, generate_graphs: bool = True):
         # Ranges
         max_keep_range = [1] + list(range(5, 31, 5))
         max_spread_range = [1] + list(range(5, 31, 5))
@@ -170,7 +170,7 @@ class CombinedProjectsAndDiversityRun(Run):
                 )
 
                 ax.set_title(
-                    f"Priority Algorithm Parameters vs Priorities Satisfied\n~Five Diversity Constraint, {max_iterations} iterations, 120 students~"
+                    f"Priority Algorithm Parameters vs Priorities Satisfied\n~Project & Diversify Scenario, {max_iterations} iterations, 120 students~"
                 )
                 ax.set_xlabel("MAX_KEEP")
                 ax.set_ylabel("MAX_SPREAD")
