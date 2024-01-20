@@ -46,9 +46,7 @@ class Student:
             self.name = faker.Faker().name()
 
 
-    def to_weird_survey_thingy(self):
-        num_available_time = random.randint(3, 5)
-
+    def to_opponent_data_format(self):
         dictionary = {
             'Email Address': faker.Faker().email(),
             'SID': self.id,
@@ -59,7 +57,7 @@ class Student:
             'Do you have an existing study group of size 2-6 in mind': 'No',
             'timezone offset': '-7',  # all the same timezone
             'Would you like to attend the same discussion': 'Yes',
-            'discussion section times': ','.join(fromNumbersToTimeSlots(random.choices([1, 2, 3, 4, 5, 6], k=num_available_time))),
+            'discussion section times': fromNumbersToTimeSlots(self.attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value]),
             '2nd Group Member Berkeley Student Email': '',
             '3rd Group Member Berkeley Student Email': '',
             '4th Group Member Berkeley Student Email': '',

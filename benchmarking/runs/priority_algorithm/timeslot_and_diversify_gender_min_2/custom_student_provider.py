@@ -1,7 +1,8 @@
 import itertools
+import random
 from typing import List
 
-from api.models.enums import ScenarioAttribute, Gender
+from api.models.enums import ScenarioAttribute, Gender, Race
 from api.models.student import Student
 from benchmarking.data.interfaces import StudentProvider
 
@@ -21,6 +22,7 @@ class CustomTwelveHundredStudentProvider(StudentProvider):
                 _id=1,
                 attributes={
                     ScenarioAttribute.GENDER.value: [Gender.MALE.value],
+                    ScenarioAttribute.YEAR_LEVEL.value: [3],
                 },
             ),
             Student(
@@ -96,7 +98,7 @@ class CustomTwelveHundredStudentProvider(StudentProvider):
         team_cnt = 0
         for i in range(120):
             student = next(student_cycler)
-            if i % 4 == 0:
+            if i % 8 == 0:
                 team_cnt += 1
             timeslot_list = [j for j in range(team_cnt, team_cnt + 3)]
             students.append(
@@ -105,8 +107,11 @@ class CustomTwelveHundredStudentProvider(StudentProvider):
                     attributes={
                         **student.attributes,
                         ScenarioAttribute.TIMESLOT_AVAILABILITY.value: timeslot_list,
+                        ScenarioAttribute.YEAR_LEVEL.value: [3],
+                        ScenarioAttribute.RACE.value: [Race.Other.value],
                     },
                 )
             )
+        random.shuffle(students)
 
         return students

@@ -227,32 +227,11 @@ def fromNumbersToTimeSlots(numbers: List[int]) -> List[str]:
     return [fromNumberToTimeslot(number) for number in numbers]
 
 def fromNumberToTimeslot(number: int) -> str:
-    if number == 1:
-        return "1-2 M/W"
-    if number == 2:
-        return "2-3 M/W"
-    if number == 3:
-        return "3-4 M/W"
-    if number == 4:
-        return "4-5 M/W"
-    if number == 5:
-        return "10-11 M/W"
-    if number == 6:
-        return "11-12 M/W"
+    return str(number)
 
 def fromTimeslotToNumber(timeslot: str) -> int:
-    if timeslot == "1-2 M/W":
-        return 1
-    if timeslot == "2-3 M/W":
-        return 2
-    if timeslot == "3-4 M/W":
-        return 3
-    if timeslot == "4-5 M/W":
-        return 4
-    if timeslot == "10-11 M/W":
-        return 5
-    if timeslot == "11-12 M/W":
-        return 6
+    return int(timeslot)
+
 
 def fromTimeslotsToNumbers(timeslots: List[str]) -> List[int]:
     return [fromTimeslotToNumber(timeslot) for timeslot in timeslots]
