@@ -22,9 +22,15 @@ class AverageProjectRequirementsCoverage(TeamSetMetric):
                 raise ValueError(f"Team { team.id } has no requirements")
 
             for student in team.students:
-                all_requirements = [requirement for requirement in all_requirements if not student.meets_requirement(requirement)]
+                all_requirements = [
+                    requirement
+                    for requirement in all_requirements
+                    if not student.meets_requirement(requirement)
+                ]
 
-            total += (num_requirements - len(all_requirements)) / float(num_requirements)
+            total += (num_requirements - len(all_requirements)) / float(
+                num_requirements
+            )
 
         total /= len(team_set.teams)
 

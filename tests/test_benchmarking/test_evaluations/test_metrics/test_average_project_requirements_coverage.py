@@ -5,13 +5,15 @@ from api.models.project import ProjectRequirement
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
-from benchmarking.evaluations.metrics.average_project_requirements_coverage import AverageProjectRequirementsCoverage
+from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
+    AverageProjectRequirementsCoverage,
+)
 
 
 class TestAverageProjectRequirementsCoverage(unittest.TestCase):
     def setUp(self):
         self.teamset_that_all_meets_requirements = TeamSet(
-            _id='0',
+            _id="0",
             teams=[
                 Team(
                     _id=0,
@@ -53,7 +55,7 @@ class TestAverageProjectRequirementsCoverage(unittest.TestCase):
         )
 
         self.teamset_that_half_meets_requirements = TeamSet(
-            _id='1',
+            _id="1",
             teams=[
                 Team(
                     _id=0,
@@ -95,7 +97,7 @@ class TestAverageProjectRequirementsCoverage(unittest.TestCase):
         )
 
         self.teamset_that_none_meets_requirements = TeamSet(
-            _id='2',
+            _id="2",
             teams=[
                 Team(
                     _id=0,
@@ -137,7 +139,7 @@ class TestAverageProjectRequirementsCoverage(unittest.TestCase):
         )
 
         self.teamset_that_one_person_cover_all_requirements = TeamSet(
-            _id='3',
+            _id="3",
             teams=[
                 Team(
                     _id=0,
@@ -193,14 +195,14 @@ class TestAverageProjectRequirementsCoverage(unittest.TestCase):
                                 2: [0],
                                 3: [0],
                             },
-                        )
-                    ]
+                        ),
+                    ],
                 )
             ],
         )
 
         self.teamset_that_one_person_cover_half_requirements = TeamSet(
-            _id='4',
+            _id="4",
             teams=[
                 Team(
                     _id=0,
@@ -256,8 +258,8 @@ class TestAverageProjectRequirementsCoverage(unittest.TestCase):
                                 2: [0],
                                 3: [0],
                             },
-                        )
-                    ]
+                        ),
+                    ],
                 )
             ],
         )
@@ -269,7 +271,9 @@ class TestAverageProjectRequirementsCoverage(unittest.TestCase):
 
         self.assertEqual(1, actual)
 
-    def test_calculate__should_return_one_half_when_half_of_the_teams_meet_requirements(self):
+    def test_calculate__should_return_one_half_when_half_of_the_teams_meet_requirements(
+        self,
+    ):
         metric = AverageProjectRequirementsCoverage()
 
         actual = metric.calculate(self.teamset_that_half_meets_requirements)
@@ -290,10 +294,11 @@ class TestAverageProjectRequirementsCoverage(unittest.TestCase):
 
         self.assertEqual(1, actual)
 
-    def test_calculate__should_return_one_half_when_one_person_cover_half_requirements(self):
+    def test_calculate__should_return_one_half_when_one_person_cover_half_requirements(
+        self,
+    ):
         metric = AverageProjectRequirementsCoverage()
 
         actual = metric.calculate(self.teamset_that_one_person_cover_half_requirements)
 
         self.assertEqual(0.5, actual)
-
