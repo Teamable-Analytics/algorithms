@@ -285,7 +285,7 @@ class TestAverageTimeslotCoverage(unittest.TestCase):
             self.teamset_that_everyone_is_available_on_one_timeslot
         )
 
-        # 1/8 because everyone only has 1 available timeslot and there are 8 available timeslots
+        # 1/8 because everyone only has 1 available timeslot_and_diversify_gender_min_2 and there are 8 available timeslots
         self.assertEqual(1 / 8, actual)
 
     def test_calculate__should_return_0_noone_agrees_on_a_timeslot(self):

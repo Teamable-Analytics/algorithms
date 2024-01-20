@@ -28,7 +28,7 @@ class COSC341W2021T2StudentProvider(StudentProvider):
     def get(self, seed: int = None) -> List[Student]:
         """
         Returns a list of the students in COSC 341/51 in the W2021T2 semester.
-        Includes their friend/enemy relationships, gender (1), timeslot availability (7), year level (6), and intended effort level (100).
+        Includes their friend/enemy relationships, gender (1), timeslot_and_diversify_gender_min_2 availability (7), year level (6), and intended effort level (100).
 
         Seed shuffles student order.
         """
