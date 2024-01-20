@@ -63,15 +63,25 @@ def team_cosine_similarities(
         if len(team.students) <= 0:
             continue
         total = 0
+        num = 0
         for s1, s2 in itertools.combinations(team.students, 2):
             s1_vector = class_attributes.get_student_vector(s1)
             s2_vector = class_attributes.get_student_vector(s2)
             total += cosine_similarity(s1_vector, s2_vector)
-        similarities.append(total / len(team.students))
+            num += 1
+        team_avg = total / num
+        similarities.append(team_avg)
     return similarities
 
 
 def cosine_similarity(
     v1: List[Union[int, float]], v2: List[Union[int, float]]
 ) -> float:
+    """
+    Can return a number between 0 and the length of the vectors
+    """
+    if len(v1) != len(v2):
+        raise ValueError("Vectors must be the same length")
+    if len(v1) == 0 or len(v2) == 0:
+        raise ValueError("Vectors must not be empty")
     return dot(v1, v2) / (norm(v1) * norm(v2))
