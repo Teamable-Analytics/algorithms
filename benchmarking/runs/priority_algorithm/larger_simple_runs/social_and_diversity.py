@@ -9,7 +9,11 @@ from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
 )
 from api.models.enums import (
-    AlgorithmType, DiversifyType, ScenarioAttribute, TokenizationConstraintDirection, Gender,
+    AlgorithmType,
+    DiversifyType,
+    ScenarioAttribute,
+    TokenizationConstraintDirection,
+    Gender,
 )
 from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubject
@@ -24,7 +28,8 @@ from benchmarking.evaluations.metrics.utils.team_calculations import (
 )
 from benchmarking.runs.interfaces import Run
 from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import (
-    Major, Custom120SocialAndDiversityStudentProvider,
+    Major,
+    Custom120SocialAndDiversityStudentProvider,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -175,7 +180,16 @@ class SocialAndDiversity(Run):
 
 
 class SocialAndDiversityScenario(Scenario):
-    def __init__(self, max_num_friends: int, max_num_enemies: int, value_of_female: int, value_of_math: int, value_of_21: int, *args, **kwargs):
+    def __init__(
+        self,
+        max_num_friends: int,
+        max_num_enemies: int,
+        value_of_female: int,
+        value_of_math: int,
+        value_of_21: int,
+        *args,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
         self.max_num_friends = max_num_friends
         self.max_num_enemies = max_num_enemies
@@ -185,7 +199,9 @@ class SocialAndDiversityScenario(Scenario):
 
     @property
     def name(self):
-        return "Create teams that group social friends together then diversifies students"
+        return (
+            "Create teams that group social friends together then diversifies students"
+        )
 
     @property
     def goals(self) -> List[Goal]:

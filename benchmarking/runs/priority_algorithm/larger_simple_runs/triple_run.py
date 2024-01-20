@@ -10,7 +10,11 @@ from api.ai.interfaces.algorithm_config import (
 )
 from api.models.enums import (
     AlgorithmType,
-    RequirementsCriteria, DiversifyType, ScenarioAttribute, TokenizationConstraintDirection, Gender,
+    RequirementsCriteria,
+    DiversifyType,
+    ScenarioAttribute,
+    TokenizationConstraintDirection,
+    Gender,
 )
 from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.data.simulated_data.mock_initial_teams_provider import (
@@ -21,7 +25,8 @@ from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubjec
 from benchmarking.evaluations.goals import (
     PreferenceGoal,
     WeightGoal,
-    ProjectRequirementGoal, DiversityGoal,
+    ProjectRequirementGoal,
+    DiversityGoal,
 )
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.average_social_satisfied import (
@@ -36,7 +41,8 @@ from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_projects imp
     get_custom_projects,
 )
 from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import (
-    Major, Custom120SocialDiversityAndProjectStudentProvider,
+    Major,
+    Custom120SocialDiversityAndProjectStudentProvider,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -193,7 +199,16 @@ class TripleRun(Run):
 
 
 class TripleScenario(Scenario):
-    def __init__(self, max_num_friends: int, max_num_enemies: int, value_of_female: int, value_of_math: int, value_of_21: int, *args, **kwargs):
+    def __init__(
+        self,
+        max_num_friends: int,
+        max_num_enemies: int,
+        value_of_female: int,
+        value_of_math: int,
+        value_of_21: int,
+        *args,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
         self.max_num_friends = max_num_friends
         self.max_num_enemies = max_num_enemies
