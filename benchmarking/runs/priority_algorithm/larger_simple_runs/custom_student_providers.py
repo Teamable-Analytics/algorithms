@@ -390,17 +390,19 @@ class Custom120SocialAndDiversityStudentProvider(StudentProvider):
         students = []
         # Hi Bowen
         for i in range(120):
-            student = Student(
-                _id=i,
-                relationships={
-                    (i + 1 if i % 2 == 0 else i - 1): Relationship.FRIEND,
-                },
-                attributes={
-                    ScenarioAttribute.GENDER.value: (
-                        Gender.FEMALE.value if i < 6 else Gender.MALE.value
-                    ),
-                    ScenarioAttribute.AGE.value: (20 if i < 60 else 21),
-                },
+            students.append(
+                Student(
+                    _id=i,
+                    relationships={
+                        (i + 1 if i % 2 == 0 else i - 1): Relationship.FRIEND,
+                    },
+                    attributes={
+                        ScenarioAttribute.GENDER.value: (
+                            Gender.FEMALE.value if i < 6 else Gender.MALE.value
+                        ),
+                        ScenarioAttribute.AGE.value: (20 if i < 60 else 21),
+                    },
+                )
             )
 
         order = np.random.default_rng(seed=seed).permutation(120)
