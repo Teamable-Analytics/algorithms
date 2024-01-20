@@ -346,9 +346,7 @@ class Custom120SocialStudentProvider(StudentProvider):
         students = [
             Student(
                 _id=i,
-                relationships={
-                    i + 1 if i % 2 == 0 else i - 1: Relationship.FRIEND
-                },
+                relationships={i + 1 if i % 2 == 0 else i - 1: Relationship.FRIEND},
             )
             for i in range(120)
         ]
