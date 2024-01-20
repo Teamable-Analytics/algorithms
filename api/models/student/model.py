@@ -1,7 +1,11 @@
+import random
 from dataclasses import dataclass, field
 from typing import List, Dict
 
-from api.models.enums import Relationship, RequirementOperator
+import faker
+
+from api.models.enums import Relationship, RequirementOperator, fromYearLevelToAlYearLevel, ScenarioAttribute, \
+    fromNumbersToTimeSlots, fromGenderToAlGender, Gender, fromRaceToAlRace, Race
 from api.models.project import ProjectRequirement
 
 
@@ -36,3 +40,33 @@ class Student:
             else:  # default case is RequirementOperator.EXACTLY
                 is_met |= value == requirement.value
         return is_met
+
+    def __post_init__(self):
+        if not self.name:
+            self.name = faker.Faker().name()
+
+
+    def to_weird_survey_thingy(self):
+        num_available_time = random.randint(3, 5)
+
+        dictionary = {
+            'Email Address': faker.Faker().email(),
+            'SID': self.id,
+            'First name': self.name.split()[0],
+            'Last name': self.name.split()[1],
+            'What year are you': fromYearLevelToAlYearLevel(self.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]).value,
+            'Would you like to be part of a course study group?': 'Yes',
+            'Do you have an existing study group of size 2-6 in mind': 'No',
+            'timezone offset': '-7',  # all the same timezone
+            'Would you like to attend the same discussion': 'Yes',
+            'discussion section times': ','.join(fromNumbersToTimeSlots(random.choices([1, 2, 3, 4, 5, 6], k=num_available_time))),
+            '2nd Group Member Berkeley Student Email': '',
+            '3rd Group Member Berkeley Student Email': '',
+            '4th Group Member Berkeley Student Email': '',
+            '5th Group Member Berkeley Student Email': '',
+            '6th Group Member Berkeley Student Email': '',
+            'Will you be on the Berkeley campus': 'Yes',    # No remote students
+            'Which of these options best describes your race?': fromRaceToAlRace(Race(self.attributes[ScenarioAttribute.RACE.value][0])).value,
+            'How do you self-identify?': fromGenderToAlGender(Gender(self.attributes[ScenarioAttribute.GENDER.value][0])).value
+        }
+        return dictionary
