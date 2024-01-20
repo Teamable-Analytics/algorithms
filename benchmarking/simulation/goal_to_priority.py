@@ -6,6 +6,7 @@ from api.ai.priority_algorithm.priority.priority import (
     TokenizationPriority,
     RequirementPriority,
     ProjectPreferencePriority,
+    SocialPreferencePriority,
 )
 from benchmarking.evaluations.enums import PreferenceSubject
 from benchmarking.evaluations.goals import (
@@ -27,11 +28,17 @@ def goals_to_priorities(goals: List[Goal]) -> List[Priority]:
 
 
 def goal_to_priority(goal: Goal) -> Priority:
-    if isinstance(goal, PreferenceGoal) and goal.subject == PreferenceSubject.PROJECTS:
-        return ProjectPreferencePriority(
-            max_project_preferences=goal.max_project_preferences,
-            direction=goal.direction,
-        )
+    if isinstance(goal, PreferenceGoal):
+        if goal.subject == PreferenceSubject.PROJECTS:
+            return ProjectPreferencePriority(
+                max_project_preferences=goal.max_project_preferences,
+                direction=goal.direction,
+            )
+        if goal.subject in [PreferenceSubject.FRIENDS, PreferenceSubject.ENEMIES]:
+            return SocialPreferencePriority(
+                max_num_friends=goal.max_num_friends,
+                max_num_enemies=goal.max_num_enemies,
+            )
 
     if isinstance(goal, ProjectRequirementGoal):
         return RequirementPriority(
