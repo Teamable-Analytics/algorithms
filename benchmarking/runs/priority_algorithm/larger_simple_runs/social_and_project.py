@@ -79,7 +79,6 @@ class SocialAndProject(Run):
                 student_provider=Custom120SocialAndProjectsStudentProvider(),
                 initial_teams_provider=initial_teams_provider,
                 cache_key=f"priority_algorithm/larger_simple_runs/class_size_120/social_and_project/",
-                num_teams=30,
             ),
             algorithm_set={
                 AlgorithmType.PRIORITY: [
