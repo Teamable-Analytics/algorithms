@@ -69,11 +69,12 @@ class MockStudentProviderSettings:
 
         # Validate when attribute ranges are specified as a list of (value, % chance) tuples
         for attribute_id, range_config in self.attribute_ranges.items():
-            total_chance = sum([_[1] for _ in range_config])
-            if not math.isclose(total_chance, 1.0):
-                raise ValueError(
-                    f"attribute_ranges[{attribute_id}] must sum to 1. Found {total_chance}"
-                )
+            if isinstance(range_config[0], (int, AttributeValueEnum)):
+                total_chance = sum([_[1] for _ in range_config])
+                if not math.isclose(total_chance, 1):
+                    raise ValueError(
+                        f"attribute_ranges[{attribute_id}] must sum to 1. Found {total_chance}"
+                    )
 
 
 class MockStudentProvider(StudentProvider):
