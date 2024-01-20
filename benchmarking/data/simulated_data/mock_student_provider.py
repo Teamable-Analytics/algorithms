@@ -67,7 +67,7 @@ class MockStudentProviderSettings:
             )
 
         if self.attribute_ranges and not isinstance(
-            self.attribute_ranges[0], (int, AttributeValueEnum)
+            list(self.attribute_ranges.items())[0], (int, AttributeValueEnum)
         ):
             # Validate when attribute ranges are specified as a list of (value, % chance) tuples
             for attribute_id, range_config in self.attribute_ranges.items():
