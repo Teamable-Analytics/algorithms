@@ -397,10 +397,10 @@ class Custom120SocialAndDiversityStudentProvider(StudentProvider):
                         (i + 1 if i % 2 == 0 else i - 1): Relationship.FRIEND,
                     },
                     attributes={
-                        ScenarioAttribute.GENDER.value: (
+                        ScenarioAttribute.GENDER.value: [
                             Gender.FEMALE.value if i < 6 else Gender.MALE.value
-                        ),
-                        ScenarioAttribute.AGE.value: (20 if i < 60 else 21),
+                        ],
+                        ScenarioAttribute.AGE.value: [20 if i < 60 else 21],
                     },
                 )
             )
