@@ -361,3 +361,76 @@ class Custom120SocialStudentProvider(StudentProvider):
     @property
     def max_project_preferences_per_student(self) -> int:
         return 0
+
+
+class Custom120SocialAndProjectsStudentProvider(StudentProvider):
+    def get(self, seed: int = None) -> List[Student]:
+        students = Custom120SocialStudentProvider().get()
+
+        # Add project skills
+        for student in students:
+            if student._id % 4 == 0:
+                student.attributes.update({PROGRAMMING_LANGUAGE: [student._id // 4]})
+
+        order = np.random.default_rng(seed=seed).permutation(120)
+        real_students_of_ubc = [students[i] for i in order]
+        return real_students_of_ubc
+
+    @property
+    def num_students(self) -> int:
+        return 120
+
+    @property
+    def max_project_preferences_per_student(self) -> int:
+        return 0
+
+
+class Custom120SocialAndDiversityStudentProvider(StudentProvider):
+    def get(self, seed: int = None) -> List[Student]:
+        students = []
+        # Hi Bowen
+        for i in range(120):
+            student = Student(
+                _id=i,
+                relationships={
+                    (i + 1 if i % 2 == 0 else i - 1): Relationship.FRIEND,
+                },
+                attributes={
+                    ScenarioAttribute.GENDER.value: (
+                        Gender.FEMALE.value if i < 6 else Gender.MALE.value
+                    ),
+                    ScenarioAttribute.AGE.value: (20 if i < 60 else 21),
+                },
+            )
+
+        order = np.random.default_rng(seed=seed).permutation(120)
+        return [students[i] for i in order]
+
+    @property
+    def num_students(self) -> int:
+        return 120
+
+    @property
+    def max_project_preferences_per_student(self) -> int:
+        return 0
+
+
+class Custom120SocialDiversityAndProjectStudentProvider(StudentProvider):
+    def get(self, seed: int = None) -> List[Student]:
+        students = Custom120SocialAndDiversityStudentProvider().get()
+
+        # Add project skills
+        for student in students:
+            if student._id % 4 == 0:
+                student.attributes.update({PROGRAMMING_LANGUAGE: [student._id // 4]})
+
+        order = np.random.default_rng(seed=seed).permutation(120)
+        return [students[i] for i in order]
+
+    @property
+    def num_students(self) -> int:
+        return 120
+
+    @property
+    def max_project_preferences_per_student(self) -> int:
+        return 0
