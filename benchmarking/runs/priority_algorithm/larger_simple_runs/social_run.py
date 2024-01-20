@@ -11,7 +11,10 @@ from api.ai.interfaces.algorithm_config import (
 from api.models.enums import (
     AlgorithmType,
 )
+from benchmarking.evaluations.metrics.average_social_satisfied import AverageSocialSatisfaction
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
+from benchmarking.evaluations.metrics.utils.team_calculations import is_happy_team_allhp_friend, \
+    is_strictly_happy_team_friend
 from benchmarking.evaluations.scenarios.include_social_friends import (
     IncludeSocialFriends,
 )
@@ -29,7 +32,7 @@ class SocialRun(Run):
     NUMBER_OF_TEAMS = 30
     NUMBER_OF_STUDENTS_PER_TEAM = 4
 
-    def start(self, num_trials: int = 30, generate_graphs: bool = True):
+    def start(self, num_trials: int = 1, generate_graphs: bool = True):
         # Ranges
         max_keep_range = [1] + list(range(5, 31, 5))
         max_spread_range = [1] + list(range(5, 31, 5))
@@ -41,6 +44,9 @@ class SocialRun(Run):
                 goals_to_priorities(scenario.goals),
                 False,
             ),
+            "AverageSocialSatisfaction": AverageSocialSatisfaction(
+                metric_function=is_strictly_happy_team_friend
+            )
         }
 
         artifact: SimulationSetArtifact = SimulationSet(
@@ -48,6 +54,7 @@ class SocialRun(Run):
                 scenario=scenario,
                 student_provider=Custom120SocialStudentProvider(),
                 cache_key=f"priority_algorithm/larger_simple_runs/class_size_120/simple_social_run/",
+                num_teams=30
             ),
             algorithm_set={
                 AlgorithmType.PRIORITY: [

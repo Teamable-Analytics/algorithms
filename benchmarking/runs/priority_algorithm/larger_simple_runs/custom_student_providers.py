@@ -343,15 +343,18 @@ class CustomOneHundredAndTwentyStudentProvider(StudentProvider):
 
 class Custom120SocialStudentProvider(StudentProvider):
     def get(self, seed: int = None) -> List[Student]:
-        return [
+        students = [
             Student(
                 _id=i,
                 relationships={
-                    i + 1 if i % 2 == 0 else i - 1: Relationship.FRIEND.value
+                    i + 1 if i % 2 == 0 else i - 1: Relationship.FRIEND
                 },
             )
             for i in range(120)
         ]
+        order = np.random.default_rng(seed=seed).permutation(120)
+        real_students_of_ubc = [students[i] for i in order]
+        return real_students_of_ubc
 
     @property
     def num_students(self) -> int:
