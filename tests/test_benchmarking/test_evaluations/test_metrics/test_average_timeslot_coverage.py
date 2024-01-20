@@ -268,7 +268,7 @@ class TestAverageTimeslotCoverage(unittest.TestCase):
     def test_calculate__should_return_1_when_everyone_is_available(self):
         metrics = AverageTimeslotCoverage(
             available_timeslots=self.available_timeslots,
-            timeslot_attribute_value=ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
+            timeslot_attribute_id=ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
         )
 
         actual = metrics.calculate(self.teamset_that_everyone_is_available)
@@ -278,7 +278,7 @@ class TestAverageTimeslotCoverage(unittest.TestCase):
     def test_calculate__should_return_one_eighth_when_noone_is_available(self):
         metrics = AverageTimeslotCoverage(
             available_timeslots=self.available_timeslots,
-            timeslot_attribute_value=ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
+            timeslot_attribute_id=ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
         )
 
         actual = metrics.calculate(
@@ -291,7 +291,7 @@ class TestAverageTimeslotCoverage(unittest.TestCase):
     def test_calculate__should_return_0_noone_agrees_on_a_timeslot(self):
         metrics = AverageTimeslotCoverage(
             available_timeslots=self.available_timeslots,
-            timeslot_attribute_value=ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
+            timeslot_attribute_id=ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
         )
 
         actual = metrics.calculate(self.teamset_that_noone_agree_on_one_timeslot)
@@ -301,7 +301,7 @@ class TestAverageTimeslotCoverage(unittest.TestCase):
     def test_calculate__should_return_0_when_noone_is_available_mutually(self):
         metrics = AverageTimeslotCoverage(
             available_timeslots=self.available_timeslots,
-            timeslot_attribute_value=ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
+            timeslot_attribute_id=ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
         )
 
         actual = metrics.calculate(

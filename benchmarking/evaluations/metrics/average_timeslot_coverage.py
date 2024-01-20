@@ -13,13 +13,13 @@ class AverageTimeslotCoverage(TeamSetMetric):
     def __init__(
         self,
         available_timeslots: List[int],
-        timeslot_attribute_value: int = ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
+        timeslot_attribute_id: int = ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
         *args,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.available_timeslots = available_timeslots
-        self.timeslot_attribute_value = timeslot_attribute_value
+        self.timeslot_attribute_value = timeslot_attribute_id
 
         if len(available_timeslots) == 0:
             raise ValueError("There must be at least one available timeslot")
