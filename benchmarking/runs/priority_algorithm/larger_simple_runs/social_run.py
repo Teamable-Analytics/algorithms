@@ -39,8 +39,8 @@ class SocialRun(Run):
     def start(self, num_trials: int = 30, generate_graphs: bool = False):
         # Ranges
         max_keep_range = [1] + list(range(5, 31, 5))
-        max_spread_range = [1] + list(range(5, 31, 5))
-        max_iterations_range = [1, 5, 10, 20, 30]
+        max_spread_range = [1] + list(range(5, 31, 5)) + [100]
+        max_iterations_range = [1, 5, 10, 20, 30, 250]
 
         scenario = IncludeSocialFriends(
             max_num_friends=1,
