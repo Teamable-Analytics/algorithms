@@ -79,5 +79,5 @@ class TimeSlotAndDiversifyGenderMin2(Run):
 
 if __name__ == '__main__':
     typer.run(
-        TimeSlotAndDiversifyGenderMin2().generate_student_csv
+        TimeSlotAndDiversifyGenderMin2().start
     )
