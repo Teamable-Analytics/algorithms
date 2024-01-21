@@ -16,7 +16,7 @@ class CustomStudentProvider(StudentProvider):
     def max_project_preferences_per_student(self) -> int:
         return 0
 
-    def get_students(self):
+    def get(self, seed: int = None):
         return [
             Student(
                 _id=idx,
