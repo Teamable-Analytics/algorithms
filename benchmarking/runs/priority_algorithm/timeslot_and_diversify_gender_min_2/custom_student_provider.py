@@ -108,7 +108,7 @@ class CustomStudentProvider(StudentProvider):
             timeslot_list = [j for j in range(team_cnt, team_cnt + 3)]
             students.append(
                 Student(
-                    _id=uuid.uuid4().int & (1<<64)-1,
+                    _id=i,
                     attributes={
                         **student.attributes,
                         ScenarioAttribute.TIMESLOT_AVAILABILITY.value: timeslot_list,
