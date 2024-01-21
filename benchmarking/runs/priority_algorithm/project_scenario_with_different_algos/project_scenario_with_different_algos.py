@@ -1,6 +1,8 @@
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig, WeightAlgorithmConfig, \
     DoubleRoundRobinAlgorithmConfig
 from api.models.enums import AlgorithmType
+from api.models.student import Student
+from api.models.team import TeamShell
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import AverageProjectRequirementsCoverage
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.project_scenario import ProjectScenario
@@ -52,9 +54,21 @@ class ProjectScenarioWithDifferentAlgos(Run):
                         ),
                     ],
                     AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
-                    AlgorithmType.DRR: [DoubleRoundRobinAlgorithmConfig()],
+                    AlgorithmType.DRR: [DoubleRoundRobinAlgorithmConfig(utility_function=additive_utility_function)],
                 },
             ).run(num_runs=num_trials)
+
+
+def additive_utility_function(student: Student, team: TeamShell) -> float:
+    if len(team.requirements) == 0:
+        return 0.0
+
+    return sum(
+        [
+            student.meets_requirement(requirement)
+            for requirement in team.requirements
+        ]
+    ) / float(len(team.requirements))
 
 
 if __name__ == "__main__":
