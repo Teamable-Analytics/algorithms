@@ -1,5 +1,6 @@
 import itertools
 import random
+import uuid
 from typing import List
 
 from api.models.enums import ScenarioAttribute, Gender, Race
@@ -7,10 +8,14 @@ from api.models.student import Student
 from benchmarking.data.interfaces import StudentProvider
 
 
-class CustomTwelveHundredStudentProvider(StudentProvider):
+class CustomStudentProvider(StudentProvider):
+    def __init__(self, num_students: int = 120):
+        self._num_students = num_students
+
+
     @property
     def num_students(self) -> int:
-        return 120
+        return self._num_students
 
     @property
     def max_project_preferences_per_student(self) -> int:
@@ -96,14 +101,14 @@ class CustomTwelveHundredStudentProvider(StudentProvider):
         student_cycler = itertools.cycle(template_students)
         students = []
         team_cnt = 0
-        for i in range(120):
+        for i in range(self.num_students):
             student = next(student_cycler)
             if i % 8 == 0:
                 team_cnt += 1
             timeslot_list = [j for j in range(team_cnt, team_cnt + 3)]
             students.append(
                 Student(
-                    _id=student.id * 100 + i,
+                    _id=uuid.uuid4().int & (1<<64)-1,
                     attributes={
                         **student.attributes,
                         ScenarioAttribute.TIMESLOT_AVAILABILITY.value: timeslot_list,
