@@ -185,6 +185,7 @@ class FiveDiversityConstraint(Run):
                             bbox_to_anchor=(1.04, 0.8),
                             borderaxespad=0,
                         )
+                        plt.subplots_adjust(right=0.7)
                         plt.show()
 
 
