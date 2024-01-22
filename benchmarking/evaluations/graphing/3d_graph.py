@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+import os
+from os import path
 from typing import List, Dict, Tuple
 
 import numpy as np
@@ -9,6 +11,7 @@ from matplotlib import pyplot as plt
 class Surface3D:
     points: List[Tuple[float, float, float]]
     label: str
+    color: str = "blue"
 
 
 def make_3d_graph(
@@ -35,17 +38,15 @@ def make_3d_graph(
             ] = zi
 
         # Plot the surface
-        surface = ax.plot_wireframe(
+        ax.plot_wireframe(
             X,
             Y,
             Z,
-            color=("blue" if start_type.value == "weight" else "red"),
-            label=f"{start_type.value} start".title(),
+            color=surface.color,
+            label=surface.label,
         )
 
-    ax.set_title(
-        f"Priority Algorithm Parameters vs Priorities Satisfied\n~Five Diversity Constraint, {max_iterations} iterations, {class_size} students~"
-    )
+    ax.set_title(graph_title)
     ax.set_xlabel("MAX_KEEP")
     ax.invert_xaxis()
     ax.set_ylabel("MAX_SPREAD")
@@ -57,4 +58,12 @@ def make_3d_graph(
         borderaxespad=0,
     )
     plt.subplots_adjust(right=0.64)
-    plt.show()
+
+    if save_graph:
+        file_save_location = path.abspath(filename or graph_title)
+        if not path.exists(path.dirname(file_save_location)):
+            os.makedirs(path.dirname(file_save_location))
+        plt.savefig(file_save_location)
+        plt.close()
+    else:
+        plt.show()
