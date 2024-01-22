@@ -13,6 +13,7 @@ from benchmarking.evaluations.interfaces import TeamSetMetric
 
 class ClassAttributeSet:
     def __init__(self, team_set: TeamSet):
+        # Dict of a (Attribute type, attribute value) to index of that combination in the vector used for cosine similarity
         self._data: Dict[Tuple[int, int], int] = {}
         index = 0
         for team in team_set.teams:
