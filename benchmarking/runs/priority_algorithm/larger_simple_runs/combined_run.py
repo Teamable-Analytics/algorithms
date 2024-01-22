@@ -44,7 +44,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class CombinedProjectsAndDiversityRun(Run):
-    def start(self, num_trials: int = 30, generate_graphs: bool = False):
+    def start(self, num_trials: int = 30, generate_graphs: bool = True):
         # Ranges
         max_keep_range = [1] + list(range(5, 31, 5))
         max_spread_range = [1] + list(range(5, 31, 5))

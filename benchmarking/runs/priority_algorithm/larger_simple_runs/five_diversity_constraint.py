@@ -54,7 +54,9 @@ class FiveDiversityConstraint(Run):
         # Ranges
         max_keep_range = [1] + list(range(5, 31, 5))
         max_spread_range = [1] + list(range(5, 31, 5))
-        max_iterations_range = [1, 5, 10, 20, 30]
+        max_iterations_range = [
+            1,
+        ]  #  5, 10, 20, 30
 
         scenario = FiveDiversityConstraintScenario(
             value_of_female=Gender.FEMALE.value,
@@ -138,9 +140,6 @@ class FiveDiversityConstraint(Run):
                         fig = plt.figure()
                         ax = fig.add_subplot(projection="3d")
                         for start_type, points in points_dict.items():
-                            # if start_type == PriorityAlgorithmStartType.WEIGHT:
-                            #     continue
-
                             # Filter
                             plotted_points = [
                                 (keep, spread, score)
@@ -162,22 +161,6 @@ class FiveDiversityConstraint(Run):
                                     np.where(unique_x == xi)[0][0],
                                 ] = zi
 
-                            ##### \/ \/ \/ \/ TEMP. REMOVE LATER \/ \/ \/ \/ #####
-                            remove_missing_points = False
-                            if remove_missing_points:
-                                # Find the index where the first zero appears in each row
-                                zero_indices = np.argmax(Z == 0, axis=1)
-
-                                # Find the index where the first zero appears in any row
-                                first_zero_index = np.argmax(zero_indices > 0)
-
-                                # Remove rows with zeros
-                                X = X[:first_zero_index, :]
-                                Y = Y[:first_zero_index, :]
-                                Z = Z[:first_zero_index, :]
-
-                            ##### /\ /\ /\ /\ TEMP. REMOVE LATER /\ /\ /\ /\ #####
-
                             # Plot the surface
                             surface = ax.plot_wireframe(
                                 X,
@@ -193,10 +176,15 @@ class FiveDiversityConstraint(Run):
                             f"Priority Algorithm Parameters vs Priorities Satisfied\n~Five Diversity Constraint, {max_iterations} iterations, {class_size} students~"
                         )
                         ax.set_xlabel("MAX_KEEP")
+                        ax.invert_xaxis()
                         ax.set_ylabel("MAX_SPREAD")
                         ax.set_zlabel("Score")
                         ax.set_zlim(0, 1)
-                        plt.legend()
+                        plt.legend(
+                            loc="lower left",
+                            bbox_to_anchor=(1.04, 0.8),
+                            borderaxespad=0,
+                        )
                         plt.show()
 
 

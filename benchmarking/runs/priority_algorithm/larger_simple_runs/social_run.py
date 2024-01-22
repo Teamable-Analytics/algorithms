@@ -17,6 +17,7 @@ from benchmarking.evaluations.metrics.average_social_satisfied import (
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.metrics.utils.team_calculations import (
     is_happy_team_1hp_friend,
+    is_strictly_happy_team_friend,
 )
 from benchmarking.evaluations.scenarios.include_social_friends import (
     IncludeSocialFriends,
@@ -36,7 +37,7 @@ class SocialRun(Run):
     NUMBER_OF_TEAMS = 30
     NUMBER_OF_STUDENTS_PER_TEAM = 4
 
-    def start(self, num_trials: int = 30, generate_graphs: bool = False):
+    def start(self, num_trials: int = 30, generate_graphs: bool = True):
         # Ranges
         max_keep_range = [1] + list(range(5, 31, 5))
         max_spread_range = [1] + list(range(5, 31, 5)) + [100]
@@ -52,7 +53,7 @@ class SocialRun(Run):
                 False,
             ),
             "AverageSocialSatisfaction": AverageSocialSatisfaction(
-                metric_function=is_happy_team_1hp_friend
+                metric_function=is_strictly_happy_team_friend
             ),
         }
 
