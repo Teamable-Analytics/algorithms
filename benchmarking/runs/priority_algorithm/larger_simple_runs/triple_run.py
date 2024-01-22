@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 
 from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
+    PriorityAlgorithmStartType,
 )
 from api.models.enums import (
     AlgorithmType,
@@ -35,6 +36,7 @@ from benchmarking.evaluations.metrics.average_social_satisfied import (
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.metrics.utils.team_calculations import (
     is_happy_team_1hp_friend,
+    is_strictly_happy_team_friend,
 )
 from benchmarking.runs.interfaces import Run
 from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_projects import (
@@ -74,51 +76,59 @@ class TripleRun(Run):
                 False,
             ),
             "AverageSocialSatisfaction": AverageSocialSatisfaction(
-                metric_function=is_happy_team_1hp_friend
+                metric_function=is_strictly_happy_team_friend
             ),
+            "AverageCosineSimilarity":
         }
         initial_teams_provider = MockInitialTeamsProvider(
             settings=MockInitialTeamsProviderSettings(
                 projects=get_custom_projects(),
             )
         )
+        start_types = [
+            PriorityAlgorithmStartType.WEIGHT,
+            PriorityAlgorithmStartType.RANDOM,
+        ]
 
-        artifact: SimulationSetArtifact = SimulationSet(
-            settings=SimulationSettings(
-                scenario=scenario,
-                student_provider=Custom120SocialDiversityAndProjectStudentProvider(),
-                initial_teams_provider=initial_teams_provider,
-                cache_key=f"priority_algorithm/larger_simple_runs/class_size_120/triple_run/",
-            ),
-            algorithm_set={
-                AlgorithmType.PRIORITY: [
-                    PriorityAlgorithmConfig(
-                        MAX_KEEP=max_keep,
-                        MAX_SPREAD=max_spread,
-                        MAX_ITERATE=max_iterations,
-                        MAX_TIME=10000000,
-                        name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}",
-                    )
-                    for max_keep in max_keep_range
-                    for max_spread in max_spread_range
-                    for max_iterations in max_iterations_range
-                ]
-            },
-        ).run(num_runs=num_trials)
+        artifacts_dict = {start_type: {} for start_type in start_types}
+        for start_type in start_types:
+            artifact: SimulationSetArtifact = SimulationSet(
+                settings=SimulationSettings(
+                    scenario=scenario,
+                    student_provider=Custom120SocialDiversityAndProjectStudentProvider(),
+                    initial_teams_provider=initial_teams_provider,
+                    cache_key=f"priority_algorithm/larger_simple_runs/class_size_120/triple_run/",
+                ),
+                algorithm_set={
+                    AlgorithmType.PRIORITY: [
+                        PriorityAlgorithmConfig(
+                            MAX_KEEP=max_keep,
+                            MAX_SPREAD=max_spread,
+                            MAX_ITERATE=max_iterations,
+                            MAX_TIME=10000000,
+                            START_TYPE=start_type,
+                            name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}-{start_type.value}_start",
+                        )
+                        for max_keep in max_keep_range
+                        for max_spread in max_spread_range
+                        for max_iterations in max_iterations_range
+                    ]
+                },
+            ).run(num_runs=num_trials)
 
-        artifacts_dict = {}
-        for name, simulation_artifact in artifact.items():
-            match = re.search(
-                r"max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+)",
-                name,
-            )
-            if match:
-                max_keep = int(match.group(1))
-                max_spread = int(match.group(2))
-                max_iterations = int(match.group(3))
-                artifacts_dict[
-                    (max_keep, max_spread, max_iterations)
-                ] = simulation_artifact
+            artifacts_dict = {}
+            for name, simulation_artifact in artifact.items():
+                match = re.search(
+                    r"max_keep_(\d+)-max_spread_(\d+)-max_iterations_(\d+)",
+                    name,
+                )
+                if match:
+                    max_keep = int(match.group(1))
+                    max_spread = int(match.group(2))
+                    max_iterations = int(match.group(3))
+                    artifacts_dict[start_type][
+                        (max_keep, max_spread, max_iterations)
+                    ] = simulation_artifact
 
         if generate_graphs:
             for metric_name, metric in metrics.items():
