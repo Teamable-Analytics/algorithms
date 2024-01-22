@@ -182,10 +182,10 @@ class FiveDiversityConstraint(Run):
                         ax.set_zlim(0, 1)
                         plt.legend(
                             loc="lower left",
-                            bbox_to_anchor=(1.04, 0.8),
+                            bbox_to_anchor=(1.2, 0.8),
                             borderaxespad=0,
                         )
-                        plt.subplots_adjust(right=0.7)
+                        plt.subplots_adjust(right=0.64)
                         plt.show()
 
 
