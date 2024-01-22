@@ -25,6 +25,9 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
     MockStudentProvider,
 )
+from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
+    AverageProjectRequirementsCoverage,
+)
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
@@ -148,6 +151,7 @@ class RegularClassSize(Run):
                 goals_to_priorities(scenario.goals),
                 False,
             ),
+            "AverageProjectRequirementCoverage": AverageProjectRequirementsCoverage(),
         }
 
         artifact: SimulationSetArtifact = SimulationSet(

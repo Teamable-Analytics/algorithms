@@ -23,12 +23,16 @@ from benchmarking.evaluations.goals import (
     ProjectRequirementGoal,
 )
 from benchmarking.evaluations.interfaces import Scenario, Goal
+from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
+    AverageProjectRequirementsCoverage,
+)
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,
 )
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.metrics.utils.team_calculations import (
     is_happy_team_1hp_friend,
+    is_strictly_happy_team_friend,
 )
 from benchmarking.runs.interfaces import Run
 from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_projects import (
@@ -64,8 +68,9 @@ class SocialAndProject(Run):
                 False,
             ),
             "AverageSocialSatisfaction": AverageSocialSatisfaction(
-                metric_function=is_happy_team_1hp_friend
+                metric_function=is_strictly_happy_team_friend
             ),
+            "AverageProjectRequirementCoverage": AverageProjectRequirementsCoverage(),
         }
         initial_teams_provider = MockInitialTeamsProvider(
             settings=MockInitialTeamsProviderSettings(

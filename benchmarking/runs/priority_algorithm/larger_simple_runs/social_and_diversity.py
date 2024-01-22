@@ -22,9 +22,11 @@ from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,
 )
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.metrics.utils.team_calculations import (
     is_happy_team_1hp_friend,
+    is_strictly_happy_team_friend,
 )
 from benchmarking.runs.interfaces import Run
 from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import (
@@ -45,8 +47,8 @@ class SocialAndDiversity(Run):
     def start(self, num_trials: int = 30, generate_graphs: bool = True):
         # Ranges
         max_keep_range = [1] + list(range(5, 31, 5))
-        max_spread_range = [1] + list(range(5, 31, 5))
-        max_iterations_range = [1, 5, 10, 20, 30]
+        max_spread_range = [1] + list(range(5, 31, 5)) + [100]
+        max_iterations_range = [1, 5, 10, 20, 30] + [250]
 
         scenario = SocialAndDiversityScenario(
             max_num_friends=1,
@@ -61,10 +63,10 @@ class SocialAndDiversity(Run):
                 False,
             ),
             "AverageSocialSatisfaction": AverageSocialSatisfaction(
-                metric_function=is_happy_team_1hp_friend
+                metric_function=is_strictly_happy_team_friend
             ),
+            "AverageCosineSimilarity": AverageCosineSimilarity(),
         }
-
         artifact: SimulationSetArtifact = SimulationSet(
             settings=SimulationSettings(
                 scenario=scenario,

@@ -28,6 +28,10 @@ from benchmarking.evaluations.goals import (
     WeightGoal,
 )
 from benchmarking.evaluations.interfaces import Scenario, Goal
+from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
+    AverageProjectRequirementsCoverage,
+)
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.runs.interfaces import Run
 from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_projects import (
@@ -60,6 +64,8 @@ class CombinedProjectsAndDiversityRun(Run):
                 goals_to_priorities(scenario.goals),
                 False,
             ),
+            "AverageCosineSimilarity": AverageCosineSimilarity(),
+            "AverageProjectRequirementCoverage": AverageProjectRequirementsCoverage(),
         }
 
         initial_teams_provider = MockInitialTeamsProvider(
