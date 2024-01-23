@@ -1,4 +1,5 @@
 import itertools
+from pathlib import Path
 from typing import Dict
 
 import typer
@@ -189,6 +190,7 @@ class CustomModels(Run):
 
         class_sizes = [20, 100, 240, 500, 1000]
         # class_sizes = [20, 40, 60, 80, 100]
+        # class_sizes = [20]
         team_size = 4
 
         simulation_sets: Dict[int, SimulationSetArtifact] = {}
@@ -234,8 +236,8 @@ class CustomModels(Run):
                     ],
                     AlgorithmType.GROUP_MATCHER: [
                         GroupMatcherAlgorithmConfig(
-                            csv_output_path=f'/Users/ketphan02/UBC/group-matcher/inpData/{ class_size }-generated.csv',
-                            group_matcher_run_path='/Users/ketphan02/UBC/group-matcher/run.py'
+                            csv_output_path=Path.cwd().parent.parent.parent / f"api/ai/group_matcher_algorithm/group-matcher/inpData/{ class_size }-generated.csv",
+                            group_matcher_run_path=Path.cwd().parent.parent.parent / 'api/ai/group_matcher_algorithm/group-matcher/run.py'
                         ),
                     ]
                 }

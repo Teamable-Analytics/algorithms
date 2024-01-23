@@ -34,6 +34,9 @@ class GroupMatcherAlgorithm(Algorithm):
             team.id: team for team_idx, team in enumerate(self.teams)
         }
 
+        if not self.csv_input_path.parent.exists():
+            self.csv_input_path.parent.mkdir(parents=True)
+
     def prepare(self, students: List[Student]) -> None:
         student_data = [student.to_group_matcher_data_format() for student in students]
         with open(self.csv_input_path, 'w') as csvfile:

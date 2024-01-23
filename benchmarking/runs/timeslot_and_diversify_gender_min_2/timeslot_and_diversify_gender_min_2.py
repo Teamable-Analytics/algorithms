@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Dict
 
 import typer
@@ -78,8 +79,8 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                     ],
                     AlgorithmType.GROUP_MATCHER: [
                         GroupMatcherAlgorithmConfig(
-                            csv_output_path=f'/Users/ketphan02/UBC/group-matcher/inpData/{ class_size }-generated.csv',
-                            group_matcher_run_path='/Users/ketphan02/UBC/group-matcher/run.py'
+                            csv_output_path=Path.cwd().parent.parent.parent / f"api/ai/group_matcher_algorithm/group-matcher/inpData/{ class_size }-generated.csv",
+                            group_matcher_run_path=Path.cwd().parent.parent.parent / 'api/ai/group_matcher_algorithm/group-matcher/run.py'
                         ),
                     ]
                 }
