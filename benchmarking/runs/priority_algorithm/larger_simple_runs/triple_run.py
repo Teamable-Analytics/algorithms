@@ -150,6 +150,7 @@ class TripleRun(Run):
                         value = list(value_dict.values())[0]
                         points[point_location] = value
                     points_dict[start_type] = points
+
                 for max_iterations in max_iterations_range:
                     surfaces: List[Surface3D] = []
                     for start_type, points in points_dict.items():
@@ -173,7 +174,7 @@ class TripleRun(Run):
                         graph_title=f"Priority Algorithm Parameters vs {metric_name}\n~Five Diversity Constraint, {max_iterations} iterations, 120 students~",
                         x_label="MAX_KEEP",
                         y_label="MAX_SPREAD",
-                        z_label="Score",
+                        z_label=metric_name,
                         z_lim=(0, 1),
                         invert_xaxis=True,
                         plot_legend=True,
