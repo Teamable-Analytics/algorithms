@@ -1,14 +1,18 @@
-from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig, WeightAlgorithmConfig, \
-    DoubleRoundRobinAlgorithmConfig
+from api.ai.interfaces.algorithm_config import (
+    PriorityAlgorithmConfig,
+    WeightAlgorithmConfig,
+    DoubleRoundRobinAlgorithmConfig,
+)
 from api.models.enums import AlgorithmType
 from api.models.student import Student
 from api.models.team import TeamShell
-from benchmarking.evaluations.metrics.average_project_requirements_coverage import AverageProjectRequirementsCoverage
+from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
+    AverageProjectRequirementsCoverage,
+)
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.project_scenario import ProjectScenario
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.priority_algorithm.project_scenario_with_different_algos.custom_student_provider import \
-    CustomStudentProvider
+from benchmarking.runs.project_scenario_with_different_algos.student_provider import CustomStudentProvider
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
@@ -54,7 +58,11 @@ class ProjectScenarioWithDifferentAlgos(Run):
                         ),
                     ],
                     AlgorithmType.WEIGHT: [WeightAlgorithmConfig()],
-                    AlgorithmType.DRR: [DoubleRoundRobinAlgorithmConfig(utility_function=additive_utility_function)],
+                    AlgorithmType.DRR: [
+                        DoubleRoundRobinAlgorithmConfig(
+                            utility_function=additive_utility_function
+                        )
+                    ],
                 },
             ).run(num_runs=num_trials)
 
@@ -64,10 +72,7 @@ def additive_utility_function(student: Student, team: TeamShell) -> float:
         return 0.0
 
     return sum(
-        [
-            student.meets_requirement(requirement)
-            for requirement in team.requirements
-        ]
+        [student.meets_requirement(requirement) for requirement in team.requirements]
     ) / float(len(team.requirements))
 
 

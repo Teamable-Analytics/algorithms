@@ -38,6 +38,7 @@ class AlgorithmType(Enum):
     MRR = "multiple_round_robin_with_adjusted_winner"
     GEG = "generalized_envy_graph"
     DRR = "double_round_robin"
+    GROUP_MATCHER = "group_matcher"
 
 
 class TokenizationConstraintDirection(Enum):
@@ -126,7 +127,6 @@ class PriorityType(Enum):
     SOCIAL_PREFERENCE = "social_preference"
 
 
-
 # From paper: https://sigcse2023.sigcse.org/details/sigcse-ts-2023-papers/163/Inclusive-study-group-formation-at-scale
 class AlRace(AttributeValueEnum):
     White = "White"
@@ -151,24 +151,31 @@ class AlGender(AttributeValueEnum):
     Male = "Male"
     Other = "Other"
 
+
 def fromGenderToAlGender(gender: Gender) -> AlGender:
     if gender == Gender.MALE:
         return AlGender.Male
     if gender == Gender.FEMALE:
-        return  AlGender.Female
+        return AlGender.Female
     return AlGender.Other
 
+
 def fromAlGenderToGender(alGenderNum: int or str) -> Gender:
-    if alGenderNum == 0 or alGenderNum == 'Male':
+    if alGenderNum == 0 or alGenderNum == "Male":
         return Gender.FEMALE
-    if alGenderNum == 1 or alGenderNum == 'Female':
+    if alGenderNum == 1 or alGenderNum == "Female":
         return Gender.MALE
     return Gender.OTHER
+
 
 def fromRaceToAlRace(race: Race) -> AlRace:
     if race == Race.European:
         return AlRace.White
-    if race == Race.South_Asian or race == Race.East_Asian or race == Race.South_East_Asian:
+    if (
+        race == Race.South_Asian
+        or race == Race.East_Asian
+        or race == Race.South_East_Asian
+    ):
         return AlRace.Asian
     if race == Race.Hispanic_or_Latin_American:
         return AlRace.Hispanic
@@ -180,6 +187,7 @@ def fromRaceToAlRace(race: Race) -> AlRace:
         return AlRace.Middle_Eastern
     if race == Race.Other:
         return AlRace.Multiple_Races
+
 
 def fromAlRaceToRace(alRaceNum: int or str) -> Race:
     if alRaceNum == 0 or alRaceNum == "White":
@@ -198,7 +206,6 @@ def fromAlRaceToRace(alRaceNum: int or str) -> Race:
         return Race.Other
 
 
-
 def fromYearLevelToAlYearLevel(yearLevel: int) -> AlYearLevel:
     if yearLevel == 0:
         return AlYearLevel.Freshman
@@ -212,13 +219,13 @@ def fromYearLevelToAlYearLevel(yearLevel: int) -> AlYearLevel:
 
 
 def fromAlYearLevelToYearLevel(alYearLevel: str) -> int:
-    if 'freshman' in alYearLevel.lower():
+    if "freshman" in alYearLevel.lower():
         return 0
-    if 'sophomore' in alYearLevel.lower():
+    if "sophomore" in alYearLevel.lower():
         return 1
-    if 'junior' in alYearLevel.lower():
+    if "junior" in alYearLevel.lower():
         return 2
-    if 'senior' in alYearLevel.lower():
+    if "senior" in alYearLevel.lower():
         return 3
     return 4
 
@@ -226,8 +233,10 @@ def fromAlYearLevelToYearLevel(alYearLevel: str) -> int:
 def fromNumbersToTimeSlots(numbers: List[int]) -> List[str]:
     return [fromNumberToTimeslot(number) for number in numbers]
 
+
 def fromNumberToTimeslot(number: int) -> str:
     return str(number)
+
 
 def fromTimeslotToNumber(timeslot: str) -> int:
     return int(timeslot)

@@ -1,31 +1,40 @@
 from typing import List
 
 from api.models.enums import (
+    RequirementsCriteria,
     DiversifyType,
     ScenarioAttribute,
-    Gender,
-    TokenizationConstraintDirection, Race,
+    TokenizationConstraintDirection,
+    AttributeValueEnum,
 )
+from api.models.student import Student
 from api.models.tokenization_constraint import TokenizationConstraint
-from benchmarking.evaluations.goals import WeightGoal, DiversityGoal
+from benchmarking.data.interfaces import StudentProvider
+from benchmarking.data.simulated_data.mock_student_provider import (
+    MockStudentProvider,
+    MockStudentProviderSettings,
+)
+from benchmarking.evaluations.goals import DiversityGoal, ProjectRequirementGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 
+from api.models.project import Project, ProjectRequirement
+from benchmarking.data.simulated_data.mock_initial_teams_provider import (
+    MockInitialTeamsProvider,
+    MockInitialTeamsProviderSettings,
+)
 
-class ConcentrateTimeslotAndDiversifyGenderMin2Female(Scenario):
-    def __init__(self, value_of_female: int = Gender.FEMALE, value_of_african: int = Race.African):
+
+class ScenarioThatWeLove(Scenario):
+    def __init__(self, value_of_female: int, value_of_african: int):
         super().__init__()
         self.value_of_female = value_of_female
         self.value_of_african = value_of_african
 
     @property
-    def name(self):
-        return "Concentrate on Timeslot and Diversify Female min of 2"
-
-    @property
     def goals(self) -> List[Goal]:
         return [
-            DiversityGoal(
-                DiversifyType.CONCENTRATE, ScenarioAttribute.TIMESLOT_AVAILABILITY.value
+            ProjectRequirementGoal(
+                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
             ),
             DiversityGoal(
                 DiversifyType.DIVERSIFY,
@@ -45,5 +54,8 @@ class ConcentrateTimeslotAndDiversifyGenderMin2Female(Scenario):
                     value=self.value_of_african,
                 ),
             ),
-            WeightGoal(diversity_goal_weight=1),
         ]
+
+    @property
+    def name(self) -> str:
+        return "We love Bowen <3"

@@ -16,5 +16,5 @@ class ProjectScenario(Scenario):
             ProjectRequirementGoal(
                 criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
             ),
-            WeightGoal(project_requirement_weight=1)
+            WeightGoal(project_requirement_weight=1),
         ]

@@ -1,12 +1,13 @@
 from typing import List, TYPE_CHECKING
 
 from api.ai.geg_algorithm.geg_algorithm import GeneralizedEnvyGraphAlgorithm
+from api.ai.group_marcher_algorithm.group_matcher_algorithm import GroupMatcherAlgorithm
 from api.ai.interfaces.algorithm_config import (
     AlgorithmConfig,
     RandomAlgorithmConfig,
     WeightAlgorithmConfig,
     SocialAlgorithmConfig,
-    PriorityAlgorithmConfig,
+    PriorityAlgorithmConfig, GroupMatcherAlgorithmConfig,
 )
 from api.ai.interfaces.algorithm_options import (
     RandomAlgorithmOptions,
@@ -16,6 +17,7 @@ from api.ai.interfaces.algorithm_options import (
     MultipleRoundRobinAlgorithmOptions,
     GeneralizedEnvyGraphAlgorithmOptions,
     DoubleRoundRobinAlgorithmOptions,
+    GroupMatcherAlgorithmOptions,
 )
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.multiple_round_robin_with_adjusted_winner_algorithm.mrr_algorithm import (
@@ -78,6 +80,8 @@ class AlgorithmRunner:
             return GeneralizedEnvyGraphAlgorithm
         if algorithm_type == AlgorithmType.DRR:
             return DoubleRoundRobinAlgorithm
+        if algorithm_type == AlgorithmType.GROUP_MATCHER:
+            return GroupMatcherAlgorithm
 
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm class!"
@@ -99,6 +103,8 @@ class AlgorithmRunner:
             return GeneralizedEnvyGraphAlgorithmOptions
         if algorithm_type == AlgorithmType.DRR:
             return DoubleRoundRobinAlgorithmOptions
+        if algorithm_type == AlgorithmType.GROUP_MATCHER:
+            return GroupMatcherAlgorithmOptions
 
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm options class!"
@@ -120,6 +126,8 @@ class AlgorithmRunner:
             return None
         if algorithm_type == AlgorithmType.DRR:
             return None
+        if algorithm_type == AlgorithmType.GROUP_MATCHER:
+            return GroupMatcherAlgorithmConfig
 
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm config class!"

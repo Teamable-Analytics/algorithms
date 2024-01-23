@@ -47,10 +47,10 @@ class SocialAlgorithmConfig(AlgorithmConfig):
 
 @dataclass
 class PriorityAlgorithmConfig(AlgorithmConfig):
-    MAX_KEEP: int = 3  # nodes
-    MAX_SPREAD: int = 3  # nodes
-    MAX_ITERATE: int = 1500  # iterations
-    MAX_TIME: int = 30  # seconds
+    MAX_KEEP: int = 15  # nodes
+    MAX_SPREAD: int = 30  # nodes
+    MAX_ITERATE: int = 30  # iterations
+    MAX_TIME: int = 10000000  # seconds
 
     """
     Specifies the mutations as a list of [mutation_function, number_team_sets_generated_this_way]
@@ -111,6 +111,19 @@ class GeneralizedEnvyGraphAlgorithmConfig(AlgorithmConfig):
     def __init__(self, utility_function: Callable[[Student, TeamShell], float]):
         super().__init__()
         self.utility_function = utility_function
+
+    def validate(self):
+        super().validate()
+
+
+class GroupMatcherAlgorithmConfig(AlgorithmConfig):
+    csv_input_path: str
+    group_matcher_run_path: str
+
+    def __init__(self, csv_output_path: str, group_matcher_run_path: str):
+        super().__init__()
+        self.csv_input_path = csv_output_path
+        self.group_matcher_run_path = group_matcher_run_path
 
     def validate(self):
         super().validate()
