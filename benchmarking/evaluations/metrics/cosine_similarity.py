@@ -86,3 +86,43 @@ def cosine_similarity(
     if len(v1) == 0 or len(v2) == 0:
         raise ValueError("Vectors must not be empty")
     return dot(v1, v2) / (norm(v1) * norm(v2))
+
+
+class AverageCosineDifference(TeamSetMetric):
+    def calculate(self, team_set: TeamSet) -> float:
+        class_attributes = ClassAttributeSet(team_set)
+
+        similarities = team_cosine_similarities(team_set.teams, class_attributes)
+
+        return statistics.mean([1 - similarity for similarity in similarities])
+
+    @staticmethod
+    def calculate_stdev(team_set: TeamSet) -> float:
+        class_attributes = ClassAttributeSet(team_set)
+
+        similarities = team_cosine_similarities(team_set.teams, class_attributes)
+
+        return statistics.stdev(similarities)
+
+
+def team_cosine_differences(
+    teams: List[Team], class_attributes: ClassAttributeSet
+) -> List[float]:
+    differences = []
+    for team in teams:
+        if len(team.students) <= 0:
+            continue
+        total = 0
+        num = 0
+        for s1, s2 in itertools.combinations(team.students, 2):
+            s1_vector = class_attributes.get_student_vector(s1)
+            s2_vector = class_attributes.get_student_vector(s2)
+            total += cosine_difference(s1_vector, s2_vector)
+            num += 1
+        team_avg = total / num
+        differences.append(team_avg)
+    return differences
+
+
+def cosine_difference(v1: List[Union[int, float]], v2: List[Union[int, float]]):
+    return 1 - cosine_similarity(v1, v2)
