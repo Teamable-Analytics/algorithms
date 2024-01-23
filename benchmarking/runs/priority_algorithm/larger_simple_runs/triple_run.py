@@ -62,8 +62,8 @@ class TripleRun(Run):
     def start(self, num_trials: int = 30, generate_graphs: bool = False):
         # Ranges
         max_keep_range = [1] + list(range(5, 31, 5))
-        max_spread_range = [1] + list(range(5, 31, 5)) + [100]
-        max_iterations_range = [1, 5, 10, 20, 30, 250]
+        max_spread_range = [1] + list(range(20, 101, 20))
+        max_iterations_range = [1] + list(range(50, 251, 50))
 
         scenario = TripleScenario(
             max_num_friends=1,
@@ -171,7 +171,7 @@ class TripleRun(Run):
                         )
                     graph_3d(
                         surfaces,
-                        graph_title=f"Priority Algorithm Parameters vs {metric_name}\n~Five Diversity Constraint, {max_iterations} iterations, 120 students~",
+                        graph_title=f"Priority Algorithm Parameters vs {metric_name}\n~Projects, Diversity, and Social Scenario, {max_iterations} iterations, 120 students~",
                         x_label="MAX_KEEP",
                         y_label="MAX_SPREAD",
                         z_label=metric_name,
