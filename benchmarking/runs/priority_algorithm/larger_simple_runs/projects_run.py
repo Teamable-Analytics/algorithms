@@ -67,7 +67,7 @@ class RegularClassSize(Run):
     NUMBER_OF_STUDENTS_PER_TEAM = 4
     NUMBER_OF_PROJECTS = 3
 
-    def start(self, num_trials: int = 30, generate_graphs: bool = True):
+    def start(self, num_trials: int = 30, generate_graphs: bool = False):
         # Ranges
         max_keep_range = [1] + list(range(5, 16, 5))
         max_spread_range = [1] + list(range(5, 31, 5))
