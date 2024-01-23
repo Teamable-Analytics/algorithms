@@ -5,7 +5,10 @@ import numpy as np
 from api.models.enums import ScenarioAttribute, Gender, Race
 from api.models.student import Student
 from benchmarking.data.interfaces import StudentProvider
-from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider, MockStudentProviderSettings
+from benchmarking.data.simulated_data.mock_student_provider import (
+    MockStudentProvider,
+    MockStudentProviderSettings,
+)
 
 
 class TimeslotCustomStudentProvider(StudentProvider):
@@ -47,7 +50,7 @@ class TimeslotCustomStudentProvider(StudentProvider):
                         (Race.African, self.ratio_of_african_students),
                         (Race.European, 1 - self.ratio_of_african_students),
                     ],
-                }
+                },
             )
         ).get()
 
@@ -56,7 +59,9 @@ class TimeslotCustomStudentProvider(StudentProvider):
         for student in students:
             num_time_slots = int(rng.random() * 3) + 3
             timeslots = rng.choice(range(20), num_time_slots, replace=False)
-            student.attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value] = timeslots.tolist()
+            student.attributes[
+                ScenarioAttribute.TIMESLOT_AVAILABILITY.value
+            ] = timeslots.tolist()
 
         order = rng.permutation(len(students))
         return [students[_] for _ in order]

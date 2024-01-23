@@ -8,7 +8,8 @@ from api.ai.interfaces.algorithm_options import (
     SocialAlgorithmOptions,
     WeightAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
-    DoubleRoundRobinAlgorithmOptions, GroupMatcherAlgorithmOptions,
+    DoubleRoundRobinAlgorithmOptions,
+    GroupMatcherAlgorithmOptions,
 )
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.priority_algorithm.priority.interfaces import Priority

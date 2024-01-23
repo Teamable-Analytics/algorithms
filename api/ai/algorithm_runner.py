@@ -6,7 +6,8 @@ from api.ai.interfaces.algorithm_config import (
     RandomAlgorithmConfig,
     WeightAlgorithmConfig,
     SocialAlgorithmConfig,
-    PriorityAlgorithmConfig, GroupMatcherAlgorithmConfig,
+    PriorityAlgorithmConfig,
+    GroupMatcherAlgorithmConfig,
 )
 from api.ai.interfaces.algorithm_options import (
     RandomAlgorithmOptions,

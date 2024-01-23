@@ -12,7 +12,9 @@ from benchmarking.evaluations.metrics.average_project_requirements_coverage impo
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.project_scenario import ProjectScenario
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.project_scenario_with_different_algos.student_provider import CustomStudentProvider
+from benchmarking.runs.project_scenario_with_different_algos.student_provider import (
+    CustomStudentProvider,
+)
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings

@@ -4,8 +4,13 @@ from typing import Dict
 
 import typer
 
-from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig, RandomAlgorithmConfig, \
-    DoubleRoundRobinAlgorithmConfig, WeightAlgorithmConfig, GroupMatcherAlgorithmConfig
+from api.ai.interfaces.algorithm_config import (
+    PriorityAlgorithmConfig,
+    RandomAlgorithmConfig,
+    DoubleRoundRobinAlgorithmConfig,
+    WeightAlgorithmConfig,
+    GroupMatcherAlgorithmConfig,
+)
 from api.models.enums import RequirementOperator, AlgorithmType, Gender, Race
 from api.models.project import Project, ProjectRequirement
 from api.models.student import Student
@@ -17,14 +22,23 @@ from benchmarking.data.simulated_data.mock_initial_teams_provider import (
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.metrics.average_project_requirements_coverage import AverageProjectRequirementsCoverage
+from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
+    AverageProjectRequirementsCoverage,
+)
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.scenario_that_we_love import (
     ScenarioThatWeLove,
 )
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.project_scenario_with_different_algos.student_provider import TECHNICAL_SKILLS, \
-    DevelopmentSkills, GITHUB_EXPERIENCE, GithubExperience, WORK_EXPERIENCE, WorkExperience, CustomStudentProvider
+from benchmarking.runs.project_scenario_with_different_algos.student_provider import (
+    TECHNICAL_SKILLS,
+    DevelopmentSkills,
+    GITHUB_EXPERIENCE,
+    GithubExperience,
+    WORK_EXPERIENCE,
+    WorkExperience,
+    CustomStudentProvider,
+)
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
@@ -48,132 +62,132 @@ class CustomModels(Run):
         )
 
         initial_projecys = [
-                    Project(
-                        _id=1,
-                        name="Face blur video sending and receiving using Amazon Web Services (AWS)",
-                        requirements=[
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.AWS.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.Frontend.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.Backend.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=WORK_EXPERIENCE,
-                                operator=RequirementOperator.MORE_THAN,
-                                value=WorkExperience.Two_Semesters.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=GITHUB_EXPERIENCE,
-                                operator=RequirementOperator.MORE_THAN,
-                                value=GithubExperience.Beginner.value,
-                            ),
-                        ],
+            Project(
+                _id=1,
+                name="Face blur video sending and receiving using Amazon Web Services (AWS)",
+                requirements=[
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.AWS.value,
                     ),
-                    Project(
-                        _id=2,
-                        name="Left over food delivery mobile app",
-                        requirements=[
-                            ProjectRequirement(
-                                attribute=WORK_EXPERIENCE,
-                                operator=RequirementOperator.LESS_THAN,
-                                value=WorkExperience.Two_Semesters.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.Mobile.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.ReactNative.value,
-                            ),
-                        ],
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.Frontend.value,
                     ),
-                    Project(
-                        _id=3,
-                        name="Collaborative website to play games with each other using PyGame",
-                        requirements=[
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.Python.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.Frontend.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.Design.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=GITHUB_EXPERIENCE,
-                                operator=RequirementOperator.EXACTLY,
-                                value=GithubExperience.Advanced.value,
-                            ),
-                        ],
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.Backend.value,
                     ),
-                    Project(
-                        _id=4,
-                        name="Create an Internal Website for Scheduling for a Company",
-                        requirements=[
-                            ProjectRequirement(
-                                attribute=WORK_EXPERIENCE,
-                                operator=RequirementOperator.LESS_THAN,
-                                value=WorkExperience.Two_Semesters.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.Backend.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.Next.value,
-                            ),
-                        ],
+                    ProjectRequirement(
+                        attribute=WORK_EXPERIENCE,
+                        operator=RequirementOperator.MORE_THAN,
+                        value=WorkExperience.Two_Semesters.value,
                     ),
-                    Project(
-                        _id=5,
-                        name="Dating app for pets",
-                        requirements=[
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.Mobile.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.Backend.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.Frontend.value,
-                            ),
-                            ProjectRequirement(
-                                attribute=TECHNICAL_SKILLS,
-                                operator=RequirementOperator.EXACTLY,
-                                value=DevelopmentSkills.Django.value,
-                            )
-                        ],
+                    ProjectRequirement(
+                        attribute=GITHUB_EXPERIENCE,
+                        operator=RequirementOperator.MORE_THAN,
+                        value=GithubExperience.Beginner.value,
                     ),
-                ]
+                ],
+            ),
+            Project(
+                _id=2,
+                name="Left over food delivery mobile app",
+                requirements=[
+                    ProjectRequirement(
+                        attribute=WORK_EXPERIENCE,
+                        operator=RequirementOperator.LESS_THAN,
+                        value=WorkExperience.Two_Semesters.value,
+                    ),
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.Mobile.value,
+                    ),
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.ReactNative.value,
+                    ),
+                ],
+            ),
+            Project(
+                _id=3,
+                name="Collaborative website to play games with each other using PyGame",
+                requirements=[
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.Python.value,
+                    ),
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.Frontend.value,
+                    ),
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.Design.value,
+                    ),
+                    ProjectRequirement(
+                        attribute=GITHUB_EXPERIENCE,
+                        operator=RequirementOperator.EXACTLY,
+                        value=GithubExperience.Advanced.value,
+                    ),
+                ],
+            ),
+            Project(
+                _id=4,
+                name="Create an Internal Website for Scheduling for a Company",
+                requirements=[
+                    ProjectRequirement(
+                        attribute=WORK_EXPERIENCE,
+                        operator=RequirementOperator.LESS_THAN,
+                        value=WorkExperience.Two_Semesters.value,
+                    ),
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.Backend.value,
+                    ),
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.Next.value,
+                    ),
+                ],
+            ),
+            Project(
+                _id=5,
+                name="Dating app for pets",
+                requirements=[
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.Mobile.value,
+                    ),
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.Backend.value,
+                    ),
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.Frontend.value,
+                    ),
+                    ProjectRequirement(
+                        attribute=TECHNICAL_SKILLS,
+                        operator=RequirementOperator.EXACTLY,
+                        value=DevelopmentSkills.Django.value,
+                    ),
+                ],
+            ),
+        ]
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
@@ -206,15 +220,13 @@ class CustomModels(Run):
                 projects.append(
                     Project(
                         _id=i,
-                        name=next_project.name + ' ' + str(i),
+                        name=next_project.name + " " + str(i),
                         requirements=next_project.requirements,
                     )
                 )
 
             initial_team_provider = MockInitialTeamsProvider(
-                settings=MockInitialTeamsProviderSettings(
-                    projects=projects
-                )
+                settings=MockInitialTeamsProviderSettings(projects=projects)
             )
 
             student_provider = CustomStudentProvider(class_size)
@@ -229,21 +241,24 @@ class CustomModels(Run):
                 settings=simulation_settings,
                 algorithm_set={
                     AlgorithmType.DRR: [
-                        DoubleRoundRobinAlgorithmConfig(utility_function=additive_utility_function),
+                        DoubleRoundRobinAlgorithmConfig(
+                            utility_function=additive_utility_function
+                        ),
                     ],
                     AlgorithmType.WEIGHT: [
                         WeightAlgorithmConfig(),
                     ],
                     AlgorithmType.GROUP_MATCHER: [
                         GroupMatcherAlgorithmConfig(
-                            csv_output_path=Path.cwd().parent.parent.parent / f"api/ai/group_matcher_algorithm/group-matcher/inpData/{ class_size }-generated.csv",
-                            group_matcher_run_path=Path.cwd().parent.parent.parent / 'api/ai/group_matcher_algorithm/group-matcher/run.py'
+                            csv_output_path=Path.cwd().parent.parent.parent
+                            / f"api/ai/group_matcher_algorithm/group-matcher/inpData/{ class_size }-generated.csv",
+                            group_matcher_run_path=Path.cwd().parent.parent.parent
+                            / "api/ai/group_matcher_algorithm/group-matcher/run.py",
                         ),
-                    ]
-                }
+                    ],
+                },
             ).run(num_runs=1)
             simulation_sets[class_size] = deterministic_artifacts
-
 
             probabilistic_artifacts = SimulationSet(
                 settings=simulation_settings,

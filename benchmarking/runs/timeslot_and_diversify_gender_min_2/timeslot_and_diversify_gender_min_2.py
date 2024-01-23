@@ -5,7 +5,10 @@ import typer
 
 from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
-    WeightAlgorithmConfig, DoubleRoundRobinAlgorithmConfig, GroupMatcherAlgorithmConfig, RandomAlgorithmConfig,
+    WeightAlgorithmConfig,
+    DoubleRoundRobinAlgorithmConfig,
+    GroupMatcherAlgorithmConfig,
+    RandomAlgorithmConfig,
 )
 from api.models.enums import AlgorithmType
 from api.models.student import Student
@@ -56,7 +59,6 @@ class TimeSlotAndDiversifyGenderMin2(Run):
         }
         simulation_sets = {}
 
-
         class_sizes = [20, 100, 240, 500, 1000]
         # class_sizes = [20, 40, 60, 80, 100]
 
@@ -65,11 +67,11 @@ class TimeSlotAndDiversifyGenderMin2(Run):
             student_provider = TimeslotCustomStudentProvider(class_size)
 
             simulation_settings = SimulationSettings(
-                    num_teams=class_size // self.TEAM_SIZE,
-                    student_provider=student_provider,
-                    scenario=scenario,
-                    cache_key=f"timeslot_stuff/class_size_{class_size}",
-                )
+                num_teams=class_size // self.TEAM_SIZE,
+                student_provider=student_provider,
+                scenario=scenario,
+                cache_key=f"timeslot_stuff/class_size_{class_size}",
+            )
 
             deterministic_artifacts = SimulationSet(
                 settings=simulation_settings,
@@ -79,11 +81,13 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                     ],
                     AlgorithmType.GROUP_MATCHER: [
                         GroupMatcherAlgorithmConfig(
-                            csv_output_path=Path.cwd().parent.parent.parent / f"api/ai/group_matcher_algorithm/group-matcher/inpData/{ class_size }-generated.csv",
-                            group_matcher_run_path=Path.cwd().parent.parent.parent / 'api/ai/group_matcher_algorithm/group-matcher/run.py'
+                            csv_output_path=Path.cwd().parent.parent.parent
+                            / f"api/ai/group_matcher_algorithm/group-matcher/inpData/{ class_size }-generated.csv",
+                            group_matcher_run_path=Path.cwd().parent.parent.parent
+                            / "api/ai/group_matcher_algorithm/group-matcher/run.py",
                         ),
-                    ]
-                }
+                    ],
+                },
             ).run(num_runs=1)
             simulation_sets[class_size] = deterministic_artifacts
 

@@ -68,7 +68,9 @@ class Student:
             "timezone offset": "-7",  # all the same timezone
             "Would you like to attend the same discussion": "Yes",
             "discussion section times": fromNumbersToTimeSlots(
-                self.attributes.get(ScenarioAttribute.TIMESLOT_AVAILABILITY.value, ['1'])
+                self.attributes.get(
+                    ScenarioAttribute.TIMESLOT_AVAILABILITY.value, ["1"]
+                )
             ),
             "Will you be on the Berkeley campus": "Yes",  # No remote students
             "Which of these options best describes your race?": fromRaceToAlRace(
