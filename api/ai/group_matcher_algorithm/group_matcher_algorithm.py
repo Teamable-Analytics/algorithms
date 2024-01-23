@@ -51,9 +51,7 @@ class GroupMatcherAlgorithm(Algorithm):
     def generate(self, students: List[Student]) -> TeamSet:
         # Run the group matcher algorithm
         cmd = f"python3 {self.group_matcher_run_path} {self.config_file_path} {self.csv_input_path}"
-        print(cmd)
         cmd_output = os.system(cmd)
-        print(cmd_output)
 
         # Read the output csv file and create a TeamSet
         df = pd.read_csv(self.outpath)

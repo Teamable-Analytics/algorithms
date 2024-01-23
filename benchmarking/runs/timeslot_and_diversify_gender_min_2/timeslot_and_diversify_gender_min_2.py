@@ -45,7 +45,7 @@ def additive_utility_function(student: Student, team: TeamShell) -> float:
 class TimeSlotAndDiversifyGenderMin2(Run):
     TEAM_SIZE = 4
 
-    def start(self, num_trials: int = 100, generate_graphs: bool = True):
+    def start(self, num_trials: int = 100, generate_graphs: bool = False):
         scenario = ConcentrateTimeslotAndDiversifyGenderMin2Female()
 
         metrics = {
