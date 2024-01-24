@@ -33,6 +33,7 @@ from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_prov
 from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
     get_pretty_metric_name,
     save_points,
+    get_graph_params,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight

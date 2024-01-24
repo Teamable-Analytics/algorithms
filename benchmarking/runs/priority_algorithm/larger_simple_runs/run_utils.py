@@ -37,10 +37,10 @@ def save_points(surfaces: List[Surface3D], path: str):
 
 def get_graph_params() -> Dict:
     return {
-        x_label: "K",
-        y_label: "Width",
-        z_lim: (0, 1),
-        invert_xaxis: True,
-        plot_legend: True,
-        save_graph: True,
+        "x_label": "K",
+        "y_label": "Width",
+        "z_lim": (0, 1),
+        "invert_xaxis": True,
+        "plot_legend": True,
+        "save_graph": True,
     }

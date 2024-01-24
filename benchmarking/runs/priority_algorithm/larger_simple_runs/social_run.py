@@ -28,6 +28,7 @@ from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_prov
 )
 from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
     get_pretty_metric_name,
+    get_graph_params,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -153,13 +154,8 @@ class SocialRun(Run):
                     graph_3d(
                         surfaces,
                         graph_title=f"Priority Algorithm Parameters vs {get_pretty_metric_name(metric)}\n~Social Scenario, {max_iterations} iterations, 120 students~",
-                        x_label="Max Keep",
-                        y_label="Max Spread",
                         z_label=get_pretty_metric_name(metric),
-                        z_lim=(0, 1),
-                        invert_xaxis=True,
-                        plot_legend=True,
-                        save_graph=True,
+                        **get_graph_params(),
                         filename=save_loc,
                     )
 
