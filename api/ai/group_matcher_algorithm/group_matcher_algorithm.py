@@ -11,7 +11,6 @@ from api.ai.interfaces.algorithm_options import GroupMatcherAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.models.enums import ScenarioAttribute, fromAlRaceToRace, fromAlGenderToGender
 from api.models.student import Student
-from api.models.team import Team
 from api.models.team_set import TeamSet
 
 
@@ -26,8 +25,10 @@ class GroupMatcherAlgorithm(Algorithm):
     ):
         super().__init__(algorithm_options, team_generation_options, algorithm_config)
         self.csv_input_path = algorithm_config.csv_input_path
+
+        class_size = int(self.csv_input_path.stem.split("-")[0])
         self.group_matcher_run_path = algorithm_config.group_matcher_run_path
-        self.outpath = Path.cwd() / "out-private.csv"
+        self.outpath = Path.cwd() / f"out-private-{class_size}.csv"
         if self.outpath.exists():
             self.outpath.unlink()
         self.config_file_path = (
@@ -51,7 +52,7 @@ class GroupMatcherAlgorithm(Algorithm):
     def generate(self, students: List[Student]) -> TeamSet:
         # Run the group matcher algorithm
         cmd = f"python3 {self.group_matcher_run_path} {self.config_file_path} {self.csv_input_path}"
-        cmd_output = os.system(cmd)
+        os.system(cmd)
 
         # Read the output csv file and create a TeamSet
         df = pd.read_csv(self.outpath)
@@ -75,4 +76,7 @@ class GroupMatcherAlgorithm(Algorithm):
 
             self.team_trace[int(row["group_num"]) + 1].add_student(new_student)
 
-        return TeamSet(teams=self.teams)
+        # Unlink after finish
+        self.outpath.unlink()
+
+        return TeamSet(teams=[team for team in self.teams if len(team.students) > 0])

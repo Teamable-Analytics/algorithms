@@ -50,6 +50,7 @@ def goal_to_priority(goal: Goal) -> Priority:
             return DiversityPriority(
                 attribute_id=goal.attribute,
                 strategy=goal.strategy,
+                max_num_choices=goal.max_num_choices,
             )
 
         return TokenizationPriority(

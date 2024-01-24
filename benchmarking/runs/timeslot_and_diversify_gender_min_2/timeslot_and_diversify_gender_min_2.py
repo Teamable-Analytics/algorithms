@@ -46,7 +46,7 @@ class TimeSlotAndDiversifyGenderMin2(Run):
     TEAM_SIZE = 4
 
     def start(self, num_trials: int = 100, generate_graphs: bool = False):
-        scenario = ConcentrateTimeslotAndDiversifyGenderMin2Female()
+        scenario = ConcentrateTimeslotAndDiversifyGenderMin2Female(max_num_choices=5)
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
@@ -54,7 +54,7 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                 False,
             ),
             "AverageTimeslotCoverage": AverageTimeslotCoverage(
-                available_timeslots=list(range(20)),
+                available_timeslots=list(range(10)),
             ),
         }
         simulation_sets = {}
@@ -87,6 +87,7 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                             / "api/ai/group_matcher_algorithm/group-matcher/run.py",
                         ),
                     ],
+                    AlgorithmType.DRR: [DoubleRoundRobinAlgorithmConfig(utility_function=additive_utility_function)],
                 },
             ).run(num_runs=1)
             simulation_sets[class_size] = deterministic_artifacts

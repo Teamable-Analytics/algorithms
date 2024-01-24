@@ -58,7 +58,7 @@ class TimeslotCustomStudentProvider(StudentProvider):
         rng = np.random.default_rng(seed=seed)
         for student in students:
             num_time_slots = int(rng.random() * 3) + 3
-            timeslots = rng.choice(range(20), num_time_slots, replace=False)
+            timeslots = rng.choice(range(10), num_time_slots, replace=False)
             student.attributes[
                 ScenarioAttribute.TIMESLOT_AVAILABILITY.value
             ] = timeslots.tolist()
