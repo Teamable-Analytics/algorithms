@@ -1,4 +1,6 @@
+import copy
 import unittest
+from typing import List
 
 from api.ai.priority_algorithm.priority.priority import (
     RequirementPriority,
@@ -317,23 +319,27 @@ class TestDiversityPriority(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.attribute_id = 1
+        cls.multi_attribute_id = 2
         cls.trivial_team_shell = TeamShell(_id=1)
         cls.student_a = Student(
             _id=1,
             attributes={
                 cls.attribute_id: [1],
+                cls.multi_attribute_id: [1, 2, 3],
             },
         )
         cls.student_b = Student(
             _id=2,
             attributes={
                 cls.attribute_id: [2],
+                cls.multi_attribute_id: [1, 2],
             },
         )
         cls.student_c = Student(
             _id=3,
             attributes={
                 cls.attribute_id: [3],
+                cls.multi_attribute_id: [1],
             },
         )
         cls.student_d = Student(
@@ -341,25 +347,90 @@ class TestDiversityPriority(unittest.TestCase):
             attributes={
                 # intentionally duplicated value
                 cls.attribute_id: [3],
+                cls.multi_attribute_id: [2],
+            },
+        )
+        cls.student_e = Student(
+            _id=3,
+            attributes={
+                cls.multi_attribute_id: [3],
+            },
+        )
+        cls.student_f = Student(
+            _id=3,
+            attributes={
+                cls.multi_attribute_id: [],
             },
         )
 
     def test_satisfaction__with_concentrate(self):
         diversity_priority = DiversityPriority(
-            attribute_id=self.attribute_id, strategy=DiversifyType.CONCENTRATE
+            attribute_id=self.attribute_id,
+            strategy=DiversifyType.CONCENTRATE,
+            max_num_choices=1,
         )
         high_satisfaction = diversity_priority.satisfaction(
-            [self.student_c, self.student_d], self.trivial_team_shell
+            ensure_different_ids([self.student_c, self.student_d]),
+            self.trivial_team_shell,
         )
         medium_satisfaction = diversity_priority.satisfaction(
-            [self.student_b, self.student_c, self.student_d], self.trivial_team_shell
+            ensure_different_ids([self.student_b, self.student_c, self.student_d]),
+            self.trivial_team_shell,
         )
         low_satisfaction = diversity_priority.satisfaction(
-            [self.student_a, self.student_b, self.student_c], self.trivial_team_shell
+            ensure_different_ids([self.student_a, self.student_b, self.student_c]),
+            self.trivial_team_shell,
         )
 
         self.assertGreater(high_satisfaction, medium_satisfaction)
         self.assertGreater(medium_satisfaction, low_satisfaction)
+
+    def test_satisfaction__with_concentrate_and_multi_answers(self):
+        diversity_priority = DiversityPriority(
+            attribute_id=self.multi_attribute_id,
+            strategy=DiversifyType.CONCENTRATE,
+            max_num_choices=3,
+        )
+        highest_satisfaction = diversity_priority.satisfaction(
+            ensure_different_ids([self.student_a, self.student_a, self.student_a]),
+            self.trivial_team_shell,
+        )
+        high_satisfaction = diversity_priority.satisfaction(
+            ensure_different_ids([self.student_a, self.student_a, self.student_b]),
+            self.trivial_team_shell,
+        )
+        satisfaction_1 = diversity_priority.satisfaction(
+            ensure_different_ids([self.student_b, self.student_b, self.student_b]),
+            self.trivial_team_shell,
+        )
+        satisfaction_2 = diversity_priority.satisfaction(
+            ensure_different_ids([self.student_b, self.student_b, self.student_c]),
+            self.trivial_team_shell,
+        )
+        satisfaction_3 = diversity_priority.satisfaction(
+            ensure_different_ids([self.student_a, self.student_a, self.student_f]),
+            self.trivial_team_shell,
+        )
+        satisfaction_4 = diversity_priority.satisfaction(
+            ensure_different_ids([self.student_c, self.student_c, self.student_c]),
+            self.trivial_team_shell,
+        )
+        lowest_satisfaction_1 = diversity_priority.satisfaction(
+            ensure_different_ids([self.student_c, self.student_d, self.student_e]),
+            self.trivial_team_shell,
+        )
+        lowest_satisfaction_2 = diversity_priority.satisfaction(
+            ensure_different_ids([self.student_f, self.student_f, self.student_f]),
+            self.trivial_team_shell,
+        )
+
+        self.assertGreater(highest_satisfaction, high_satisfaction)
+        self.assertGreater(high_satisfaction, satisfaction_1)
+        self.assertGreater(satisfaction_1, satisfaction_2)
+        self.assertGreater(satisfaction_2, satisfaction_3)
+        self.assertGreaterEqual(satisfaction_3, satisfaction_4)
+        self.assertGreater(satisfaction_4, lowest_satisfaction_1)
+        self.assertEqual(lowest_satisfaction_1, lowest_satisfaction_2)
 
     def test_satisfaction__with_diversify(self):
         diversity_priority = DiversityPriority(
@@ -587,3 +658,15 @@ class TestSocialPriority(unittest.TestCase):
         self.assertGreater(friend_2_outcast_1, enemy_cycle)
         self.assertGreater(enemy_cycle, neutral_2_outcast_1)
         self.assertGreater(neutral_2_outcast_1, all_enemies)
+
+
+def ensure_different_ids(students: List[Student]) -> List[Student]:
+    # some calculations care about student ids and them being different,
+    # but it's easier to write tests without making new students, so ths
+    # just lets us fake it whenever
+    new_students = []
+    for index, student in enumerate(students):
+        new_student = copy.deepcopy(student)
+        new_student._id = index
+        new_students.append(new_student)
+    return new_students
