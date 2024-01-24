@@ -28,7 +28,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class Runtimes(Run):
-    def start(self, num_trials: int = 1, generate_graphs: bool = True):
+    def start(self, num_trials: int = 100, generate_graphs: bool = False):
         class_size = 120
         team_size = 4
 
