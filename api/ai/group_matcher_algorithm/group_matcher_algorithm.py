@@ -1,7 +1,8 @@
 import csv
 import os
+import time
 from pathlib import Path
-from typing import List
+from typing import List, Dict
 
 import pandas as pd
 
@@ -15,6 +16,8 @@ from api.models.team_set import TeamSet
 
 
 class GroupMatcherAlgorithm(Algorithm):
+    student_trace: Dict[int, Student]
+
     def __init__(
         self,
         algorithm_options: GroupMatcherAlgorithmOptions,
@@ -42,6 +45,7 @@ class GroupMatcherAlgorithm(Algorithm):
 
     def prepare(self, students: List[Student]) -> None:
         student_data = [student.to_group_matcher_data_format() for student in students]
+        self.student_trace = { student.id: student for student in students }
         with open(self.csv_input_path, "w") as csvfile:
             writer = csv.DictWriter(
                 csvfile, fieldnames=student_data[0].keys(), delimiter=";"
@@ -57,24 +61,8 @@ class GroupMatcherAlgorithm(Algorithm):
         # Read the output csv file and create a TeamSet
         df = pd.read_csv(self.outpath)
         for _, row in df.iterrows():
-            new_student = Student(
-                _id=row["sid"],
-                name=row["first_name"] + " " + row["last_name"],
-                attributes={
-                    ScenarioAttribute.YEAR_LEVEL.value: [int(row["year"])],
-                    ScenarioAttribute.RACE.value: [
-                        fromAlRaceToRace(int(row["race"])).value
-                    ],
-                    ScenarioAttribute.GENDER.value: [
-                        fromAlGenderToGender(int(row["gender"])).value
-                    ],
-                    ScenarioAttribute.TIMESLOT_AVAILABILITY.value: list(
-                        map(int, row["disc_times_options"].strip("[']").split(","))
-                    ),
-                },
-            )
-
-            self.team_trace[int(row["group_num"]) + 1].add_student(new_student)
+            student_id = row["sid"]
+            self.team_trace[int(row["group_num"]) + 1].add_student(self.student_trace[student_id])
 
         # Unlink after finish
         self.outpath.unlink()

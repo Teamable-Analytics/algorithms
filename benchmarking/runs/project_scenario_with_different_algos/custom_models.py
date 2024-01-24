@@ -1,6 +1,6 @@
 import itertools
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 import typer
 
@@ -25,6 +25,7 @@ from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetad
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
     AverageProjectRequirementsCoverage,
 )
+from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.scenario_that_we_love import (
     ScenarioThatWeLove,
@@ -55,7 +56,7 @@ def additive_utility_function(student: Student, team: TeamShell) -> float:
 
 
 class CustomModels(Run):
-    def start(self, num_trials: int = 100, generate_graphs: bool = False):
+    def start(self, num_trials: int = 100, generate_graphs: bool = True):
         scenario = ScenarioThatWeLove(
             value_of_female=Gender.FEMALE.value,
             value_of_african=Race.African.value,
@@ -251,9 +252,9 @@ class CustomModels(Run):
                     AlgorithmType.GROUP_MATCHER: [
                         GroupMatcherAlgorithmConfig(
                             csv_output_path=Path.cwd().parent.parent.parent
-                            / f"api/ai/group_matcher_algorithm/group-matcher/inpData/{ class_size }-generated.csv",
+                                            / f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv",
                             group_matcher_run_path=Path.cwd().parent.parent.parent
-                            / "api/ai/group_matcher_algorithm/group-matcher/run.py",
+                                                   / "api/ai/group_matcher_algorithm/group-matcher/run.py",
                         ),
                     ],
                 },
