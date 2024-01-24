@@ -14,7 +14,11 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
-from benchmarking.evaluations.goals import DiversityGoal, ProjectRequirementGoal, WeightGoal
+from benchmarking.evaluations.goals import (
+    DiversityGoal,
+    ProjectRequirementGoal,
+    WeightGoal,
+)
 from benchmarking.evaluations.interfaces import Scenario, Goal
 
 from api.models.project import Project, ProjectRequirement

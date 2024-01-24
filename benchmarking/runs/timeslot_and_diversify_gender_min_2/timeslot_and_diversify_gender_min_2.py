@@ -87,7 +87,11 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                             / "api/ai/group_matcher_algorithm/group-matcher/run.py",
                         ),
                     ],
-                    AlgorithmType.DRR: [DoubleRoundRobinAlgorithmConfig(utility_function=additive_utility_function)],
+                    AlgorithmType.DRR: [
+                        DoubleRoundRobinAlgorithmConfig(
+                            utility_function=additive_utility_function
+                        )
+                    ],
                 },
             ).run(num_runs=1)
             simulation_sets[class_size] = deterministic_artifacts

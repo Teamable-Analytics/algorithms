@@ -132,7 +132,6 @@ class CampusLocation(AttributeValueEnum):
     Vancouver = 2
 
 
-
 # From paper: https://sigcse2023.sigcse.org/details/sigcse-ts-2023-papers/163/Inclusive-study-group-formation-at-scale
 class AlRace(AttributeValueEnum):
     White = "White"

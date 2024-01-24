@@ -4,12 +4,15 @@ import typer
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.models.enums import AlgorithmType, ScenarioAttribute
-from benchmarking.evaluations.metrics.average_timeslot_coverage import AverageTimeslotCoverage
+from benchmarking.evaluations.metrics.average_timeslot_coverage import (
+    AverageTimeslotCoverage,
+)
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.concentrate_timeslot import ConcentrateTimeslot
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.priority_algorithm.concentration_sanity_check.concentrate_on_timeslot_clean.custom_student_provider import \
-    CleanTimeslotCustomStudentProvider
+from benchmarking.runs.priority_algorithm.concentration_sanity_check.concentrate_on_timeslot_clean.custom_student_provider import (
+    CleanTimeslotCustomStudentProvider,
+)
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet
@@ -32,7 +35,9 @@ class SanityCheckConcentrateOnCleanTimeslot(Run):
                 goals_to_priorities(scenario.goals),
                 False,
             ),
-            "AverageTimeslotCoverage": AverageTimeslotCoverage(available_timeslots=list(range(1, 9)))
+            "AverageTimeslotCoverage": AverageTimeslotCoverage(
+                available_timeslots=list(range(1, 9))
+            ),
         }
 
         artifact = SimulationSet(
@@ -58,11 +63,15 @@ class SanityCheckConcentrateOnCleanTimeslot(Run):
 
         print(average_metrics)
 
-        all_teamsets = artifact.get('AlgorithmType.PRIORITY-PriorityAlgorithm')[0]
+        all_teamsets = artifact.get("AlgorithmType.PRIORITY-PriorityAlgorithm")[0]
         for idx, teamset in enumerate(all_teamsets):
             print(f"Teamset {idx + 1}")
             for team in teamset.teams:
-                print(f"Team { team.id }: " + str(sorted([student.id for student in team.students])))
+                print(
+                    f"Team { team.id }: "
+                    + str(sorted([student.id for student in team.students]))
+                )
+
 
 if __name__ == "__main__":
     typer.run(SanityCheckConcentrateOnCleanTimeslot().start)
