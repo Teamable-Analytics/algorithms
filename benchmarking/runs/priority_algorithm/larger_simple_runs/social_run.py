@@ -29,6 +29,7 @@ from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_prov
 from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
     get_pretty_metric_name,
     get_graph_params,
+    save_points,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -41,7 +42,7 @@ class SocialRun(Run):
     NUMBER_OF_TEAMS = 30
     NUMBER_OF_STUDENTS_PER_TEAM = 4
 
-    def start(self, num_trials: int = 30, generate_graphs: bool = False):
+    def start(self, num_trials: int = 30, generate_graphs: bool = True):
         # Ranges
         max_keep_range = [1] + list(range(5, 31, 5))
         max_spread_range = [1] + list(range(20, 101, 20))
@@ -158,6 +159,7 @@ class SocialRun(Run):
                         **get_graph_params(),
                         filename=save_loc,
                     )
+                    save_points(surfaces, save_loc)
 
 
 if __name__ == "__main__":

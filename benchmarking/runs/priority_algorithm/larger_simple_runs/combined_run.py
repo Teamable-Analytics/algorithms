@@ -44,6 +44,7 @@ from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_prov
 from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
     get_pretty_metric_name,
     get_graph_params,
+    save_points,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -52,7 +53,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class CombinedProjectsAndDiversityRun(Run):
-    def start(self, num_trials: int = 30, generate_graphs: bool = False):
+    def start(self, num_trials: int = 30, generate_graphs: bool = True):
         # Ranges
         max_keep_range = [1] + list(range(5, 31, 5))
         max_spread_range = [1] + list(range(5, 31, 5))
@@ -69,7 +70,7 @@ class CombinedProjectsAndDiversityRun(Run):
                 False,
             ),
             "AverageCosineDifference": AverageCosineDifference(),
-            "AverageProjectRequirementCoverage": AverageProjectRequirementsCoverage(),
+            "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
         }
 
         initial_teams_provider = MockInitialTeamsProvider(
@@ -174,6 +175,7 @@ class CombinedProjectsAndDiversityRun(Run):
                         **get_graph_params(),
                         filename=save_loc,
                     )
+                    save_points(surfaces, save_loc)
 
 
 class DiversityAndProjectsScenario(Scenario):
