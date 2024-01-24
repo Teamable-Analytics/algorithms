@@ -44,6 +44,7 @@ from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_prov
 from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
     get_pretty_metric_name,
     get_graph_params,
+    save_points,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -74,7 +75,7 @@ class SocialAndProject(Run):
             "AverageSocialSatisfaction": AverageSocialSatisfaction(
                 metric_function=is_strictly_happy_team_friend
             ),
-            "AverageProjectRequirementCoverage": AverageProjectRequirementsCoverage(),
+            "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
         }
         initial_teams_provider = MockInitialTeamsProvider(
             settings=MockInitialTeamsProviderSettings(
@@ -103,6 +104,7 @@ class SocialAndProject(Run):
                             MAX_SPREAD=max_spread,
                             MAX_ITERATE=max_iterations,
                             MAX_TIME=10000000,
+                            START_TYPE=start_type,
                             name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}-{start_type.value}_start",
                         )
                         for max_keep in max_keep_range
@@ -177,6 +179,7 @@ class SocialAndProject(Run):
                         **get_graph_params(),
                         filename=save_loc,
                     )
+                    save_points(surfaces, save_loc)
 
 
 class SocialAndProjectScenario(Scenario):
