@@ -1,3 +1,4 @@
+import hashlib
 from typing import List, Dict
 
 import numpy as np
@@ -78,7 +79,13 @@ class SimulationSet:
 
 
 def _get_seeds(num_seeds: int, cache_key: str) -> List[int]:
-    seed_generator_seed = abs(hash(cache_key)) if cache_key else None
+    seed_length = 12
+    seed_generator_seed = (
+        abs(int(hashlib.sha256(cache_key.encode("utf-8")).hexdigest(), 16))
+        % (10**seed_length)
+        if cache_key
+        else None
+    )
     rng = np.random.default_rng(seed_generator_seed)
     return [
         # Arbitrary upper bound. Big number, so we have lower chance of duplicate seed.
