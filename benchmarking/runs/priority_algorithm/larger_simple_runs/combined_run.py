@@ -1,4 +1,5 @@
 import re
+from os import path
 from typing import Dict, Tuple, List
 
 import typer
@@ -30,7 +31,7 @@ from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
     AverageProjectRequirementsCoverage,
 )
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.runs.interfaces import Run
 from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_projects import (
@@ -39,6 +40,9 @@ from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_projects imp
 from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import (
     CustomOneHundredAndTwentyStudentWithProjectAttributesProvider,
     Major,
+)
+from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
+    get_pretty_metric_name,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -63,7 +67,7 @@ class CombinedProjectsAndDiversityRun(Run):
                 goals_to_priorities(scenario.goals),
                 False,
             ),
-            "AverageCosineSimilarity": AverageCosineSimilarity(),
+            "AverageCosineDifference": AverageCosineDifference(),
             "AverageProjectRequirementCoverage": AverageProjectRequirementsCoverage(),
         }
 
@@ -154,15 +158,25 @@ class CombinedProjectsAndDiversityRun(Run):
                                 color="blue" if start_type.value == "weight" else "red",
                             )
                         )
+                    save_loc = path.abspath(
+                        path.join(
+                            path.dirname(__file__),
+                            "graphs",
+                            "project_and_diversity",
+                            f"{get_pretty_metric_name(metric)} - {max_iterations} Iterations",
+                        )
+                    )
                     graph_3d(
                         surfaces,
-                        graph_title=f"Priority Algorithm Parameters vs {metric_name}\n~Project & Diversify Scenario, {max_iterations} iterations, 120 students~",
-                        x_label="MAX_KEEP",
-                        y_label="MAX_SPREAD",
-                        z_label=metric_name,
+                        graph_title=f"Priority Algorithm Parameters vs {get_pretty_metric_name(metric)}\n~Project & Diversify Scenario, {max_iterations} iterations, 120 students~",
+                        x_label="Max Keep",
+                        y_label="Max Spread",
+                        z_label=get_pretty_metric_name(metric),
                         z_lim=(0, 1),
                         invert_xaxis=True,
                         plot_legend=True,
+                        save_graph=True,
+                        filename=save_loc,
                     )
 
 

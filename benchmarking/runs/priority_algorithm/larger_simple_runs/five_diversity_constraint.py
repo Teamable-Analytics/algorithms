@@ -1,9 +1,8 @@
 import re
+from os import path
 from typing import Dict, Tuple, List
 
-import numpy as np
 import typer
-from matplotlib import pyplot as plt
 
 from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
@@ -23,22 +22,26 @@ from benchmarking.data.interfaces import StudentProvider
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.graphing.graph_3d import graph_3d, Surface3D
 from benchmarking.evaluations.interfaces import Scenario, Goal
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
+from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.runs.interfaces import Run
 from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import (
     CustomOneHundredAndTwentyStudentProvider,
     Major,
 )
+
+from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
+    get_pretty_metric_name,
+    save_points,
+)
+from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
-from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.simulation.goal_to_priority import goals_to_priorities
-
 
 class FiveDiversityConstraint(Run):
-    def start(self, num_trials: int = 30, generate_graphs: bool = False):
+    def start(self, num_trials: int = 30, generate_graphs: bool = True):
         class_sizes = [120]
         num_teams = 30
         student_providers: Dict[int, StudentProvider] = {
@@ -62,7 +65,7 @@ class FiveDiversityConstraint(Run):
                 goals_to_priorities(scenario.goals),
                 False,
             ),
-            "AverageCosineSimilarity": AverageCosineSimilarity(),
+            "AverageCosineDifference": AverageCosineDifference(),
         }
         start_types = [
             PriorityAlgorithmStartType.WEIGHT,
@@ -154,16 +157,27 @@ class FiveDiversityConstraint(Run):
                                     else "red",
                                 )
                             )
+                        save_loc = path.abspath(
+                            path.join(
+                                path.dirname(__file__),
+                                "graphs",
+                                "diversity",
+                                f"{get_pretty_metric_name(metric)} - {max_iterations} Iterations",
+                            )
+                        )
                         graph_3d(
                             surfaces,
-                            graph_title=f"Priority Algorithm Parameters vs {metric_name}\n~Five Diversity Constraint, {max_iterations} iterations, {class_size} students~",
-                            x_label="MAX_KEEP",
-                            y_label="MAX_SPREAD",
-                            z_label="Score",
+                            graph_title=f"Priority Algorithm Parameters vs {get_pretty_metric_name(metric)}\n~Five Diversity Constraint, {max_iterations} iterations, {class_size} students~",
+                            x_label="Max Keep",
+                            y_label="Max Spread",
+                            z_label=get_pretty_metric_name(metric),
                             z_lim=(0, 1),
                             invert_xaxis=True,
                             plot_legend=True,
+                            save_graph=True,
+                            filename=save_loc,
                         )
+                        save_points(surfaces, save_loc)
 
 
 class FiveDiversityConstraintScenario(Scenario):

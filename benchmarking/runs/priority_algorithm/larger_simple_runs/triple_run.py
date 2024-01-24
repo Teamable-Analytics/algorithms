@@ -1,4 +1,5 @@
 import re
+from os import path
 from typing import List, Dict, Tuple
 
 import typer
@@ -35,7 +36,7 @@ from benchmarking.evaluations.metrics.average_project_requirements_coverage impo
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,
 )
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.metrics.utils.team_calculations import (
     is_strictly_happy_team_friend,
@@ -47,6 +48,9 @@ from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_projects imp
 from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import (
     Major,
     Custom120SocialDiversityAndProjectStudentProvider,
+)
+from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
+    get_pretty_metric_name,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -80,7 +84,7 @@ class TripleRun(Run):
             "AverageSocialSatisfaction": AverageSocialSatisfaction(
                 metric_function=is_strictly_happy_team_friend
             ),
-            "AverageCosineSimilarity": AverageCosineSimilarity(),
+            "AverageCosineDifference": AverageCosineDifference(),
             "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
         }
         initial_teams_provider = MockInitialTeamsProvider(
@@ -169,15 +173,25 @@ class TripleRun(Run):
                                 color="blue" if start_type.value == "weight" else "red",
                             )
                         )
+                    save_loc = path.abspath(
+                        path.join(
+                            path.dirname(__file__),
+                            "graphs",
+                            "triple",
+                            f"{get_pretty_metric_name(metric)} - {max_iterations} Iterations",
+                        )
+                    )
                     graph_3d(
                         surfaces,
-                        graph_title=f"Priority Algorithm Parameters vs {metric_name}\n~Projects, Diversity, and Social Scenario, {max_iterations} iterations, 120 students~",
-                        x_label="MAX_KEEP",
-                        y_label="MAX_SPREAD",
-                        z_label=metric_name,
+                        graph_title=f"Priority Algorithm Parameters vs {get_pretty_metric_name(metric)}\n~Projects, Diversity & Social Scenario, {max_iterations} iterations, 120 students~",
+                        x_label="Max Keep",
+                        y_label="Max Spread",
+                        z_label=get_pretty_metric_name(metric),
                         z_lim=(0, 1),
                         invert_xaxis=True,
                         plot_legend=True,
+                        save_graph=True,
+                        filename=save_loc,
                     )
 
 
