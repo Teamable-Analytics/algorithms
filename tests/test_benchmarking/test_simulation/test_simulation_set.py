@@ -11,7 +11,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
-from benchmarking.simulation.simulation_set import SimulationSet
+from benchmarking.simulation.simulation_set import SimulationSet, _get_seeds
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from tests.test_benchmarking.test_simulation._data import TestScenario
 from utils.validation import is_unique
@@ -112,3 +112,16 @@ class TestSimulationSet(unittest.TestCase):
         ]
         self.assertEqual(4, len(generated_keys))
         self.assertTrue(is_unique(generated_keys))
+
+    def test_get_seeds(self):
+        a = _get_seeds(1, "test_cache_key")
+        b = _get_seeds(1, "test_cache_key")
+        self.assertListEqual(a, b)
+
+        a = _get_seeds(2, "test/cache_key")
+        b = _get_seeds(2, "test/cache_key")
+        self.assertListEqual(a, b)
+
+        a = _get_seeds(200, "test/cache_key_20")
+        b = _get_seeds(200, "test/cache_key_20")
+        self.assertListEqual(a, b)
