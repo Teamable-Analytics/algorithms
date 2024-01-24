@@ -168,13 +168,8 @@ class FiveDiversityConstraint(Run):
                         graph_3d(
                             surfaces,
                             graph_title=f"Priority Algorithm Parameters vs {get_pretty_metric_name(metric)}\n~Five Diversity Constraint, {max_iterations} iterations, {class_size} students~",
-                            x_label="Max Keep",
-                            y_label="Max Spread",
                             z_label=get_pretty_metric_name(metric),
-                            z_lim=(0, 1),
-                            invert_xaxis=True,
-                            plot_legend=True,
-                            save_graph=True,
+                            **get_graph_params(),
                             filename=save_loc,
                         )
                         save_points(surfaces, save_loc)
