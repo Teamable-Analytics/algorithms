@@ -236,6 +236,9 @@ class RegularClassSize(Run):
                                 ],
                                 label=f"{start_type.value} start".title(),
                                 color="blue" if start_type.value == "weight" else "red",
+                                linestyle="solid"
+                                if start_type.value == "weight"
+                                else "dashed",
                             )
                         )
                     save_loc = path.abspath(

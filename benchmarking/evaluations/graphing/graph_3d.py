@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import os
 from os import path
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Union
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -12,6 +12,7 @@ class Surface3D:
     points: List[Tuple[float, float, float]]
     label: str
     color: str = "blue"
+    linestyle: Union[str, Tuple[int, Tuple[int,]]] = None
 
 
 def graph_3d(
@@ -54,6 +55,7 @@ def graph_3d(
             Z,
             color=surface.color,
             label=surface.label,
+            linestyle=surface.linestyle,
         )
 
     ax.set_title(graph_title)
