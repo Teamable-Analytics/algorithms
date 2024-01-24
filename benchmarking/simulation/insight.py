@@ -26,8 +26,8 @@ class Insight:
 
         if not self.team_sets:
             raise ValueError("At least one team set must be specified for an insight.")
-        if not self.metrics:
-            raise ValueError("At least one metric must be specified for an insight.")
+        # if not self.metrics:
+        #     raise ValueError("At least one metric must be specified for an insight.")
         if self.run_times and len(self.run_times) != len(self.team_sets):
             raise ValueError(
                 "If you provide run times, you must provide a run time for each team set provided."
