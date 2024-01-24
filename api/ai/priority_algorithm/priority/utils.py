@@ -24,6 +24,9 @@ def int_dot_product(a: List[int], b: List[int]) -> int:
     if len(a) != len(b):
         raise ValueError("The lengths of both vectors must be equal.")
 
+    if len(a) == 0:
+        return 0
+
     return sum(a_i * b_i for a_i, b_i in zip(a, b))
 
 
