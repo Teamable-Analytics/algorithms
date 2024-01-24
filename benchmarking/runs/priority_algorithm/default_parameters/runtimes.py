@@ -138,7 +138,7 @@ class TwoDiversityScenario(Scenario):
                 tokenization_constraint=TokenizationConstraint(
                     direction=TokenizationConstraintDirection.MIN_OF,
                     threshold=2,
-                    value=self.value_of_female,
+                    value=self.value_of_a,
                 ),
             ),
         ]
