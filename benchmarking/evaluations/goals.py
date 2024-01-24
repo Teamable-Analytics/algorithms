@@ -24,7 +24,7 @@ class DiversityGoal(Goal):
             self.strategy == DiversifyType.CONCENTRATE
             and not self.tokenization_constraint
         ):
-            self.max_num_choices = 1  # setting the default when needed
+            self.max_num_choices = self.max_num_choices or 1  # setting the default when needed
         # calls the super method after so that the validate method is processed after this default is set
         super().__post_init__()
 
