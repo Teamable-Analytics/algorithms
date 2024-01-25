@@ -1,4 +1,5 @@
 import itertools
+import os
 from pathlib import Path
 from typing import Dict, List
 
@@ -251,10 +252,20 @@ class CustomModels(Run):
                     ],
                     AlgorithmType.GROUP_MATCHER: [
                         GroupMatcherAlgorithmConfig(
-                            csv_output_path=Path.cwd().parent.parent.parent
-                                            / f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv",
-                            group_matcher_run_path=Path.cwd().parent.parent.parent
-                                                   / "api/ai/group_matcher_algorithm/group-matcher/run.py",
+                            csv_output_path=os.path.abspath(
+                                os.path.join(
+                                    os.path.dirname(__file__),
+                                    "../../..",
+                                    f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
+                                )
+                            ),
+                            group_matcher_run_path=os.path.abspath(
+                                os.path.join(
+                                    os.path.dirname(__file__),
+                                    "../../..",
+                                    "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                                )
+                            )
                         ),
                     ],
                 },
@@ -338,4 +349,6 @@ class CustomModels(Run):
 
 
 if __name__ == "__main__":
-    typer.run(CustomModels().start)
+    CustomModels().start()
+    TimeSlotAndDiversifyGenderMin2().start()
+

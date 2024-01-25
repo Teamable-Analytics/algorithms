@@ -27,7 +27,7 @@ class GroupMatcherAlgorithm(Algorithm):
         **kwargs,
     ):
         super().__init__(algorithm_options, team_generation_options, algorithm_config)
-        self.csv_input_path = algorithm_config.csv_input_path
+        self.csv_input_path = Path(algorithm_config.csv_input_path)
 
         class_size = int(self.csv_input_path.stem.split("-")[0])
         self.group_matcher_run_path = algorithm_config.group_matcher_run_path
