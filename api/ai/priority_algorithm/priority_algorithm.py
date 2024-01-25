@@ -44,13 +44,16 @@ class PriorityAlgorithm(Algorithm):
                 algorithm_options=RandomAlgorithmOptions(),
                 team_generation_options=self.team_generation_options,
             ).generate(students)
-        else:
+        elif self.algorithm_config.START_TYPE == PriorityAlgorithmStartType.WEIGHT:
             team_set = WeightAlgorithm(
                 algorithm_options=weight_options_from_priority_options(
                     self.algorithm_options
                 ),
                 team_generation_options=self.team_generation_options,
             ).generate(students)
+        else:
+            # This shouldn't trigger unless user intentionally sets it to None because the config has a default value set
+            raise ValueError("Priority algorithm start type must be set")
 
         return PriorityTeamSet(
             priority_teams=[

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable, Tuple, List, Union
+from typing import Callable, Tuple, List
 
 from api.models.student import Student
 from api.models.team import TeamShell
