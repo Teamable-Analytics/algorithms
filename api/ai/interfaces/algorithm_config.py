@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from enum import Enum
 from typing import Callable, Tuple, List
 
 from api.models.student import Student
@@ -45,12 +46,18 @@ class SocialAlgorithmConfig(AlgorithmConfig):
         super().validate()
 
 
+class PriorityAlgorithmStartType(Enum):
+    RANDOM = "random"
+    WEIGHT = "weight"
+
+
 @dataclass
 class PriorityAlgorithmConfig(AlgorithmConfig):
     MAX_KEEP: int = 3  # nodes
     MAX_SPREAD: int = 3  # nodes
     MAX_ITERATE: int = 1500  # iterations
     MAX_TIME: int = 30  # seconds
+    START_TYPE: PriorityAlgorithmStartType = PriorityAlgorithmStartType.WEIGHT
 
     """
     Specifies the mutations as a list of [mutation_function, number_team_sets_generated_this_way]
