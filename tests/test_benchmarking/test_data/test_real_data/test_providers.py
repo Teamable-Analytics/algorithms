@@ -3,7 +3,7 @@ from typing import List
 
 from api.models.student import Student
 from api.models.team import Team
-from benchmarking.data.real_data.cosc341_w2022_provider.providers import (
+from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
     COSC341W2021T2StudentProvider,
     COSC341W2021T2InitialTeamsProvider,
 )
