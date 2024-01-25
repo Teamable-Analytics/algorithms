@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 from typing import Dict
 
@@ -19,13 +20,11 @@ from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetad
 from benchmarking.evaluations.metrics.average_timeslot_coverage import (
     AverageTimeslotCoverage,
 )
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_gender_min_2_and_diversify_year_level import \
     ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel
 from benchmarking.runs.interfaces import Run
-from benchmarking.evaluations.scenarios.concentrate_timeslot_and_diversify_gender_min_2_female import (
-    ConcentrateTimeslotAndDiversifyGenderMin2Female,
-)
 from benchmarking.runs.timeslot_and_diversify_gender_min_2.custom_student_provider import (
     TimeslotCustomStudentProvider,
 )
@@ -34,22 +33,11 @@ from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
-
-def additive_utility_function(student: Student, team: TeamShell) -> float:
-    if len(team.requirements) == 0:
-        return 0.0
-
-    return sum(
-        [student.meets_requirement(requirement) for requirement in team.requirements]
-    ) / float(len(team.requirements))
-
-
 class TimeSlotAndDiversifyGenderMin2(Run):
     TEAM_SIZE = 4
 
     def start(self, num_trials: int = 100, generate_graphs: bool = False):
-        # TODO: Find number of timeslot options that were offered
-        scenario = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(max_num_choices=0)
+        scenario = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(max_num_choices=6)
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
@@ -59,22 +47,23 @@ class TimeSlotAndDiversifyGenderMin2(Run):
             "AverageTimeslotCoverage": AverageTimeslotCoverage(
                 available_timeslots=list(range(10)),
             ),
-            ""
+            "AverageCosineSimilarity": AverageCosineSimilarity()
         }
         simulation_sets = {}
 
-        class_sizes = [20, 100, 240, 500, 1000]
+        # class_sizes = [20, 100, 240, 500, 1000]
         # class_sizes = [20, 40, 60, 80, 100]
+        class_sizes = [20, 40]
 
         for class_size in class_sizes:
             print("CLASS SIZE /", class_size)
             student_provider = TimeslotCustomStudentProvider(class_size)
 
             simulation_settings = SimulationSettings(
-                num_teams=class_size // self.TEAM_SIZE,
+                num_teams=math.ceil(class_size / self.TEAM_SIZE),
                 student_provider=student_provider,
                 scenario=scenario,
-                cache_key=f"timeslot_stuff/class_size_{class_size}",
+                cache_key=f"real_data/cosc_341/class_size_{class_size}",
             )
 
             deterministic_artifacts = SimulationSet(
@@ -90,11 +79,6 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                             group_matcher_run_path=Path.cwd().parent.parent.parent
                             / "api/ai/group_matcher_algorithm/group-matcher/run.py",
                         ),
-                    ],
-                    AlgorithmType.DRR: [
-                        DoubleRoundRobinAlgorithmConfig(
-                            utility_function=additive_utility_function
-                        )
                     ],
                 },
             ).run(num_runs=1)
