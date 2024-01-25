@@ -1,5 +1,4 @@
 import re
-from os import path
 from typing import Dict, Tuple, List
 
 import typer
@@ -20,7 +19,6 @@ from api.models.enums import (
 from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.data.interfaces import StudentProvider
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
-from benchmarking.evaluations.graphing.graph_3d import graph_3d, Surface3D
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
@@ -29,11 +27,8 @@ from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_prov
     CustomOneHundredAndTwentyStudentProvider,
     Major,
 )
-
 from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
-    get_pretty_metric_name,
-    save_points,
-    get_graph_params,
+    plot_and_save_points_dict,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -138,42 +133,13 @@ class FiveDiversityConstraint(Run):
                             points[point_location] = value
                         points_dict[start_type] = points
 
-                    for max_iterations in max_iterations_range:
-                        surfaces: List[Surface3D] = []
-                        for start_type, points in points_dict.items():
-                            surfaces.append(
-                                Surface3D(
-                                    points=[
-                                        (keep, spread, score)
-                                        for (
-                                            keep,
-                                            spread,
-                                            iterations,
-                                        ), score in points.items()
-                                        if iterations == max_iterations
-                                    ],
-                                    label=f"{start_type.value} start".title(),
-                                    color="blue"
-                                    if start_type.value == "weight"
-                                    else "red",
-                                )
-                            )
-                        save_loc = path.abspath(
-                            path.join(
-                                path.dirname(__file__),
-                                "graphs",
-                                "diversity",
-                                f"{get_pretty_metric_name(metric)} - {max_iterations} Iterations",
-                            )
-                        )
-                        graph_3d(
-                            surfaces,
-                            graph_title=f"Priority Algorithm Parameters vs {get_pretty_metric_name(metric)}\n~Five Diversity Constraint, {max_iterations} iterations, {class_size} students~",
-                            z_label=get_pretty_metric_name(metric),
-                            **get_graph_params(),
-                            filename=save_loc,
-                        )
-                        save_points(surfaces, save_loc)
+                    plot_and_save_points_dict(
+                        points_dict,
+                        max_iterations_range,
+                        metric,
+                        "Five Diversity Constraint",
+                        "diversity",
+                    )
 
 
 class FiveDiversityConstraintScenario(Scenario):

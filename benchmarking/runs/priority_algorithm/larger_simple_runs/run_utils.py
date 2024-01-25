@@ -47,9 +47,12 @@ def get_graph_params() -> Dict:
     }
 
 
-def plot_points_dict(
+def plot_and_save_points_dict(
     points_dict: Dict[PriorityAlgorithmStartType, Dict[Tuple[int, int, int], float]],
     max_iterations_range: List[int],
+    metric: TeamSetMetric,
+    scenario_name: str,
+    graph_save_loc: str,
 ):
     for max_iterations in max_iterations_range:
         surfaces: List[Surface3D] = []
@@ -74,13 +77,13 @@ def plot_points_dict(
             path.join(
                 path.dirname(__file__),
                 "graphs",
-                "projects",
+                graph_save_loc,
                 f"{get_pretty_metric_name(metric)} - {max_iterations} Iterations",
             )
         )
         graph_3d(
             surfaces,
-            graph_title=f"Priority Algorithm Parameters vs {get_pretty_metric_name(metric)}\n~3 Project Scenario, {max_iterations} iterations, 120 students~",
+            graph_title=f"Priority Algorithm Parameters vs {get_pretty_metric_name(metric)}\n~{scenario_name}~\n~{max_iterations} iterations, 120 students~",
             z_label=get_pretty_metric_name(metric),
             **get_graph_params(),
             filename=save_loc,
