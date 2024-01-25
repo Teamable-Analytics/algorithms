@@ -70,7 +70,7 @@ if __name__ == "__main__":
                     2: Gpa.D.value,
                     1: Gpa.F.value,
                 }
-                gpa = map(lambda x: x, gpa)
+                gpa = [_ for _ in map(lambda x: gpa_mapping[x], gpa)]
 
                 project_preferences = [
                     _ for _ in student_response.get("333") or [] if _ != -1
@@ -112,8 +112,7 @@ if __name__ == "__main__":
                     332,
                 ]
                 students_other_attributes: Dict[int, List[int]] = {
-                    a: student_response.get(str(a)) or []
-                    for a in map(lambda x: x["id"], other_attributes)
+                    a: student_response.get(str(a)) or [] for a in other_attributes
                 }
 
                 # Create student
@@ -141,7 +140,6 @@ if __name__ == "__main__":
     ids = [student.id for student in output["students"]]
     if len(set(ids)) != len(ids):
         print("Duplicate student ids found")
-    print(f"Num students: {len(ids)}")
 
     # Format output to json
     json_output = {
