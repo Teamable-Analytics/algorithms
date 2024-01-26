@@ -72,7 +72,7 @@ class Runtimes(Run):
                         num_teams=class_size // team_size,
                         scenario=scenario,
                         student_provider=student_provider,
-                        cache_key=f"priority_algorithm/default_parameters/bigger{scenario_name}/class_size_{class_size}",
+                        cache_key=f"priority_algorithm/default_parameters/bigger_{scenario_name}/class_size_{class_size}",
                     ),
                     algorithm_set={
                         AlgorithmType.PRIORITY: [
