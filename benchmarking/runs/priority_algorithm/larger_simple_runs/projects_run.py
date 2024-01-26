@@ -1,7 +1,6 @@
 import itertools
 import random
 import re
-from os import path
 from typing import List, Dict, Tuple
 
 import typer
@@ -27,7 +26,6 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
 )
 from benchmarking.evaluations.goals import ProjectRequirementGoal, WeightGoal
-from benchmarking.evaluations.graphing.graph_3d import graph_3d, Surface3D
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
     AverageProjectRequirementsCoverage,
@@ -35,9 +33,7 @@ from benchmarking.evaluations.metrics.average_project_requirements_coverage impo
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.runs.interfaces import Run
 from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
-    get_pretty_metric_name,
-    get_graph_params,
-    save_points,
+    plot_and_save_points_dict,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -220,43 +216,13 @@ class RegularClassSize(Run):
                         points[point_location] = value
                     points_dict[start_type] = points
 
-                for max_iterations in max_iterations_range:
-                    surfaces: List[Surface3D] = []
-                    for start_type, points in points_dict.items():
-                        surfaces.append(
-                            Surface3D(
-                                points=[
-                                    (keep, spread, score)
-                                    for (
-                                        keep,
-                                        spread,
-                                        iterations,
-                                    ), score in points.items()
-                                    if iterations == max_iterations
-                                ],
-                                label=f"{start_type.value} start".title(),
-                                color="blue" if start_type.value == "weight" else "red",
-                                linestyle="solid"
-                                if start_type.value == "weight"
-                                else "dashed",
-                            )
-                        )
-                    save_loc = path.abspath(
-                        path.join(
-                            path.dirname(__file__),
-                            "graphs",
-                            "projects",
-                            f"{get_pretty_metric_name(metric)} - {max_iterations} Iterations",
-                        )
-                    )
-                    graph_3d(
-                        surfaces,
-                        graph_title=f"Priority Algorithm Parameters vs {get_pretty_metric_name(metric)}\n~3 Project Scenario, {max_iterations} iterations, 120 students~",
-                        z_label=get_pretty_metric_name(metric),
-                        **get_graph_params(),
-                        filename=save_loc,
-                    )
-                    save_points(surfaces, save_loc)
+                plot_and_save_points_dict(
+                    points_dict,
+                    max_iterations_range,
+                    metric,
+                    "3 Project Scenario",
+                    "projects",
+                )
 
 
 if __name__ == "__main__":

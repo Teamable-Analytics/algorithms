@@ -1,6 +1,5 @@
 import re
-from os import path
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple
 
 import typer
 
@@ -11,7 +10,6 @@ from api.ai.interfaces.algorithm_config import (
 from api.models.enums import (
     AlgorithmType,
 )
-from benchmarking.evaluations.graphing.graph_3d import graph_3d, Surface3D
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,
 )
@@ -27,9 +25,7 @@ from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_prov
     Custom120SocialStudentProvider,
 )
 from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
-    get_pretty_metric_name,
-    get_graph_params,
-    save_points,
+    plot_and_save_points_dict,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import Insight
@@ -126,40 +122,13 @@ class SocialRun(Run):
                         points[point_location] = value
                     points_dict[start_type] = points
 
-                for max_iterations in max_iterations_range:
-                    surfaces: List[Surface3D] = []
-                    for start_type, points in points_dict.items():
-                        surfaces.append(
-                            Surface3D(
-                                points=[
-                                    (keep, spread, score)
-                                    for (
-                                        keep,
-                                        spread,
-                                        iterations,
-                                    ), score in points.items()
-                                    if iterations == max_iterations
-                                ],
-                                label=f"{start_type.value} start".title(),
-                                color="blue" if start_type.value == "weight" else "red",
-                            )
-                        )
-                    save_loc = path.abspath(
-                        path.join(
-                            path.dirname(__file__),
-                            "graphs",
-                            "social",
-                            f"{get_pretty_metric_name(metric)} - {max_iterations} Iterations",
-                        )
-                    )
-                    graph_3d(
-                        surfaces,
-                        graph_title=f"Priority Algorithm Parameters vs {get_pretty_metric_name(metric)}\n~Social Scenario, {max_iterations} iterations, 120 students~",
-                        z_label=get_pretty_metric_name(metric),
-                        **get_graph_params(),
-                        filename=save_loc,
-                    )
-                    save_points(surfaces, save_loc)
+                plot_and_save_points_dict(
+                    points_dict,
+                    max_iterations_range,
+                    metric,
+                    "Social Scenario",
+                    "social",
+                )
 
 
 if __name__ == "__main__":
