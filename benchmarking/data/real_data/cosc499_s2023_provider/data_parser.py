@@ -1,10 +1,15 @@
 import json
 from typing import List, Dict
 
-from api.models.enums import Gender, ScenarioAttribute, Relationship, Gpa
+from api.models.enums import (
+    ScenarioAttribute,
+    Relationship,
+    Gpa,
+    RequirementOperator,
+)
+from api.models.project import Project, ProjectRequirement
 from api.models.student import Student, StudentSerializer
 from api.models.team import Team, TeamSerializer
-
 
 if __name__ == "__main__":
     output = {
@@ -12,14 +17,190 @@ if __name__ == "__main__":
         "teams": [],
     }
 
-    projects = {
-        172: "Gamified Coding Practice Platform -  Learnification Technologies",
-        173: "Peer Review Application - Learnification Technologies",
-        174: "Automating Database Question Generation and Marking",
-        175: "Manpower/scheduling Board - Horizon Electric",
-        176: "Apple Database and Image Analysis",
-        177: "Love for Vernon Community Calendar",
-        178: "Rental Marketplace Tool - RentalHut Inc.",
+    # See attributes.json for description of each attribute
+    projects: Dict[int, Project] = {
+        175: Project(
+            _id=175,
+            name="Gamified Coding Practice Platform -  Learnification Technologies",
+            requirements=[
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=307,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=324,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=327,
+                ),
+            ],
+        ),
+        174: Project(
+            _id=174,
+            name="Peer Review Application - Learnification Technologies",
+            requirements=[
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=307,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=324,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=327,
+                ),
+            ],
+        ),
+        172: Project(
+            _id=172,
+            name="Automating Database Question Generation and Marking",
+            requirements=[
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=323,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=304,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=307,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=327,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=328,
+                ),
+            ],
+        ),
+        177: Project(
+            _id=177,
+            name="Manpower/scheduling Board - Horizon Electric",
+            requirements=[
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=307,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=304,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=325,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=326,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=332,
+                ),
+            ],
+        ),
+        173: Project(
+            _id=173,
+            name="Apple Database and Image Analysis",
+            requirements=[
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=305,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=304,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=325,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=307,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=332,
+                ),
+            ],
+        ),
+        178: Project(
+            _id=178,
+            name="Love for Vernon Community Calendar",
+            requirements=[
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=307,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=323,
+                ),
+            ],
+        ),
+        176: Project(
+            _id=176,
+            name="Rental Marketplace Tool - RentalHut Inc.",
+            requirements=[
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=307,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=2,
+                    attribute=304,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=327,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=328,
+                ),
+                ProjectRequirement(
+                    operator=RequirementOperator.MORE_THAN,
+                    value=1,
+                    attribute=325,
+                ),
+            ],
+        ),
     }
 
     with open("gen_group_set-20240125_110626.json", "r") as f:
@@ -29,8 +210,8 @@ if __name__ == "__main__":
             members = data.get("members") or []
             name = data.get("name") or ""
 
-            for i, project_name in projects.items():
-                if project_name in name:
+            for i, project in projects.items():
+                if project.name in name:
                     project_id = i
                     break
 
@@ -39,6 +220,7 @@ if __name__ == "__main__":
                 _id=int(key),
                 name=name,
                 project_id=project_id or -1,
+                requirements=projects[project_id].requirements,
             )
 
             for member in members:
@@ -70,7 +252,7 @@ if __name__ == "__main__":
                     2: Gpa.D.value,
                     1: Gpa.F.value,
                 }
-                gpa = [_ for _ in map(lambda x: gpa_mapping[x], gpa)]
+                gpa = [_ for _ in map(lambda x: gpa_mapping[x], gpa) if _ != -1]
 
                 project_preferences = [
                     _ for _ in student_response.get("333") or [] if _ != -1
@@ -111,9 +293,12 @@ if __name__ == "__main__":
                     329,
                     332,
                 ]
-                students_other_attributes: Dict[int, List[int]] = {
-                    a: student_response.get(str(a)) or [] for a in other_attributes
-                }
+                students_other_attributes = {}
+                for a in other_attributes:
+                    val = student_response.get(str(a))
+                    if not val or val == [-1]:
+                        val = []
+                    students_other_attributes[a] = val
 
                 # Create student
                 student = Student(
@@ -151,4 +336,4 @@ if __name__ == "__main__":
 
     # Write json
     with open("COSC499_S2023_data.json", "w+") as f:
-        json.dump(json_output, f)
+        json.dump(json_output, f, indent=2)
