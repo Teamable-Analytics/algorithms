@@ -104,7 +104,9 @@ class Runtimes(Run):
                         metric_function=is_happy_team_1hp_friend,
                     ),
                 }
-                insight_output = Insight.get_output_set(artifact, list(metrics.values()))
+                insight_output = Insight.get_output_set(
+                    artifact, list(metrics.values())
+                )
                 print(scenario_name + ":")
                 print(
                     f"Runtime: {Insight.average_metric(insight_output, Insight.KEY_RUNTIMES)}"
