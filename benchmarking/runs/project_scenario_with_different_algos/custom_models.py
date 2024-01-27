@@ -26,7 +26,9 @@ from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetad
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
     AverageProjectRequirementsCoverage,
 )
-from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
+from benchmarking.evaluations.metrics.envy_free_up_to_one_item import (
+    EnvyFreenessUpToOneItem,
+)
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.scenario_that_we_love import (
     ScenarioThatWeLove,
@@ -256,16 +258,16 @@ class CustomModels(Run):
                                 os.path.join(
                                     os.path.dirname(__file__),
                                     "../../..",
-                                    f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
+                                    f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv",
                                 )
                             ),
                             group_matcher_run_path=os.path.abspath(
                                 os.path.join(
                                     os.path.dirname(__file__),
                                     "../../..",
-                                    "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                                    "api/ai/group_matcher_algorithm/group-matcher/run.py",
                                 )
-                            )
+                            ),
                         ),
                     ],
                 },
@@ -351,4 +353,3 @@ class CustomModels(Run):
 if __name__ == "__main__":
     CustomModels().start()
     TimeSlotAndDiversifyGenderMin2().start()
-

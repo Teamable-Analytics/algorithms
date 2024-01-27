@@ -5,7 +5,8 @@ from api.models.enums import (
     ScenarioAttribute,
     Gender,
     TokenizationConstraintDirection,
-    Race, YearLevel,
+    Race,
+    YearLevel,
 )
 from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import WeightGoal, DiversityGoal
@@ -14,9 +15,9 @@ from benchmarking.evaluations.interfaces import Scenario, Goal
 
 class ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(Scenario):
     def __init__(
-            self,
-            max_num_choices: int,
-            value_of_female: int = Gender.FEMALE,
+        self,
+        max_num_choices: int,
+        value_of_female: int = Gender.FEMALE,
     ):
         super().__init__()
         self.value_of_female = value_of_female

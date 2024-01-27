@@ -45,7 +45,7 @@ class GroupMatcherAlgorithm(Algorithm):
 
     def prepare(self, students: List[Student]) -> None:
         student_data = [student.to_group_matcher_data_format() for student in students]
-        self.student_trace = { student.id: student for student in students }
+        self.student_trace = {student.id: student for student in students}
         with open(self.csv_input_path, "w") as csvfile:
             writer = csv.DictWriter(
                 csvfile, fieldnames=student_data[0].keys(), delimiter=";"
@@ -62,7 +62,9 @@ class GroupMatcherAlgorithm(Algorithm):
         df = pd.read_csv(self.outpath)
         for _, row in df.iterrows():
             student_id = row["sid"]
-            self.team_trace[int(row["group_num"]) + 1].add_student(self.student_trace[student_id])
+            self.team_trace[int(row["group_num"]) + 1].add_student(
+                self.student_trace[student_id]
+            )
 
         # Unlink after finish
         self.outpath.unlink()

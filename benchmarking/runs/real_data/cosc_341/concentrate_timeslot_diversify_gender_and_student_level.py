@@ -11,6 +11,9 @@ from api.ai.interfaces.algorithm_config import (
     RandomAlgorithmConfig,
 )
 from api.models.enums import AlgorithmType
+from benchmarking.data.real_data.cosc341_w2022_provider.providers import (
+    COSC341W2021T2AnsweredSurveysStudentProvider,
+)
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
@@ -19,15 +22,13 @@ from benchmarking.evaluations.metrics.average_timeslot_coverage import (
 )
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_gender_min_2_and_diversify_year_level import \
-    ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel
-from benchmarking.runs.interfaces import Run
-from benchmarking.runs.timeslot_and_diversify_gender_min_2.custom_student_provider import (
-    TimeslotCustomStudentProvider,
+from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_gender_min_2_and_diversify_year_level import (
+    ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel,
 )
+from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
-from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
+from benchmarking.simulation.simulation_set import SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
@@ -35,7 +36,9 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
     TEAM_SIZE = 4
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
-        scenario_1 = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(max_num_choices=6)
+        scenario_1 = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(
+            max_num_choices=6
+        )
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
@@ -45,44 +48,36 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
             "AverageTimeslotCoverage": AverageTimeslotCoverage(
                 available_timeslots=list(range(10)),
             ),
-            "AverageCosineSimilarity": AverageCosineSimilarity()
+            "AverageCosineSimilarity": AverageCosineSimilarity(),
         }
-        simulation_sets = {}
 
-        # class_sizes = [20, 100, 240, 500, 1000]
-        # class_sizes = [20, 40, 60, 80, 100]
-        class_sizes = [20, 40]
+        student_provider = COSC341W2021T2AnsweredSurveysStudentProvider()
+        simulation_settings = SimulationSettings(
+            num_teams=math.ceil(120 / self.TEAM_SIZE),
+            student_provider=student_provider,
+            scenario=scenario_1,
+            cache_key=f"real_data/cosc_341/concentrate_timeslot_diversify_gender_and_student_level",
+        )
 
-        for class_size in class_sizes:
-            print("CLASS SIZE /", class_size)
-            student_provider = TimeslotCustomStudentProvider(class_size)
+        artifact = SimulationSet(
+            settings=simulation_settings,
+            algorithm_set={
+                AlgorithmType.WEIGHT: [
+                    WeightAlgorithmConfig(),
+                ],
+                AlgorithmType.GROUP_MATCHER: [
+                    GroupMatcherAlgorithmConfig(
+                        csv_output_path=Path.cwd().parent.parent.parent
+                        / f"api/ai/group_matcher_algorithm/group-matcher/inpData/-generated.csv",
+                        group_matcher_run_path=Path.cwd().parent.parent.parent
+                        / "api/ai/group_matcher_algorithm/group-matcher/run.py",
+                    ),
+                ],
+            },
+        ).run(num_runs=1)
 
-            simulation_settings = SimulationSettings(
-                num_teams=math.ceil(class_size / self.TEAM_SIZE),
-                student_provider=student_provider,
-                scenario=scenario_1,
-                cache_key=f"real_data/cosc_341/concentrate_timeslot_diversify_gender_and_student_level/class_size_{class_size}",
-            )
-
-            deterministic_artifacts = SimulationSet(
-                settings=simulation_settings,
-                algorithm_set={
-                    AlgorithmType.WEIGHT: [
-                        WeightAlgorithmConfig(),
-                    ],
-                    AlgorithmType.GROUP_MATCHER: [
-                        GroupMatcherAlgorithmConfig(
-                            csv_output_path=Path.cwd().parent.parent.parent
-                            / f"api/ai/group_matcher_algorithm/group-matcher/inpData/{ class_size }-generated.csv",
-                            group_matcher_run_path=Path.cwd().parent.parent.parent
-                            / "api/ai/group_matcher_algorithm/group-matcher/run.py",
-                        ),
-                    ],
-                },
-            ).run(num_runs=1)
-            simulation_sets[class_size] = deterministic_artifacts
-
-            probabilistic_artifacts = SimulationSet(
+        artifact.update(
+            SimulationSet(
                 settings=simulation_settings,
                 algorithm_set={
                     AlgorithmType.PRIORITY: [
@@ -98,38 +93,33 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
                     ],
                 },
             ).run(num_runs=num_trials)
-            simulation_sets[class_size].update(probabilistic_artifacts)
+        )
 
         if generate_graphs:
             graph_data: Dict[str, Dict[str, GraphData]] = {}
+            insight_set: Dict[str, InsightOutput] = Insight.get_output_set(
+                artifact=artifact, metrics=list(metrics.values())
+            )
 
-            for class_size in class_sizes:
-                artifact: SimulationSetArtifact = simulation_sets[class_size]
-                insight_set: Dict[str, InsightOutput] = Insight.get_output_set(
-                    artifact=artifact, metrics=list(metrics.values())
+            average_metrics: Dict[str, Dict[str, float]] = {}
+            for metric_name in metrics.keys():
+                average_metrics[metric_name] = Insight.average_metric(
+                    insight_set, metrics[metric_name].name
                 )
 
-                average_metrics: Dict[str, Dict[str, float]] = {}
-                for metric_name in metrics.keys():
-                    average_metrics[metric_name] = Insight.average_metric(
-                        insight_set, metrics[metric_name].name
-                    )
-
-                for metric_name, average_metric in average_metrics.items():
-                    if metric_name not in graph_data:
-                        graph_data[metric_name] = {}
-                    for algorithm_name, value in average_metric.items():
-                        if algorithm_name not in graph_data[metric_name]:
-                            graph_data[metric_name][algorithm_name] = GraphData(
-                                x_data=[class_size],
-                                y_data=[value],
-                                name=algorithm_name,
-                            )
-                        else:
-                            graph_data[metric_name][algorithm_name].x_data.append(
-                                class_size
-                            )
-                            graph_data[metric_name][algorithm_name].y_data.append(value)
+            for metric_name, average_metric in average_metrics.items():
+                if metric_name not in graph_data:
+                    graph_data[metric_name] = {}
+                for algorithm_name, value in average_metric.items():
+                    if algorithm_name not in graph_data[metric_name]:
+                        graph_data[metric_name][algorithm_name] = GraphData(
+                            x_data=[120],
+                            y_data=[value],
+                            name=algorithm_name,
+                        )
+                    else:
+                        graph_data[metric_name][algorithm_name].x_data.append(120)
+                        graph_data[metric_name][algorithm_name].y_data.append(value)
 
             for metric_name in metrics.keys():
                 y_label = metrics[metric_name].name
