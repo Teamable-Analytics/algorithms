@@ -44,6 +44,8 @@ if __name__ == "__main__":
                     relationships[_] = Relationship.ENEMY
 
                 timeslot_availability: List[int] = student_response.get("73") or []
+                if timeslot_availability == [-1]:
+                    timeslot_availability = []
 
                 # A student will have one of the following values: 1: 341, 2: 541, -1: no answer to survey
                 x = student_response.get("72") or [-1]
