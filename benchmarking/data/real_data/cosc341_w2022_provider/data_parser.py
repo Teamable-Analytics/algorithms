@@ -1,7 +1,7 @@
 import json
 from typing import List
 
-from api.models.enums import Gender, ScenarioAttribute, Relationship
+from api.models.enums import Gender, ScenarioAttribute, Relationship, YearLevel
 from api.models.student import Student, StudentSerializer
 from api.models.team import Team, TeamSerializer
 
@@ -46,8 +46,15 @@ if __name__ == "__main__":
                 timeslot_availability: List[int] = student_response.get("73") or []
 
                 # All students should have year level, but default to 1
-                # 1: 341, 2: 541
-                year_level = student_response.get("72") or [1]
+                # 2: 341, 4: 541
+                x = student_response.get("72")
+                year_level = (
+                    YearLevel.Third.value
+                    if x == 1
+                    else YearLevel.Graduate.value
+                    if x == 2
+                    else x
+                )
 
                 # effort level [1-4]
                 # 1 - I expect to participate minimally because this class is a requirement and I just need to pass
