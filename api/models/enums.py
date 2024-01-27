@@ -120,11 +120,11 @@ class Race(AttributeValueEnum):
 
 
 class YearLevel(AttributeValueEnum):
-    First = 0
-    Second = 1
-    Third = 2
-    Fourth = 3
-    Graduate = 4
+    First = 1
+    Second = 2
+    Third = 3
+    Fourth = 4
+    Graduate = 5
 
 
 class PriorityType(Enum):

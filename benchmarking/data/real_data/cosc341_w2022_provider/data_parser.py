@@ -47,14 +47,17 @@ if __name__ == "__main__":
 
                 # All students should have year level, but default to 1
                 # 2: 341, 4: 541
-                x = student_response.get("72")
-                year_level = (
-                    YearLevel.Third.value
-                    if x == 1
-                    else YearLevel.Graduate.value
-                    if x == 2
-                    else x
-                )
+                x = student_response.get("72") or [-1]
+                year_level = [
+                    (
+                        YearLevel.Third.value
+                        if _ == 1
+                        else YearLevel.Graduate.value
+                        if _ == 2
+                        else _
+                    )
+                    for _ in x
+                ]
 
                 # effort level [1-4]
                 # 1 - I expect to participate minimally because this class is a requirement and I just need to pass

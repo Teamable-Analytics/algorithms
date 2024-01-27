@@ -61,8 +61,11 @@ class COSC341W2021T2StudentProvider(StudentProvider):
 class COSC341W2021T2AnsweredSurveysStudentProvider(StudentProvider):
     def get(self, seed: int = None) -> List[Student]:
         # As the question about what class you were in was mandatory, any student who had -1 set as their value did not answer the survey.
-        return [student for student in COSC341W2021T2StudentProvider().get(seed=seed) if
-                -1 not in student.attributes[ScenarioAttribute.YEAR_LEVEL.value]]
+        return [
+            student
+            for student in COSC341W2021T2StudentProvider().get(seed=seed)
+            if -1 not in student.attributes[ScenarioAttribute.YEAR_LEVEL.value]
+        ]
 
     @property
     def num_students(self) -> int:
