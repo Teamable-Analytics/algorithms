@@ -74,7 +74,7 @@ class TestAverageSoloStatus(unittest.TestCase):
                             },
                         ),
                     ],
-                )
+                ),
             ],
         )
 
@@ -114,7 +114,7 @@ class TestAverageSoloStatus(unittest.TestCase):
                             },
                         ),
                     ],
-                )
+                ),
             ],
         )
 
@@ -158,14 +158,18 @@ class TestAverageSoloStatus(unittest.TestCase):
                             },
                         ),
                     ],
-                )
+                ),
             ],
         )
 
-    def test_calculate__should_return_0_when_the_minority_group_not_exist_in_class(self):
+    def test_calculate__should_return_0_when_the_minority_group_not_exist_in_class(
+        self,
+    ):
         metric = AverageSoloStatus(
             minority_groups={
-                ScenarioAttribute.RACE.value: [race.value for race in Race if race != Race.Other]
+                ScenarioAttribute.RACE.value: [
+                    race.value for race in Race if race != Race.Other
+                ]
             }
         )
 
@@ -173,29 +177,31 @@ class TestAverageSoloStatus(unittest.TestCase):
 
         self.assertEqual(actual, 0)
 
-    def test_calculate__should_return_0_5_when_half_of_the_team_has_student_with_solo_status(self):
+    def test_calculate__should_return_0_5_when_half_of_the_team_has_student_with_solo_status(
+        self,
+    ):
         metric = AverageSoloStatus(
-            minority_groups={
-                ScenarioAttribute.RACE.value: [Race.European.value]
-            }
+            minority_groups={ScenarioAttribute.RACE.value: [Race.European.value]}
         )
 
         actual = metric.calculate(self.class_with_only_1_minority_student)
 
         self.assertEqual(actual, 0.5)
 
-    def test_calculate__should_return_1_when_all_teams_have_student_with_solo_status(self):
+    def test_calculate__should_return_1_when_all_teams_have_student_with_solo_status(
+        self,
+    ):
         metric = AverageSoloStatus(
-            minority_groups={
-                ScenarioAttribute.RACE.value: [Race.European.value]
-            }
+            minority_groups={ScenarioAttribute.RACE.value: [Race.European.value]}
         )
 
         actual = metric.calculate(self.class_with_all_minority_students)
 
         self.assertEqual(actual, 1)
 
-    def test_calculate__should_return_1_when_all_teams_have_student_with_solo_status_in_different_attributes(self):
+    def test_calculate__should_return_1_when_all_teams_have_student_with_solo_status_in_different_attributes(
+        self,
+    ):
         metric = AverageSoloStatus(
             minority_groups={
                 ScenarioAttribute.RACE.value: [Race.European.value],
@@ -203,7 +209,9 @@ class TestAverageSoloStatus(unittest.TestCase):
             }
         )
 
-        actual = metric.calculate(self.class_with_all_minority_students_different_attribute)
+        actual = metric.calculate(
+            self.class_with_all_minority_students_different_attribute
+        )
 
         self.assertEqual(actual, 1)
 
@@ -214,8 +222,8 @@ class TestAverageSoloStatus(unittest.TestCase):
             }
         )
 
-        actual = metric_sanity.calculate(self.class_with_all_minority_students_different_attribute)
+        actual = metric_sanity.calculate(
+            self.class_with_all_minority_students_different_attribute
+        )
 
         self.assertEqual(actual, 0.5)
-
-

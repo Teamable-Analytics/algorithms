@@ -19,11 +19,18 @@ class AverageSoloStatus(TeamSetMetric):
             is_solo = False
             for attribute_id, attribute_groups in self.minority_groups.items():
                 all_attribute_values_in_team = Counter(
-                    [attr for student in team.students for attr in student.attributes.get(attribute_id)])
+                    [
+                        attr
+                        for student in team.students
+                        for attr in student.attributes.get(attribute_id)
+                    ]
+                )
 
                 for attribute_group in attribute_groups:
-                    if attribute_group in all_attribute_values_in_team and \
-                            all_attribute_values_in_team.get(attribute_group) == 1:
+                    if (
+                        attribute_group in all_attribute_values_in_team
+                        and all_attribute_values_in_team.get(attribute_group) == 1
+                    ):
                         is_solo = True
                         break
             if is_solo:
