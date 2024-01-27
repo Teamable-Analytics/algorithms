@@ -45,8 +45,7 @@ if __name__ == "__main__":
 
                 timeslot_availability: List[int] = student_response.get("73") or []
 
-                # All students should have year level, but default to 1
-                # 2: 341, 4: 541
+                # A student will have one of the following values: 1: 341, 2: 541, -1: no answer to survey
                 x = student_response.get("72") or [-1]
                 year_level = [
                     (
