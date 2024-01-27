@@ -7,13 +7,10 @@ import typer
 from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     WeightAlgorithmConfig,
-    DoubleRoundRobinAlgorithmConfig,
     GroupMatcherAlgorithmConfig,
     RandomAlgorithmConfig,
 )
 from api.models.enums import AlgorithmType
-from api.models.student import Student
-from api.models.team import TeamShell
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
@@ -33,15 +30,16 @@ from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
-class TimeSlotAndDiversifyGenderMin2(Run):
+
+class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
     TEAM_SIZE = 4
 
-    def start(self, num_trials: int = 100, generate_graphs: bool = False):
-        scenario = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(max_num_choices=6)
+    def start(self, num_trials: int = 1, generate_graphs: bool = True):
+        scenario_1 = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(max_num_choices=6)
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
-                goals_to_priorities(scenario.goals),
+                goals_to_priorities(scenario_1.goals),
                 False,
             ),
             "AverageTimeslotCoverage": AverageTimeslotCoverage(
@@ -62,8 +60,8 @@ class TimeSlotAndDiversifyGenderMin2(Run):
             simulation_settings = SimulationSettings(
                 num_teams=math.ceil(class_size / self.TEAM_SIZE),
                 student_provider=student_provider,
-                scenario=scenario,
-                cache_key=f"real_data/cosc_341/class_size_{class_size}",
+                scenario=scenario_1,
+                cache_key=f"real_data/cosc_341/concentrate_timeslot_diversify_gender_and_student_level/class_size_{class_size}",
             )
 
             deterministic_artifacts = SimulationSet(
@@ -148,4 +146,4 @@ class TimeSlotAndDiversifyGenderMin2(Run):
 
 
 if __name__ == "__main__":
-    typer.run(TimeSlotAndDiversifyGenderMin2().start)
+    typer.run(ConcentrateTimeslotDiversifyGenderAndStudentLevel().start)
