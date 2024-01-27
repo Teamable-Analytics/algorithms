@@ -229,27 +229,27 @@ def fromAlRaceToRace(alRaceNum: int or str) -> Race:
 
 
 def fromYearLevelToAlYearLevel(yearLevel: int) -> AlYearLevel:
-    if yearLevel == 0:
-        return AlYearLevel.Freshman
     if yearLevel == 1:
-        return AlYearLevel.Sophomore
+        return AlYearLevel.Freshman
     if yearLevel == 2:
-        return AlYearLevel.Junior
+        return AlYearLevel.Sophomore
     if yearLevel == 3:
+        return AlYearLevel.Junior
+    if yearLevel == 4:
         return AlYearLevel.Senior
     return AlYearLevel.Graduate
 
 
 def fromAlYearLevelToYearLevel(alYearLevel: str) -> int:
     if "freshman" in alYearLevel.lower():
-        return 0
-    if "sophomore" in alYearLevel.lower():
         return 1
-    if "junior" in alYearLevel.lower():
+    if "sophomore" in alYearLevel.lower():
         return 2
-    if "senior" in alYearLevel.lower():
+    if "junior" in alYearLevel.lower():
         return 3
-    return 4
+    if "senior" in alYearLevel.lower():
+        return 4
+    return 5
 
 
 def fromNumbersToTimeSlots(numbers: List[int]) -> List[str]:
