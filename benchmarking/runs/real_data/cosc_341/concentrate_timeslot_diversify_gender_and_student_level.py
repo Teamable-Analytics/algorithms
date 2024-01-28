@@ -59,7 +59,7 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
             cache_key=f"real_data/cosc_341/concentrate_timeslot_diversify_gender_and_student_level",
         )
 
-        artifact = SimulationSet(
+        artifacts = SimulationSet(
             settings=simulation_settings,
             algorithm_set={
                 AlgorithmType.WEIGHT: [
@@ -68,15 +68,15 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
                 AlgorithmType.GROUP_MATCHER: [
                     GroupMatcherAlgorithmConfig(
                         csv_output_path=Path.cwd().parent.parent.parent
-                        / f"api/ai/group_matcher_algorithm/group-matcher/inpData/-generated.csv",
+                                        / f"api/ai/group_matcher_algorithm/group-matcher/inpData/-generated.csv",
                         group_matcher_run_path=Path.cwd().parent.parent.parent
-                        / "api/ai/group_matcher_algorithm/group-matcher/run.py",
+                                               / "api/ai/group_matcher_algorithm/group-matcher/run.py",
                     ),
                 ],
             },
         ).run(num_runs=1)
 
-        artifact.update(
+        artifacts.update(
             SimulationSet(
                 settings=simulation_settings,
                 algorithm_set={
@@ -98,7 +98,7 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
         if generate_graphs:
             graph_data: Dict[str, Dict[str, GraphData]] = {}
             insight_set: Dict[str, InsightOutput] = Insight.get_output_set(
-                artifact=artifact, metrics=list(metrics.values())
+                artifact=artifacts, metrics=list(metrics.values())
             )
 
             average_metrics: Dict[str, Dict[str, float]] = {}
