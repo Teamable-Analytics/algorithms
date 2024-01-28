@@ -128,10 +128,10 @@ class GroupMatcherAlgorithmConfig(AlgorithmConfig):
     csv_input_path: Path
     group_matcher_run_path: Path
 
-    def __init__(self, csv_output_path: Path, group_matcher_run_path: Path):
+    def __init__(self, csv_output_path: str, group_matcher_run_path: str):
         super().__init__()
-        self.csv_input_path = csv_output_path
-        self.group_matcher_run_path = group_matcher_run_path
+        self.csv_input_path = Path(csv_output_path)
+        self.group_matcher_run_path = Path(group_matcher_run_path)
 
     def validate(self):
         super().validate()
