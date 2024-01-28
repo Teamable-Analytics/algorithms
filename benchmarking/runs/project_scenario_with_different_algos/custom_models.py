@@ -39,6 +39,7 @@ from benchmarking.runs.project_scenario_with_different_algos.student_provider im
     WorkExperience,
     CustomStudentProvider,
 )
+from benchmarking.runs.timeslot_and_diversify_gender_min_2.timeslot_and_diversify_gender_min_2 import TimeSlotAndDiversifyGenderMin2
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
@@ -55,7 +56,7 @@ def additive_utility_function(student: Student, team: TeamShell) -> float:
 
 
 class CustomModels(Run):
-    def start(self, num_trials: int = 100, generate_graphs: bool = True):
+    def start(self, num_trials: int = 100, generate_graphs: bool = False):
         scenario = ScenarioThatWeLove(
             value_of_female=Gender.FEMALE.value,
             value_of_african=Race.African.value,
@@ -249,31 +250,24 @@ class CustomModels(Run):
                     AlgorithmType.WEIGHT: [
                         WeightAlgorithmConfig(),
                     ],
-                    AlgorithmType.GROUP_MATCHER: [
-                        GroupMatcherAlgorithmConfig(
-                            csv_output_path=os.path.abspath(
-                                os.path.join(
-                                    os.path.dirname(__file__),
-                                    "../../..",
-                                    f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
-                                )
-                            ),
-                            group_matcher_run_path=os.path.abspath(
-                                os.path.join(
-                                    os.path.dirname(__file__),
-                                    "../../..",
-                                    "api/ai/group_matcher_algorithm/group-matcher/run.py"
-                                )
-                            )
-                        ),
-                    ],
-                },
-            ).run(num_runs=1)
-            simulation_sets[class_size] = deterministic_artifacts
-
-            probabilistic_artifacts = SimulationSet(
-                settings=simulation_settings,
-                algorithm_set={
+                    # AlgorithmType.GROUP_MATCHER: [
+                    #     GroupMatcherAlgorithmConfig(
+                    #         csv_output_path=os.path.abspath(
+                    #             os.path.join(
+                    #                 os.path.dirname(__file__),
+                    #                 "../../..",
+                    #                 f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
+                    #             )
+                    #         ),
+                    #         group_matcher_run_path=os.path.abspath(
+                    #             os.path.join(
+                    #                 os.path.dirname(__file__),
+                    #                 "../../..",
+                    #                 "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                    #             )
+                    #         )
+                    #     ),
+                    # ],
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
                             MAX_TIME=1000000,
@@ -286,8 +280,8 @@ class CustomModels(Run):
                         RandomAlgorithmConfig(),
                     ],
                 },
-            ).run(num_runs=num_trials)
-            simulation_sets[class_size].update(probabilistic_artifacts)
+            ).run(num_runs=100)
+            simulation_sets[class_size] = deterministic_artifacts
 
         if generate_graphs:
             graph_data: Dict[str, Dict[str, GraphData]] = {}
