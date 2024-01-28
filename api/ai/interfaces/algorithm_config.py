@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from enum import Enum
 from pathlib import Path
 from typing import Callable, Tuple, List
 
@@ -46,12 +47,18 @@ class SocialAlgorithmConfig(AlgorithmConfig):
         super().validate()
 
 
+class PriorityAlgorithmStartType(Enum):
+    RANDOM = "random"
+    WEIGHT = "weight"
+
+
 @dataclass
 class PriorityAlgorithmConfig(AlgorithmConfig):
-    MAX_KEEP: int = 15  # nodes
-    MAX_SPREAD: int = 30  # nodes
-    MAX_ITERATE: int = 30  # iterations
-    MAX_TIME: int = 10000000  # seconds
+    MAX_KEEP: int = 3  # nodes
+    MAX_SPREAD: int = 3  # nodes
+    MAX_ITERATE: int = 1500  # iterations
+    MAX_TIME: int = 30  # seconds
+    START_TYPE: PriorityAlgorithmStartType = PriorityAlgorithmStartType.WEIGHT
 
     """
     Specifies the mutations as a list of [mutation_function, number_team_sets_generated_this_way]
@@ -121,10 +128,10 @@ class GroupMatcherAlgorithmConfig(AlgorithmConfig):
     csv_input_path: Path
     group_matcher_run_path: Path
 
-    def __init__(self, csv_output_path: Path, group_matcher_run_path: Path):
+    def __init__(self, csv_output_path: str, group_matcher_run_path: str):
         super().__init__()
-        self.csv_input_path = csv_output_path
-        self.group_matcher_run_path = group_matcher_run_path
+        self.csv_input_path = Path(csv_output_path)
+        self.group_matcher_run_path = Path(group_matcher_run_path)
 
     def validate(self):
         super().validate()

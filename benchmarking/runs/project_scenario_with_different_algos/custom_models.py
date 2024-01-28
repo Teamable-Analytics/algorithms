@@ -1,9 +1,6 @@
 import itertools
 import os
-from pathlib import Path
-from typing import Dict, List
-
-import typer
+from typing import Dict
 
 from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
@@ -26,6 +23,7 @@ from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetad
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
     AverageProjectRequirementsCoverage,
 )
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
 from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.scenario_that_we_love import (
@@ -201,6 +199,7 @@ class CustomModels(Run):
             "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(
                 name="Average Project Requirements Coverage"
             ),
+            "AverageCosineSimilarity": AverageCosineSimilarity()
             # Cosine
             # Solo status
         }
@@ -344,5 +343,4 @@ class CustomModels(Run):
 
 if __name__ == "__main__":
     CustomModels().start()
-    TimeSlotAndDiversifyGenderMin2().start()
 
