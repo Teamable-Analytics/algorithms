@@ -5,19 +5,19 @@ from api.models.student import Student
 from api.models.team import Team
 from benchmarking.data.real_data.cosc341_w2022_provider.providers import (
     COSC341W2021T2StudentProvider,
-    COSC341W2021T2InitialTeamsProvider,
+    COSC341W2021T2TeamConfigurationProvider,
 )
 
 
-class TestCOSC341W2021T2InitialTeamsProvider(unittest.TestCase):
+class TestCOSC341W2021T2TeamConfigurationProvider(unittest.TestCase):
     def test_get__returns_correct_type(self):
-        teams = COSC341W2021T2InitialTeamsProvider().get()
+        teams = COSC341W2021T2TeamConfigurationProvider().get()
 
         self.assertIsInstance(teams, List)
         self.assertIsInstance(teams[0], Team)
 
     def test_get__teams_contains_all_students_once(self):
-        teams = COSC341W2021T2InitialTeamsProvider().get()
+        teams = COSC341W2021T2TeamConfigurationProvider().get()
         teams_students = []
         for team in teams:
             teams_students.extend(team.students)
