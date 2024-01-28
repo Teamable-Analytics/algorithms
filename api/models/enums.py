@@ -253,7 +253,7 @@ def fromAlYearLevelToYearLevel(alYearLevel: str) -> int:
 
 
 def fromNumbersToTimeSlots(numbers: List[int]) -> List[str]:
-    return [fromNumberToTimeslot(number) for number in numbers]
+    return [fromNumberToTimeslot(number) for number in numbers if number != -1]
 
 
 def fromNumberToTimeslot(number: int) -> str:

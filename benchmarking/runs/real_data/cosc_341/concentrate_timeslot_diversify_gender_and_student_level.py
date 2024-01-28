@@ -1,4 +1,5 @@
 import math
+import os
 from pathlib import Path
 from typing import Dict
 
@@ -57,14 +58,14 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
 
         student_provider = COSC341W2021T2AnsweredSurveysStudentProvider()
         simulation_settings_1 = SimulationSettings(
-            num_teams=math.ceil(120 / self.TEAM_SIZE),
+            num_teams=math.ceil(175 / self.TEAM_SIZE),
             student_provider=student_provider,
             scenario=scenario_1,
             cache_key=f"real_data/cosc_341/concentrate_timeslot_diversify_gender_and_student_level",
         )
 
         simulation_settings_2 = SimulationSettings(
-            num_teams=math.ceil(120 / self.TEAM_SIZE),
+            num_teams=math.ceil(175 / self.TEAM_SIZE),
             student_provider=student_provider,
             scenario=scenario_2,
             cache_key=f"real_data/cosc_341/concentrate_timeslot_diversify_gender_and_student_level",
@@ -78,10 +79,20 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
                 ],
                 AlgorithmType.GROUP_MATCHER: [
                     GroupMatcherAlgorithmConfig(
-                        csv_output_path=Path.cwd().parent.parent.parent
-                                        / f"api/ai/group_matcher_algorithm/group-matcher/inpData/-generated.csv",
-                        group_matcher_run_path=Path.cwd().parent.parent.parent
-                                               / "api/ai/group_matcher_algorithm/group-matcher/run.py",
+                        csv_output_path=os.path.abspath(
+                            os.path.join(
+                                os.path.dirname(__file__),
+                                "../../../..",
+                                f"api/ai/group_matcher_algorithm/group-matcher/inpData/{175}-generated.csv"
+                            )
+                        ),
+                        group_matcher_run_path=os.path.abspath(
+                            os.path.join(
+                                os.path.dirname(__file__),
+                                "../../../..",
+                                "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                            )
+                        )
                     ),
                 ],
             },
