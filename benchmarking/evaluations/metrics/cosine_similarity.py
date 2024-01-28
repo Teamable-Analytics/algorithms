@@ -65,6 +65,11 @@ def team_cosine_similarities(
             continue
         total = 0
         num = 0
+
+        if team.size == 1:
+            similarities.append(1)
+            continue
+
         for s1, s2 in itertools.combinations(team.students, 2):
             s1_vector = class_attributes.get_student_vector(s1)
             s2_vector = class_attributes.get_student_vector(s2)
@@ -114,6 +119,11 @@ def team_cosine_differences(
             continue
         total = 0
         num = 0
+
+        if team.size == 1:
+            differences.append(0)
+            continue
+
         for s1, s2 in itertools.combinations(team.students, 2):
             s1_vector = class_attributes.get_student_vector(s1)
             s2_vector = class_attributes.get_student_vector(s2)
