@@ -3,6 +3,7 @@ from typing import List
 
 from api.models.student import Student
 from api.models.team import Team
+from api.models.team_set import TeamSet
 from benchmarking.data.real_data.cosc341_w2022_provider.providers import (
     COSC341W2021T2StudentProvider,
     COSC341W2021T2TeamConfigurationProvider,
@@ -11,15 +12,14 @@ from benchmarking.data.real_data.cosc341_w2022_provider.providers import (
 
 class TestCOSC341W2021T2TeamConfigurationProvider(unittest.TestCase):
     def test_get__returns_correct_type(self):
-        teams = COSC341W2021T2TeamConfigurationProvider().get()
+        team_set = COSC341W2021T2TeamConfigurationProvider().get()
 
-        self.assertIsInstance(teams, List)
-        self.assertIsInstance(teams[0], Team)
+        self.assertIsInstance(team_set, TeamSet)
 
     def test_get__teams_contains_all_students_once(self):
-        teams = COSC341W2021T2TeamConfigurationProvider().get()
+        team_set = COSC341W2021T2TeamConfigurationProvider().get()
         teams_students = []
-        for team in teams:
+        for team in team_set.teams:
             teams_students.extend(team.students)
 
         students = COSC341W2021T2StudentProvider().get()
