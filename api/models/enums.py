@@ -119,6 +119,14 @@ class Race(AttributeValueEnum):
     Other = 9
 
 
+class YearLevel(AttributeValueEnum):
+    First = 1
+    Second = 2
+    Third = 3
+    Fourth = 4
+    Graduate = 5
+
+
 class PriorityType(Enum):
     TOKENIZATION = "tokenization"
     DIVERSITY = "diversity"
