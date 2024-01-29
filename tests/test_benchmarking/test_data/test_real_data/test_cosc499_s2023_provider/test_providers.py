@@ -3,23 +3,23 @@ from typing import List
 
 from api.models.student import Student
 from api.models.team import Team
+from api.models.team_set import TeamSet
 from benchmarking.data.real_data.cosc499_s2023_provider.providers import (
     COSC499S2023StudentProvider,
-    COSC499S2023InitialTeamsProvider,
+    COSC499S2023InitialTeamConfigurationProvider,
 )
 
 
-class TestCOSC499S2023InitialTeamsProvider(unittest.TestCase):
+class TestCOSC499S2023InitialTeamConfigurationProvider(unittest.TestCase):
     def test_get__returns_correct_type(self):
-        teams = COSC499S2023InitialTeamsProvider().get()
+        team_set = COSC499S2023InitialTeamConfigurationProvider().get()
 
-        self.assertIsInstance(teams, List)
-        self.assertIsInstance(teams[0], Team)
+        self.assertIsInstance(team_set, TeamSet)
 
     def test_get__teams_contains_all_students_once(self):
-        teams = COSC499S2023InitialTeamsProvider().get()
+        team_set = COSC499S2023InitialTeamConfigurationProvider().get()
         teams_students = []
-        for team in teams:
+        for team in team_set.teams:
             teams_students.extend(team.students)
 
         students = COSC499S2023StudentProvider().get()

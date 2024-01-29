@@ -1,3 +1,4 @@
+import json
 from os import path
 from typing import List
 
@@ -5,15 +6,15 @@ import numpy as np
 
 from api.models.student import Student, StudentSerializer
 from api.models.team import Team, TeamSerializer
+from api.models.team_set import TeamSet
 from benchmarking.data.interfaces import (
     StudentProvider,
-    InitialTeamsProvider,
+    TeamConfigurationProvider,
 )
-import json
 
 
-class COSC499S2023InitialTeamsProvider(InitialTeamsProvider):
-    def get(self) -> List[Team]:
+class COSC499S2023InitialTeamConfigurationProvider(TeamConfigurationProvider):
+    def get(self) -> TeamSet:
         """
         Returns the teams that were created for the W2021T2 COSC341 class
         """
@@ -21,7 +22,8 @@ class COSC499S2023InitialTeamsProvider(InitialTeamsProvider):
             path.join(path.dirname(__file__), "COSC499_S2023_data.json"), "r"
         ) as f:
             json_data = json.load(f)
-            return [TeamSerializer().decode(team) for team in json_data["teams"]]
+            teams = [TeamSerializer().decode(team) for team in json_data["teams"]]
+        return TeamSet(teams=teams)
 
 
 class COSC499S2023StudentProvider(StudentProvider):
