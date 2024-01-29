@@ -51,7 +51,7 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
                 False,
             ),
             "AverageTimeslotCoverage": AverageTimeslotCoverage(
-                available_timeslots=list(range(10)),
+                available_timeslots=[1, 2, 3, 4, 5, 6],
             ),
             "AverageCosineSimilarity": AverageCosineSimilarity(),
         }
@@ -170,7 +170,7 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
                     LineGraphMetadata(
                         x_label="Class Size",
                         y_label=y_label,
-                        title="Timeslot - Diversity Scenarios",
+                        title="COSC 341 Simplified Scenario",
                         data=list(graph_data[metric_name].values()),
                         y_lim=y_lim,
                     ),
