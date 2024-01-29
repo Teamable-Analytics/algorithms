@@ -81,7 +81,7 @@ class Runtimes(Run):
                                 MAX_SPREAD=100,
                                 MAX_ITERATE=500,
                                 MAX_TIME=1000000,
-                                name=f"config_250-100-30",
+                                name=f"config_500-100-30",
                             )
                             if "social" in scenario_name
                             else PriorityAlgorithmConfig(
@@ -89,7 +89,7 @@ class Runtimes(Run):
                                 MAX_SPREAD=30,
                                 MAX_ITERATE=60,
                                 MAX_TIME=1000000,
-                                name=f"config_30-30-15",
+                                name=f"config_60-30-15",
                             ),
                         ],
                     },
