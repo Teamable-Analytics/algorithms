@@ -1,19 +1,21 @@
+import json
 from os import path
 from typing import List
 
 import numpy as np
 
+from api.models.enums import ScenarioAttribute
 from api.models.student import Student, StudentSerializer
-from api.models.team import Team, TeamSerializer
+from api.models.team import TeamSerializer
+from api.models.team_set import TeamSet
 from benchmarking.data.interfaces import (
     StudentProvider,
-    InitialTeamsProvider,
+    TeamConfigurationProvider,
 )
-import json
 
 
-class COSC341W2021T2InitialTeamsProvider(InitialTeamsProvider):
-    def get(self) -> List[Team]:
+class COSC341W2021T2TeamConfigurationProvider(TeamConfigurationProvider):
+    def get(self) -> TeamSet:
         """
         Returns the teams that were created for the W2021T2 COSC341 class
         """
@@ -21,7 +23,8 @@ class COSC341W2021T2InitialTeamsProvider(InitialTeamsProvider):
             path.join(path.dirname(__file__), "COSC341_W2021T2_data.json"), "r"
         ) as f:
             json_data = json.load(f)
-            return [TeamSerializer().decode(team) for team in json_data["teams"]]
+            teams = [TeamSerializer().decode(team) for team in json_data["teams"]]
+            return TeamSet(teams=teams)
 
 
 class COSC341W2021T2StudentProvider(StudentProvider):
@@ -51,6 +54,24 @@ class COSC341W2021T2StudentProvider(StudentProvider):
     @property
     def num_students(self) -> int:
         return 215
+
+    @property
+    def max_project_preferences_per_student(self) -> int:
+        return 0
+
+
+class COSC341W2021T2AnsweredSurveysStudentProvider(StudentProvider):
+    def get(self, seed: int = None) -> List[Student]:
+        # As the question about what class you were in was mandatory, any student who had -1 set as their value did not answer the survey.
+        return [
+            student
+            for student in COSC341W2021T2StudentProvider().get(seed=seed)
+            if -1 not in student.attributes[ScenarioAttribute.YEAR_LEVEL.value]
+        ]
+
+    @property
+    def num_students(self) -> int:
+        return 175
 
     @property
     def max_project_preferences_per_student(self) -> int:
