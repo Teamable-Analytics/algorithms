@@ -5,7 +5,7 @@ from typing import List
 import numpy as np
 
 from api.models.student import Student, StudentSerializer
-from api.models.team import Team, TeamSerializer
+from api.models.team import TeamSerializer
 from api.models.team_set import TeamSet
 from benchmarking.data.interfaces import (
     StudentProvider,
