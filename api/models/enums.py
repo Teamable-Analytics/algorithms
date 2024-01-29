@@ -142,11 +142,11 @@ class CampusLocation(AttributeValueEnum):
 
 
 class YearLevel(AttributeValueEnum):
-    First = 0
-    Second = 1
-    Third = 2
-    Fourth = 3
-    Graduate = 4
+    First = 1
+    Second = 2
+    Third = 3
+    Fourth = 4
+    Graduate = 5
 
 
 # From paper: https://sigcse2023.sigcse.org/details/sigcse-ts-2023-papers/163/Inclusive-study-group-formation-at-scale

@@ -1,4 +1,4 @@
-from api.models.enums import ScenarioAttribute, Gender
+from api.models.enums import ScenarioAttribute, Gender, YearLevel
 from benchmarking.data.real_data.cosc341_w2022_provider.providers import (
     COSC341W2021T2StudentProvider,
 )
@@ -9,7 +9,7 @@ print(len(students))
 grad_students = [
     student
     for student in students
-    if student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0] == 2
+    if student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0] == YearLevel.Graduate.value
 ]
 print(f"Number of grad students: {len(grad_students)}")
 
@@ -17,7 +17,7 @@ print(f"Number of grad students: {len(grad_students)}")
 undergrad_students = [
     student
     for student in students
-    if student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0] == 1
+    if student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0] == YearLevel.Third.value
 ]
 print(f"Number of undergraduate students: {len(undergrad_students)}")
 
@@ -65,6 +65,6 @@ print(f"Number of Prefer Not to Answer students: {len(no_answer_students)}")
 # i = 0
 # for student in students:
 #     i += 1
-#     print(f"Gender Value: {student.attributes[ScenarioAttribute.GENDER.value]}")
+#     print(f"Year Value: {student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]}")
 #
 # print(i)
