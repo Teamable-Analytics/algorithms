@@ -16,7 +16,7 @@ from benchmarking.data.interfaces import (
 class COSC499S2023InitialTeamConfigurationProvider(TeamConfigurationProvider):
     def get(self) -> TeamSet:
         """
-        Returns the teams that were created for the W2021T2 COSC341 class
+        Returns the teams that were created for the S2023 COSC499 class
         """
         with open(
             path.join(path.dirname(__file__), "COSC499_S2023_data.json"), "r"
@@ -29,7 +29,7 @@ class COSC499S2023InitialTeamConfigurationProvider(TeamConfigurationProvider):
 class COSC499S2023StudentProvider(StudentProvider):
     def get(self, seed: int = None) -> List[Student]:
         """
-        Returns a list of the students in COSC 341/51 in the W2021T2 semester.
+        Returns a list of the students in COSC 499 in the S2023 semester.
         Includes their friend/enemy relationships, gender (1), timeslot availability (7), year level (6), and intended effort level (100).
 
         Seed shuffles student order.
