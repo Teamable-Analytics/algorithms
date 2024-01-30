@@ -43,6 +43,20 @@ def is_strictly_happy_student_enemy(student: Student) -> bool:
     return num_enemies_satisfied(student) == total
 
 
+def has_friend_and_no_enemies(student: Student) -> bool:
+    num_friend_requests = list(student.relationships.values()).count(
+        Relationship.FRIEND
+    )
+    friends_in_team = num_friends_satisfied(student)
+    if num_friend_requests > 0 and friends_in_team == 0:
+        return False
+    num_enemy_requests = list(student.relationships.values()).count(Relationship.ENEMY)
+    enemies_in_team = num_enemies_satisfied(student)
+    if num_enemy_requests > 0 and enemies_in_team > 0:
+        return False
+    return True
+
+
 def student_meets_requirement(student: Student, requirement: ProjectRequirement):
     is_met = False
     for value in student.attributes[requirement.attribute]:
