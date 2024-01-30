@@ -99,6 +99,7 @@ class Gpa(AttributeValueEnum):
     B = 2
     C = 3
     D = 4
+    F = 5
 
 
 class Age(AttributeValueEnum):

@@ -1,3 +1,4 @@
+import statistics
 import unittest
 
 from api.models.student import Student
@@ -64,3 +65,8 @@ class TestPrioritySatisfactionMetric(unittest.TestCase):
         self.assertAlmostEqual(
             (2 + 2 + 1) / 3 / 3, actual_calculate_value, delta=0.000001
         )
+
+    def test_standard_deviation__evaluates_metric_correctly(self):
+        sd = statistics.stdev([1, 2 / 3, 0])
+        calculated_value = self.priority_satisfaction.calculate_stdev(self.team_set)
+        self.assertAlmostEqual(sd, calculated_value, delta=0.000001)
