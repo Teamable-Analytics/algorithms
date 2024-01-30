@@ -1,6 +1,7 @@
 from typing import List, TYPE_CHECKING
 
 from api.ai.geg_algorithm.geg_algorithm import GeneralizedEnvyGraphAlgorithm
+from api.ai.interfaces.algorithm import Algorithm
 from api.ai.interfaces.algorithm_config import (
     AlgorithmConfig,
     RandomAlgorithmConfig,
@@ -40,6 +41,8 @@ if TYPE_CHECKING:
 
 
 class AlgorithmRunner:
+    algorithm: Algorithm
+
     def __init__(
         self,
         algorithm_type: AlgorithmType,
@@ -55,15 +58,10 @@ class AlgorithmRunner:
     def generate(self, students: List[Student]) -> TeamSet:
         # the algorithm classes internally track generated teams, so a new instance of the
         #   algorithm class MUST be created to run a new generation without side effects
-        algorithm = self.algorithm_cls(
-            team_generation_options=self.team_generation_options,
-            algorithm_options=self.algorithm_options,
-            algorithm_config=self.algorithm_config,
-        )
 
-        algorithm.prepare(students)
+        self.algorithm.prepare(students)
 
-        return algorithm.generate(students)
+        return self.algorithm.generate(students)
 
     @staticmethod
     def get_algorithm_from_type(algorithm_type: AlgorithmType):
@@ -133,3 +131,17 @@ class AlgorithmRunner:
         raise NotImplementedError(
             f"Algorithm type {algorithm_type} is not associated with an algorithm config class!"
         )
+
+    def pre_prepare(self, students: List[Student]):
+        algorithm = self.algorithm_cls(
+            team_generation_options=self.team_generation_options,
+            algorithm_options=self.algorithm_options,
+            algorithm_config=self.algorithm_config,
+        )
+
+        self.algorithm = algorithm
+
+        algorithm.pre_prepare(students)
+
+    def clean_up(self):
+        self.algorithm.clean_up()

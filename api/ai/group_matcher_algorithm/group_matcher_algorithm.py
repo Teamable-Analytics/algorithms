@@ -30,8 +30,9 @@ class GroupMatcherAlgorithm(Algorithm):
         self.csv_input_path = Path(algorithm_config.csv_input_path)
 
         class_size = int(self.csv_input_path.stem.split("-")[0])
+        iteration_idx = int(self.csv_input_path.stem.split("-")[1])
         self.group_matcher_run_path = algorithm_config.group_matcher_run_path
-        self.outpath = Path.cwd() / f"out-private-{class_size}.csv"
+        self.outpath = Path.cwd() / f"out-private-{iteration_idx}-{class_size}.csv"
         if self.outpath.exists():
             self.outpath.unlink()
         self.config_file_path = (
@@ -43,7 +44,7 @@ class GroupMatcherAlgorithm(Algorithm):
         if not self.csv_input_path.parent.exists():
             self.csv_input_path.parent.mkdir(parents=True)
 
-    def prepare(self, students: List[Student]) -> None:
+    def pre_prepare(self, students: List[Student]) -> None:
         student_data = [student.to_group_matcher_data_format() for student in students]
         self.student_trace = { student.id: student for student in students }
         with open(self.csv_input_path, "w") as csvfile:
@@ -64,7 +65,8 @@ class GroupMatcherAlgorithm(Algorithm):
             student_id = row["sid"]
             self.team_trace[int(row["group_num"]) + 1].add_student(self.student_trace[student_id])
 
+        return TeamSet(teams=[team for team in self.teams if len(team.students) > 0])
+
+    def clean_up(self) -> None:
         # Unlink after finish
         self.outpath.unlink()
-
-        return TeamSet(teams=[team for team in self.teams if len(team.students) > 0])
