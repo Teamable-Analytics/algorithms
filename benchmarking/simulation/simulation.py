@@ -158,9 +158,11 @@ def run_trial_batch(
             else:
                 students = settings.student_provider.get()
 
+            runner.pre_prepare(students)
             start_time = time.time()
             team_set = runner.generate(students)
             end_time = time.time()
+            runner.clean_up()
 
             run_time = end_time - start_time
 
