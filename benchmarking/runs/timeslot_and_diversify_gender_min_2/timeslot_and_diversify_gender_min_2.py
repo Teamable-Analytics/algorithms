@@ -105,10 +105,10 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                     ],
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
-                            MAX_TIME=1000000,
-                            MAX_KEEP=15,
-                            MAX_SPREAD=30,
-                            MAX_ITERATE=30,
+                            MAX_TIME=10000000,
+                            MAX_KEEP=30,
+                            MAX_SPREAD=100,
+                            MAX_ITERATE=250,
                         ),
                     ],
                     AlgorithmType.RANDOM: [

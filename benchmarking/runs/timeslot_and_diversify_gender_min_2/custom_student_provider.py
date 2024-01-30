@@ -37,7 +37,7 @@ class TimeslotCustomStudentProvider(StudentProvider):
                 attribute_ranges={
                     ScenarioAttribute.GENDER.value: [
                         (Gender.FEMALE, self.ratio_of_female_students),
-                        (Gender.FEMALE, 1 - self.ratio_of_female_students),
+                        (Gender.MALE, 1 - self.ratio_of_female_students),
                     ],
                     ScenarioAttribute.YEAR_LEVEL.value: [
                         (0, 0.3),

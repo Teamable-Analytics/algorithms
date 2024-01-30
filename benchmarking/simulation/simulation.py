@@ -91,8 +91,6 @@ class Simulation:
             SimulationCache.create_fragment_parent_dir(self.settings.cache_key)
 
         num_processes = max(1, os.cpu_count() - 2)
-        # TODO: Remove this after running the simulations
-        num_processes = 1
         num_runs_per_worker = chunk(num_runs, num_processes)
 
         # Calculate the run indexes that need to be run by each worker

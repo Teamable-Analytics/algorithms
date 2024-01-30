@@ -2,6 +2,8 @@ import itertools
 import os
 from typing import Dict
 
+import typer
+
 from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     RandomAlgorithmConfig,
@@ -56,7 +58,7 @@ def additive_utility_function(student: Student, team: TeamShell) -> float:
 
 
 class CustomModels(Run):
-    def start(self, num_trials: int = 100, generate_graphs: bool = False):
+    def start(self, num_trials: int = 100, generate_graphs: bool = True):
         scenario = ScenarioThatWeLove(
             value_of_female=Gender.FEMALE.value,
             value_of_african=Race.African.value,
@@ -270,10 +272,10 @@ class CustomModels(Run):
                     # ],
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
-                            MAX_TIME=1000000,
-                            MAX_KEEP=15,
-                            MAX_SPREAD=30,
-                            MAX_ITERATE=30,
+                            MAX_TIME=10000000,
+                            MAX_KEEP=30,
+                            MAX_SPREAD=100,
+                            MAX_ITERATE=250,
                         ),
                     ],
                     AlgorithmType.RANDOM: [
@@ -342,5 +344,5 @@ class CustomModels(Run):
 
 
 if __name__ == "__main__":
-    CustomModels().start()
-
+    typer.run(CustomModels().start)
+    typer.run(TimeSlotAndDiversifyGenderMin2().start)
