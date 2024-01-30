@@ -1,5 +1,5 @@
 from api.models.enums import ScenarioAttribute, Gender, YearLevel
-from benchmarking.data.real_data.cosc341_w2022_provider.providers import (
+from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
     COSC341W2021T2StudentProvider,
 )
 
