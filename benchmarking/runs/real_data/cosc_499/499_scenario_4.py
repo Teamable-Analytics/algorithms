@@ -18,6 +18,8 @@ from api.models.enums import (
 )
 from benchmarking.data.real_data.cosc499_s2023_provider.providers import (
     COSC499S2023StudentProvider,
+    COSC499S2023InitialTeamConfigurationProvider,
+    COSC499S2023InitialTeamsProvider,
 )
 from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubject
 from benchmarking.evaluations.goals import (
@@ -69,9 +71,11 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
         }
 
         student_provider = COSC499S2023StudentProvider()
+        initial_teams_provider = COSC499S2023InitialTeamsProvider()
         simulation_settings = SimulationSettings(
             num_teams=math.ceil(student_provider.num_students / self.TEAM_SIZE),
             student_provider=student_provider,
+            initial_teams_provider=initial_teams_provider,
             scenario=scenario,
             cache_key=f"real_data/cosc_499/499_scenario_4",
         )
