@@ -52,7 +52,7 @@ from benchmarking.simulation.simulation_set import SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
+class Cosc499Scenario4Run(Run):
     TEAM_SIZE = 4
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
@@ -73,7 +73,6 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
         student_provider = COSC499S2023StudentProvider()
         initial_teams_provider = COSC499S2023InitialTeamsProvider()
         simulation_settings = SimulationSettings(
-            num_teams=math.ceil(student_provider.num_students / self.TEAM_SIZE),
             student_provider=student_provider,
             initial_teams_provider=initial_teams_provider,
             scenario=scenario,
@@ -193,24 +192,6 @@ class Scenario4(Scenario):
                 max_num_friends=self.max_num_friends,
                 max_num_enemies=self.max_num_enemies,
             ),
-            # DiversityGoal(
-            #     DiversifyType.DIVERSIFY,
-            #     ScenarioAttribute.GPA.value,
-            #     tokenization_constraint=TokenizationConstraint(
-            #         direction=TokenizationConstraintDirection.MIN_OF,
-            #         threshold=2,
-            #         value=Gpa.A.value,
-            #     ),
-            # ),
-            # DiversityGoal(
-            #     DiversifyType.DIVERSIFY,
-            #     ScenarioAttribute.GPA.value,
-            #     tokenization_constraint=TokenizationConstraint(
-            #         direction=TokenizationConstraintDirection.MIN_OF,
-            #         threshold=2,
-            #         value=Gpa.B.value,
-            #     ),
-            # ),
             DiversityGoal(
                 DiversifyType.DIVERSIFY,
                 ScenarioAttribute.GPA.value,
@@ -220,4 +201,4 @@ class Scenario4(Scenario):
 
 
 if __name__ == "__main__":
-    typer.run(ConcentrateTimeslotDiversifyGenderAndStudentLevel().start)
+    typer.run(Cosc499Scenario4Run().start)
