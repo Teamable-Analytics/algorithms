@@ -42,7 +42,8 @@ from benchmarking.runs.project_scenario_with_different_algos.student_provider im
     WorkExperience,
     CustomStudentProvider,
 )
-from benchmarking.runs.timeslot_and_diversify_gender_min_2.timeslot_and_diversify_gender_min_2 import TimeSlotAndDiversifyGenderMin2
+from benchmarking.runs.timeslot_and_diversify_gender_min_2.timeslot_and_diversify_gender_min_2 import \
+    TimeSlotAndDiversifyGenderMin2
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact, _get_seeds
@@ -216,7 +217,7 @@ class CustomModels(Run):
 
         for class_size in class_sizes:
             print("CLASS SIZE /", class_size)
-            cache_key=f"custom_models/class_size_{class_size}"
+            cache_key = f"custom_models/class_size_{class_size}"
 
             project_cycler = itertools.cycle(initial_projecys)
             projects = []
@@ -358,4 +359,4 @@ class CustomModels(Run):
 
 if __name__ == "__main__":
     typer.run(CustomModels().start)
-    # typer.run(TimeSlotAndDiversifyGenderMin2().start)
+    typer.run(TimeSlotAndDiversifyGenderMin2().start)
