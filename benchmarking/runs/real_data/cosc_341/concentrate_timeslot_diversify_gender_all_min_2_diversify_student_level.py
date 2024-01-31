@@ -1,6 +1,5 @@
 import math
 import os
-from pathlib import Path
 from typing import Dict
 
 import typer
@@ -8,24 +7,21 @@ import typer
 from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     WeightAlgorithmConfig,
-    GroupMatcherAlgorithmConfig,
     RandomAlgorithmConfig,
+    GroupMatcherAlgorithmConfig,
 )
 from api.models.enums import AlgorithmType
 from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
     COSC341W2021T2AnsweredSurveysStudentProvider,
 )
-from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
-from benchmarking.evaluations.graphing.line_graph import line_graph
-from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
+from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.metrics.average_timeslot_coverage import (
     AverageTimeslotCoverage,
 )
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_gender_min_2_and_diversify_year_level import (
-    ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel,
-    DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel,
+from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_all_min_2_diversify_student_level import (
+    ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel,
 )
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
@@ -38,16 +34,13 @@ class ConcentrateTimeslotDiversifyAllGenderMin2DiversifyStudentLevel(Run):
     TEAM_SIZE = 4
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
-        scenario_1 = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(
-            max_num_choices=6
-        )
-        scenario_2 = DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel(
+        scenario = ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel(
             max_num_choices=6
         )
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
-                goals_to_priorities(scenario_1.goals),
+                goals_to_priorities(scenario.goals),
                 False,
             ),
             "AverageTimeslotCoverage": AverageTimeslotCoverage(
@@ -58,22 +51,15 @@ class ConcentrateTimeslotDiversifyAllGenderMin2DiversifyStudentLevel(Run):
 
         cache_key = "real_data/cosc_341/concentrate_timeslot_diversify_all_gender_min_2_diversify_student_level"
         student_provider = COSC341W2021T2AnsweredSurveysStudentProvider()
-        simulation_settings_1 = SimulationSettings(
+        simulation_settings = SimulationSettings(
             num_teams=math.ceil(175 / self.TEAM_SIZE),
             student_provider=student_provider,
-            scenario=scenario_1,
-            cache_key=cache_key,
-        )
-
-        simulation_settings_2 = SimulationSettings(
-            num_teams=math.ceil(175 / self.TEAM_SIZE),
-            student_provider=student_provider,
-            scenario=scenario_2,
+            scenario=scenario,
             cache_key=cache_key,
         )
 
         artifacts = SimulationSet(
-            settings=simulation_settings_1,
+            settings=simulation_settings,
             algorithm_set={
                 AlgorithmType.WEIGHT: [
                     WeightAlgorithmConfig(),
@@ -101,7 +87,7 @@ class ConcentrateTimeslotDiversifyAllGenderMin2DiversifyStudentLevel(Run):
 
         artifacts.update(
             SimulationSet(
-                settings=simulation_settings_1,
+                settings=simulation_settings,
                 algorithm_set={
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
@@ -109,26 +95,6 @@ class ConcentrateTimeslotDiversifyAllGenderMin2DiversifyStudentLevel(Run):
                             MAX_KEEP=15,
                             MAX_SPREAD=30,
                             MAX_ITERATE=30,
-                        ),
-                    ],
-                    AlgorithmType.RANDOM: [
-                        RandomAlgorithmConfig(),
-                    ],
-                },
-            ).run(num_runs=num_trials)
-        )
-
-        artifacts.update(
-            SimulationSet(
-                settings=simulation_settings_2,
-                algorithm_set={
-                    AlgorithmType.PRIORITY: [
-                        PriorityAlgorithmConfig(
-                            MAX_TIME=1000000,
-                            MAX_KEEP=15,
-                            MAX_SPREAD=30,
-                            MAX_ITERATE=30,
-                            name="Switched Order Priority",
                         ),
                     ],
                     AlgorithmType.RANDOM: [
