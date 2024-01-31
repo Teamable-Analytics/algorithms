@@ -1,7 +1,6 @@
 import math
 import os
-from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 import typer
 
@@ -11,21 +10,38 @@ from api.ai.interfaces.algorithm_config import (
     GroupMatcherAlgorithmConfig,
     RandomAlgorithmConfig,
 )
-from api.models.enums import AlgorithmType
-from benchmarking.data.real_data.cosc341_w2022_provider.providers import (
-    COSC341W2021T2AnsweredSurveysStudentProvider,
+from api.models.enums import (
+    AlgorithmType,
+    DiversifyType,
+    ScenarioAttribute,
+    RequirementsCriteria,
+)
+from benchmarking.data.real_data.cosc499_s2023_provider.providers import (
+    COSC499S2023StudentProvider,
+)
+from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubject
+from benchmarking.evaluations.goals import (
+    DiversityGoal,
+    WeightGoal,
+    ProjectRequirementGoal,
+    PreferenceGoal,
 )
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
-from benchmarking.evaluations.metrics.average_timeslot_coverage import (
-    AverageTimeslotCoverage,
+from benchmarking.evaluations.interfaces import Scenario, Goal
+from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
+    AverageProjectRequirementsCoverage,
 )
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
+from benchmarking.evaluations.metrics.average_social_satisfied import (
+    AverageSocialSatisfaction,
+)
+from benchmarking.evaluations.metrics.cosine_similarity import (
+    AverageCosineDifference,
+)
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_gender_min_2_and_diversify_year_level import (
-    ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel,
-    DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel,
+from benchmarking.evaluations.metrics.utils.team_calculations import (
+    is_happy_team_all_have_friend_no_enemy,
 )
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
@@ -38,41 +54,30 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
     TEAM_SIZE = 4
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
-        scenario_1 = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(
-            max_num_choices=6
-        )
-        scenario_2 = DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel(
-            max_num_choices=6
-        )
+        scenario = Scenario4(max_num_friends=3, max_num_enemies=3)
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
-                goals_to_priorities(scenario_1.goals),
+                goals_to_priorities(scenario.goals),
                 False,
             ),
-            "AverageTimeslotCoverage": AverageTimeslotCoverage(
-                available_timeslots=[1, 2, 3, 4, 5, 6],
+            "AverageCosineDifference": AverageCosineDifference(),
+            "AverageSocialSatisfaction": AverageSocialSatisfaction(
+                metric_function=is_happy_team_all_have_friend_no_enemy
             ),
-            "AverageCosineSimilarity": AverageCosineSimilarity(),
+            "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
         }
 
-        student_provider = COSC341W2021T2AnsweredSurveysStudentProvider()
-        simulation_settings_1 = SimulationSettings(
-            num_teams=math.ceil(175 / self.TEAM_SIZE),
+        student_provider = COSC499S2023StudentProvider()
+        simulation_settings = SimulationSettings(
+            num_teams=math.ceil(student_provider.num_students / self.TEAM_SIZE),
             student_provider=student_provider,
-            scenario=scenario_1,
-            cache_key=f"real_data/cosc_341/concentrate_timeslot_diversify_gender_and_student_level",
-        )
-
-        simulation_settings_2 = SimulationSettings(
-            num_teams=math.ceil(175 / self.TEAM_SIZE),
-            student_provider=student_provider,
-            scenario=scenario_2,
-            cache_key=f"real_data/cosc_341/concentrate_timeslot_diversify_gender_and_student_level",
+            scenario=scenario,
+            cache_key=f"real_data/cosc_499/499_scenario_4",
         )
 
         artifacts = SimulationSet(
-            settings=simulation_settings_1,
+            settings=simulation_settings,
             algorithm_set={
                 AlgorithmType.WEIGHT: [
                     WeightAlgorithmConfig(),
@@ -83,16 +88,16 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
                             os.path.join(
                                 os.path.dirname(__file__),
                                 "../../../..",
-                                f"api/ai/group_matcher_algorithm/group-matcher/inpData/{175}-generated.csv"
+                                f"api/ai/group_matcher_algorithm/group-matcher/inpData/{175}-generated.csv",
                             )
                         ),
                         group_matcher_run_path=os.path.abspath(
                             os.path.join(
                                 os.path.dirname(__file__),
                                 "../../../..",
-                                "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                                "api/ai/group_matcher_algorithm/group-matcher/run.py",
                             )
-                        )
+                        ),
                     ),
                 ],
             },
@@ -100,34 +105,14 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
 
         artifacts.update(
             SimulationSet(
-                settings=simulation_settings_1,
+                settings=simulation_settings,
                 algorithm_set={
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
                             MAX_TIME=1000000,
-                            MAX_KEEP=15,
-                            MAX_SPREAD=30,
-                            MAX_ITERATE=30,
-                        ),
-                    ],
-                    AlgorithmType.RANDOM: [
-                        RandomAlgorithmConfig(),
-                    ],
-                },
-            ).run(num_runs=num_trials)
-        )
-
-        artifacts.update(
-            SimulationSet(
-                settings=simulation_settings_2,
-                algorithm_set={
-                    AlgorithmType.PRIORITY: [
-                        PriorityAlgorithmConfig(
-                            MAX_TIME=1000000,
-                            MAX_KEEP=15,
-                            MAX_SPREAD=30,
-                            MAX_ITERATE=30,
-                            name="Switched Order Priority"
+                            MAX_KEEP=30,
+                            MAX_SPREAD=100,
+                            MAX_ITERATE=250,
                         ),
                     ],
                     AlgorithmType.RANDOM: [
@@ -175,6 +160,59 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
                         y_lim=y_lim,
                     ),
                 )
+
+
+class Scenario4(Scenario):
+    def __init__(self, max_num_friends: int, max_num_enemies: int):
+        self.max_num_friends = max_num_friends
+        self.max_num_enemies = max_num_enemies
+
+    @property
+    def name(self) -> str:
+        return "Prioritizes project requirements, then friends/enemies, then diversifies GPA"
+
+    @property
+    def goals(self) -> List[Goal]:
+        return [
+            ProjectRequirementGoal(
+                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED,
+            ),
+            PreferenceGoal(
+                direction=PreferenceDirection.INCLUDE,
+                subject=PreferenceSubject.FRIENDS,
+                max_num_friends=self.max_num_friends,
+                max_num_enemies=self.max_num_enemies,
+            ),
+            PreferenceGoal(
+                direction=PreferenceDirection.EXCLUDE,
+                subject=PreferenceSubject.ENEMIES,
+                max_num_friends=self.max_num_friends,
+                max_num_enemies=self.max_num_enemies,
+            ),
+            # DiversityGoal(
+            #     DiversifyType.DIVERSIFY,
+            #     ScenarioAttribute.GPA.value,
+            #     tokenization_constraint=TokenizationConstraint(
+            #         direction=TokenizationConstraintDirection.MIN_OF,
+            #         threshold=2,
+            #         value=Gpa.A.value,
+            #     ),
+            # ),
+            # DiversityGoal(
+            #     DiversifyType.DIVERSIFY,
+            #     ScenarioAttribute.GPA.value,
+            #     tokenization_constraint=TokenizationConstraint(
+            #         direction=TokenizationConstraintDirection.MIN_OF,
+            #         threshold=2,
+            #         value=Gpa.B.value,
+            #     ),
+            # ),
+            DiversityGoal(
+                DiversifyType.DIVERSIFY,
+                ScenarioAttribute.GPA.value,
+            ),
+            WeightGoal(social_preference_weight=2, diversity_goal_weight=1),
+        ]
 
 
 if __name__ == "__main__":
