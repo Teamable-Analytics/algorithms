@@ -10,15 +10,19 @@ from api.ai.interfaces.algorithm_config import (
     RandomAlgorithmConfig,
     GroupMatcherAlgorithmConfig,
 )
-from api.models.enums import AlgorithmType
+from api.models.enums import AlgorithmType, ScenarioAttribute, Gender
 from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
     COSC341W2021T2AnsweredSurveysStudentProvider,
 )
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
+from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 from benchmarking.evaluations.metrics.average_timeslot_coverage import (
     AverageTimeslotCoverage,
 )
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
+from benchmarking.evaluations.metrics.cosine_similarity import (
+    AverageCosineSimilarity,
+    AverageCosineDifference,
+)
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_all_min_2_diversify_student_level import (
     ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel,
@@ -46,7 +50,12 @@ class ConcentrateTimeslotDiversifyAllGenderMin2DiversifyStudentLevel(Run):
             "AverageTimeslotCoverage": AverageTimeslotCoverage(
                 available_timeslots=[1, 2, 3, 4, 5, 6],
             ),
-            "AverageCosineSimilarity": AverageCosineSimilarity(),
+            "AverageCosineDifference": AverageCosineDifference(),
+            "AverageSoloStatus": AverageSoloStatus(
+                minority_groups={
+                    ScenarioAttribute.GENDER.value: [gender.value for gender in Gender],
+                }
+            ),
         }
 
         cache_key = "real_data/cosc_341/concentrate_timeslot_diversify_all_gender_min_2_diversify_student_level"
@@ -92,9 +101,9 @@ class ConcentrateTimeslotDiversifyAllGenderMin2DiversifyStudentLevel(Run):
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
                             MAX_TIME=1000000,
-                            MAX_KEEP=15,
-                            MAX_SPREAD=30,
-                            MAX_ITERATE=30,
+                            MAX_KEEP=30,
+                            MAX_SPREAD=100,
+                            MAX_ITERATE=250,
                         ),
                     ],
                     AlgorithmType.RANDOM: [
