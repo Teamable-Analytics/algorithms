@@ -11,6 +11,7 @@ from benchmarking.evaluations.metrics.average_project_requirements_coverage impo
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,
 )
+from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 from benchmarking.evaluations.metrics.cosine_similarity import (
     AverageCosineDifference,
 )
@@ -26,6 +27,8 @@ def get_pretty_metric_name(metric: TeamSetMetric) -> str:
         return "Project Coverage"
     if isinstance(metric, AverageSocialSatisfaction):
         return "Social Satisfaction"
+    if isinstance(metric, AverageSoloStatus):
+        return "Solo Status"
     return "Score"
 
 
