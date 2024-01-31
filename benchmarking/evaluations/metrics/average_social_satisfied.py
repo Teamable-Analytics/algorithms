@@ -18,5 +18,5 @@ class AverageSocialSatisfaction(TeamSetMetric):
             / team_set.num_teams
         )
 
-    def stdev(self, team_set: TeamSet) -> float:
+    def calculate_stdev(self, team_set: TeamSet) -> float:
         return statistics.stdev([self.metric_function(team) for team in team_set.teams])
