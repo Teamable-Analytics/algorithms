@@ -20,7 +20,6 @@ from benchmarking.evaluations.metrics.average_timeslot_coverage import (
     AverageTimeslotCoverage,
 )
 from benchmarking.evaluations.metrics.cosine_similarity import (
-    AverageCosineSimilarity,
     AverageCosineDifference,
 )
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
@@ -34,8 +33,12 @@ from benchmarking.simulation.simulation_set import SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class ConcentrateTimeslotDiversifyAllGenderMin2DiversifyStudentLevel(Run):
+class Scenario2(Run):
     TEAM_SIZE = 4
+    """
+    This run focuses on the scenario of concentrating timeslots, diversifying all genders with min 2 
+    (female > non-binary > male > no answer), and diversifying based on year level (third year vs. graduate students).
+    """
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
         scenario = ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel(
@@ -58,7 +61,7 @@ class ConcentrateTimeslotDiversifyAllGenderMin2DiversifyStudentLevel(Run):
             ),
         }
 
-        cache_key = "real_data/cosc_341/concentrate_timeslot_diversify_all_gender_min_2_diversify_student_level"
+        cache_key = "real_data/cosc_341/scenario_2"
         student_provider = COSC341W2021T2AnsweredSurveysStudentProvider()
         simulation_settings = SimulationSettings(
             num_teams=math.ceil(175 / self.TEAM_SIZE),
@@ -152,4 +155,4 @@ class ConcentrateTimeslotDiversifyAllGenderMin2DiversifyStudentLevel(Run):
 
 
 if __name__ == "__main__":
-    typer.run(ConcentrateTimeslotDiversifyAllGenderMin2DiversifyStudentLevel().start)
+    typer.run(Scenario2().start)
