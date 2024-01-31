@@ -51,6 +51,7 @@ if __name__ == "__main__":
 
     # Get project req distribution
     other_attributes: Dict[int, Dict[int, int]] = {
+        ScenarioAttribute.TIMESLOT_AVAILABILITY.value: {},
         304: {},
         305: {},
         306: {},
@@ -83,6 +84,10 @@ if __name__ == "__main__":
                 if attr_val not in other_attributes[attribute_type]:
                     other_attributes[attribute_type][attr_val] = 0
                 other_attributes[attribute_type][attr_val] += 1
+    # Swap timeslot id
+    other_attributes[301] = other_attributes.pop(
+        ScenarioAttribute.TIMESLOT_AVAILABILITY.value
+    )
     with open("attributes.json", "r") as f:
         names = json.load(f)
         names = {_["id"]: _["name"] for _ in names}
@@ -92,14 +97,15 @@ if __name__ == "__main__":
         attribute_info = data["attribute_info"]
     for a, counts in other_attributes.items():
         av = get_attr_values(str(a), attribute_info)
-        named_attributes[a] = {f"{k} - {av[k]}": v for k, v in counts.items()}
+        named_attributes[a] = {f"{av[k]}": v for k, v in counts.items()}
     variable_names_suck = {}
     for k, v in named_attributes.items():
-        variable_names_suck[f"{k} - {names[k]}"] = v
-    print(json.dumps(variable_names_suck, indent=2))
+        variable_names_suck[f"{names[k]}"] = v
 
     # Validate data
     # Each attributes counts should add to 41
     for a, counts in variable_names_suck.items():
         if sum(counts.values()) != 41:
             print(f"Attribute {a} does not sum to 41: {sum(counts.values())}")
+
+    print(json.dumps(variable_names_suck, indent=2))
