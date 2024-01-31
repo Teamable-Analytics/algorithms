@@ -66,18 +66,19 @@ class Scenario1(Run):
         }
 
         student_provider = COSC341W2021T2AnsweredSurveysStudentProvider()
+        cache_key = "real_data/cosc_341/scenario1"
         simulation_settings_1 = SimulationSettings(
             num_teams=math.ceil(175 / self.TEAM_SIZE),
             student_provider=student_provider,
             scenario=scenario_1,
-            cache_key=f"real_data/cosc_341/concentrate_timeslot_diversify_gender_and_student_level",
+            cache_key=cache_key,
         )
 
         simulation_settings_2 = SimulationSettings(
             num_teams=math.ceil(175 / self.TEAM_SIZE),
             student_provider=student_provider,
             scenario=scenario_2,
-            cache_key=f"real_data/cosc_341/concentrate_timeslot_diversify_gender_and_student_level",
+            cache_key=cache_key,
         )
 
         artifacts = SimulationSet(
