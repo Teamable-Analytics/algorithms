@@ -1,6 +1,5 @@
 import math
 import os
-from pathlib import Path
 from typing import Dict
 
 import typer
@@ -11,17 +10,18 @@ from api.ai.interfaces.algorithm_config import (
     GroupMatcherAlgorithmConfig,
     RandomAlgorithmConfig,
 )
-from api.models.enums import AlgorithmType
+from api.models.enums import AlgorithmType, ScenarioAttribute, Gender
 from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
     COSC341W2021T2AnsweredSurveysStudentProvider,
 )
-from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
-from benchmarking.evaluations.graphing.line_graph import line_graph
-from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
+from benchmarking.evaluations.graphing.graph_metadata import GraphData
+from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 from benchmarking.evaluations.metrics.average_timeslot_coverage import (
     AverageTimeslotCoverage,
 )
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
+from benchmarking.evaluations.metrics.cosine_similarity import (
+    AverageCosineDifference,
+)
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_gender_min_2_and_diversify_year_level import (
     ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel,
@@ -34,8 +34,12 @@ from benchmarking.simulation.simulation_set import SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
+class Scenario1(Run):
     TEAM_SIZE = 4
+    """
+    This run focuses on the scenario of concentrating timeslots, diversifying females with min 2, and diversifying based 
+    on year level (third year vs. graduate students).
+    """
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
         scenario_1 = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(
@@ -53,22 +57,28 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
             "AverageTimeslotCoverage": AverageTimeslotCoverage(
                 available_timeslots=[1, 2, 3, 4, 5, 6],
             ),
-            "AverageCosineSimilarity": AverageCosineSimilarity(),
+            "AverageCosineDifference": AverageCosineDifference(),
+            "AverageSoloStatus": AverageSoloStatus(
+                minority_groups={
+                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
+                }
+            ),
         }
 
         student_provider = COSC341W2021T2AnsweredSurveysStudentProvider()
+        cache_key = "real_data/cosc_341/scenario1"
         simulation_settings_1 = SimulationSettings(
             num_teams=math.ceil(175 / self.TEAM_SIZE),
             student_provider=student_provider,
             scenario=scenario_1,
-            cache_key=f"real_data/cosc_341/concentrate_timeslot_diversify_gender_and_student_level",
+            cache_key=cache_key,
         )
 
         simulation_settings_2 = SimulationSettings(
             num_teams=math.ceil(175 / self.TEAM_SIZE),
             student_provider=student_provider,
             scenario=scenario_2,
-            cache_key=f"real_data/cosc_341/concentrate_timeslot_diversify_gender_and_student_level",
+            cache_key=cache_key,
         )
 
         artifacts = SimulationSet(
@@ -105,9 +115,9 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
                             MAX_TIME=1000000,
-                            MAX_KEEP=15,
-                            MAX_SPREAD=30,
-                            MAX_ITERATE=30,
+                            MAX_KEEP=30,
+                            MAX_SPREAD=100,
+                            MAX_ITERATE=250,
                         ),
                     ],
                     AlgorithmType.RANDOM: [
@@ -124,9 +134,9 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
                             MAX_TIME=1000000,
-                            MAX_KEEP=15,
-                            MAX_SPREAD=30,
-                            MAX_ITERATE=30,
+                            MAX_KEEP=30,
+                            MAX_SPREAD=100,
+                            MAX_ITERATE=250,
                             name="Switched Order Priority",
                         ),
                     ],
@@ -176,4 +186,4 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
 
 
 if __name__ == "__main__":
-    typer.run(ConcentrateTimeslotDiversifyGenderAndStudentLevel().start)
+    typer.run(Scenario1().start)
