@@ -9,7 +9,8 @@ print(len(students))
 grad_students = [
     student
     for student in students
-    if student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0] == YearLevel.Graduate.value
+    if student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]
+    == YearLevel.Graduate.value
 ]
 print(f"Number of grad students: {len(grad_students)}")
 
@@ -17,7 +18,8 @@ print(f"Number of grad students: {len(grad_students)}")
 undergrad_students = [
     student
     for student in students
-    if student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0] == YearLevel.Third.value
+    if student.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]
+    == YearLevel.Third.value
 ]
 print(f"Number of undergraduate students: {len(undergrad_students)}")
 

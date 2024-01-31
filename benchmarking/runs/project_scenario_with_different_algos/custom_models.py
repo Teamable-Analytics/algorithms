@@ -24,7 +24,9 @@ from benchmarking.evaluations.metrics.average_project_requirements_coverage impo
     AverageProjectRequirementsCoverage,
 )
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
-from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
+from benchmarking.evaluations.metrics.envy_free_up_to_one_item import (
+    EnvyFreenessUpToOneItem,
+)
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.scenario_that_we_love import (
     ScenarioThatWeLove,
@@ -39,7 +41,9 @@ from benchmarking.runs.project_scenario_with_different_algos.student_provider im
     WorkExperience,
     CustomStudentProvider,
 )
-from benchmarking.runs.timeslot_and_diversify_gender_min_2.timeslot_and_diversify_gender_min_2 import TimeSlotAndDiversifyGenderMin2
+from benchmarking.runs.timeslot_and_diversify_gender_min_2.timeslot_and_diversify_gender_min_2 import (
+    TimeSlotAndDiversifyGenderMin2,
+)
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
@@ -343,4 +347,3 @@ class CustomModels(Run):
 
 if __name__ == "__main__":
     CustomModels().start()
-
