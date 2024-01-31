@@ -1,4 +1,3 @@
-import math
 import os
 from typing import Dict, List
 
@@ -21,7 +20,6 @@ from api.models.student import Student
 from api.models.team import TeamShell
 from benchmarking.data.real_data.cosc499_s2023_provider.providers import (
     COSC499S2023StudentProvider,
-    COSC499S2023InitialTeamConfigurationProvider,
     COSC499S2023InitialTeamsProvider,
 )
 from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubject
@@ -31,9 +29,7 @@ from benchmarking.evaluations.goals import (
     ProjectRequirementGoal,
     PreferenceGoal,
 )
-from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
-from benchmarking.evaluations.graphing.line_graph import line_graph
-from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
+from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
     AverageProjectRequirementsCoverage,
@@ -103,7 +99,7 @@ class Cosc499Scenario4Run(Run):
                             os.path.join(
                                 os.path.dirname(__file__),
                                 "../../../..",
-                                f"api/ai/group_matcher_algorithm/group-matcher/inpData/{175}-generated.csv",
+                                f"api/ai/group_matcher_algorithm/group-matcher/inpData/{41}-generated.csv",
                             )
                         ),
                         group_matcher_run_path=os.path.abspath(
