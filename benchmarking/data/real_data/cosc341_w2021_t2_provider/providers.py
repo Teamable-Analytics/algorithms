@@ -6,11 +6,12 @@ import numpy as np
 
 from api.models.enums import ScenarioAttribute
 from api.models.student import Student, StudentSerializer
-from api.models.team import TeamSerializer
+from api.models.team import TeamSerializer, TeamShell
 from api.models.team_set import TeamSet
 from benchmarking.data.interfaces import (
     StudentProvider,
     TeamConfigurationProvider,
+    InitialTeamsProvider,
 )
 
 
@@ -25,6 +26,13 @@ class COSC341W2021T2TeamConfigurationProvider(TeamConfigurationProvider):
             json_data = json.load(f)
             teams = [TeamSerializer().decode(team) for team in json_data["teams"]]
             return TeamSet(teams=teams)
+
+
+class COSC341W2021T2InitialTeamsProvider(InitialTeamsProvider):
+    def get(self) -> List[TeamShell]:
+        return [
+            t.to_shell() for t in COSC341W2021T2TeamConfigurationProvider().get().teams
+        ]
 
 
 class COSC341W2021T2StudentProvider(StudentProvider):
