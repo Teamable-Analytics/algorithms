@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 from benchmarking.data.interfaces import StudentProvider, InitialTeamsProvider
 from benchmarking.evaluations.interfaces import Scenario
@@ -12,6 +13,7 @@ class SimulationSettings:
     num_teams: int = None
     initial_teams_provider: InitialTeamsProvider = None
     cache_key: str = None
+    predefined_seeds: List[int] = None
 
     def __post_init__(self):
         self.validate()

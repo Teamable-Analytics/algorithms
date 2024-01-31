@@ -32,7 +32,7 @@ class GroupMatcherAlgorithm(Algorithm):
         class_size = int(self.csv_input_path.stem.split("-")[0])
         iteration_idx = int(self.csv_input_path.stem.split("-")[1])
         self.group_matcher_run_path = algorithm_config.group_matcher_run_path
-        self.outpath = Path.cwd() / f"out-private-{iteration_idx}-{class_size}.csv"
+        self.outpath = Path.cwd() / f"out-private-{class_size}.csv"
         if self.outpath.exists():
             self.outpath.unlink()
         self.config_file_path = (
@@ -60,6 +60,9 @@ class GroupMatcherAlgorithm(Algorithm):
         os.system(cmd)
 
         # Read the output csv file and create a TeamSet
+        while not self.outpath.exists():
+            print("Not found file " + str(self.outpath))
+            time.sleep(1)
         df = pd.read_csv(self.outpath)
         for _, row in df.iterrows():
             student_id = row["sid"]

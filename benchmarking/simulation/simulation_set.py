@@ -1,5 +1,5 @@
 import hashlib
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 import numpy as np
 
@@ -35,7 +35,7 @@ class SimulationSet:
 
     def run(self, num_runs: int) -> SimulationSetArtifact:
         # Generate `num_runs` seeds
-        seeds = _get_seeds(num_runs, self.base_cache_key)
+        seeds = _get_seeds(num_runs, self.base_cache_key, self.base_settings.predefined_seeds)
 
         for algorithm in self.algorithm_types:
             for config in self.algorithm_set[algorithm]:
@@ -78,7 +78,10 @@ class SimulationSet:
         return config_simulation_set_artifact.get(name, ([], []))
 
 
-def _get_seeds(num_seeds: int, cache_key: str) -> List[int]:
+def _get_seeds(num_seeds: int, cache_key: str, predefined_seeds: Optional[List[int]] = None) -> List[int]:
+    if predefined_seeds:
+        return predefined_seeds
+
     seed_length = 12
     seed_generator_seed = (
         abs(int(hashlib.sha256(cache_key.encode("utf-8")).hexdigest(), 16))

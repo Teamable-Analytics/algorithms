@@ -31,7 +31,7 @@ from benchmarking.runs.timeslot_and_diversify_gender_min_2.custom_student_provid
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
-from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
+from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact, _get_seeds
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
@@ -67,12 +67,13 @@ class TimeSlotAndDiversifyGenderMin2(Run):
         for class_size in class_sizes:
             print("CLASS SIZE /", class_size)
             student_provider = TimeslotCustomStudentProvider(class_size)
+            cache_key = f"timeslot_stuff/class_size_{class_size}"
 
             simulation_settings = SimulationSettings(
                 num_teams=class_size // self.TEAM_SIZE,
                 student_provider=student_provider,
                 scenario=scenario,
-                cache_key=f"timeslot_stuff/class_size_{class_size}",
+                cache_key=cache_key,
             )
 
             deterministic_artifacts = SimulationSet(
@@ -80,24 +81,6 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                 algorithm_set={
                     AlgorithmType.WEIGHT: [
                         WeightAlgorithmConfig(),
-                    ],
-                    AlgorithmType.GROUP_MATCHER: [
-                        GroupMatcherAlgorithmConfig(
-                            csv_output_path=os.path.abspath(
-                                os.path.join(
-                                    os.path.dirname(__file__),
-                                    "../../..",
-                                    f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-{uuid.uuid4()}-generated.csv"
-                                )
-                            ),
-                            group_matcher_run_path=os.path.abspath(
-                                os.path.join(
-                                    os.path.dirname(__file__),
-                                    "../../..",
-                                    "api/ai/group_matcher_algorithm/group-matcher/run.py"
-                                )
-                            )
-                        ),
                     ],
                     AlgorithmType.DRR: [
                         DoubleRoundRobinAlgorithmConfig(
@@ -118,6 +101,44 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                 },
             ).run(num_runs=num_trials)
             simulation_sets[class_size] = deterministic_artifacts
+
+            group_matcher_artifacts: SimulationSetArtifact = {}
+            for seed in _get_seeds(num_trials, cache_key):
+                print(seed)
+            #     new_artifacts = SimulationSet(
+            #         settings=SimulationSettings(
+            #             num_teams=class_size // self.TEAM_SIZE,
+            #             student_provider=student_provider,
+            #             scenario=scenario,
+            #             cache_key=cache_key,
+            #             predefined_seeds=[seed]
+            #         ),
+            #         algorithm_set={
+            #             AlgorithmType.GROUP_MATCHER: [
+            #                 GroupMatcherAlgorithmConfig(
+            #                     csv_output_path=os.path.abspath(
+            #                         os.path.join(
+            #                             os.path.dirname(__file__),
+            #                             "../../..",
+            #                             f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-{seed}-generated.csv"
+            #                         )
+            #                     ),
+            #                     group_matcher_run_path=os.path.abspath(
+            #                         os.path.join(
+            #                             os.path.dirname(__file__),
+            #                             "../../..",
+            #                             "api/ai/group_matcher_algorithm/group-matcher/run.py"
+            #                         )
+            #                     )
+            #                 ),
+            #             ]
+            #         }
+            #     ).run(num_runs=1)
+
+            #     group_matcher_artifacts['AlgorithmType.GROUP_MATCHER-default'][0].extend(new_artifacts['AlgorithmType.GROUP_MATCHER-default'][0])
+            #     group_matcher_artifacts['AlgorithmType.GROUP_MATCHER-default'][1].extend(new_artifacts["AlgorithmType.GROUP_MATCHER-default"][1])
+               
+            # simulation_sets[class_size].update(group_matcher_artifacts)
 
         if generate_graphs:
             graph_data: Dict[str, Dict[str, GraphData]] = {}
