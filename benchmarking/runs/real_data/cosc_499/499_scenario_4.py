@@ -9,6 +9,7 @@ from api.ai.interfaces.algorithm_config import (
     WeightAlgorithmConfig,
     GroupMatcherAlgorithmConfig,
     RandomAlgorithmConfig,
+    DoubleRoundRobinAlgorithmConfig,
 )
 from api.models.enums import (
     AlgorithmType,
@@ -16,6 +17,8 @@ from api.models.enums import (
     ScenarioAttribute,
     RequirementsCriteria,
 )
+from api.models.student import Student
+from api.models.team import TeamShell
 from benchmarking.data.real_data.cosc499_s2023_provider.providers import (
     COSC499S2023StudentProvider,
     COSC499S2023InitialTeamConfigurationProvider,
@@ -50,6 +53,15 @@ from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
+
+
+def additive_utility_function(student: Student, team: TeamShell) -> float:
+    if len(team.requirements) == 0:
+        return 0.0
+
+    return sum(
+        [student.meets_requirement(requirement) for requirement in team.requirements]
+    ) / float(len(team.requirements))
 
 
 class Cosc499Scenario4Run(Run):
@@ -102,6 +114,11 @@ class Cosc499Scenario4Run(Run):
                             )
                         ),
                     ),
+                ],
+                AlgorithmType.DRR: [
+                    DoubleRoundRobinAlgorithmConfig(
+                        utility_function=additive_utility_function
+                    )
                 ],
             },
         ).run(num_runs=1)
@@ -196,7 +213,7 @@ class Scenario4(Scenario):
                 DiversifyType.DIVERSIFY,
                 ScenarioAttribute.GPA.value,
             ),
-            WeightGoal(social_preference_weight=2, diversity_goal_weight=1),
+            WeightGoal(project_requirement_weight=3, social_preference_weight=2, diversity_goal_weight=1),
         ]
 
 
