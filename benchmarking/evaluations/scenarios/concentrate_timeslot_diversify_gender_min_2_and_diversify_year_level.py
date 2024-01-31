@@ -15,9 +15,9 @@ from benchmarking.evaluations.interfaces import Scenario, Goal
 
 class ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(Scenario):
     def __init__(
-            self,
-            max_num_choices: int,
-            value_of_female: int = Gender.FEMALE,
+        self,
+        max_num_choices: int,
+        value_of_female: int = Gender.FEMALE,
     ):
         super().__init__()
         self.value_of_female = value_of_female
@@ -54,9 +54,9 @@ class ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(Scenario):
 
 class DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel(Scenario):
     def __init__(
-            self,
-            max_num_choices: int,
-            value_of_female: int = Gender.FEMALE,
+        self,
+        max_num_choices: int,
+        value_of_female: int = Gender.FEMALE,
     ):
         super().__init__()
         self.value_of_female = value_of_female
