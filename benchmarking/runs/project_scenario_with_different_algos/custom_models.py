@@ -243,69 +243,60 @@ class CustomModels(Run):
                 cache_key=cache_key,
             )
 
-            deterministic_artifacts = SimulationSet(
-                settings=simulation_settings,
+            # deterministic_artifacts = SimulationSet(
+            #     settings=simulation_settings,
+            #     algorithm_set={
+            #         AlgorithmType.DRR: [
+            #             DoubleRoundRobinAlgorithmConfig(
+            #                 utility_function=additive_utility_function
+            #             ),
+            #         ],
+            #         AlgorithmType.WEIGHT: [
+            #             WeightAlgorithmConfig(),
+            #         ],
+            #         AlgorithmType.PRIORITY: [
+            #             PriorityAlgorithmConfig(
+            #                 MAX_TIME=10000000,
+            #                 MAX_KEEP=30,
+            #                 MAX_SPREAD=100,
+            #                 MAX_ITERATE=250,
+            #             ),
+            #         ],
+            #         AlgorithmType.RANDOM: [
+            #             RandomAlgorithmConfig(),
+            #         ],
+            #     },
+            # ).run(num_runs=100)
+            # simulation_sets[class_size] = deterministic_artifacts
+
+            simulation_sets[class_size] = SimulationSet(
+                settings=SimulationSettings(
+                    num_teams=class_size // team_size,
+                    student_provider=student_provider,
+                    scenario=scenario,
+                    cache_key=cache_key,
+                ),
                 algorithm_set={
-                    AlgorithmType.DRR: [
-                        DoubleRoundRobinAlgorithmConfig(
-                            utility_function=additive_utility_function
+                    AlgorithmType.GROUP_MATCHER: [
+                        GroupMatcherAlgorithmConfig(
+                            csv_output_path=os.path.abspath(
+                                os.path.join(
+                                    os.path.dirname(__file__),
+                                    "../../..",
+                                    f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
+                                )
+                            ),
+                            group_matcher_run_path=os.path.abspath(
+                                os.path.join(
+                                    os.path.dirname(__file__),
+                                    "../../..",
+                                    "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                                )
+                            )
                         ),
-                    ],
-                    AlgorithmType.WEIGHT: [
-                        WeightAlgorithmConfig(),
-                    ],
-                    AlgorithmType.PRIORITY: [
-                        PriorityAlgorithmConfig(
-                            MAX_TIME=10000000,
-                            MAX_KEEP=30,
-                            MAX_SPREAD=100,
-                            MAX_ITERATE=250,
-                        ),
-                    ],
-                    AlgorithmType.RANDOM: [
-                        RandomAlgorithmConfig(),
-                    ],
-                },
-            ).run(num_runs=100)
-            simulation_sets[class_size] = deterministic_artifacts
-
-            group_matcher_artifacts: SimulationSetArtifact = {'AlgorithmType.GROUP_MATCHER-default': ([], [])}
-            for seed in _get_seeds(num_trials, cache_key):
-                print(seed)
-            #     new_artifacts = SimulationSet(
-            #         settings=SimulationSettings(
-            #             num_teams=class_size // team_size,
-            #             student_provider=student_provider,
-            #             scenario=scenario,
-            #             cache_key=cache_key,
-            #             predefined_seeds=[seed]
-            #         ),
-            #         algorithm_set={
-            #             AlgorithmType.GROUP_MATCHER: [
-            #                 GroupMatcherAlgorithmConfig(
-            #                     csv_output_path=os.path.abspath(
-            #                         os.path.join(
-            #                             os.path.dirname(__file__),
-            #                             "../../..",
-            #                             f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-{seed}-generated.csv"
-            #                         )
-            #                     ),
-            #                     group_matcher_run_path=os.path.abspath(
-            #                         os.path.join(
-            #                             os.path.dirname(__file__),
-            #                             "../../..",
-            #                             "api/ai/group_matcher_algorithm/group-matcher/run.py"
-            #                         )
-            #                     )
-            #                 ),
-            #             ]
-            #         }
-            #     ).run(num_runs=1)
-
-            #     group_matcher_artifacts['AlgorithmType.GROUP_MATCHER-default'][0].extend(new_artifacts['AlgorithmType.GROUP_MATCHER-default'][0])
-            #     group_matcher_artifacts['AlgorithmType.GROUP_MATCHER-default'][1].extend(new_artifacts["AlgorithmType.GROUP_MATCHER-default"][1])
-
-            # simulation_sets[class_size].update(group_matcher_artifacts)
+                    ]
+                }
+            ).run(num_runs=num_trials)
 
         if generate_graphs:
             graph_data: Dict[str, Dict[str, GraphData]] = {}
@@ -367,4 +358,4 @@ class CustomModels(Run):
 
 if __name__ == "__main__":
     typer.run(CustomModels().start)
-    typer.run(TimeSlotAndDiversifyGenderMin2().start)
+    # typer.run(TimeSlotAndDiversifyGenderMin2().start)
