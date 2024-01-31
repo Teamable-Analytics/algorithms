@@ -42,6 +42,7 @@ from benchmarking.evaluations.metrics.average_timeslot_coverage import (
 )
 from benchmarking.evaluations.metrics.cosine_similarity import (
     AverageCosineDifference,
+    AverageCosineSimilarity,
 )
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.metrics.utils.team_calculations import (
@@ -74,7 +75,12 @@ class Cosc499Scenario4Run(Run):
                 goals_to_priorities(scenario.goals),
                 False,
             ),
-            "AverageCosineDifference": AverageCosineDifference(),
+            "AverageCosineDifference": AverageCosineDifference(
+                [ScenarioAttribute.GPA.value]
+            ),
+            "AverageCosineSimilarity": AverageCosineSimilarity(
+                [ScenarioAttribute.TIMESLOT_AVAILABILITY.value]
+            ),
             "AverageSocialSatisfaction": AverageSocialSatisfaction(
                 metric_function=is_happy_team_all_have_friend_no_enemy
             ),
@@ -99,24 +105,24 @@ class Cosc499Scenario4Run(Run):
                 AlgorithmType.WEIGHT: [
                     WeightAlgorithmConfig(),
                 ],
-                AlgorithmType.GROUP_MATCHER: [
-                    GroupMatcherAlgorithmConfig(
-                        csv_output_path=os.path.abspath(
-                            os.path.join(
-                                os.path.dirname(__file__),
-                                "../../../..",
-                                f"api/ai/group_matcher_algorithm/group-matcher/inpData/{41}-generated.csv",
-                            )
-                        ),
-                        group_matcher_run_path=os.path.abspath(
-                            os.path.join(
-                                os.path.dirname(__file__),
-                                "../../../..",
-                                "api/ai/group_matcher_algorithm/group-matcher/run.py",
-                            )
-                        ),
-                    ),
-                ],
+                # AlgorithmType.GROUP_MATCHER: [
+                #     GroupMatcherAlgorithmConfig(
+                #         csv_output_path=os.path.abspath(
+                #             os.path.join(
+                #                 os.path.dirname(__file__),
+                #                 "../../../..",
+                #                 f"api/ai/group_matcher_algorithm/group-matcher/inpData/{41}-generated.csv",
+                #             )
+                #         ),
+                #         group_matcher_run_path=os.path.abspath(
+                #             os.path.join(
+                #                 os.path.dirname(__file__),
+                #                 "../../../..",
+                #                 "api/ai/group_matcher_algorithm/group-matcher/run.py",
+                #             )
+                #         ),
+                #     ),
+                # ],
                 AlgorithmType.DRR: [
                     DoubleRoundRobinAlgorithmConfig(
                         utility_function=additive_utility_function
@@ -223,8 +229,8 @@ class Scenario4(Scenario):
             ),
             WeightGoal(
                 project_requirement_weight=3,
-                social_preference_weight=2,
-                diversity_goal_weight=1,
+                social_preference_weight=1,
+                diversity_goal_weight=2,
             ),
         ]
 
