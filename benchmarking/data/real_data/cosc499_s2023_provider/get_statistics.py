@@ -1,3 +1,4 @@
+import json
 from typing import List, Dict
 
 from api.models.enums import ScenarioAttribute, Gender, YearLevel, Gpa, Relationship
@@ -5,6 +6,13 @@ from api.models.student import Student
 from benchmarking.data.real_data.cosc499_s2023_provider.providers import (
     COSC499S2023StudentProvider,
 )
+
+
+def get_attr_values(attr_id: str, attribute_info: Dict) -> Dict[int, str]:
+    questions = attribute_info[attr_id]["questions"]
+    answers = questions[list(questions.keys())[0]]
+    return {_[1]: _[0] for _ in answers}
+
 
 if __name__ == "__main__":
     students: List[Student] = COSC499S2023StudentProvider().get()
@@ -43,11 +51,6 @@ if __name__ == "__main__":
 
     # Get project req distribution
     other_attributes: Dict[int, Dict[int, int]] = {
-        293: {},
-        294: {},
-        295: {},
-        297: {},
-        298: {},
         304: {},
         305: {},
         306: {},
@@ -80,4 +83,23 @@ if __name__ == "__main__":
                 if attr_val not in other_attributes[attribute_type]:
                     other_attributes[attribute_type][attr_val] = 0
                 other_attributes[attribute_type][attr_val] += 1
-    print(other_attributes)
+    with open("attributes.json", "r") as f:
+        names = json.load(f)
+        names = {_["id"]: _["name"] for _ in names}
+    named_attributes = {}
+    with open("gen_group_set-20240125_110626.json", "r") as f:
+        data = json.load(f)
+        attribute_info = data["attribute_info"]
+    for a, counts in other_attributes.items():
+        av = get_attr_values(str(a), attribute_info)
+        named_attributes[a] = {f"{k} - {av[k]}": v for k, v in counts.items()}
+    variable_names_suck = {}
+    for k, v in named_attributes.items():
+        variable_names_suck[f"{k} - {names[k]}"] = v
+    print(json.dumps(variable_names_suck, indent=2))
+
+    # Validate data
+    # Each attributes counts should add to 41
+    for a, counts in variable_names_suck.items():
+        if sum(counts.values()) != 41:
+            print(f"Attribute {a} does not sum to 41: {sum(counts.values())}")
