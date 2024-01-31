@@ -14,6 +14,7 @@ from api.models.enums import (
     TokenizationConstraintDirection,
     RequirementsCriteria,
     Gender,
+    Age,
 )
 from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.data.simulated_data.mock_initial_teams_provider import (
@@ -29,6 +30,7 @@ from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
     AverageProjectRequirementsCoverage,
 )
+from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.runs.interfaces import Run
@@ -67,6 +69,13 @@ class CombinedProjectsAndDiversityRun(Run):
             ),
             "AverageCosineDifference": AverageCosineDifference(),
             "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
+            "AverageSoloStatus": AverageSoloStatus(
+                minority_groups={
+                    ScenarioAttribute.GENDER.value: [_.value for _ in Gender.values()],
+                    ScenarioAttribute.AGE.value: [_.value for _ in Age.values()],
+                    ScenarioAttribute.MAJOR.value: [_.value for _ in Major.values()],
+                }
+            ),
         }
 
         initial_teams_provider = MockInitialTeamsProvider(

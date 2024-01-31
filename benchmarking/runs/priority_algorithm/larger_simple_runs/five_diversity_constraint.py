@@ -15,11 +15,13 @@ from api.models.enums import (
     TokenizationConstraintDirection,
     Gpa,
     Race,
+    Age,
 )
 from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.data.interfaces import StudentProvider
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
+from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.runs.interfaces import Run
@@ -62,6 +64,15 @@ class FiveDiversityConstraint(Run):
                 False,
             ),
             "AverageCosineDifference": AverageCosineDifference(),
+            "AverageSoloStatus": AverageSoloStatus(
+                minority_groups={
+                    ScenarioAttribute.GENDER.value: [_.value for _ in Gender.values()],
+                    ScenarioAttribute.GPA.value: [_.value for _ in Gpa.values()],
+                    ScenarioAttribute.AGE.value: [_.value for _ in Age.values()],
+                    ScenarioAttribute.MAJOR.value: [_.value for _ in Major.values()],
+                    ScenarioAttribute.RACE.value: [_.value for _ in Race.values()],
+                }
+            ),
         }
         start_types = [
             PriorityAlgorithmStartType.WEIGHT,

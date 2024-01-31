@@ -13,6 +13,7 @@ from api.models.enums import (
     ScenarioAttribute,
     TokenizationConstraintDirection,
     Gender,
+    Age,
 )
 from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubject
@@ -21,6 +22,7 @@ from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,
 )
+from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.metrics.utils.team_calculations import (
@@ -68,6 +70,12 @@ class SocialAndDiversity(Run):
                 metric_function=is_strictly_happy_team_friend
             ),
             "AverageCosineDifference": AverageCosineDifference(),
+            "AverageSoloStatus": AverageSoloStatus(
+                minority_groups={
+                    ScenarioAttribute.GENDER.value: [_.value for _ in Gender.values()],
+                    ScenarioAttribute.AGE.value: [_.value for _ in Age.values()],
+                }
+            ),
         }
 
         start_types = [

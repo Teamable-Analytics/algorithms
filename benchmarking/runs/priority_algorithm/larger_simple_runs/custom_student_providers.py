@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import List
 
 import numpy as np
@@ -7,16 +6,15 @@ from api.models.enums import (
     Gender,
     ScenarioAttribute,
     Gpa,
-    Age,
     Race,
-    RequirementOperator,
     Relationship,
+    AttributeValueEnum,
 )
 from api.models.student import Student
 from benchmarking.data.interfaces import StudentProvider
 
 
-class Major(Enum):
+class Major(AttributeValueEnum):
     MATH = 1
     COMP_SCI = 2
 
