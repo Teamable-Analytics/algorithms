@@ -12,6 +12,7 @@ from benchmarking.evaluations.interfaces import Scenario, Goal
 
 
 class ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel(Scenario):
+    # This scenario diversifies all genders with min 2 to better compare with group matcher, which guarantees no individual will have solo status
     def __init__(
         self,
         max_num_choices: int,
@@ -29,7 +30,7 @@ class ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel(Scenario):
 
     @property
     def name(self):
-        return "Concentrate on Timeslot, Diversify Female Min of Two, and Diversify Year Level"
+        return "Concentrate on Timeslot, Diversify All Genders Min of Two, and Diversify Year Level"
 
     @property
     def goals(self) -> List[Goal]:
@@ -55,6 +56,24 @@ class ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel(Scenario):
                     direction=TokenizationConstraintDirection.MIN_OF,
                     threshold=2,
                     value=self.value_of_non_binary,
+                ),
+            ),
+            DiversityGoal(
+                DiversifyType.DIVERSIFY,
+                ScenarioAttribute.GENDER.value,
+                tokenization_constraint=TokenizationConstraint(
+                    direction=TokenizationConstraintDirection.MIN_OF,
+                    threshold=2,
+                    value=self.value_of_male,
+                ),
+            ),
+            DiversityGoal(
+                DiversifyType.DIVERSIFY,
+                ScenarioAttribute.GENDER.value,
+                tokenization_constraint=TokenizationConstraint(
+                    direction=TokenizationConstraintDirection.MIN_OF,
+                    threshold=2,
+                    value=self.value_of_non_answer,
                 ),
             ),
             DiversityGoal(

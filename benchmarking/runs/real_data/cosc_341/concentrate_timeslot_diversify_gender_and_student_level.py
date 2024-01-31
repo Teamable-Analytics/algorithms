@@ -163,18 +163,28 @@ class ConcentrateTimeslotDiversifyGenderAndStudentLevel(Run):
                         graph_data[metric_name][algorithm_name].x_data.append(120)
                         graph_data[metric_name][algorithm_name].y_data.append(value)
 
+            # for metric_name in metrics.keys():
+            #     y_label = metrics[metric_name].name
+            #     y_lim = GraphAxisRange(0, 1.1)
+            #     line_graph(
+            #         LineGraphMetadata(
+            #             x_label="Class Size",
+            #             y_label=y_label,
+            #             title="COSC 341 Simplified Scenario",
+            #             data=list(graph_data[metric_name].values()),
+            #             y_lim=y_lim,
+            #         ),
+            #     )
+
+            # LETS MAKE SOME CSV BOYS
+            data = {
+                "tr": list(average_metrics.keys()),
+            }
             for metric_name in metrics.keys():
-                y_label = metrics[metric_name].name
-                y_lim = GraphAxisRange(0, 1.1)
-                line_graph(
-                    LineGraphMetadata(
-                        x_label="Class Size",
-                        y_label=y_label,
-                        title="COSC 341 Simplified Scenario",
-                        data=list(graph_data[metric_name].values()),
-                        y_lim=y_lim,
-                    ),
-                )
+                data[metric_name] = []
+                for algorithm_name in average_metrics.keys():
+                    data[metric_name] = graph_data[metric_name][algorithm_name]
+            print(data)
 
 
 if __name__ == "__main__":
