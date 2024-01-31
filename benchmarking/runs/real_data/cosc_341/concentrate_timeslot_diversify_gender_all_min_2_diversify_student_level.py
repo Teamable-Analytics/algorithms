@@ -164,18 +164,16 @@ class ConcentrateTimeslotDiversifyAllGenderMin2DiversifyStudentLevel(Run):
                         graph_data[metric_name][algorithm_name].x_data.append(120)
                         graph_data[metric_name][algorithm_name].y_data.append(value)
 
-            for metric_name in metrics.keys():
-                y_label = metrics[metric_name].name
-                y_lim = GraphAxisRange(0, 1.1)
-                line_graph(
-                    LineGraphMetadata(
-                        x_label="Class Size",
-                        y_label=y_label,
-                        title="COSC 341 Simplified Scenario",
-                        data=list(graph_data[metric_name].values()),
-                        y_lim=y_lim,
-                    ),
-                )
+            # Print data as csv
+            data = {
+                "": list(graph_data["PrioritySatisfaction"].keys()),
+            }
+            for metric_name, inner_data in graph_data.items():
+                data[metric_name] = []
+                for algorithm_name, g_data in inner_data.items():
+                    data[metric_name].extend([str(_) for _ in g_data.y_data])
+            for k, v in data.items():
+                print(",".join([k] + v))
 
 
 if __name__ == "__main__":
