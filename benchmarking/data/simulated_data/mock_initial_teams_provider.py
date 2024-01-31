@@ -39,32 +39,19 @@ class MockInitialTeamsProvider(InitialTeamsProvider):
 
         self.settings = settings
 
-    def get(self) -> List[Team]:
+    def get(self) -> List[TeamShell]:
         if self.settings.projects:
-            return projects_to_teams(self.settings.projects)
-        return team_shells_to_teams(self.settings.initial_teams)
+            return projects_to_team_shells(self.settings.projects)
+        return self.settings.initial_teams
 
 
-def team_shells_to_teams(team_shells: List[TeamShell]) -> List[Team]:
-    return [
-        Team(
-            _id=team_shell.id,
-            name=team_shell.name,
-            project_id=team_shell.project_id,
-            requirements=copy.deepcopy(team_shell.requirements),
-            is_locked=team_shell.is_locked,
-        )
-        for team_shell in team_shells
-    ]
-
-
-def projects_to_teams(projects: List[Project]) -> List[Team]:
-    teams = []
+def projects_to_team_shells(projects: List[Project]) -> List[TeamShell]:
+    team_shells = []
     id_counter = 1  # start from 1
     for project in projects:
         for team_idx in range(project.number_of_teams):
-            teams.append(
-                Team(
+            team_shells.append(
+                TeamShell(
                     _id=id_counter,
                     name=f"{project.name or f'Project {project.id}'} - {team_idx + 1}",
                     project_id=project.id,
@@ -73,4 +60,4 @@ def projects_to_teams(projects: List[Project]) -> List[Team]:
             )
             id_counter += 1
 
-    return teams
+    return team_shells
