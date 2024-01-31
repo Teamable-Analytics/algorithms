@@ -98,6 +98,7 @@ class Gpa(AttributeValueEnum):
     B = 2
     C = 3
     D = 4
+    F = 5
 
 
 class Age(AttributeValueEnum):
@@ -117,6 +118,14 @@ class Race(AttributeValueEnum):
     Hispanic_or_Latin_American = 7
     Middle_Eastern = 8
     Other = 9
+
+
+class YearLevel(AttributeValueEnum):
+    First = 1
+    Second = 2
+    Third = 3
+    Fourth = 4
+    Graduate = 5
 
 
 class PriorityType(Enum):
