@@ -27,11 +27,6 @@ class COSC499S2023InitialTeamConfigurationProvider(TeamConfigurationProvider):
         return TeamSet(teams=teams)
 
 
-class COSC499S2023InitialTeamsProvider(InitialTeamsProvider):
-    def get(self) -> List[TeamShell]:
-        return [t.to_shell() for t in COSC499S2023InitialTeamConfigurationProvider().get().teams]
-
-
 class COSC499S2023StudentProvider(StudentProvider):
     def get(self, seed: int = None) -> List[Student]:
         """
