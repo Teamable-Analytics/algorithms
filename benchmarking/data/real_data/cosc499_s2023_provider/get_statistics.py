@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from api.models.enums import ScenarioAttribute, Gender, YearLevel, Gpa, Relationship
 from api.models.student import Student
@@ -20,8 +20,6 @@ if __name__ == "__main__":
     other = 0
     for s in students:
         vals = s.attributes.get(ScenarioAttribute.GPA.value) or [-1]
-        if len(vals) != 1:
-            print("AAAAAA huge grade")
         if vals[0] in grade_distribution:
             grade_distribution[vals[0]] += 1
         else:
@@ -42,3 +40,44 @@ if __name__ == "__main__":
             len([_ for _, r in s.relationships.items() if r == Relationship.ENEMY]),
         )
     print(f"Max friends: {max_friends}, Max enemies: {max_enemies}")
+
+    # Get project req distribution
+    other_attributes: Dict[int, Dict[int, int]] = {
+        293: {},
+        294: {},
+        295: {},
+        297: {},
+        298: {},
+        304: {},
+        305: {},
+        306: {},
+        307: {},
+        308: {},
+        310: {},
+        311: {},
+        312: {},
+        313: {},
+        314: {},
+        315: {},
+        316: {},
+        317: {},
+        318: {},
+        319: {},
+        321: {},
+        323: {},
+        324: {},
+        325: {},
+        326: {},
+        327: {},
+        328: {},
+        329: {},
+        332: {},
+    }
+    for s in students:
+        for attribute_type in other_attributes.keys():
+            student_attribute = s.attributes.get(attribute_type) or []
+            for attr_val in student_attribute:
+                if attr_val not in other_attributes[attribute_type]:
+                    other_attributes[attribute_type][attr_val] = 0
+                other_attributes[attribute_type][attr_val] += 1
+    print(other_attributes)
