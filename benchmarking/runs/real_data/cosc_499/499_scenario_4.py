@@ -37,6 +37,9 @@ from benchmarking.evaluations.metrics.average_project_requirements_coverage impo
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,
 )
+from benchmarking.evaluations.metrics.average_timeslot_coverage import (
+    AverageTimeslotCoverage,
+)
 from benchmarking.evaluations.metrics.cosine_similarity import (
     AverageCosineDifference,
 )
@@ -64,7 +67,7 @@ class Cosc499Scenario4Run(Run):
     TEAM_SIZE = 4
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
-        scenario = Scenario4(max_num_friends=3, max_num_enemies=3)
+        scenario = Scenario4(max_num_friends=3, max_num_enemies=3, max_num_timeslots=6)
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
@@ -74,6 +77,9 @@ class Cosc499Scenario4Run(Run):
             "AverageCosineDifference": AverageCosineDifference(),
             "AverageSocialSatisfaction": AverageSocialSatisfaction(
                 metric_function=is_happy_team_all_have_friend_no_enemy
+            ),
+            "AverageTimeslotCoverage": AverageTimeslotCoverage(
+                available_timeslots=[1, 2, 3, 4, 5, 6],
             ),
             "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
         }
@@ -177,19 +183,31 @@ class Cosc499Scenario4Run(Run):
 
 
 class Scenario4(Scenario):
-    def __init__(self, max_num_friends: int, max_num_enemies: int):
+    def __init__(
+        self, max_num_friends: int, max_num_enemies: int, max_num_timeslots: int
+    ):
         self.max_num_friends = max_num_friends
         self.max_num_enemies = max_num_enemies
+        self.max_num_timeslots = max_num_timeslots
 
     @property
     def name(self) -> str:
-        return "Prioritizes project requirements, then friends/enemies, then diversifies GPA"
+        return "Prioritizes project requirements, then diversify GPA, then concentrate timeslot, then friends/enemies"
 
     @property
     def goals(self) -> List[Goal]:
         return [
             ProjectRequirementGoal(
                 criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED,
+            ),
+            DiversityGoal(
+                DiversifyType.DIVERSIFY,
+                ScenarioAttribute.GPA.value,
+            ),
+            DiversityGoal(
+                DiversifyType.CONCENTRATE,
+                ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
+                max_num_choices=self.max_num_timeslots,
             ),
             PreferenceGoal(
                 direction=PreferenceDirection.INCLUDE,
@@ -202,10 +220,6 @@ class Scenario4(Scenario):
                 subject=PreferenceSubject.ENEMIES,
                 max_num_friends=self.max_num_friends,
                 max_num_enemies=self.max_num_enemies,
-            ),
-            DiversityGoal(
-                DiversifyType.DIVERSIFY,
-                ScenarioAttribute.GPA.value,
             ),
             WeightGoal(
                 project_requirement_weight=3,
