@@ -12,7 +12,7 @@ from api.ai.interfaces.algorithm_config import (
     RandomAlgorithmConfig,
 )
 from api.models.enums import AlgorithmType
-from benchmarking.data.real_data.cosc341_w2022_provider.providers import (
+from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
     COSC341W2021T2AnsweredSurveysStudentProvider,
 )
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
