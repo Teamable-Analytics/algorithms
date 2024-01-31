@@ -57,7 +57,14 @@ class Scenario1(Run):
             "AverageTimeslotCoverage": AverageTimeslotCoverage(
                 available_timeslots=[1, 2, 3, 4, 5, 6],
             ),
-            "AverageCosineDifference": AverageCosineDifference(),
+            "GenderCosineDifference": AverageCosineDifference(
+                name="GenderCosineDifference",
+                attribute_filter=[ScenarioAttribute.GENDER.value],
+            ),
+            "YearLevelCosineDifference": AverageCosineDifference(
+                name="YearLevelCosineDifference",
+                attribute_filter=[ScenarioAttribute.YEAR_LEVEL.value],
+            ),
             "AverageSoloStatus": AverageSoloStatus(
                 minority_groups={
                     ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
