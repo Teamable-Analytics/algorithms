@@ -97,10 +97,10 @@ if __name__ == "__main__":
         attribute_info = data["attribute_info"]
     for a, counts in other_attributes.items():
         av = get_attr_values(str(a), attribute_info)
-        named_attributes[a] = {f"{av[k]}": v for k, v in counts.items()}
+        named_attributes[a] = {f"{k} - {av[k]}": v for k, v in counts.items()}
     variable_names_suck = {}
     for k, v in named_attributes.items():
-        variable_names_suck[f"{names[k]}"] = v
+        variable_names_suck[f"{k} - {names[k]}"] = v
 
     # Validate data
     # Each attributes counts should add to 41
