@@ -189,7 +189,9 @@ class Cosc499Scenario4Run(Run):
                 cosine_diffs = []
                 for team_set in team_sets:
                     cosine_diffs.append(
-                        AverageCosineDifference.calculate_stdev(team_set)
+                        AverageCosineDifference(
+                            [ScenarioAttribute.GPA.value]
+                        ).calculate_stdev(team_set)
                     )
                 print(f",{sum(cosine_diffs) / len(cosine_diffs)}", end="")
             print()
