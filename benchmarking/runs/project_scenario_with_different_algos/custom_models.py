@@ -12,7 +12,7 @@ from api.ai.interfaces.algorithm_config import (
     WeightAlgorithmConfig,
     GroupMatcherAlgorithmConfig,
 )
-from api.models.enums import RequirementOperator, AlgorithmType, Gender, Race
+from api.models.enums import RequirementOperator, AlgorithmType, Gender, Race, ScenarioAttribute
 from api.models.project import Project, ProjectRequirement
 from api.models.student import Student
 from api.models.team import TeamShell
@@ -26,6 +26,7 @@ from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetad
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
     AverageProjectRequirementsCoverage,
 )
+from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
 from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
@@ -202,7 +203,15 @@ class CustomModels(Run):
             "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(
                 name="Average Project Requirements Coverage"
             ),
-            "AverageCosineSimilarity": AverageCosineSimilarity()
+            "AverageCosineSimilarity": AverageCosineSimilarity(
+                attribute_filter=[ScenarioAttribute.GENDER.value, ScenarioAttribute.RACE.value],
+            ),
+            "AverageSoloStatus": AverageSoloStatus(
+                minority_groups={
+                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
+                    ScenarioAttribute.RACE.value: [Race.African.value],
+                }
+            ),
             # Cosine
             # Solo status
         }
@@ -270,8 +279,6 @@ class CustomModels(Run):
             simulation_sets[class_size] = deterministic_artifacts
 
             group_matcher_artifacts: SimulationSetArtifact = {'AlgorithmType.GROUP_MATCHER-default': ([], [])}
-            for seed in _get_seeds(num_trials, cache_key):
-                print(seed)
             #     new_artifacts = SimulationSet(
             #         settings=SimulationSettings(
             #             num_teams=class_size // team_size,

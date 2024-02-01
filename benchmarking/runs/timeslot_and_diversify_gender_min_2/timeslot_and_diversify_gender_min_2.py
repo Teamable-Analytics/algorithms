@@ -102,9 +102,9 @@ class TimeSlotAndDiversifyGenderMin2(Run):
             ).run(num_runs=num_trials)
             simulation_sets[class_size] = deterministic_artifacts
 
-            group_matcher_artifacts: SimulationSetArtifact = {}
-            for seed in _get_seeds(num_trials, cache_key):
-                print(seed)
+            # group_matcher_artifacts: SimulationSetArtifact = {}
+            # for seed in _get_seeds(num_trials, cache_key):
+                # print(seed)
             #     new_artifacts = SimulationSet(
             #         settings=SimulationSettings(
             #             num_teams=class_size // self.TEAM_SIZE,
