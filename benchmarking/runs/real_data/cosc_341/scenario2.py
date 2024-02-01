@@ -160,6 +160,32 @@ class Scenario2(Run):
             for k, v in data.items():
                 print(",".join([k] + v))
 
+            # Calculate Inter-Homogeneity from stdev of cosine difference
+            print("GenderInterHomogeneity", end="")
+            for algorithm_name, (team_sets, run_times) in artifacts.items():
+                cosine_diffs = []
+                for team_set in team_sets:
+                    cosine_diffs.append(
+                        AverageCosineDifference(
+                            [ScenarioAttribute.GENDER.value]
+                        ).calculate_stdev(team_set)
+                    )
+                print(f",{sum(cosine_diffs) / len(cosine_diffs)}", end="")
+            print()
+
+            # Calculate Inter-Homogeneity from stdev of cosine difference
+            print("YearLevelInterHomogeneity", end="")
+            for algorithm_name, (team_sets, run_times) in artifacts.items():
+                cosine_diffs = []
+                for team_set in team_sets:
+                    cosine_diffs.append(
+                        AverageCosineDifference(
+                            [ScenarioAttribute.YEAR_LEVEL.value]
+                        ).calculate_stdev(team_set)
+                    )
+                print(f",{sum(cosine_diffs) / len(cosine_diffs)}", end="")
+            print()
+
 
 if __name__ == "__main__":
     typer.run(Scenario2().start)
