@@ -15,6 +15,8 @@ from api.ai.interfaces.algorithm_config import (
 from api.models.enums import AlgorithmType
 from api.models.student import Student
 from api.models.team import TeamShell
+from benchmarking.data.simulated_data.mock_initial_teams_provider import MockInitialTeamsProvider, \
+    MockInitialTeamsProviderSettings
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
@@ -76,29 +78,28 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                 cache_key=cache_key,
             )
 
-            deterministic_artifacts = SimulationSet(
+            simulation_sets[class_size] = SimulationSet(
                 settings=simulation_settings,
                 algorithm_set={
-                    AlgorithmType.WEIGHT: [
-                        WeightAlgorithmConfig(),
-                    ],
-                    AlgorithmType.DRR: [
-                        DoubleRoundRobinAlgorithmConfig(
-                            utility_function=additive_utility_function
-                        )
-                    ],
-                    AlgorithmType.PRIORITY: [
-                        PriorityAlgorithmConfig(
-                            MAX_TIME=10000000,
-                            MAX_KEEP=30,
-                            MAX_SPREAD=100,
-                            MAX_ITERATE=250,
+                    AlgorithmType.GROUP_MATCHER: [
+                        GroupMatcherAlgorithmConfig(
+                            csv_output_path=os.path.abspath(
+                                os.path.join(
+                                    os.path.dirname(__file__),
+                                    "../../..",
+                                    f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
+                                )
+                            ),
+                            group_matcher_run_path=os.path.abspath(
+                                os.path.join(
+                                    os.path.dirname(__file__),
+                                    "../../..",
+                                    "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                                )
+                            )
                         ),
-                    ],
-                    AlgorithmType.RANDOM: [
-                        RandomAlgorithmConfig(),
-                    ],
-                },
+                    ]
+                }
             ).run(num_runs=num_trials)
             simulation_sets[class_size] = deterministic_artifacts
 
