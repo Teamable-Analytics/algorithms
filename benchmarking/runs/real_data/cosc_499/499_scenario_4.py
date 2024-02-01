@@ -105,24 +105,24 @@ class Cosc499Scenario4Run(Run):
                 AlgorithmType.WEIGHT: [
                     WeightAlgorithmConfig(),
                 ],
-                # AlgorithmType.GROUP_MATCHER: [
-                #     GroupMatcherAlgorithmConfig(
-                #         csv_output_path=os.path.abspath(
-                #             os.path.join(
-                #                 os.path.dirname(__file__),
-                #                 "../../../..",
-                #                 f"api/ai/group_matcher_algorithm/group-matcher/inpData/{41}-generated.csv",
-                #             )
-                #         ),
-                #         group_matcher_run_path=os.path.abspath(
-                #             os.path.join(
-                #                 os.path.dirname(__file__),
-                #                 "../../../..",
-                #                 "api/ai/group_matcher_algorithm/group-matcher/run.py",
-                #             )
-                #         ),
-                #     ),
-                # ],
+                AlgorithmType.GROUP_MATCHER: [
+                    GroupMatcherAlgorithmConfig(
+                        csv_output_path=os.path.abspath(
+                            os.path.join(
+                                os.path.dirname(__file__),
+                                "../../../..",
+                                f"api/ai/group_matcher_algorithm/group-matcher/inpData/{41}-generated.csv",
+                            )
+                        ),
+                        group_matcher_run_path=os.path.abspath(
+                            os.path.join(
+                                os.path.dirname(__file__),
+                                "../../../..",
+                                "api/ai/group_matcher_algorithm/group-matcher/run.py",
+                            )
+                        ),
+                    ),
+                ],
                 AlgorithmType.DRR: [
                     DoubleRoundRobinAlgorithmConfig(
                         utility_function=additive_utility_function
