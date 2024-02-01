@@ -60,7 +60,7 @@ def additive_utility_function(student: Student, team: TeamShell) -> float:
 
 
 class CustomModels(Run):
-    def start(self, num_trials: int = 100, generate_graphs: bool = False):
+    def start(self, num_trials: int = 100, generate_graphs: bool = True):
         scenario = ScenarioThatWeLove(
             value_of_female=Gender.FEMALE.value,
             value_of_african=Race.African.value,
@@ -244,33 +244,33 @@ class CustomModels(Run):
                 cache_key=cache_key,
             )
 
-            # deterministic_artifacts = SimulationSet(
-            #     settings=simulation_settings,
-            #     algorithm_set={
-            #         AlgorithmType.DRR: [
-            #             DoubleRoundRobinAlgorithmConfig(
-            #                 utility_function=additive_utility_function
-            #             ),
-            #         ],
-            #         AlgorithmType.WEIGHT: [
-            #             WeightAlgorithmConfig(),
-            #         ],
-            #         AlgorithmType.PRIORITY: [
-            #             PriorityAlgorithmConfig(
-            #                 MAX_TIME=10000000,
-            #                 MAX_KEEP=30,
-            #                 MAX_SPREAD=100,
-            #                 MAX_ITERATE=250,
-            #             ),
-            #         ],
-            #         AlgorithmType.RANDOM: [
-            #             RandomAlgorithmConfig(),
-            #         ],
-            #     },
-            # ).run(num_runs=100)
-            # simulation_sets[class_size] = deterministic_artifacts
+            deterministic_artifacts = SimulationSet(
+                settings=simulation_settings,
+                algorithm_set={
+                    AlgorithmType.DRR: [
+                        DoubleRoundRobinAlgorithmConfig(
+                            utility_function=additive_utility_function
+                        ),
+                    ],
+                    AlgorithmType.WEIGHT: [
+                        WeightAlgorithmConfig(),
+                    ],
+                    AlgorithmType.PRIORITY: [
+                        PriorityAlgorithmConfig(
+                            MAX_TIME=10000000,
+                            MAX_KEEP=30,
+                            MAX_SPREAD=100,
+                            MAX_ITERATE=250,
+                        ),
+                    ],
+                    AlgorithmType.RANDOM: [
+                        RandomAlgorithmConfig(),
+                    ],
+                },
+            ).run(num_runs=100)
+            simulation_sets[class_size] = deterministic_artifacts
 
-            simulation_sets[class_size] = SimulationSet(
+            group_matcher_artifact = SimulationSet(
                 settings=simulation_settings,
                 algorithm_set={
                     AlgorithmType.GROUP_MATCHER: [
@@ -293,6 +293,8 @@ class CustomModels(Run):
                     ]
                 }
             ).run(num_runs=num_trials)
+
+            simulation_sets[class_size].update(group_matcher_artifact)
 
         if generate_graphs:
             graph_data: Dict[str, Dict[str, GraphData]] = {}
@@ -354,4 +356,4 @@ class CustomModels(Run):
 
 if __name__ == "__main__":
     typer.run(CustomModels().start)
-    typer.run(TimeSlotAndDiversifyGenderMin2().start)
+    # typer.run(TimeSlotAndDiversifyGenderMin2().start)
