@@ -86,5 +86,4 @@ class GroupMatcherAlgorithm(Algorithm):
             student.add_team(team)
             team.add_student(student)
 
-        return TeamSet(
-            teams=[team for team in self.teams if len(team.students) > 0])
+        return TeamSet(teams=[team for team in self.teams if len(team.students) > 0])
