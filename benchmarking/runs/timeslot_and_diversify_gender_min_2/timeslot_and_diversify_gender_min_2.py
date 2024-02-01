@@ -15,6 +15,8 @@ from api.ai.interfaces.algorithm_config import (
 from api.models.enums import AlgorithmType
 from api.models.student import Student
 from api.models.team import TeamShell
+from benchmarking.data.simulated_data.mock_initial_teams_provider import MockInitialTeamsProvider, \
+    MockInitialTeamsProviderSettings
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
@@ -77,12 +79,7 @@ class TimeSlotAndDiversifyGenderMin2(Run):
             )
 
             simulation_sets[class_size] = SimulationSet(
-                settings=SimulationSettings(
-                    num_teams=class_size // self.TEAM_SIZE,
-                    student_provider=student_provider,
-                    scenario=scenario,
-                    cache_key=cache_key,
-                ),
+                settings=simulation_settings,
                 algorithm_set={
                     AlgorithmType.GROUP_MATCHER: [
                         GroupMatcherAlgorithmConfig(
