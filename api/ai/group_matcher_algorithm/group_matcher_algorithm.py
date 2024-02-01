@@ -1,4 +1,5 @@
 import csv
+import itertools
 import os
 import time
 from pathlib import Path
@@ -12,6 +13,7 @@ from api.ai.interfaces.algorithm_options import GroupMatcherAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.models.enums import ScenarioAttribute, fromAlRaceToRace, fromAlGenderToGender
 from api.models.student import Student
+from api.models.team import Team
 from api.models.team_set import TeamSet
 
 
@@ -39,6 +41,7 @@ class GroupMatcherAlgorithm(Algorithm):
         )
 
         self.team_trace = {team.id: team for team_idx, team in enumerate(self.teams)}
+        self.team_cycler = itertools.cycle(self.teams)
 
         if not self.csv_input_path.parent.exists():
             self.csv_input_path.parent.mkdir(parents=True)
