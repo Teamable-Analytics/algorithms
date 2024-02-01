@@ -59,14 +59,25 @@ class GroupMatcherAlgorithm(Algorithm):
         os.system(cmd)
 
         # Read the output csv file and create a TeamSet
+        while not self.outpath.exists():
+            print("Not found file " + str(self.outpath))
+            time.sleep(1)
         df = pd.read_csv(self.outpath)
         for _, row in df.iterrows():
             student_id = row["sid"]
+            group_num = int(row["group_num"]) + 1
+            if group_num not in self.team_trace:
+                new_team_attributes = self.team_cycler.__next__()
+                new_team = Team(
+                    _id=len(self.team_trace) + 1,
+                    name=f"Team {len(self.team_trace) + 1}",
+                    requirements=new_team_attributes.requirements,
+                    project_id=new_team_attributes.project_id,
+                    students=[],
+                )
+                self.team_trace[int(row["group_num"]) + 1] = new_team
             self.team_trace[int(row["group_num"]) + 1].add_student(
                 self.student_trace[student_id]
             )
-
-        # Unlink after finish
-        self.outpath.unlink()
 
         return TeamSet(teams=[team for team in self.teams if len(team.students) > 0])
