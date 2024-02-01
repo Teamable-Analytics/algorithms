@@ -183,6 +183,17 @@ class Cosc499Scenario4Run(Run):
             for k, v in data.items():
                 print(",".join([k] + v))
 
+            # Calculate Inter-Homogeneity from stdev of cosine difference
+            print("Inter-Homogeneity", end="")
+            for algorithm_name, (team_sets, run_times) in artifacts.items():
+                cosine_diffs = []
+                for team_set in team_sets:
+                    cosine_diffs.append(
+                        AverageCosineDifference.calculate_stdev(team_set)
+                    )
+                print(f",{sum(cosine_diffs) / len(cosine_diffs)}", end="")
+            print()
+
 
 class Scenario4(Scenario):
     def __init__(
