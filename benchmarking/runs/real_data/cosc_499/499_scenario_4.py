@@ -42,7 +42,6 @@ from benchmarking.evaluations.metrics.average_timeslot_coverage import (
 )
 from benchmarking.evaluations.metrics.cosine_similarity import (
     AverageCosineDifference,
-    AverageCosineSimilarity,
 )
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.metrics.utils.team_calculations import (
@@ -77,9 +76,6 @@ class Cosc499Scenario4Run(Run):
             ),
             "AverageCosineDifference": AverageCosineDifference(
                 [ScenarioAttribute.GPA.value]
-            ),
-            "AverageCosineSimilarity": AverageCosineSimilarity(
-                [ScenarioAttribute.TIMESLOT_AVAILABILITY.value]
             ),
             "AverageSocialSatisfaction": AverageSocialSatisfaction(
                 metric_function=is_happy_team_all_have_friend_no_enemy
