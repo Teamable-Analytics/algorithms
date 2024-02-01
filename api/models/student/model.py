@@ -61,7 +61,7 @@ class Student:
             "First name": self.name.split()[0],
             "Last name": self.name.split()[1],
             "What year are you": fromYearLevelToAlYearLevel(
-                self.attributes[ScenarioAttribute.YEAR_LEVEL.value][0]
+                self.attributes.get([ScenarioAttribute.YEAR_LEVEL.value][0], 4)
             ).value,
             "Would you like to be part of a course study group?": "Yes",
             "Do you have an existing study group of size 2-6 in mind": "No",
@@ -77,7 +77,7 @@ class Student:
                 Race(self.attributes.get(ScenarioAttribute.RACE.value, [Race.Other])[0])
             ).value,
             "How do you self-identify?": fromGenderToAlGender(
-                Gender(self.attributes[ScenarioAttribute.GENDER.value][0])
+                Gender(self.attributes.get([ScenarioAttribute.GENDER.value][0], Gender.NA.value))
             ).value,
         }
         return dictionary

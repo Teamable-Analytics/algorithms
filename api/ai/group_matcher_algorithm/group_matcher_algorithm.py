@@ -40,7 +40,7 @@ class GroupMatcherAlgorithm(Algorithm):
             Path(self.group_matcher_run_path).parent / "example_config.py"
         )
 
-        self.team_trace = {team.id: team for team_idx, team in enumerate(self.teams)}
+        self.team_trace = {team_idx + 1: team for team_idx, team in enumerate(self.teams)}
         self.team_cycler = itertools.cycle(self.teams)
 
         if not self.csv_input_path.parent.exists():
@@ -69,7 +69,7 @@ class GroupMatcherAlgorithm(Algorithm):
         for _, row in df.iterrows():
             student_id = row["sid"]
             group_num = int(row["group_num"]) + 1
-            if group_num not in self.team_trace:
+            if group_num not in self.team_trace.keys():
                 new_team_attributes = self.team_cycler.__next__()
                 new_team = Team(
                     _id=len(self.team_trace) + 1,
@@ -79,8 +79,11 @@ class GroupMatcherAlgorithm(Algorithm):
                     students=[],
                 )
                 self.team_trace[int(row["group_num"]) + 1] = new_team
-            self.team_trace[int(row["group_num"]) + 1].add_student(
-                self.student_trace[student_id]
-            )
+
+            student = self.student_trace[student_id]
+            team = self.team_trace[int(row["group_num"]) + 1]
+
+            student.add_team(team)
+            team.add_student(student)
 
         return TeamSet(teams=[team for team in self.teams if len(team.students) > 0])
