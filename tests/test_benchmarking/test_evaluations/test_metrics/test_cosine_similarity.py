@@ -1,5 +1,6 @@
 import unittest
 
+from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
 from benchmarking.data.simulated_data.mock_student_provider import (
@@ -60,6 +61,40 @@ class TestCosineSimilarity(unittest.TestCase):
             AverageCosineSimilarity().calculate(self.team_set_distributed_attribute),
         )
 
+    def test_calculate__filters_attributes(self):
+        team_set = TeamSet(
+            teams=[
+                Team(
+                    _id=1,
+                    students=[
+                        Student(
+                            _id=1,
+                            attributes={1: [1], 2: [1]},
+                        ),
+                        Student(
+                            _id=2,
+                            attributes={1: [1], 2: [2]},
+                        ),
+                    ],
+                ),
+            ]
+        )
+
+        self.assertEqual(
+            1, AverageCosineSimilarity(attribute_filter=[1]).calculate(team_set)
+        )
+        self.assertEqual(
+            0, AverageCosineSimilarity(attribute_filter=[2]).calculate(team_set)
+        )
+        self.assertGreater(
+            AverageCosineSimilarity(attribute_filter=[1]).calculate(team_set),
+            AverageCosineSimilarity().calculate(team_set),
+        )
+        self.assertLess(
+            AverageCosineSimilarity(attribute_filter=[2]).calculate(team_set),
+            AverageCosineSimilarity().calculate(team_set),
+        )
+
 
 class TestCosineDifference(unittest.TestCase):
     def setUp(self):
@@ -107,4 +142,38 @@ class TestCosineDifference(unittest.TestCase):
         self.assertEqual(
             0.6,
             AverageCosineDifference().calculate(self.team_set_distributed_attribute),
+        )
+
+    def test_calculate__filters_attributes(self):
+        team_set = TeamSet(
+            teams=[
+                Team(
+                    _id=1,
+                    students=[
+                        Student(
+                            _id=1,
+                            attributes={1: [1], 2: [1]},
+                        ),
+                        Student(
+                            _id=2,
+                            attributes={1: [1], 2: [2]},
+                        ),
+                    ],
+                ),
+            ]
+        )
+
+        self.assertEqual(
+            0, AverageCosineDifference(attribute_filter=[1]).calculate(team_set)
+        )
+        self.assertEqual(
+            1, AverageCosineDifference(attribute_filter=[2]).calculate(team_set)
+        )
+        self.assertLess(
+            AverageCosineDifference(attribute_filter=[1]).calculate(team_set),
+            AverageCosineDifference().calculate(team_set),
+        )
+        self.assertGreater(
+            AverageCosineDifference(attribute_filter=[2]).calculate(team_set),
+            AverageCosineDifference().calculate(team_set),
         )
