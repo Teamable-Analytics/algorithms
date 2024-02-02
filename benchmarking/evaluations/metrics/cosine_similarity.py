@@ -90,6 +90,8 @@ def cosine_similarity(
         raise ValueError("Vectors must be the same length")
     if len(v1) == 0 or len(v2) == 0:
         raise ValueError("Vectors must not be empty")
+    if norm(v1) == 0 or norm(v2) == 0:
+        return 0
     return dot(v1, v2) / (norm(v1) * norm(v2))
 
 
