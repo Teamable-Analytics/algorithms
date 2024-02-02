@@ -53,7 +53,14 @@ class Scenario2(Run):
             "AverageTimeslotCoverage": AverageTimeslotCoverage(
                 available_timeslots=[1, 2, 3, 4, 5, 6],
             ),
-            "AverageCosineDifference": AverageCosineDifference(),
+            "GenderCosineDifference": AverageCosineDifference(
+                name="GenderCosineDifference",
+                attribute_filter=[ScenarioAttribute.GENDER.value],
+            ),
+            "YearLevelCosineDifference": AverageCosineDifference(
+                name="YearLevelCosineDifference",
+                attribute_filter=[ScenarioAttribute.YEAR_LEVEL.value],
+            ),
             "AverageSoloStatus": AverageSoloStatus(
                 minority_groups={
                     ScenarioAttribute.GENDER.value: [gender.value for gender in Gender],
@@ -61,7 +68,7 @@ class Scenario2(Run):
             ),
         }
 
-        cache_key = "real_data/cosc_341/scenario_2"
+        cache_key = "real_data/cosc_341/scenario2"
         student_provider = COSC341W2021T2AnsweredSurveysStudentProvider()
         simulation_settings = SimulationSettings(
             num_teams=math.ceil(175 / self.TEAM_SIZE),
@@ -152,6 +159,46 @@ class Scenario2(Run):
                     data[metric_name].extend([str(_) for _ in g_data.y_data])
             for k, v in data.items():
                 print(",".join([k] + v))
+
+            # Calculate Inter-Homogeneity from stdev of cosine difference
+            print("GenderInterHomogeneity", end="")
+            for algorithm_name, (team_sets, run_times) in artifacts.items():
+                cosine_diffs = []
+                for team_set in team_sets:
+                    cosine_diffs.append(
+                        AverageCosineDifference(
+                            [ScenarioAttribute.GENDER.value]
+                        ).calculate_stdev(team_set)
+                    )
+                print(f",{sum(cosine_diffs) / len(cosine_diffs)}", end="")
+            print()
+
+            # Calculate Inter-Homogeneity from stdev of cosine difference
+            print("YearLevelInterHomogeneity", end="")
+            for algorithm_name, (team_sets, run_times) in artifacts.items():
+                cosine_diffs = []
+                for team_set in team_sets:
+                    cosine_diffs.append(
+                        AverageCosineDifference(
+                            [ScenarioAttribute.YEAR_LEVEL.value]
+                        ).calculate_stdev(team_set)
+                    )
+                print(f",{sum(cosine_diffs) / len(cosine_diffs)}", end="")
+            print()
+
+            # Calculate Inter-Homogeneity from stdev of cosine difference
+            print("TimeslotLevelInterHomogeneity", end="")
+            for algorithm_name, (team_sets, run_times) in artifacts.items():
+                cosine_diffs = []
+                for team_set in team_sets:
+                    cosine_diffs.append(
+                        AverageCosineDifference(
+                            [ScenarioAttribute.TIMESLOT_AVAILABILITY.value]
+                        ).calculate_stdev(team_set)
+                    )
+                print(f",{sum(cosine_diffs) / len(cosine_diffs)}", end="")
+            print()
+
 
 
 if __name__ == "__main__":
