@@ -85,7 +85,7 @@ class CustomModels(Run):
 
         return metric_name_dict.get(metric_name, metric_name)
 
-    def start(self, num_trials: int = 30, generate_graphs: bool = False):
+    def start(self, num_trials: int = 30, generate_graphs: bool = False, class_size: int = 500):
         scenario = ScenarioThatWeLove(
             value_of_female=Gender.FEMALE.value,
             value_of_african=Race.African.value,
@@ -247,7 +247,7 @@ class CustomModels(Run):
             # Solo status
         }
 
-        class_sizes = [500, 1000]
+        class_sizes = [class_size]
         # class_sizes = [20, 40, 60, 80, 100]
         # class_sizes = [20]
         team_size = 4
