@@ -50,8 +50,9 @@ def has_friend_and_no_enemies(student: Student) -> bool:
     friends_in_team = num_friends_satisfied(student)
     if num_friend_requests > 0 and friends_in_team == 0:
         return False
-    enemies_in_team = num_enemies_satisfied(student)
-    return enemies_in_team == 0
+    num_enemy_requests = list(student.relationships.values()).count(Relationship.ENEMY)
+    enemies_satisfied = num_enemies_satisfied(student)
+    return num_enemy_requests == enemies_satisfied
 
 
 def student_meets_requirement(student: Student, requirement: ProjectRequirement):
