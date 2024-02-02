@@ -85,7 +85,7 @@ class CustomModels(Run):
 
         return metric_name_dict.get(metric_name, metric_name)
 
-    def start(self, num_trials: int = 100, generate_graphs: bool = True):
+    def start(self, num_trials: int = 30, generate_graphs: bool = False):
         scenario = ScenarioThatWeLove(
             value_of_female=Gender.FEMALE.value,
             value_of_african=Race.African.value,
@@ -247,7 +247,7 @@ class CustomModels(Run):
             # Solo status
         }
 
-        class_sizes = [20, 100, 240, 500, 1000]
+        class_sizes = [500, 1000]
         # class_sizes = [20, 40, 60, 80, 100]
         # class_sizes = [20]
         team_size = 4
@@ -256,7 +256,7 @@ class CustomModels(Run):
 
         for class_size in class_sizes:
             print("CLASS SIZE /", class_size)
-            cache_key = f"custom_models/class_size_{class_size}"
+            cache_key = f"custom_models/new/class_size_{class_size}"
 
             project_cycler = itertools.cycle(initial_projecys)
             projects = []
@@ -286,25 +286,25 @@ class CustomModels(Run):
             deterministic_artifacts = SimulationSet(
                 settings=simulation_settings,
                 algorithm_set={
-                    AlgorithmType.DRR: [
-                        DoubleRoundRobinAlgorithmConfig(
-                            utility_function=additive_utility_function
-                        ),
-                    ],
-                    AlgorithmType.WEIGHT: [
-                        WeightAlgorithmConfig(),
-                    ],
-                    AlgorithmType.PRIORITY: [
-                        PriorityAlgorithmConfig(
-                            MAX_TIME=10000000,
-                            MAX_KEEP=30,
-                            MAX_SPREAD=100,
-                            MAX_ITERATE=250,
-                        ),
-                    ],
-                    AlgorithmType.RANDOM: [
-                        RandomAlgorithmConfig(),
-                    ],
+                    # AlgorithmType.DRR: [
+                    #     DoubleRoundRobinAlgorithmConfig(
+                    #         utility_function=additive_utility_function
+                    #     ),
+                    # ],
+                    # AlgorithmType.WEIGHT: [
+                    #     WeightAlgorithmConfig(),
+                    # ],
+                    # AlgorithmType.PRIORITY: [
+                    #     PriorityAlgorithmConfig(
+                    #         MAX_TIME=10000000,
+                    #         MAX_KEEP=50 if class_size == 1000 else 40, # 40 keep for 500 students
+                    #         MAX_SPREAD=200 if class_size == 1000 else 150, # 150 spread for 500 students
+                    #         MAX_ITERATE=1000 if class_size == 1000 else 600, # 600 iterations for 500 students
+                    #     ),
+                    # ],
+                    # AlgorithmType.RANDOM: [
+                    #     RandomAlgorithmConfig(),
+                    # ],
                     AlgorithmType.GROUP_MATCHER: [
                             GroupMatcherAlgorithmConfig(
                                 csv_output_path=os.path.abspath(
@@ -323,8 +323,8 @@ class CustomModels(Run):
                                 ),
                             ),
                         ]
-                },
-            ).run(num_runs=100)
+                    },
+            ).run(num_runs=num_trials)
 
             simulation_sets[class_size] = deterministic_artifacts
 
