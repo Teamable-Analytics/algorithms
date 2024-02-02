@@ -56,7 +56,19 @@ def additive_utility_function(student: Student, team: TeamShell) -> float:
 
 
 class CustomModels(Run):
-    def start(self, num_trials: int = 100, generate_graphs: bool = False):
+    @staticmethod
+    def better_algorithm_name(algorithm_name: str) -> str:
+        algorithm_name_dict = {
+            "AlgorithmType.DRR-default": "Double Round Robin",
+            "AlgorithmType.WEIGHT-default": "Weight",
+            "AlgorithmType.PRIORITY-default": "Priority",
+            "AlgorithmType.RANDOM-default": "Random",
+            "AlgorithmType.GROUP_MATCHER-default": "Group Matcher",
+        }
+
+        return algorithm_name_dict.get(algorithm_name, algorithm_name)
+
+    def start(self, num_trials: int = 100, generate_graphs: bool = True):
         scenario = ScenarioThatWeLove(
             value_of_female=Gender.FEMALE.value,
             value_of_african=Race.African.value,
@@ -250,24 +262,6 @@ class CustomModels(Run):
                     AlgorithmType.WEIGHT: [
                         WeightAlgorithmConfig(),
                     ],
-                    # AlgorithmType.GROUP_MATCHER: [
-                    #     GroupMatcherAlgorithmConfig(
-                    #         csv_output_path=os.path.abspath(
-                    #             os.path.join(
-                    #                 os.path.dirname(__file__),
-                    #                 "../../..",
-                    #                 f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
-                    #             )
-                    #         ),
-                    #         group_matcher_run_path=os.path.abspath(
-                    #             os.path.join(
-                    #                 os.path.dirname(__file__),
-                    #                 "../../..",
-                    #                 "api/ai/group_matcher_algorithm/group-matcher/run.py"
-                    #             )
-                    #         )
-                    #     ),
-                    # ],
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
                             MAX_TIME=1000000,
@@ -278,6 +272,24 @@ class CustomModels(Run):
                     ],
                     AlgorithmType.RANDOM: [
                         RandomAlgorithmConfig(),
+                    ],
+                    AlgorithmType.GROUP_MATCHER: [
+                        GroupMatcherAlgorithmConfig(
+                            csv_output_path=os.path.abspath(
+                                os.path.join(
+                                    os.path.dirname(__file__),
+                                    "../../..",
+                                    f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
+                                )
+                            ),
+                            group_matcher_run_path=os.path.abspath(
+                                os.path.join(
+                                    os.path.dirname(__file__),
+                                    "../../..",
+                                    "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                                )
+                            )
+                        ),
                     ],
                 },
             ).run(num_runs=100)
@@ -307,17 +319,18 @@ class CustomModels(Run):
                     if metric_name not in graph_data:
                         graph_data[metric_name] = {}
                     for algorithm_name, value in average_metric.items():
-                        if algorithm_name not in graph_data[metric_name]:
-                            graph_data[metric_name][algorithm_name] = GraphData(
+                        new_algorithm_name = self.better_algorithm_name(algorithm_name)
+                        if new_algorithm_name not in graph_data[metric_name]:
+                            graph_data[metric_name][new_algorithm_name] = GraphData(
                                 x_data=[class_size],
                                 y_data=[value],
-                                name=algorithm_name,
+                                name=new_algorithm_name,
                             )
                         else:
-                            graph_data[metric_name][algorithm_name].x_data.append(
+                            graph_data[metric_name][new_algorithm_name].x_data.append(
                                 class_size
                             )
-                            graph_data[metric_name][algorithm_name].y_data.append(value)
+                            graph_data[metric_name][new_algorithm_name].y_data.append(value)
 
             for metric_name in [Insight.KEY_RUNTIMES, *list(metrics.keys())]:
                 y_label = (
@@ -334,7 +347,7 @@ class CustomModels(Run):
                     LineGraphMetadata(
                         x_label="Class Size",
                         y_label=y_label,
-                        title="Project - Diversity Scenarios",
+                        title=f"Mock Data Scenario: Satisfy Project Requirements,\nand Diversify Females and Africans with Min 2\n~ {y_label} vs Class Size",
                         data=list(graph_data[metric_name].values()),
                         y_lim=y_lim,
                     ),
