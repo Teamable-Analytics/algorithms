@@ -286,43 +286,43 @@ class CustomModels(Run):
             deterministic_artifacts = SimulationSet(
                 settings=simulation_settings,
                 algorithm_set={
-                    # AlgorithmType.DRR: [
-                    #     DoubleRoundRobinAlgorithmConfig(
-                    #         utility_function=additive_utility_function
-                    #     ),
-                    # ],
-                    # AlgorithmType.WEIGHT: [
-                    #     WeightAlgorithmConfig(),
-                    # ],
-                    # AlgorithmType.PRIORITY: [
-                    #     PriorityAlgorithmConfig(
-                    #         MAX_TIME=10000000,
-                    #         MAX_KEEP=50 if class_size == 1000 else 40, # 40 keep for 500 students
-                    #         MAX_SPREAD=200 if class_size == 1000 else 150, # 150 spread for 500 students
-                    #         MAX_ITERATE=1000 if class_size == 1000 else 600, # 600 iterations for 500 students
-                    #     ),
-                    # ],
-                    # AlgorithmType.RANDOM: [
-                    #     RandomAlgorithmConfig(),
-                    # ],
-                    AlgorithmType.GROUP_MATCHER: [
-                            GroupMatcherAlgorithmConfig(
-                                csv_output_path=os.path.abspath(
-                                    os.path.join(
-                                        os.path.dirname(__file__),
-                                        "../../..",
-                                        f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
-                                    )
-                                ),
-                                group_matcher_run_path=os.path.abspath(
-                                    os.path.join(
-                                        os.path.dirname(__file__),
-                                        "../../..",
-                                        "api/ai/group_matcher_algorithm/group-matcher/run.py"
-                                    )
-                                ),
-                            ),
-                        ]
+                    AlgorithmType.DRR: [
+                        DoubleRoundRobinAlgorithmConfig(
+                            utility_function=additive_utility_function
+                        ),
+                    ],
+                    AlgorithmType.WEIGHT: [
+                        WeightAlgorithmConfig(),
+                    ],
+                    AlgorithmType.PRIORITY: [
+                        PriorityAlgorithmConfig(
+                            MAX_TIME=10000000,
+                            MAX_KEEP=50 if class_size == 1000 else 40, # 40 keep for 500 students
+                            MAX_SPREAD=200 if class_size == 1000 else 150, # 150 spread for 500 students
+                            MAX_ITERATE=1000 if class_size == 1000 else 600, # 600 iterations for 500 students
+                        ),
+                    ],
+                    AlgorithmType.RANDOM: [
+                        RandomAlgorithmConfig(),
+                    ],
+                    # AlgorithmType.GROUP_MATCHER: [
+                    #         GroupMatcherAlgorithmConfig(
+                    #             csv_output_path=os.path.abspath(
+                    #                 os.path.join(
+                    #                     os.path.dirname(__file__),
+                    #                     "../../..",
+                    #                     f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
+                    #                 )
+                    #             ),
+                    #             group_matcher_run_path=os.path.abspath(
+                    #                 os.path.join(
+                    #                     os.path.dirname(__file__),
+                    #                     "../../..",
+                    #                     "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                    #                 )
+                    #             ),
+                    #         ),
+                    #     ]
                     },
             ).run(num_runs=num_trials)
 
