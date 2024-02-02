@@ -8,7 +8,6 @@ from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     WeightAlgorithmConfig,
     GroupMatcherAlgorithmConfig,
-    RandomAlgorithmConfig,
 )
 from api.models.enums import AlgorithmType, ScenarioAttribute, Gender
 from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
@@ -23,10 +22,8 @@ from benchmarking.evaluations.metrics.cosine_similarity import (
     AverageCosineDifference,
 )
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_gender_min_2_and_diversify_year_level import (
-    ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel,
-    DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel,
-)
+from benchmarking.evaluations.scenarios.concentrate_timeslot_concentrate_gender_diversify_year_level import \
+    ConcentrateTimeslotConcentrateGenderDiversifyYearLevel, ConcentrateGenderConcentrateTimeslotDiversifyYearLevel
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
@@ -34,18 +31,18 @@ from benchmarking.simulation.simulation_set import SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class Scenario1(Run):
-    TEAM_SIZE = 4
+class Scenario4(Run):
+    TEAM_SIZE = 6
     """
     This run focuses on the scenario of concentrating timeslots, diversifying females with min 2, and diversifying based 
     on year level (third year vs. graduate students).
     """
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
-        scenario_1 = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(
+        scenario_1 = ConcentrateTimeslotConcentrateGenderDiversifyYearLevel(
             max_num_choices=6
         )
-        scenario_2 = DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel(
+        scenario_2 = ConcentrateGenderConcentrateTimeslotDiversifyYearLevel(
             max_num_choices=6
         )
 
@@ -73,7 +70,7 @@ class Scenario1(Run):
         }
 
         student_provider = COSC341W2021T2AnsweredSurveysStudentProvider()
-        cache_key = "real_data/cosc_341/scenario1"
+        cache_key = "real_data/cosc_341/scenario6"
         simulation_settings_1 = SimulationSettings(
             num_teams=math.ceil(175 / self.TEAM_SIZE),
             student_provider=student_provider,
@@ -127,9 +124,6 @@ class Scenario1(Run):
                             MAX_ITERATE=250,
                         ),
                     ],
-                    AlgorithmType.RANDOM: [
-                        RandomAlgorithmConfig(),
-                    ],
                 },
             ).run(num_runs=num_trials)
         )
@@ -144,11 +138,8 @@ class Scenario1(Run):
                             MAX_KEEP=30,
                             MAX_SPREAD=100,
                             MAX_ITERATE=250,
-                            name="Switched Order Priority",
+                            name="GenderFirstPriority",
                         ),
-                    ],
-                    AlgorithmType.RANDOM: [
-                        RandomAlgorithmConfig(),
                     ],
                 },
             ).run(num_runs=num_trials)
@@ -232,4 +223,4 @@ class Scenario1(Run):
 
 
 if __name__ == "__main__":
-    typer.run(Scenario1().start)
+    typer.run(Scenario4().start)

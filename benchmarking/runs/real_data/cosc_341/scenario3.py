@@ -1,6 +1,6 @@
 import math
 import os
-from typing import Dict
+from typing import Dict, List
 
 import typer
 
@@ -10,11 +10,14 @@ from api.ai.interfaces.algorithm_config import (
     GroupMatcherAlgorithmConfig,
     RandomAlgorithmConfig,
 )
-from api.models.enums import AlgorithmType, ScenarioAttribute, Gender
+from api.models.enums import AlgorithmType, ScenarioAttribute, Gender, DiversifyType, TokenizationConstraintDirection
+from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
     COSC341W2021T2AnsweredSurveysStudentProvider,
 )
+from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
+from benchmarking.evaluations.interfaces import Scenario
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 from benchmarking.evaluations.metrics.average_timeslot_coverage import (
     AverageTimeslotCoverage,
@@ -34,11 +37,11 @@ from benchmarking.simulation.simulation_set import SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class Scenario1(Run):
-    TEAM_SIZE = 4
+class Scenario3(Run):
+    TEAM_SIZE = 6
     """
     This run focuses on the scenario of concentrating timeslots, diversifying females with min 2, and diversifying based 
-    on year level (third year vs. graduate students).
+    on year level (third year vs. graduate students) and team size 6.
     """
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
@@ -73,7 +76,7 @@ class Scenario1(Run):
         }
 
         student_provider = COSC341W2021T2AnsweredSurveysStudentProvider()
-        cache_key = "real_data/cosc_341/scenario1"
+        cache_key = "real_data/cosc_341/scenario3"
         simulation_settings_1 = SimulationSettings(
             num_teams=math.ceil(175 / self.TEAM_SIZE),
             student_provider=student_provider,
@@ -127,9 +130,6 @@ class Scenario1(Run):
                             MAX_ITERATE=250,
                         ),
                     ],
-                    AlgorithmType.RANDOM: [
-                        RandomAlgorithmConfig(),
-                    ],
                 },
             ).run(num_runs=num_trials)
         )
@@ -172,12 +172,12 @@ class Scenario1(Run):
                 for algorithm_name, value in average_metric.items():
                     if algorithm_name not in graph_data[metric_name]:
                         graph_data[metric_name][algorithm_name] = GraphData(
-                            x_data=[175],
+                            x_data=[120],
                             y_data=[value],
                             name=algorithm_name,
                         )
                     else:
-                        graph_data[metric_name][algorithm_name].x_data.append(175)
+                        graph_data[metric_name][algorithm_name].x_data.append(120)
                         graph_data[metric_name][algorithm_name].y_data.append(value)
 
             # Print data as csv
@@ -232,4 +232,4 @@ class Scenario1(Run):
 
 
 if __name__ == "__main__":
-    typer.run(Scenario1().start)
+    typer.run(Scenario3().start)
