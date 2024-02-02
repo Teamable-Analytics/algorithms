@@ -184,7 +184,7 @@ class Cosc499Scenario4Run(Run):
                 print(",".join([k] + v))
 
             # Calculate Inter-Homogeneity from stdev of cosine difference
-            print("Inter-Homogeneity", end="")
+            print("GPA Inter-Homogeneity", end="")
             for algorithm_name, (team_sets, run_times) in artifacts.items():
                 cosine_diffs = []
                 for team_set in team_sets:
