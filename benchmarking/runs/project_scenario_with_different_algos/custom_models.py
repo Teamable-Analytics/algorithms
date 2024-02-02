@@ -80,6 +80,7 @@ class CustomModels(Run):
             "AverageProjectRequirementsCoverage": "Average Project Requirements Coverage",
             "AverageCosineSimilarity": "Average Cosine Similarity",
             "AverageSoloStatus": "Average Solo Status",
+            "AverageSoloStatusGender": "Average Solo Status Gender"
         }
 
         return metric_name_dict.get(metric_name, metric_name)
@@ -235,6 +236,12 @@ class CustomModels(Run):
                     ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
                     ScenarioAttribute.RACE.value: [Race.African.value],
                 },
+            ),
+            "AverageSoloStatusGender": AverageSoloStatus(
+                minority_groups={
+                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
+                },
+                name="AverageSoloStatusGender"
             ),
             # Cosine
             # Solo status
