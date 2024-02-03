@@ -77,7 +77,7 @@ class TimeSlotAndConcentrateGenderRace(Run):
 
     TEAM_SIZE = 4
 
-    def start(self, num_trials: int = 30, generate_graphs: bool = False):
+    def start(self, num_trials: int = 30, generate_graphs: bool = False, cache_key_var: str = "concentrate_timeslots_gender_race"):
         scenario = ConcentrateTimeslotAndConcentrateGenderAndConcentrateRace(max_num_choices=5)
 
         metrics = {
@@ -106,7 +106,7 @@ class TimeSlotAndConcentrateGenderRace(Run):
         for class_size in class_sizes:
             print("CLASS SIZE /", class_size)
             student_provider = TimeslotCustomStudentProvider(class_size)
-            cache_key = f"timeslot_stuff/concentrate_timeslots_gender_race/class_size_{class_size}"
+            cache_key = f"timeslot_stuff/{cache_key_var}/class_size_{class_size}"
 
             simulation_settings = SimulationSettings(
                 num_teams=class_size // self.TEAM_SIZE,
