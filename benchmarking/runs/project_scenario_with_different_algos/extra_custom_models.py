@@ -27,7 +27,7 @@ from benchmarking.evaluations.metrics.average_project_requirements_coverage impo
     AverageProjectRequirementsCoverage,
 )
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity, AverageCosineDifference
 from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.scenario_that_we_love import (
@@ -77,8 +77,8 @@ class CustomModels(Run):
     def better_metric_name(metric_name: str) -> str:
         metric_name_dict = {
             "PrioritySatisfaction": "Priority Satisfaction",
-            "AverageProjectRequirementsCoverage": "Average Project Requirements Coverage",
-            "AverageCosineSimilarity": "Average Cosine Similarity",
+            "AverageProjectRequirementsCoverage": "Average Project Coverage",
+            "AverageCosineDifference": "Average Cosine Difference",
             "AverageSoloStatus": "Average Solo Status",
             "AverageSoloStatusGender": "Average Solo Status Gender"
         }
@@ -225,10 +225,8 @@ class CustomModels(Run):
                 False,
                 name="Priority Satisfaction",
             ),
-            "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(
-                name="Average Project Requirements Coverage"
-            ),
-            "AverageCosineSimilarity": AverageCosineSimilarity(
+            "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
+            "AverageCosineDifference": AverageCosineDifference(
                 attribute_filter=[ScenarioAttribute.GENDER.value, ScenarioAttribute.RACE.value],
             ),
             "AverageSoloStatus": AverageSoloStatus(

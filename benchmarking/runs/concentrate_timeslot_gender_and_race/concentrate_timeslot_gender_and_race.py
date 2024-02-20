@@ -55,8 +55,8 @@ class TimeSlotAndConcentrateGenderRace(Run):
     def better_algorithm_name(algorithm_name: str) -> str:
         algorithm_name_dict = {
             "AlgorithmType.DRR-default": "Double Round Robin",
-            "AlgorithmType.WEIGHT-default": "Weight",
-            "AlgorithmType.PRIORITY-default": "Priority",
+            "AlgorithmType.WEIGHT-default": "Weight (Concentrate)",
+            "AlgorithmType.PRIORITY-default": "Priority (Concentrate)",
             "AlgorithmType.RANDOM-default": "Random",
             "AlgorithmType.GROUP_MATCHER-default": "Group Matcher",
         }
@@ -67,17 +67,18 @@ class TimeSlotAndConcentrateGenderRace(Run):
     def better_metric_name(metric_name: str) -> str:
         metric_name_dict = {
             "PrioritySatisfaction": "Priority Satisfaction",
-            "AverageProjectRequirementsCoverage": "Average Project Requirements Coverage",
-            "AverageCosineDifference": "Average Cosine Difference",
+            "AverageProjectRequirementsCoverage": "Average Project Coverage",
+            "AverageCosineDifference": "Average Intra-Heterogeneity",
             "AverageSoloStatus": "Average Solo Status",
-            "AverageSoloStatusGender": "Average Solo Status Gender"
+            "AverageSoloStatusGender": "Average Solo Status Gender",
+            "AverageTimeslotCoverage": "Average Common Time Availability",
         }
 
         return metric_name_dict.get(metric_name, metric_name)
 
     TEAM_SIZE = 4
 
-    def start(self, num_trials: int = 30, generate_graphs: bool = False, cache_key_var: str = "concentrate_timeslots_gender_race"):
+    def start(self, num_trials: int = 30, generate_graphs: bool = True):
         scenario = ConcentrateTimeslotAndConcentrateGenderAndConcentrateRace(max_num_choices=5)
 
         metrics = {
@@ -85,12 +86,12 @@ class TimeSlotAndConcentrateGenderRace(Run):
             #     goals_to_priorities(scenario.goals),
             #     False,
             # ),
-            "AverageTimeslotCoverage": AverageTimeslotCoverage(
-                available_timeslots=list(range(10)),
-            ),
-            "AverageCosineDifference": AverageCosineDifference(
-                attribute_filter=[ScenarioAttribute.GENDER.value, ScenarioAttribute.RACE.value],
-            ),
+            # "AverageTimeslotCoverage": AverageTimeslotCoverage(
+            #     available_timeslots=list(range(10)),
+            # ),
+            # "AverageCosineDifference": AverageCosineDifference(
+            #     attribute_filter=[ScenarioAttribute.GENDER.value, ScenarioAttribute.RACE.value],
+            # ),
             "AverageSoloStatus": AverageSoloStatus(
                 minority_groups={
                     ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
@@ -106,18 +107,30 @@ class TimeSlotAndConcentrateGenderRace(Run):
         for class_size in class_sizes:
             print("CLASS SIZE /", class_size)
             student_provider = TimeslotCustomStudentProvider(class_size)
-            cache_key = f"timeslot_stuff/{cache_key_var}/class_size_{class_size}"
+            cache_key = f"timeslot_stuff/concentrate_timeslots_gender_race/class_size_{class_size}"
 
-            simulation_settings = SimulationSettings(
+            simulation_settings_1 = SimulationSettings(
                 num_teams=class_size // self.TEAM_SIZE,
                 student_provider=student_provider,
                 scenario=scenario,
-                cache_key=cache_key,
+                cache_key=f"timeslot_stuff/concentrate_timeslots_gender_race/class_size_{class_size}",
             )
 
-            simulation_sets[class_size] = SimulationSet(
-                settings=simulation_settings,
-                algorithm_set={
+            simulation_settings_2 = SimulationSettings(
+                num_teams=class_size // self.TEAM_SIZE,
+                student_provider=student_provider,
+                scenario=scenario,
+                cache_key=f"timeslot_stuff/braun_one/class_size_{class_size}",
+            )
+
+            simulation_settings_3 = SimulationSettings(
+                num_teams=class_size // self.TEAM_SIZE,
+                student_provider=student_provider,
+                scenario=scenario,
+                cache_key=f"timeslot_stuff/braun_three/class_size_{class_size}",
+            )
+
+            algorithm_set = {
                     AlgorithmType.DRR: [
                         DoubleRoundRobinAlgorithmConfig(
                             utility_function=additive_utility_function
@@ -137,26 +150,40 @@ class TimeSlotAndConcentrateGenderRace(Run):
                     AlgorithmType.RANDOM: [
                         RandomAlgorithmConfig(),
                     ],
-                    # AlgorithmType.GROUP_MATCHER: [
-                    #     GroupMatcherAlgorithmConfig(
-                    #         csv_output_path=os.path.abspath(
-                    #             os.path.join(
-                    #                 os.path.dirname(__file__),
-                    #                 "../../..",
-                    #                 f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
-                    #             )
-                    #         ),
-                    #         group_matcher_run_path=os.path.abspath(
-                    #             os.path.join(
-                    #                 os.path.dirname(__file__),
-                    #                 "../../..",
-                    #                 "api/ai/group_matcher_algorithm/group-matcher/run.py"
-                    #             )
-                    #         )
-                    #     ),
-                    # ]
+                    AlgorithmType.GROUP_MATCHER: [
+                        GroupMatcherAlgorithmConfig(
+                            csv_output_path=os.path.abspath(
+                                os.path.join(
+                                    os.path.dirname(__file__),
+                                    "../../..",
+                                    f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
+                                )
+                            ),
+                            group_matcher_run_path=os.path.abspath(
+                                os.path.join(
+                                    os.path.dirname(__file__),
+                                    "../../..",
+                                    "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                                )
+                            )
+                        ),
+                    ]
                 }
-            ).run(num_runs=num_trials)
+
+            simulation_sets[class_size] = SimulationSet(
+                settings=simulation_settings_1,
+                algorithm_set=algorithm_set,
+            ).run(num_runs=30)
+
+            simulation_sets[class_size].update(SimulationSet(
+                settings=simulation_settings_2,
+                algorithm_set=algorithm_set,
+            ).run(num_runs=35))
+
+            simulation_sets[class_size].update(SimulationSet(
+                settings=simulation_settings_3,
+                algorithm_set=algorithm_set,
+            ).run(num_runs=35))
 
         if generate_graphs:
             graph_data: Dict[str, Dict[str, GraphData]] = {}
@@ -177,20 +204,21 @@ class TimeSlotAndConcentrateGenderRace(Run):
                     if metric_name not in graph_data:
                         graph_data[metric_name] = {}
                     for algorithm_name, value in average_metric.items():
-                        if algorithm_name not in graph_data[metric_name]:
-                            graph_data[metric_name][algorithm_name] = GraphData(
+                        new_algorithm_name = self.better_algorithm_name(algorithm_name)
+                        if new_algorithm_name not in graph_data[metric_name]:
+                            graph_data[metric_name][new_algorithm_name] = GraphData(
                                 x_data=[class_size],
                                 y_data=[value],
-                                name=algorithm_name,
+                                name=new_algorithm_name,
                             )
                         else:
-                            graph_data[metric_name][algorithm_name].x_data.append(
+                            graph_data[metric_name][new_algorithm_name].x_data.append(
                                 class_size
                             )
-                            graph_data[metric_name][algorithm_name].y_data.append(value)
+                            graph_data[metric_name][new_algorithm_name].y_data.append(value)
 
             for metric_name in metrics.keys():
-                y_label = self.better_algorithm_name(metrics[metric_name].name)
+                y_label = self.better_metric_name(metrics[metric_name].name)
                 y_lim = GraphAxisRange(0, 1)
                 line_graph(
                     LineGraphMetadata(

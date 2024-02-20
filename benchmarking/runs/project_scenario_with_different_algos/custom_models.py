@@ -27,7 +27,7 @@ from benchmarking.evaluations.metrics.average_project_requirements_coverage impo
     AverageProjectRequirementsCoverage,
 )
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineSimilarity, AverageCosineDifference
 from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.scenarios.scenario_that_we_love import (
@@ -65,8 +65,8 @@ class CustomModels(Run):
     def better_algorithm_name(algorithm_name: str) -> str:
         algorithm_name_dict = {
             "AlgorithmType.DRR-default": "Double Round Robin",
-            "AlgorithmType.WEIGHT-default": "Weight",
-            "AlgorithmType.PRIORITY-default": "Priority",
+            "AlgorithmType.WEIGHT-default": "Weight (Diversify)",
+            "AlgorithmType.PRIORITY-default": "Priority (Diversify)",
             "AlgorithmType.RANDOM-default": "Random",
             "AlgorithmType.GROUP_MATCHER-default": "Group Matcher",
         }
@@ -76,16 +76,16 @@ class CustomModels(Run):
     @staticmethod
     def better_metric_name(metric_name: str) -> str:
         metric_name_dict = {
-            "PrioritySatisfaction": "Priority Satisfaction",
-            "AverageProjectRequirementsCoverage": "Average Project Requirements Coverage",
-            "AverageCosineSimilarity": "Average Cosine Similarity",
+            # "PrioritySatisfaction": "Priority Satisfaction",
+            "AverageProjectRequirementsCoverage": "Average Project Coverage",
+            "AverageCosineDifference": "Average Intra-Heterogeneity",
             "AverageSoloStatus": "Average Solo Status",
-            "AverageSoloStatusGender": "Average Solo Status Gender"
+            "AverageSoloStatusGender": "Average Solo Status Gender",
         }
 
         return metric_name_dict.get(metric_name, metric_name)
 
-    def start(self, num_trials: int = 100, generate_graphs: bool = True):
+    def start(self, num_trials: int = 100, generate_graphs: bool = True, analyze: bool = False):
         scenario = ScenarioThatWeLove(
             value_of_female=Gender.FEMALE.value,
             value_of_african=Race.African.value,
@@ -220,15 +220,13 @@ class CustomModels(Run):
         ]
 
         metrics = {
-            "PrioritySatisfaction": PrioritySatisfaction(
-                goals_to_priorities(scenario.goals),
-                False,
-                name="Priority Satisfaction",
-            ),
-            "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(
-                name="Average Project Requirements Coverage"
-            ),
-            "AverageCosineSimilarity": AverageCosineSimilarity(
+            # "PrioritySatisfaction": PrioritySatisfaction(
+            #     goals_to_priorities(scenario.goals),
+            #     False,
+            #     name="Priority Satisfaction",
+            # ),
+            "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
+            "AverageCosineDifference": AverageCosineDifference(
                 attribute_filter=[ScenarioAttribute.GENDER.value, ScenarioAttribute.RACE.value],
             ),
             "AverageSoloStatus": AverageSoloStatus(
@@ -236,12 +234,6 @@ class CustomModels(Run):
                     ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
                     ScenarioAttribute.RACE.value: [Race.African.value],
                 },
-            ),
-            "AverageSoloStatusGender": AverageSoloStatus(
-                minority_groups={
-                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
-                },
-                name="AverageSoloStatusGender"
             ),
             # Cosine
             # Solo status
@@ -386,6 +378,56 @@ class CustomModels(Run):
                     ),
                 )
 
+        if analyze:
+            for algorithm_name in ['AlgorithmType.DRR-default', 'AlgorithmType.GROUP_MATCHER-default']:
+
+                max_max_team_size = []
+                min_min_team_size = []
+                average_average_team_size = []
+
+                for class_size in class_sizes:
+                    artifact: SimulationSetArtifact = simulation_sets[class_size]
+
+                    teamsets = artifact[algorithm_name][0]
+                    max_num_team = -1
+                    min_num_team = 100000
+                    average_team_generated = 0
+                    max_team_sizes = []
+                    min_team_sizes = []
+                    average_team_sizes_in_teamset = []
+
+                    for teamset in teamsets:
+                        max_num_team = max(max_num_team, teamset.num_teams)
+                        min_num_team = min(min_num_team, teamset.num_teams)
+                        average_team_generated += teamset.num_teams
+
+                        max_team_size = -1
+                        min_team_size = 100000
+                        average_team_size_in_teamset = 0
+
+                        for team in teamset.teams:
+                            max_team_size = max(max_team_size, team.size)
+                            min_team_size = min(min_team_size, team.size)
+                            average_team_size_in_teamset += team.size
+
+                        max_team_sizes.append(max_team_size)
+                        max_max_team_size.append(max_team_size)
+                        min_team_sizes.append(min_team_size)
+                        min_min_team_size.append(min_team_size)
+                        average_team_sizes_in_teamset.append(float(average_team_size_in_teamset) / float(teamset.num_teams))
+                        average_average_team_size.append(float(average_team_size_in_teamset) / float(teamset.num_teams))
+
+                    average_team_generated /= float(len(teamsets))
+
+                    print(f"Class size: {class_size}, Algorithm: {algorithm_name}")
+                    print(f"Max num team: {max_num_team}, Min num team: {min_num_team}, Average num team: {average_team_generated}")
+                    print(f"Max team sizes: {max(max_team_sizes)}, Min team sizes: {min(min_team_sizes)}, Average team sizes: {sum(average_team_sizes_in_teamset) / float(len(average_team_sizes_in_teamset))}")
+                    print()
+
+                print(f"Summary for Algorithm {algorithm_name}")
+                print(f"Max team sizes: {max(max_max_team_size)}, Min team sizes: {min(min_min_team_size)}, Average team sizes: {sum(average_average_team_size) / float(len(average_average_team_size))}")
+                print()
+                print()
 
 if __name__ == "__main__":
     typer.run(CustomModels().start)
