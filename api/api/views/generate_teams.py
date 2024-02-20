@@ -43,8 +43,8 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
             team_set = runner.generate(input_data.students)
 
             serialized_team_set = TeamSetSerializer().default(team_set)
-            return ResponseWithMetadata(data=serialized_team_set, status=200)
+            return ResponseWithMetadata(data=serialized_team_set, data_label="teams", status=200)
         except SchemaError as e:
-            return ResponseWithMetadata(error=str(e), status=400)
+            return ResponseWithMetadata(error=str(e), data_label="teams", status=400)
         except Exception as e:
-            return ResponseWithMetadata(error=str(e), status=500)
+            return ResponseWithMetadata(error=str(e), data_label="teams", status=500)
