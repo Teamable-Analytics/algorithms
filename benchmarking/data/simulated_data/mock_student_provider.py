@@ -81,7 +81,9 @@ class MockStudentProviderSettings:
                 )
             if not range_config:
                 raise ValueError(f"attribute_ranges[{attribute_id}] must not be empty.")
-            if range_config[0][0] is not None and isinstance(range_config[0][0], (int, AttributeValueEnum)):
+            if range_config[0][0] is not None and isinstance(
+                range_config[0][0], (int, AttributeValueEnum)
+            ):
                 total_chance = sum([_[1] for _ in range_config])
                 if not math.isclose(total_chance, 1):
                     raise ValueError(
@@ -100,7 +102,6 @@ class MockStudentProviderSettings:
             raise ValueError(
                 f"friend_distribution ({self.friend_distribution}) must be either 'cluster' or 'random'."
             )
-
 
 
 class MockStudentProvider(StudentProvider):
