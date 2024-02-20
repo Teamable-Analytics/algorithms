@@ -81,7 +81,7 @@ class MockStudentProviderSettings:
                 )
             if not range_config:
                 raise ValueError(f"attribute_ranges[{attribute_id}] must not be empty.")
-            if isinstance(range_config[0], (int, AttributeValueEnum)):
+            if isinstance(range_config[0], (tuple, AttributeValueEnum)):
                 total_chance = sum([_[1] for _ in range_config])
                 if not math.isclose(total_chance, 1):
                     raise ValueError(
