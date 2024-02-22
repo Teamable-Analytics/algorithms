@@ -194,13 +194,11 @@ def create_mock_students(
             if not ensure_exact_attribute_ratios:
                 # assume we pick 1 value per student for this attribute if no explicit value is given
                 num_value_config = num_values_per_attribute.get(attribute_id, None)
-                print('num_value_config', num_value_config)
                 num_values = (
                     num_values_for_attribute(num_value_config, generator=rng)
                     if num_value_config is not None
                     else 1
                 )
-                print('num_values', num_values)
             else:
                 num_values = 1
 
