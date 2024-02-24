@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Dict, List
+from typing import Dict, List, Set
 
 from api.models.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
@@ -25,8 +25,8 @@ class AverageSoloStatus(TeamSetMetric):
             raise ValueError("minority_groups cannot be empty")
 
     def calculate(self, team_set: TeamSet) -> float:
-        total_solo_status_students = set()
-        total_students = 0.0
+        solo_status_students: Set[int] = set()
+        total_students = 0
         for team in team_set.teams:
             for student in team.students:
                 total_students += 1
@@ -35,8 +35,8 @@ class AverageSoloStatus(TeamSetMetric):
                     all_attribute_values_in_team = Counter(
                         [
                             attr
-                            for student in team.students
-                            for attr in student.attributes.get(attribute_id)
+                            for _student in team.students
+                            for attr in _student.attributes.get(attribute_id)
                         ]
                     )
 
@@ -45,7 +45,7 @@ class AverageSoloStatus(TeamSetMetric):
                             attr in self.minority_groups_map.get(attribute_id)
                             and all_attribute_values_in_team.get(attr) == 1
                         ):
-                            total_solo_status_students.add(student.id)
+                            solo_status_students.add(student.id)
                             break
 
-        return len(total_solo_status_students) / float(total_students)
+        return len(solo_status_students) / float(total_students)
