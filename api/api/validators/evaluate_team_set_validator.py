@@ -33,8 +33,6 @@ class EvaluateTeamSetValidator(Validator):
             except ValueError:
                 raise ValueError("team_set[id] must be a number")
 
-            Schema(str).validate(team_set["name"])
-
         if "name" in team_set:
             Schema(str).validate(team_set["name"])
 
