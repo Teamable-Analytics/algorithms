@@ -20,8 +20,13 @@ class CreateClassCompositionViewSet(viewsets.ViewSet):
             attribute_ranges_raw = request_data.get("attribute_ranges", {})
             attribute_ranges = {}
             for attribute_id, attribute_values in attribute_ranges_raw.items():
-                if type(attribute_values) is not dict and type(attribute_values) is not list:
-                    raise ValueError(f"Invalid value type for attribute_range[{attribute_id}]")
+                if (
+                    type(attribute_values) is not dict
+                    and type(attribute_values) is not list
+                ):
+                    raise ValueError(
+                        f"Invalid value type for attribute_range[{attribute_id}]"
+                    )
                 if type(attribute_values) is dict:
                     attribute_ranges[int(attribute_id)] = [
                         (int(attr_value), float(attr_probability))

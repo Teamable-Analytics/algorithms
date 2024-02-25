@@ -25,7 +25,9 @@ from api.api.views.create_class_composition import CreateClassCompositionViewSet
 router = DefaultRouter()
 
 router.register(r"generate", GenerateTeamsViewSet, basename="generate_teams")
-router.register(r"create", CreateClassCompositionViewSet, basename="create_class_composition")
+router.register(
+    r"create", CreateClassCompositionViewSet, basename="create_class_composition"
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
