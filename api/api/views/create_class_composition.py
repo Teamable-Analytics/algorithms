@@ -10,7 +10,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 )
 
 
-class GenerateClassViewSet(viewsets.ViewSet):
+class CreateClassCompositionViewSet(viewsets.ViewSet):
     @action(url_path="class", detail=False, methods=["POST"])
     def generate_class(self, request):
         try:
@@ -19,15 +19,16 @@ class GenerateClassViewSet(viewsets.ViewSet):
             # Parse the attribute ranges
             attribute_ranges_raw = request_data.get("attribute_ranges", {})
             attribute_ranges = {}
-            for key, value_dict in attribute_ranges_raw.items():
-                if type(value_dict) is not dict and type(value_dict) is not list:
-                    raise ValueError(f"Invalid value type for attribute_range[{key}]")
-                if type(value_dict) is dict:
-                    attribute_ranges[int(key)] = [
-                        (int(k), float(v)) for k, v in value_dict.items()
+            for attribute_id, attribute_values in attribute_ranges_raw.items():
+                if type(attribute_values) is not dict and type(attribute_values) is not list:
+                    raise ValueError(f"Invalid value type for attribute_range[{attribute_id}]")
+                if type(attribute_values) is dict:
+                    attribute_ranges[int(attribute_id)] = [
+                        (int(attr_value), float(attr_probability))
+                        for attr_value, attr_probability in attribute_values.items()
                     ]
-                if type(value_dict) is list:
-                    attribute_ranges[int(key)] = value_dict
+                if type(attribute_values) is list:
+                    attribute_ranges[int(attribute_id)] = attribute_values
 
             project_preference_options = list(
                 map(int, request_data.get("project_preference_options", []))

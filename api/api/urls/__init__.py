@@ -20,12 +20,12 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from api.api.views import GenerateTeamsViewSet
-from api.api.views.generate_class import GenerateClassViewSet
+from api.api.views.create_class_composition import CreateClassCompositionViewSet
 
 router = DefaultRouter()
 
 router.register(r"generate", GenerateTeamsViewSet, basename="generate_teams")
-router.register(r"generate", GenerateClassViewSet, basename="generate_class")
+router.register(r"create", CreateClassCompositionViewSet, basename="create_class_composition")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
