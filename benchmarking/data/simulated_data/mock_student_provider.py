@@ -34,7 +34,7 @@ class MockStudentProviderSettings:
         self.validate()
 
     def validate(self):
-        # todo: add validation for attribute_ranges vs num_values_per_attribute
+        # todo: add validation for num_values_per_attribute
         if not is_non_negative_integer(self.number_of_students):
             raise ValueError(
                 f"number_of_students ({self.number_of_students}) must be a non-negative integer."
@@ -79,6 +79,9 @@ class MockStudentProviderSettings:
                 raise ValueError(
                     f"attribute_ranges keys must be non-negative integers. Found {attribute_id}"
                 )
+
+            # TODO: this validation is not complete, we only check the first element on both levels
+            # (https://github.com/Teamable-Analytics/algorithms/issues/369)
             if not range_config:
                 raise ValueError(f"attribute_ranges[{attribute_id}] must not be empty.")
             if range_config[0][0] is not None and isinstance(
