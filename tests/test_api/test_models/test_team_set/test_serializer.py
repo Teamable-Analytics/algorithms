@@ -39,7 +39,7 @@ class TestTeamSetSerializer(unittest.TestCase):
             '{"attribute": 1, "operator": "less than", "value": 1}'
         )
 
-        json_team_1 = f'{{"id": 5, "name": "Team Numero 5", "requirements": [], "students": [{json_student_1}, {json_student_2}]}}'
+        json_team_1 = f'{{"id": 5, "name": "Team Numero 5", "project_id": null, "requirements": [], "students": [{json_student_1}, {json_student_2}]}}'
         json_team_2 = f'{{"id": 2, "name": "Goosed", "project_id": 11, "requirements": [{json_project_requirement_team_2}], "students": [{json_student_3}]}}'
         cls.json_team_set = f'{{"id": 421, "name": "Test Team Set", "teams": [{json_team_1}, {json_team_2}]}}'
 

@@ -15,19 +15,13 @@ class TeamSerializer(JSONEncoder, ModelDecoder):
             requirement_serializer.default(req) for req in team.requirements
         ]
         students = [student_serializer.default(student) for student in team.students]
-        team_json = {
+        return {
             "id": team.id,
             "name": team.name,
             "project_id": team.project_id,
             "requirements": requirements,
             "students": students,
         }
-        if team.name is None:
-            del team_json["name"]
-        if team.project_id is None:
-            del team_json["project_id"]
-
-        return team_json
 
     def decode(self, json_dict: Dict[str, Any]) -> Team:
         requirement_serializer = ProjectRequirementSerializer()
