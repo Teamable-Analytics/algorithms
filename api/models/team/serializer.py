@@ -17,13 +17,15 @@ class TeamSerializer(JSONEncoder, ModelDecoder):
         students = [student_serializer.default(student) for student in team.students]
         team_json = {
             "id": team.id,
+            "name": team.name,
+            "project_id": team.project_id,
             "requirements": requirements,
             "students": students,
         }
-        if team.name is not None:
-            team_json["name"] = team.name
-        if team.project_id is not None:
-            team_json["project_id"] = team.project_id
+        if team.name is None:
+            del team_json["name"]
+        if team.project_id is None:
+            del team_json["project_id"]
 
         return team_json
 

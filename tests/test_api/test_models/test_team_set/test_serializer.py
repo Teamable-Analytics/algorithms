@@ -32,16 +32,16 @@ class TestTeamSetSerializer(unittest.TestCase):
                 ),
             ],
         )
-        json_student_1 = '{"_id": 1, "name": "Steven", "attributes": {}, "relationships": {}, "project_preferences": []}'
-        json_student_2 = '{"_id": 2, "name": "Hailey", "attributes": {}, "relationships": {}, "project_preferences": []}'
-        json_student_3 = '{"_id": 3, "name": "Teamy Boi", "attributes": {}, "relationships": {}, "project_preferences": []}'
+        json_student_1 = '{"id": 1, "name": "Steven", "attributes": {}, "relationships": {}, "project_preferences": []}'
+        json_student_2 = '{"id": 2, "name": "Hailey", "attributes": {}, "relationships": {}, "project_preferences": []}'
+        json_student_3 = '{"id": 3, "name": "Teamy Boi", "attributes": {}, "relationships": {}, "project_preferences": []}'
         json_project_requirement_team_2 = (
             '{"attribute": 1, "operator": "less than", "value": 1}'
         )
 
-        json_team_1 = f'{{"_id": 5, "name": "Team Numero 5", "project_id": null, "requirements": [], "students": [{json_student_1}, {json_student_2}]}}'
-        json_team_2 = f'{{"_id": 2, "name": "Goosed", "project_id": 11, "requirements": [{json_project_requirement_team_2}], "students": [{json_student_3}]}}'
-        cls.json_team_set = f'{{"_id": 421, "name": "Test Team Set", "teams": [{json_team_1}, {json_team_2}]}}'
+        json_team_1 = f'{{"id": 5, "name": "Team Numero 5", "requirements": [], "students": [{json_student_1}, {json_student_2}]}}'
+        json_team_2 = f'{{"id": 2, "name": "Goosed", "project_id": 11, "requirements": [{json_project_requirement_team_2}], "students": [{json_student_3}]}}'
+        cls.json_team_set = f'{{"id": 421, "name": "Test Team Set", "teams": [{json_team_1}, {json_team_2}]}}'
 
     def test_team_serializer__encodes_team_set_correctly_to_json(self):
         encoded_team_set = json.dumps(self.team_set, cls=TeamSetSerializer)

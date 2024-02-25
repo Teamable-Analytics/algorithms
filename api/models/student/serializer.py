@@ -17,14 +17,15 @@ class StudentSerializer(JSONEncoder, ModelDecoder):
             raise TypeError("Object is not a student instance.")
         return_student_json = {
             "id": student.id,
+            "name": student.name,
             "attributes": student.attributes,
             "relationships": {
                 str(x): y.value for x, y in student.relationships.items()
             },
             "project_preferences": student.project_preferences,
         }
-        if student.name:
-            return_student_json["name"] = student.name
+        if student.name is None:
+            del return_student_json["name"]
 
         return return_student_json
 
