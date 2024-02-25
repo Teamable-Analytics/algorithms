@@ -10,11 +10,7 @@ class TeamSetSerializer(JSONEncoder, ModelDecoder):
     def default(self, team_set: TeamSet) -> Dict[str, Any]:
         team_serializer = TeamSerializer()
         teams = [team_serializer.default(team) for team in team_set.teams]
-        team_set_json = {
-            "id": team_set.id,
-            "name": team_set.name,
-            "teams": teams
-        }
+        team_set_json = {"id": team_set.id, "name": team_set.name, "teams": teams}
         if team_set.id is None:
             del team_set_json["id"]
         if team_set.name is None:
