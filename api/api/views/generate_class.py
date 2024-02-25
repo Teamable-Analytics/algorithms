@@ -13,18 +13,6 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 class GenerateClassViewSet(viewsets.ViewSet):
     @action(url_path="class", detail=False, methods=["POST"])
     def generate_class(self, request):
-        """
-        Steps to do this:
-        0. Permissions/access/api keys/etc
-        1. Read JSOM
-            1.1 Parse to dict
-            1.2 Throw error if invalid JSON
-        2. Encode data from JSON to the correct Dataclasses (hopefully can import?)
-            2.1 Validate dataclasses (so logical validation of values)
-        3. Generate class
-        4. Serialize class to JSON
-        5. Return JSON to a happy user :) 🚀!
-        """
         try:
             request_data = dict(request.data)
 
