@@ -15,15 +15,18 @@ class StudentSerializer(JSONEncoder, ModelDecoder):
     ]:
         if not isinstance(student, Student):
             raise TypeError("Object is not a student instance.")
-        return {
-            "_id": student._id,
-            "name": student.name,
+        return_student_json = {
+            "id": student.id,
             "attributes": student.attributes,
             "relationships": {
                 str(x): y.value for x, y in student.relationships.items()
             },
             "project_preferences": student.project_preferences,
         }
+        if student.name:
+            return_student_json["name"] = student.name
+
+        return return_student_json
 
     def decode(self, json_dict: Dict[str, Any]) -> Student:
         return Student(
