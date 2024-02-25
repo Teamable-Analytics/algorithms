@@ -2,7 +2,6 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from api.api.utils.response_with_metadata import ResponseWithMetadata
-from api.models.enums import AttributeValueEnum
 from api.models.student import StudentSerializer
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
@@ -10,8 +9,8 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 )
 
 
-class CreateClassCompositionViewSet(viewsets.ViewSet):
-    @action(url_path="class_composition", detail=False, methods=["POST"])
+class SimulatePeopleViewSet(viewsets.ViewSet):
+    @action(url_path="people", detail=False, methods=["POST"])
     def generate_class(self, request):
         try:
             request_data = dict(request.data)

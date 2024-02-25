@@ -67,8 +67,6 @@ class MockStudentProviderSettings:
                 "Cannot ensure exact attribute ratios when specifying num_values_per_attribute"
             )
 
-        if not is_unique(list(self.attribute_ranges.keys())):
-            raise ValueError(f"attribute_ranges keys must be unique.")
         # Validate when attribute ranges are specified as a list of (value, % chance) tuples
         for attribute_id, range_config in self.attribute_ranges.items():
             if not isinstance(attribute_id, int):
@@ -93,11 +91,11 @@ class MockStudentProviderSettings:
                         f"attribute_ranges[{attribute_id}] must sum to 1. Found {total_chance}"
                     )
 
-        if self.number_of_enemies > self.number_of_students:
+        if self.number_of_enemies >= self.number_of_students:
             raise ValueError(
                 "Cannot request more enemies than there are people in the class"
             )
-        if self.number_of_friends > self.number_of_students:
+        if self.number_of_friends >= self.number_of_students:
             raise ValueError(
                 "Cannot request more friends than there are people in the class"
             )
