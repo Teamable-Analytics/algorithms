@@ -11,7 +11,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 
 
 class CreateClassCompositionViewSet(viewsets.ViewSet):
-    @action(url_path="class", detail=False, methods=["POST"])
+    @action(url_path="class_composition", detail=False, methods=["POST"])
     def generate_class(self, request):
         try:
             request_data = dict(request.data)
