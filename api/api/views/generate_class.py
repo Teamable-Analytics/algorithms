@@ -54,7 +54,9 @@ class GenerateClassViewSet(viewsets.ViewSet):
             )
         except KeyError as e:
             return ResponseWithMetadata(
-                error=f"Missing key {str(e)}", data_label="students", status=500
+                error=f"Missing key {str(e)}", data_label="students", status=400
             )
+        except ValueError as e:
+            return ResponseWithMetadata(error=str(e), data_label="students", status=400)
         except Exception as e:
             return ResponseWithMetadata(error=str(e), data_label="students", status=500)
