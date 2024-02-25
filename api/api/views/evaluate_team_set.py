@@ -53,6 +53,9 @@ class EvaluateTeamSetViewSet(viewsets.GenericViewSet):
                         error=str(e), data_label=self.data_label, status=500
                     )
 
+            # TODO: Fix the ResponseWithMetadata to handle multiple data labels
+            # TODO: Return the team_set as well
+            # (https://github.com/Teamable-Analytics/algorithms/issues/369)
             return ResponseWithMetadata(
                 data=return_metrics, data_label=self.data_label, status=200
             )

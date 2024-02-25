@@ -24,7 +24,7 @@ from api.api.views import GenerateTeamsViewSet, EvaluateTeamSetViewSet
 router = DefaultRouter()
 
 router.register(r"generate", GenerateTeamsViewSet, basename="generate_teams")
-router.register(r"evaluate", EvaluateTeamSetViewSet, basename="evaluate_team_set")
+router.register(r"evaluate", EvaluateTeamSetViewSet, basename="evaluate")
 
 urlpatterns = [
     path("admin/", admin.site.urls),

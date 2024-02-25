@@ -5,6 +5,7 @@ from schema import Schema, Optional, Or, SchemaError
 from api.api.validators.interface import Validator
 from api.models.enums import RequirementOperator, Relationship
 from api.api.utils.relationship import get_relationship_str
+from utils.validation import is_unique
 
 
 class EvaluateTeamSetValidator(Validator):
@@ -88,10 +89,12 @@ class EvaluateTeamSetValidator(Validator):
         student_ids = [
             student["id"] for team in team_set["teams"] for student in team["students"]
         ]
-        if len(student_ids) != len(set(student_ids)):
+        if is_unique(student_ids):
             raise ValueError("team_set[teams] contains duplicate students")
 
     def validate_metrics(self):
+        no_params_metrics = ["project_coverage", "social_satisfaction"]
+
         metrics: Dict[str, Dict[str, Any]] = self.data["metrics"]
         for metric, params in metrics.items():
             # TODO: After deadline, make a get metric method like in AlgorithmRunner
@@ -103,8 +106,8 @@ class EvaluateTeamSetValidator(Validator):
             elif metric == "avg_solo_status":
                 self._validate_solo_status_metric(params)
             elif metric == "common_time_availability":
-                pass
-            elif metric in ["project_coverage", "social_satisfaction"]:
+                self._validate_common_time_availability_metric(params)
+            elif metric in no_params_metrics:
                 continue
             else:
                 raise ValueError(f"Unknown metric {metric}")
@@ -179,13 +182,13 @@ class EvaluateTeamSetValidator(Validator):
         Schema([int]).validate(available_timeslots)
         Schema(int).validate(timeslot_attribute_id)
 
-        if len(available_timeslots) != len(set(available_timeslots)):
+        if is_unique(available_timeslots):
             raise ValueError("available_timeslots contains duplicate timeslots")
 
         # all students' timeslots
         all_students_timeslots = set()
-        for _teams in self.data["team_set"]["teams"]:
-            for _student in _teams["students"]:
+        for _team in self.data["team_set"]["teams"]:
+            for _student in _team["students"]:
                 if timeslot_attribute_id in _student["attributes"]:
                     raise ValueError(
                         f"timeslot_attribute_id {timeslot_attribute_id} is missing in student {_student['id']}"
