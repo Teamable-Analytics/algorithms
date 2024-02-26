@@ -192,11 +192,12 @@ def create_mock_students(
         for attribute_id, attribute_range_config in attribute_ranges.items():
             # We only need to retrieve the num_values per attribute dynamically when ensure_exact_attribute_ratios == False
             if not ensure_exact_attribute_ratios:
+                # assume we pick 1 value per student for this attribute if no explicit value is given
                 num_value_config = num_values_per_attribute.get(attribute_id, None)
                 num_values = (
                     num_values_for_attribute(num_value_config, generator=rng)
-                    if num_value_config
-                    else None
+                    if num_value_config is not None
+                    else 1
                 )
             else:
                 num_values = 1
@@ -235,18 +236,17 @@ def num_values_for_attribute(num_values_config: NumValuesConfig, generator=None)
 
 
 def random_choice(
-    possible_values: List, size=None, replace=False, weights=None, generator=None
+    possible_values: List, size=1, replace=False, weights=None, generator=None
 ) -> List[int]:
     """
     Uses np.random.choice() but always returns a list of int
     (np.random.choice return numpy.int64 if size=1 and ndarray otherwise)
     """
-    if not possible_values:
+    if not possible_values or size == 0:
         return []
 
     _generator = generator or np.random.default_rng()
 
-    size = size or 1
     values = _generator.choice(possible_values, size=size, replace=replace, p=weights)
 
     if size == 1:
