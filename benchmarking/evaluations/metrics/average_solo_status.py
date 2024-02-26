@@ -17,14 +17,14 @@ class AverageSoloStatus(TeamSetMetric):
         as minority.
     """
 
-    def __init__(self, minority_groups_map: Dict[int, List[int]], *args, **kwargs):
+    def __init__(self, minority_groups_map: Dict[int, List[int]] = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.minority_groups_map = minority_groups_map
 
-        if len(minority_groups_map) == 0:
-            raise ValueError("minority_groups cannot be empty")
-
     def calculate(self, team_set: TeamSet) -> float:
+        if self.minority_groups_map is None:
+            raise ValueError("minority_groups_map is not set")
+
         solo_status_students: Set[int] = set()
         total_students = 0
         for team in team_set.teams:
@@ -36,13 +36,12 @@ class AverageSoloStatus(TeamSetMetric):
                         [
                             attr
                             for _student in team.students
-                            for attr in _student.attributes.get(attribute_id)
+                            for attr in _student.attributes.get(attribute_id, [])
                         ]
                     )
-
-                    for attr in student.attributes.get(attribute_id):
+                    for attr in student.attributes.get(attribute_id, []):
                         if (
-                            attr in self.minority_groups_map.get(attribute_id)
+                            attr in self.minority_groups_map.get(attribute_id, [])
                             and all_attribute_values_in_team.get(attr) == 1
                         ):
                             solo_status_students.add(student.id)

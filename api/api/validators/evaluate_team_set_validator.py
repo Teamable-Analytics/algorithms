@@ -139,12 +139,15 @@ class EvaluateTeamSetValidator(Validator):
         )
 
         for attribute in attribute_filter:
-            if attribute not in all_attributes:
+            if str(attribute) not in all_attributes:
                 raise ValueError(
                     f"attribute_filter contains non-existent attribute {attribute}"
                 )
 
     def _validate_solo_status_metric(self, solo_status_metric_params: Dict[str, Any]):
+        if len(solo_status_metric_params) == 0:
+            return
+
         if "minority_groups_map" not in solo_status_metric_params:
             raise SchemaError(
                 "minority_groups_map is missing in solo status metric params"
@@ -155,11 +158,24 @@ class EvaluateTeamSetValidator(Validator):
         if len(minority_groups_map) == 0:
             raise SchemaError("minority_groups_map is empty")
 
-        Schema({int: [int]}).validate(minority_groups_map)
+        Schema({str: [int]}).validate(minority_groups_map)
+
+        # Check if minority_groups_map's keys are parsable to int
+        for map_key, map_value in minority_groups_map.items():
+            try:
+                int(map_key)
+            except ValueError:
+                raise ValueError(f"minority_groups_map contains non-integer key '{map_key}'")
+
+            if len(map_value) == 0:
+                raise ValueError(f"minority_groups_map contains empty value for key '{map_key}'")
 
     def _validate_common_time_availability_metric(
         self, common_time_availability_metric_params: Dict[str, Any]
     ):
+        if len(common_time_availability_metric_params) == 0:
+            return
+
         if "timeslot_attribute_id" not in common_time_availability_metric_params:
             raise SchemaError(
                 "timeslot_attribute_id is missing in common time availability metric params"
@@ -187,12 +203,12 @@ class EvaluateTeamSetValidator(Validator):
         all_students_timeslots = set()
         for _team in self.data["team_set"]["teams"]:
             for _student in _team["students"]:
-                if timeslot_attribute_id in _student["attributes"]:
+                if str(timeslot_attribute_id) not in _student["attributes"]:
                     raise ValueError(
                         f"timeslot_attribute_id {timeslot_attribute_id} is missing in student {_student['id']}"
                     )
                 all_students_timeslots.update(
-                    _student["attributes"][timeslot_attribute_id]
+                    _student["attributes"][str(timeslot_attribute_id)]
                 )
 
         # Check if all students' timeslots are in available_timeslots
