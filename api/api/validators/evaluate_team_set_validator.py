@@ -25,7 +25,7 @@ class EvaluateTeamSetValidator(Validator):
     def validate_team_set(self):
         team_set = self.data.get("team_set", {})
 
-        if "id" in team_set:
+        if "id" in team_set and team_set["id"] is not None:
             Schema(str).validate(team_set["id"])
             # Check if team_set[id] is a number
             try:
@@ -33,7 +33,7 @@ class EvaluateTeamSetValidator(Validator):
             except ValueError:
                 raise ValueError("team_set[id] must be a number")
 
-        if "name" in team_set:
+        if "name" in team_set and team_set["name"] is not None:
             Schema(str).validate(team_set["name"])
 
         Schema(list).validate(team_set["teams"])
@@ -87,7 +87,7 @@ class EvaluateTeamSetValidator(Validator):
         student_ids = [
             student["id"] for team in team_set["teams"] for student in team["students"]
         ]
-        if is_unique(student_ids):
+        if not is_unique(student_ids):
             raise ValueError("team_set[teams] contains duplicate students")
 
     def validate_metrics(self):
@@ -180,7 +180,7 @@ class EvaluateTeamSetValidator(Validator):
         Schema([int]).validate(available_timeslots)
         Schema(int).validate(timeslot_attribute_id)
 
-        if is_unique(available_timeslots):
+        if not is_unique(available_timeslots):
             raise ValueError("available_timeslots contains duplicate timeslots")
 
         # all students' timeslots
