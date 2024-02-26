@@ -16,7 +16,7 @@ class StudentSerializer(JSONEncoder, ModelDecoder):
         if not isinstance(student, Student):
             raise TypeError("Object is not a student instance.")
         return {
-            "_id": student._id,
+            "id": student.id,
             "name": student.name,
             "attributes": student.attributes,
             "relationships": {

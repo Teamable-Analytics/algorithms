@@ -1,2 +1,3 @@
 from .generate_teams import GenerateTeamsViewSet
 from .evaluate_team_set import EvaluateTeamSetViewSet
+from .simulate_people import SimulatePeopleViewSet
