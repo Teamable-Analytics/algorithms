@@ -19,11 +19,16 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from api.api.views import GenerateTeamsViewSet, SimulatePeopleViewSet
+from api.api.views import (
+    GenerateTeamsViewSet,
+    EvaluateTeamSetViewSet,
+    SimulatePeopleViewSet,
+)
 
 router = DefaultRouter()
 
 router.register(r"generate", GenerateTeamsViewSet, basename="generate_teams")
+router.register(r"evaluate", EvaluateTeamSetViewSet, basename="evaluate")
 router.register(r"simulate", SimulatePeopleViewSet, basename="simulate_people")
 
 urlpatterns = [
