@@ -18,9 +18,13 @@ from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStat
 from benchmarking.evaluations.metrics.average_timeslot_coverage import (
     AverageTimeslotCoverage,
 )
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference, AverageCosineSimilarity
+from benchmarking.evaluations.metrics.cosine_similarity import (
+    AverageCosineDifference,
+    AverageCosineSimilarity,
+)
 from benchmarking.evaluations.metrics.utils.team_calculations import (
-    is_happy_team_allhp_friend, is_happy_team_1hp_friend,
+    is_happy_team_allhp_friend,
+    is_happy_team_1hp_friend,
 )
 
 
@@ -76,16 +80,24 @@ class EvaluateTeamSetViewSet(viewsets.GenericViewSet):
                 error=str(e), data_label=self.data_label, status=500
             )
 
-def _load_metric_params(metric_name: str, metric_params: Dict[str, Any]) -> Dict[str, Any]:
+
+def _load_metric_params(
+    metric_name: str, metric_params: Dict[str, Any]
+) -> Dict[str, Any]:
     if metric_name == "avg_solo_status" and "minority_groups_map" in metric_params:
-        minority_groups_map = {int(k): v for k, v in metric_params["minority_groups_map"].items()}
+        minority_groups_map = {
+            int(k): v for k, v in metric_params["minority_groups_map"].items()
+        }
         return {"minority_groups_map": minority_groups_map}
 
-    if metric_name == "common_time_availability" and "available_timeslots" in metric_params:
+    if (
+        metric_name == "common_time_availability"
+        and "available_timeslots" in metric_params
+    ):
         available_timeslots = list(map(int, metric_params["available_timeslots"]))
         return {
             "available_timeslots": available_timeslots,
-            "timeslot_attribute_id": int(metric_params["timeslot_attribute_id"])
+            "timeslot_attribute_id": int(metric_params["timeslot_attribute_id"]),
         }
 
     return metric_params

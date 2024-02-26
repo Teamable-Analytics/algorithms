@@ -17,7 +17,9 @@ class AverageSoloStatus(TeamSetMetric):
         as minority.
     """
 
-    def __init__(self, minority_groups_map: Dict[int, List[int]] = None, *args, **kwargs):
+    def __init__(
+        self, minority_groups_map: Dict[int, List[int]] = None, *args, **kwargs
+    ):
         super().__init__(*args, **kwargs)
         self.minority_groups_map = minority_groups_map
 

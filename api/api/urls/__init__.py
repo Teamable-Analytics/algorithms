@@ -19,7 +19,11 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from api.api.views import GenerateTeamsViewSet, EvaluateTeamSetViewSet, SimulatePeopleViewSet
+from api.api.views import (
+    GenerateTeamsViewSet,
+    EvaluateTeamSetViewSet,
+    SimulatePeopleViewSet,
+)
 
 router = DefaultRouter()
 

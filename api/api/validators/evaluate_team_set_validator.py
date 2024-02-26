@@ -165,10 +165,14 @@ class EvaluateTeamSetValidator(Validator):
             try:
                 int(map_key)
             except ValueError:
-                raise ValueError(f"minority_groups_map contains non-integer key '{map_key}'")
+                raise ValueError(
+                    f"minority_groups_map contains non-integer key '{map_key}'"
+                )
 
             if len(map_value) == 0:
-                raise ValueError(f"minority_groups_map contains empty value for key '{map_key}'")
+                raise ValueError(
+                    f"minority_groups_map contains empty value for key '{map_key}'"
+                )
 
     def _validate_common_time_availability_metric(
         self, common_time_availability_metric_params: Dict[str, Any]
