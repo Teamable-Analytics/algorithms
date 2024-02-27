@@ -152,4 +152,6 @@ class BowensDataProvider2(StudentProvider):
         return [students[i] for i in order]
 
     def get_student(self, sid: int):
+        if len(self._sid_map) == 0:
+            self.get()
         return self._sid_map[sid]
