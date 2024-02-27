@@ -4,12 +4,14 @@ import typer
 
 from api.ai.interfaces.algorithm_config import WeightAlgorithmConfig
 from api.models.enums import AlgorithmType, DiversifyType
-from benchmarking.data.simulated_data.mock_student_provider import MockStudentProvider
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.weight_run_for_bowen.bowens_data_provider import ATTRIBUTE_VALUE, BowensDataProvider
+from benchmarking.runs.weight_run_for_bowen.bowens_data_provider import (
+    ATTRIBUTE_VALUE,
+    BowensDataProvider,
+)
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
@@ -28,17 +30,17 @@ class WeightRun(Run):
                 num_teams=13,
                 scenario=scenario,
                 student_provider=BowensDataProvider(),
-                cache_key=f"priority_algorithm/weight_run_for_bowen/weight_run_2/",
+                cache_key=f"priority_algorithm/weight_run_for_bowen/weight_run/",
             ),
-            algorithm_set={
-                AlgorithmType.WEIGHT: [WeightAlgorithmConfig()]
-            },
+            algorithm_set={AlgorithmType.WEIGHT: [WeightAlgorithmConfig()]},
         ).run(num_runs=num_trials)
 
         insight_output_set = Insight.get_output_set(artifact, list(metrics.values()))
-        cosine_differences = Insight.average_metric(insight_output_set, "AverageCosineDifference")
+        print(insight_output_set)
+        cosine_differences = Insight.average_metric(
+            insight_output_set, "AverageCosineDifference"
+        )
         print(cosine_differences)
-
 
 
 class BowenScenario(Scenario):
@@ -54,5 +56,5 @@ class BowenScenario(Scenario):
         ]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     typer.run(WeightRun().start)
