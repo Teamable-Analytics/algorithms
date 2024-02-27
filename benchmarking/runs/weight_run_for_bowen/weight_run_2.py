@@ -43,7 +43,7 @@ class WeightRun(Run):
                 num_teams=ceil(student_provider.num_students / 4),
                 scenario=scenario,
                 student_provider=student_provider,
-                cache_key=f"priority_algorithm/weight_run_for_bowen/weight_run_2/",
+                cache_key=f"weight_run_for_bowen/weight_run_2/",
             ),
             algorithm_set={
                 AlgorithmType.PRIORITY: [
@@ -108,7 +108,7 @@ class WeightRun(Run):
                     "Yes"
                     if tutor_preference == 3
                     and (
-                        (group_size == 1 and team_size != 1)
+                        (group_size == 1 and team_size != 2)
                         or (group_size == 2 and (team_size > 4 or team_size < 3))
                         or (group_size == 3 and team_size < 4)
                     )

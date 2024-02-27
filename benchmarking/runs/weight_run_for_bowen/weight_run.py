@@ -18,7 +18,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class WeightRun(Run):
-    def start(self, num_trials: int = 10, generate_graphs: bool = True):
+    def start(self, num_trials: int = 1, generate_graphs: bool = True):
         scenario = BowenScenario()
 
         metrics = {
@@ -30,7 +30,7 @@ class WeightRun(Run):
                 num_teams=13,
                 scenario=scenario,
                 student_provider=BowensDataProvider(),
-                cache_key=f"priority_algorithm/weight_run_for_bowen/weight_run/",
+                cache_key=f"weight_run_for_bowen/weight_run/",
             ),
             algorithm_set={AlgorithmType.WEIGHT: [WeightAlgorithmConfig()]},
         ).run(num_runs=num_trials)
