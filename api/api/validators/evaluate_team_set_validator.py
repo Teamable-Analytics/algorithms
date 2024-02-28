@@ -12,7 +12,9 @@ class EvaluateTeamSetValidator(Validator):
     def validate(self):
         self._validate_schema()
         self.validate_team_set()
+        print(3)
         self.validate_metrics()
+        print(4)
 
     def _validate_schema(self):
         Schema(
@@ -24,7 +26,6 @@ class EvaluateTeamSetValidator(Validator):
 
     def validate_team_set(self):
         team_set = self.data.get("team_set", {})
-
         if "id" in team_set and team_set["id"] is not None:
             Schema(str).validate(team_set["id"])
             # Check if team_set[id] is a number
@@ -33,7 +34,8 @@ class EvaluateTeamSetValidator(Validator):
             except ValueError:
                 raise ValueError("team_set[id] must be a number")
 
-        Schema(Or(str, None)).validate(Optional(team_set["name"]))
+        if "name" in team_set and team_set["name"] is not None:
+            Schema(str).validate(team_set["name"])
 
         Schema(list).validate(team_set["teams"])
 
