@@ -12,9 +12,7 @@ class EvaluateTeamSetValidator(Validator):
     def validate(self):
         self._validate_schema()
         self.validate_team_set()
-        print(3)
         self.validate_metrics()
-        print(4)
 
     def _validate_schema(self):
         Schema(
