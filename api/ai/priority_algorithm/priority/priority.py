@@ -1,9 +1,14 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from schema import And, Or, Schema
 
 from api.ai.priority_algorithm.priority.interfaces import Priority
+from api.ai.priority_algorithm.priority.utils import (
+    infer_possible_values,
+    int_dot_product,
+    student_attribute_binary_vector,
+)
 from api.ai.weight_algorithm.utility.diversity_utility import _blau_index
 from api.models.enums import (
     DiversifyType,
@@ -136,15 +141,46 @@ class TokenizationPriority(Priority):
 class DiversityPriority(Priority):
     attribute_id: int
     strategy: DiversifyType
+    # the max number of values a student can have for the attribute_id
+    max_num_choices: Optional[int] = None
 
     def validate(self):
         super().validate()
+        if self.strategy == DiversifyType.CONCENTRATE and not self.max_num_choices:
+            raise ValueError(
+                "max_num_choices must be specified with strategy == CONCENTRATE and cannot be 0."
+            )
 
     def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
-        blau_index = _blau_index(students, self.attribute_id)
-        return (
-            blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)
-        )
+        if self.strategy == DiversifyType.CONCENTRATE:
+            if len(students) == 0:
+                return 0
+
+            possible_attribute_values = infer_possible_values(
+                students, self.attribute_id
+            )
+            dot_products = []  # will have length of (num students)choose(2)
+            for student_i in students:
+                for student_j in students:
+                    if student_i.id == student_j.id:
+                        break
+                    dot_product = int_dot_product(
+                        student_attribute_binary_vector(
+                            student_i, self.attribute_id, possible_attribute_values
+                        ),
+                        student_attribute_binary_vector(
+                            student_j, self.attribute_id, possible_attribute_values
+                        ),
+                    )
+                    dot_products.append(dot_product)
+
+            if len(dot_products) == 0:
+                return 0
+
+            return sum(dot_products) / (len(dot_products) * self.max_num_choices)
+
+        if self.strategy == DiversifyType.DIVERSIFY:
+            return _blau_index(students, self.attribute_id)
 
     @staticmethod
     def get_schema() -> Schema:

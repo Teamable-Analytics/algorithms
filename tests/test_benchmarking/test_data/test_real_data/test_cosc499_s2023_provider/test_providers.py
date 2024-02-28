@@ -2,27 +2,26 @@ import unittest
 from typing import List
 
 from api.models.student import Student
-from api.models.team import Team
-from benchmarking.data.real_data.cosc341_w2022_provider.providers import (
-    COSC341W2021T2StudentProvider,
-    COSC341W2021T2InitialTeamsProvider,
+from api.models.team_set import TeamSet
+from benchmarking.data.real_data.cosc499_s2023_provider.providers import (
+    COSC499S2023StudentProvider,
+    COSC499S2023InitialTeamConfigurationProvider,
 )
 
 
-class TestCOSC341W2021T2InitialTeamsProvider(unittest.TestCase):
+class TestCOSC499S2023InitialTeamConfigurationProvider(unittest.TestCase):
     def test_get__returns_correct_type(self):
-        teams = COSC341W2021T2InitialTeamsProvider().get()
+        team_set = COSC499S2023InitialTeamConfigurationProvider().get()
 
-        self.assertIsInstance(teams, List)
-        self.assertIsInstance(teams[0], Team)
+        self.assertIsInstance(team_set, TeamSet)
 
     def test_get__teams_contains_all_students_once(self):
-        teams = COSC341W2021T2InitialTeamsProvider().get()
+        team_set = COSC499S2023InitialTeamConfigurationProvider().get()
         teams_students = []
-        for team in teams:
+        for team in team_set.teams:
             teams_students.extend(team.students)
 
-        students = COSC341W2021T2StudentProvider().get()
+        students = COSC499S2023StudentProvider().get()
 
         self.assertEqual(len(students), len(teams_students))
         ids = [_.id for _ in students]
@@ -31,9 +30,9 @@ class TestCOSC341W2021T2InitialTeamsProvider(unittest.TestCase):
         self.assertListEqual(sorted(ids), sorted(teams_ids))
 
 
-class TestCOSC341W2021T2StudentProvider(unittest.TestCase):
+class TestCOSC499S2023StudentProvider(unittest.TestCase):
     def setUp(self) -> None:
-        self.provider = COSC341W2021T2StudentProvider()
+        self.provider = COSC499S2023StudentProvider()
 
     def test_get__returns_correct_type(self):
         students = self.provider.get()
@@ -66,5 +65,5 @@ class TestCOSC341W2021T2StudentProvider(unittest.TestCase):
     def test_num_students__is_same_as_len_of_get(self):
         self.assertEqual(self.provider.num_students, len(self.provider.get()))
 
-    def test_max_project_preferences_per_student__is_zero(self):
-        self.assertEqual(0, self.provider.max_project_preferences_per_student)
+    def test_max_project_preferences_per_student__is_three(self):
+        self.assertEqual(3, self.provider.max_project_preferences_per_student)
