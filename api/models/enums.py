@@ -142,14 +142,6 @@ class CampusLocation(AttributeValueEnum):
     Vancouver = 2
 
 
-class YearLevel(AttributeValueEnum):
-    First = 1
-    Second = 2
-    Third = 3
-    Fourth = 4
-    Graduate = 5
-
-
 # From paper: https://sigcse2023.sigcse.org/details/sigcse-ts-2023-papers/163/Inclusive-study-group-formation-at-scale
 class AlRace(AttributeValueEnum):
     White = "White"
