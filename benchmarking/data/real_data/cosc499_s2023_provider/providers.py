@@ -5,11 +5,12 @@ from typing import List
 import numpy as np
 
 from api.models.student import Student, StudentSerializer
-from api.models.team import TeamSerializer
+from api.models.team import TeamSerializer, TeamShell
 from api.models.team_set import TeamSet
 from benchmarking.data.interfaces import (
     StudentProvider,
     TeamConfigurationProvider,
+    InitialTeamsProvider,
 )
 
 
@@ -24,6 +25,14 @@ class COSC499S2023InitialTeamConfigurationProvider(TeamConfigurationProvider):
             json_data = json.load(f)
             teams = [TeamSerializer().decode(team) for team in json_data["teams"]]
         return TeamSet(teams=teams)
+
+
+class COSC499S2023InitialTeamsProvider(InitialTeamsProvider):
+    def get(self) -> List[TeamShell]:
+        return [
+            t.to_shell()
+            for t in COSC499S2023InitialTeamConfigurationProvider().get().teams
+        ]
 
 
 class COSC499S2023StudentProvider(StudentProvider):

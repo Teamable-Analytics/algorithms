@@ -12,21 +12,6 @@ from api.models.team_set.serializer import TeamSetSerializer
 class GenerateTeamsViewSet(viewsets.GenericViewSet):
     @action(url_path="teams", detail=False, methods=["POST"])
     def generate_teams(self, request):
-        """
-        Steps to do this:
-        0. Permissions/access/api keys/etc
-        1. Read JSON
-            1.1. Parse to dict
-            1.2. Throw error if invalid JSON
-                1.2.1 API layer validation (i.e. cannot say you're using priority_algorithm and pass the options for the weight algorithm)
-        2. Encode data from JSON to the correct Dataclasses (hopefully can import?)
-            2.1. Validate dataclasses (so logical validation of values)
-        3. Feed dataclasses to algorithm
-            3.1. Determine which algorithm to use
-        4. Run algorithm
-        5. Serialize algorithm's output (TeamSet) to JSON
-        6. Return JSON to a happy user :) 🚀!
-        """
         try:
             request_data = dict(request.data)
 
@@ -43,8 +28,10 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
             team_set = runner.generate(input_data.students)
 
             serialized_team_set = TeamSetSerializer().default(team_set)
-            return ResponseWithMetadata(data=serialized_team_set, status=200)
+            return ResponseWithMetadata(
+                data=serialized_team_set, data_label="teams", status=200
+            )
         except SchemaError as e:
-            return ResponseWithMetadata(error=str(e), status=400)
+            return ResponseWithMetadata(error=str(e), data_label="teams", status=400)
         except Exception as e:
-            return ResponseWithMetadata(error=str(e), status=500)
+            return ResponseWithMetadata(error=str(e), data_label="teams", status=500)
