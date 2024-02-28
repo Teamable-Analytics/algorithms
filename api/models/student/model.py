@@ -74,7 +74,7 @@ class Student:
             ),
             "Will you be on the Berkeley campus": "Yes",  # No remote students
             "Which of these options best describes your race?": fromRaceToAlRace(
-                Race(self.attributes.get(ScenarioAttribute.RACE.value, [ Race.Other ])[0])
+                Race(self.attributes.get(ScenarioAttribute.RACE.value, [Race.Other])[0])
             ).value,
             "How do you self-identify?": fromGenderToAlGender(
                 Gender(self.attributes[ScenarioAttribute.GENDER.value][0])
