@@ -10,7 +10,7 @@ class TeamSetSerializer(JSONEncoder, ModelDecoder):
     def default(self, team_set: TeamSet) -> Dict[str, Any]:
         team_serializer = TeamSerializer()
         teams = [team_serializer.default(team) for team in team_set.teams]
-        return {"_id": team_set._id, "name": team_set.name, "teams": teams}
+        return {"id": team_set.id, "name": team_set.name, "teams": teams}
 
     def decode(self, json_dict: Dict[str, Any]) -> TeamSet:
         team_serializer = TeamSerializer()

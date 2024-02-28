@@ -16,7 +16,7 @@ class TeamSerializer(JSONEncoder, ModelDecoder):
         ]
         students = [student_serializer.default(student) for student in team.students]
         return {
-            "_id": team._id,
+            "id": team.id,
             "name": team.name,
             "project_id": team.project_id,
             "requirements": requirements,
