@@ -1,20 +1,23 @@
 import math
 import os
-from typing import Dict
+from typing import Dict, List
 
 import typer
 
 from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     WeightAlgorithmConfig,
-    RandomAlgorithmConfig,
     GroupMatcherAlgorithmConfig,
+    RandomAlgorithmConfig,
 )
-from api.models.enums import AlgorithmType, ScenarioAttribute, Gender
+from api.models.enums import AlgorithmType, ScenarioAttribute, Gender, DiversifyType, TokenizationConstraintDirection
+from api.models.tokenization_constraint import TokenizationConstraint
 from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
     COSC341W2021T2AnsweredSurveysStudentProvider,
 )
+from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
+from benchmarking.evaluations.interfaces import Scenario
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 from benchmarking.evaluations.metrics.average_timeslot_coverage import (
     AverageTimeslotCoverage,
@@ -23,8 +26,9 @@ from benchmarking.evaluations.metrics.cosine_similarity import (
     AverageCosineDifference,
 )
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_all_min_2_diversify_student_level import (
-    ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel,
+from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_gender_min_2_and_diversify_year_level import (
+    ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel,
+    DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel,
 )
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
@@ -33,21 +37,24 @@ from benchmarking.simulation.simulation_set import SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class Scenario2(Run):
-    TEAM_SIZE = 4
+class Scenario3(Run):
+    TEAM_SIZE = 6
     """
-    This run focuses on the scenario of concentrating timeslots, diversifying all genders with min 2 
-    (female > non-binary > male > no answer), and diversifying based on year level (third year vs. graduate students).
+    This run focuses on the scenario of concentrating timeslots, diversifying females with min 2, and diversifying based 
+    on year level (third year vs. graduate students) and team size 6.
     """
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
-        scenario = ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel(
+        scenario_1 = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(
+            max_num_choices=6
+        )
+        scenario_2 = DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel(
             max_num_choices=6
         )
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
-                goals_to_priorities(scenario.goals),
+                goals_to_priorities(scenario_1.goals),
                 False,
             ),
             "AverageTimeslotCoverage": AverageTimeslotCoverage(
@@ -63,22 +70,29 @@ class Scenario2(Run):
             ),
             "AverageSoloStatus": AverageSoloStatus(
                 minority_groups={
-                    ScenarioAttribute.GENDER.value: [gender.value for gender in Gender],
+                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
                 }
             ),
         }
 
-        cache_key = "real_data/cosc_341/scenario2"
         student_provider = COSC341W2021T2AnsweredSurveysStudentProvider()
-        simulation_settings = SimulationSettings(
+        cache_key = "real_data/cosc_341/scenario3"
+        simulation_settings_1 = SimulationSettings(
             num_teams=math.ceil(175 / self.TEAM_SIZE),
             student_provider=student_provider,
-            scenario=scenario,
+            scenario=scenario_1,
+            cache_key=cache_key,
+        )
+
+        simulation_settings_2 = SimulationSettings(
+            num_teams=math.ceil(175 / self.TEAM_SIZE),
+            student_provider=student_provider,
+            scenario=scenario_2,
             cache_key=cache_key,
         )
 
         artifacts = SimulationSet(
-            settings=simulation_settings,
+            settings=simulation_settings_1,
             algorithm_set={
                 AlgorithmType.WEIGHT: [
                     WeightAlgorithmConfig(),
@@ -106,7 +120,7 @@ class Scenario2(Run):
 
         artifacts.update(
             SimulationSet(
-                settings=simulation_settings,
+                settings=simulation_settings_1,
                 algorithm_set={
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
@@ -114,6 +128,23 @@ class Scenario2(Run):
                             MAX_KEEP=30,
                             MAX_SPREAD=100,
                             MAX_ITERATE=250,
+                        ),
+                    ],
+                },
+            ).run(num_runs=num_trials)
+        )
+
+        artifacts.update(
+            SimulationSet(
+                settings=simulation_settings_2,
+                algorithm_set={
+                    AlgorithmType.PRIORITY: [
+                        PriorityAlgorithmConfig(
+                            MAX_TIME=1000000,
+                            MAX_KEEP=30,
+                            MAX_SPREAD=100,
+                            MAX_ITERATE=250,
+                            name="Switched Order Priority",
                         ),
                     ],
                     AlgorithmType.RANDOM: [
@@ -200,6 +231,5 @@ class Scenario2(Run):
             print()
 
 
-
 if __name__ == "__main__":
-    typer.run(Scenario2().start)
+    typer.run(Scenario3().start)
