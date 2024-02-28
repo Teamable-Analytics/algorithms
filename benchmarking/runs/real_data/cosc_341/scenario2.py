@@ -23,7 +23,7 @@ from benchmarking.evaluations.metrics.cosine_similarity import (
     AverageCosineDifference,
 )
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_all_min_2_diversify_student_level import (
+from benchmarking.evaluations.scenarios.cosc341.concentrate_timeslot_diversify_all_min_2_diversify_student_level import (
     ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel,
 )
 from benchmarking.runs.interfaces import Run
@@ -41,9 +41,7 @@ class Scenario2(Run):
     """
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
-        scenario = ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel(
-            max_num_choices=6
-        )
+        scenario = ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel()
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
@@ -198,7 +196,6 @@ class Scenario2(Run):
                     )
                 print(f",{sum(cosine_diffs) / len(cosine_diffs)}", end="")
             print()
-
 
 
 if __name__ == "__main__":

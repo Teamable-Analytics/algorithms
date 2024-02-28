@@ -22,8 +22,10 @@ from benchmarking.evaluations.metrics.cosine_similarity import (
     AverageCosineDifference,
 )
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.concentrate_timeslot_concentrate_gender_diversify_year_level import \
-    ConcentrateTimeslotConcentrateGenderDiversifyYearLevel, ConcentrateGenderConcentrateTimeslotDiversifyYearLevel
+from benchmarking.evaluations.scenarios.cosc341.concentrate_timeslot_concentrate_gender_diversify_year_level import (
+    ConcentrateTimeslotConcentrateGenderDiversifyYearLevel,
+    ConcentrateGenderConcentrateTimeslotDiversifyYearLevel,
+)
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
@@ -39,12 +41,8 @@ class Scenario4(Run):
     """
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
-        scenario_1 = ConcentrateTimeslotConcentrateGenderDiversifyYearLevel(
-            max_num_choices=6
-        )
-        scenario_2 = ConcentrateGenderConcentrateTimeslotDiversifyYearLevel(
-            max_num_choices=6
-        )
+        scenario_1 = ConcentrateTimeslotConcentrateGenderDiversifyYearLevel()
+        scenario_2 = ConcentrateGenderConcentrateTimeslotDiversifyYearLevel()
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(

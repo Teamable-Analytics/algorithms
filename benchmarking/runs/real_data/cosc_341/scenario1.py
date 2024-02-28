@@ -23,7 +23,7 @@ from benchmarking.evaluations.metrics.cosine_similarity import (
     AverageCosineDifference,
 )
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_gender_min_2_and_diversify_year_level import (
+from benchmarking.evaluations.scenarios.cosc341.concentrate_timeslot_diversify_gender_min_2_and_diversify_year_level import (
     ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel,
     DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel,
 )
@@ -42,12 +42,8 @@ class Scenario1(Run):
     """
 
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
-        scenario_1 = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(
-            max_num_choices=6
-        )
-        scenario_2 = DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel(
-            max_num_choices=6
-        )
+        scenario_1 = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel()
+        scenario_2 = DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel()
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
