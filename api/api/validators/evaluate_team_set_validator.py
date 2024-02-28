@@ -33,8 +33,7 @@ class EvaluateTeamSetValidator(Validator):
             except ValueError:
                 raise ValueError("team_set[id] must be a number")
 
-        if "name" in team_set and team_set["name"] is not None:
-            Schema(str).validate(team_set["name"])
+        Schema(Or(str, None)).validate(Optional(team_set["name"]))
 
         Schema(list).validate(team_set["teams"])
 
@@ -42,8 +41,8 @@ class EvaluateTeamSetValidator(Validator):
             [
                 {
                     "id": int,
-                    Optional("name"): str,
-                    Optional("project_id"): int,
+                    Optional("name"): Or(str, None),
+                    Optional("project_id"): Or(int, None),
                     Optional("requirements"): [
                         {
                             "attribute": int,
@@ -65,7 +64,6 @@ class EvaluateTeamSetValidator(Validator):
                                                 get_relationship_str(relationship)
                                                 for relationship in Relationship
                                             ]
-                                            + [float, int]
                                         )
                                     )
                                 },

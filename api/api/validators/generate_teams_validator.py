@@ -272,8 +272,8 @@ class GenerateTeamsValidator(Validator):
                 "initial_teams": [
                     {
                         "id": int,
-                        Optional("name"): str,
-                        Optional("project_id"): int,
+                        Optional("name"): Or(str, None),
+                        Optional("project_id"): Or(int, None),
                         Optional("requirements"): [
                             {
                                 "attribute": int,
