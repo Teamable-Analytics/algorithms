@@ -10,13 +10,6 @@ from benchmarking.evaluations.interfaces import Scenario, Goal
 
 class ConcentrateTimeslotConcentrateGenderDiversifyYearLevel(Scenario):
     # This scenario concentrates timeslot, concentrates gender, and diversifies year level.
-    def __init__(
-        self,
-        max_num_choices: int,
-    ):
-        super().__init__()
-        self.max_num_choices = max_num_choices
-
     @property
     def name(self):
         return (
@@ -29,7 +22,7 @@ class ConcentrateTimeslotConcentrateGenderDiversifyYearLevel(Scenario):
             DiversityGoal(
                 DiversifyType.CONCENTRATE,
                 ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
-                max_num_choices=self.max_num_choices,
+                max_num_choices=6,
             ),
             DiversityGoal(
                 DiversifyType.CONCENTRATE,
@@ -48,13 +41,6 @@ class ConcentrateTimeslotConcentrateGenderDiversifyYearLevel(Scenario):
 class ConcentrateGenderConcentrateTimeslotDiversifyYearLevel(Scenario):
     # This scenario concentrates gender, concentrates timeslot, and diversifies year level.
     # It is the same as the above with a slightly different ordering.
-    def __init__(
-        self,
-        max_num_choices: int,
-    ):
-        super().__init__()
-        self.max_num_choices = max_num_choices
-
     @property
     def name(self):
         return (
@@ -67,12 +53,12 @@ class ConcentrateGenderConcentrateTimeslotDiversifyYearLevel(Scenario):
             DiversityGoal(
                 DiversifyType.CONCENTRATE,
                 ScenarioAttribute.GENDER.value,
-                max_num_choices=1,
+                max_num_choices=6,
             ),
             DiversityGoal(
                 DiversifyType.CONCENTRATE,
                 ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
-                max_num_choices=self.max_num_choices,
+                max_num_choices=6,
             ),
             DiversityGoal(
                 DiversifyType.DIVERSIFY,
