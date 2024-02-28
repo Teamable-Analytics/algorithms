@@ -31,7 +31,7 @@ def line_graph(graph_data: LineGraphMetadata):
         raise ValueError("There is no data to graph")
 
     # Graphing
-    fig, ax = plt.subplots(figsize=(9, 5), squeeze=False)
+    fig, ax = plt.subplots(figsize=(9, 7), squeeze=False)
     legends = []
     line_styles: List[Tuple[int, Tuple[int, ...]]] = [
         (0, ()),  # solid
@@ -77,8 +77,27 @@ def line_graph(graph_data: LineGraphMetadata):
         )
 
     # Graph format
+    # legend = plt.legend(
+    #     legends, bbox_to_anchor=(1.05, 1), loc="upper left", edgecolor="none"
+    # )
+    # Legend should be below xlabel and spread across the graph
+    # legend = plt.legend(
+    #     legends,
+    #     bbox_to_anchor=(0.5, -0.15),
+    #     loc="upper center",
+    #     edgecolor="none",
+    #     ncol=5,
+    #     # Make the space between columns less
+    #     columnspacing=0.5,
+    # )
+    # Legend should be inside the graph on top right, 1 column
     legend = plt.legend(
-        legends, bbox_to_anchor=(1.05, 1), loc="upper left", edgecolor="none"
+        legends,
+        loc="upper right",
+        edgecolor="none",
+        ncol=1,
+        # Bigger legend
+        fontsize=12,
     )
     legend.get_frame().set_alpha(None)
     legend.get_frame().set_facecolor("white")

@@ -1,4 +1,5 @@
 import csv
+import itertools
 import os
 import time
 from pathlib import Path
@@ -12,6 +13,7 @@ from api.ai.interfaces.algorithm_options import GroupMatcherAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.models.enums import ScenarioAttribute, fromAlRaceToRace, fromAlGenderToGender
 from api.models.student import Student
+from api.models.team import Team
 from api.models.team_set import TeamSet
 
 
@@ -38,14 +40,15 @@ class GroupMatcherAlgorithm(Algorithm):
             Path(self.group_matcher_run_path).parent / "example_config.py"
         )
 
-        self.team_trace = {team.id: team for team_idx, team in enumerate(self.teams)}
+        self.team_trace = {team_idx + 1: team for team_idx, team in enumerate(self.teams)}
+        self.team_cycler = itertools.cycle(self.teams)
 
         if not self.csv_input_path.parent.exists():
             self.csv_input_path.parent.mkdir(parents=True)
 
-    def prepare(self, students: List[Student]) -> None:
+    def pre_prepare(self, students: List[Student]) -> None:
         student_data = [student.to_group_matcher_data_format() for student in students]
-        self.student_trace = {student.id: student for student in students}
+        self.student_trace = { student.id: student for student in students }
         with open(self.csv_input_path, "w") as csvfile:
             writer = csv.DictWriter(
                 csvfile, fieldnames=student_data[0].keys(), delimiter=";"
@@ -59,14 +62,28 @@ class GroupMatcherAlgorithm(Algorithm):
         os.system(cmd)
 
         # Read the output csv file and create a TeamSet
+        while not self.outpath.exists():
+            print("Not found file " + str(self.outpath))
+            time.sleep(1)
         df = pd.read_csv(self.outpath)
         for _, row in df.iterrows():
             student_id = row["sid"]
-            self.team_trace[int(row["group_num"]) + 1].add_student(
-                self.student_trace[student_id]
-            )
+            group_num = int(row["group_num"]) + 1
+            if group_num not in self.team_trace.keys():
+                new_team_attributes = self.team_cycler.__next__()
+                new_team = Team(
+                    _id=len(self.team_trace) + 1,
+                    name=f"Team {len(self.team_trace) + 1}",
+                    requirements=new_team_attributes.requirements,
+                    project_id=new_team_attributes.project_id,
+                    students=[],
+                )
+                self.team_trace[int(row["group_num"]) + 1] = new_team
 
-        # Unlink after finish
-        self.outpath.unlink()
+            student = self.student_trace[student_id]
+            team = self.team_trace[int(row["group_num"]) + 1]
+
+            student.add_team(team)
+            team.add_student(student)
 
         return TeamSet(teams=[team for team in self.teams if len(team.students) > 0])

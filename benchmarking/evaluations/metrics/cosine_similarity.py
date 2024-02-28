@@ -59,9 +59,8 @@ class AverageCosineSimilarity(TeamSetMetric):
 
         return statistics.mean(similarities)
 
-    @staticmethod
-    def calculate_stdev(team_set: TeamSet) -> float:
-        class_attributes = ClassAttributeSet(team_set)
+    def calculate_stdev(self, team_set: TeamSet) -> float:
+        class_attributes = ClassAttributeSet(team_set, self.attribute_filter)
 
         similarities = team_cosine_similarities(team_set.teams, class_attributes)
 
@@ -102,6 +101,8 @@ def cosine_similarity(
         raise ValueError("Vectors must be the same length")
     if len(v1) == 0 or len(v2) == 0:
         raise ValueError("Vectors must not be empty")
+    if norm(v1) == 0 or norm(v2) == 0:
+        return 0
     return dot(v1, v2) / (norm(v1) * norm(v2))
 
 
@@ -122,9 +123,8 @@ class AverageCosineDifference(TeamSetMetric):
 
         return statistics.mean([1 - similarity for similarity in similarities])
 
-    @staticmethod
-    def calculate_stdev(team_set: TeamSet) -> float:
-        class_attributes = ClassAttributeSet(team_set)
+    def calculate_stdev(self, team_set: TeamSet) -> float:
+        class_attributes = ClassAttributeSet(team_set, self.attribute_filter)
 
         similarities = team_cosine_similarities(team_set.teams, class_attributes)
 

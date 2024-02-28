@@ -37,7 +37,7 @@ class TimeslotCustomStudentProvider(StudentProvider):
                 attribute_ranges={
                     ScenarioAttribute.GENDER.value: [
                         (Gender.FEMALE, self.ratio_of_female_students),
-                        (Gender.FEMALE, 1 - self.ratio_of_female_students),
+                        (Gender.MALE, 1 - self.ratio_of_female_students),
                     ],
                     ScenarioAttribute.YEAR_LEVEL.value: [
                         (0, 0.3),
@@ -57,7 +57,7 @@ class TimeslotCustomStudentProvider(StudentProvider):
         # Add timeslot values
         rng = np.random.default_rng(seed=seed)
         for student in students:
-            num_time_slots = int(rng.random() * 3) + 3
+            num_time_slots = int(rng.random() * 3) + 3 # 3-5 timeslots
             timeslots = rng.choice(range(10), num_time_slots, replace=False)
             student.attributes[
                 ScenarioAttribute.TIMESLOT_AVAILABILITY.value

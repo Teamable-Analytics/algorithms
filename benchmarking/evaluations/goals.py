@@ -26,7 +26,7 @@ class DiversityGoal(Goal):
         ):
             self.max_num_choices = (
                 self.max_num_choices or 1
-            )  # setting the default when needed
+            )  # setting the default when needed, OR used because value cannot be 0
         # calls the super method after so that the validate method is processed after this default is set
         super().__post_init__()
 
@@ -41,7 +41,7 @@ class DiversityGoal(Goal):
             and not self.max_num_choices
         ):
             raise ValueError(
-                "max_choices must be specified with strategy == CONCENTRATE and cannot be 0."
+                "max_num_choices must be specified with strategy == CONCENTRATE and cannot be 0."
             )
 
 
