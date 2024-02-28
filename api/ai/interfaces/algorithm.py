@@ -87,6 +87,12 @@ class Algorithm(ABC):
 
         return initial_teams
 
+    def pre_prepare(self, students: List[Student]) -> None:
+        pass
+
+    def clean_up(self) -> None:
+        pass
+
 
 class ChooseAlgorithm(Algorithm):
     @abstractmethod

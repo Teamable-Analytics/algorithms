@@ -91,6 +91,7 @@ class Simulation:
             SimulationCache.create_fragment_parent_dir(self.settings.cache_key)
 
         num_processes = max(1, os.cpu_count() - 2)
+        # num_processes = 1
         num_runs_per_worker = chunk(num_runs, num_processes)
 
         # Calculate the run indexes that need to be run by each worker
@@ -156,9 +157,11 @@ def run_trial_batch(
             else:
                 students = settings.student_provider.get()
 
+            runner.pre_prepare(students)
             start_time = time.time()
             team_set = runner.generate(students)
             end_time = time.time()
+            runner.clean_up()
 
             run_time = end_time - start_time
 

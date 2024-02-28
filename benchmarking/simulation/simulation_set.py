@@ -1,5 +1,5 @@
 import hashlib
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 import numpy as np
 

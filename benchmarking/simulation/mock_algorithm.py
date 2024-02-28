@@ -9,6 +9,7 @@ from api.ai.interfaces.algorithm_options import (
     WeightAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
     DoubleRoundRobinAlgorithmOptions,
+    GroupMatcherAlgorithmOptions,
 )
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.priority_algorithm.priority.interfaces import Priority
@@ -65,6 +66,8 @@ class MockAlgorithm:
             return MultipleRoundRobinAlgorithmOptions
         if algorithm_type == AlgorithmType.DRR:
             return DoubleRoundRobinAlgorithmOptions
+        if algorithm_type == AlgorithmType.GROUP_MATCHER:
+            return GroupMatcherAlgorithmOptions
 
     @staticmethod
     def field_names_for_algorithm_type_options(
