@@ -84,8 +84,11 @@ class ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel(Scenario):
         ]
 
 
-class ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevelSwitchedOrdering(Scenario):
-    # This scenario diversifies all genders with min 2 to better compare with group matcher, which guarantees no individual will have solo status
+class ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevelSwitchedOrdering(
+    Scenario
+):
+    # This scenario diversifies all genders with min 2 to better compare with group matcher, which guarantees no individual will have solo status.
+    # It is a re-ordering of the above scenario.
     def __init__(
         self,
         max_num_choices: int,

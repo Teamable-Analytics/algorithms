@@ -3,29 +3,25 @@ from typing import List
 from api.models.enums import (
     DiversifyType,
     ScenarioAttribute,
-    Gender,
-    TokenizationConstraintDirection,
-    Race,
-    YearLevel,
 )
-from api.models.tokenization_constraint import TokenizationConstraint
-from benchmarking.evaluations.goals import WeightGoal, DiversityGoal
+from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 
 
-class ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(Scenario):
+class ConcentrateTimeslotConcentrateGenderDiversifyYearLevel(Scenario):
+    # This scenario concentrates timeslot, concentrates gender, and diversifies year level.
     def __init__(
         self,
         max_num_choices: int,
-        value_of_female: int = Gender.FEMALE,
     ):
         super().__init__()
-        self.value_of_female = value_of_female
         self.max_num_choices = max_num_choices
 
     @property
     def name(self):
-        return "Concentrate on Timeslot, Diversify Female Min of Two, and Diversify Year Level"
+        return (
+            "Concentrate on Timeslot, Concentrate All Genders, and Diversify Year Level"
+        )
 
     @property
     def goals(self) -> List[Goal]:
@@ -36,47 +32,42 @@ class ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel(Scenario):
                 max_num_choices=self.max_num_choices,
             ),
             DiversityGoal(
-                DiversifyType.DIVERSIFY,
+                DiversifyType.CONCENTRATE,
                 ScenarioAttribute.GENDER.value,
-                tokenization_constraint=TokenizationConstraint(
-                    direction=TokenizationConstraintDirection.MIN_OF,
-                    threshold=2,
-                    value=self.value_of_female,
-                ),
+                max_num_choices=1,
             ),
             DiversityGoal(
                 DiversifyType.DIVERSIFY,
                 ScenarioAttribute.YEAR_LEVEL.value,
+                max_num_choices=1,
             ),
             WeightGoal(diversity_goal_weight=1),
         ]
 
 
-class DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel(Scenario):
+class ConcentrateGenderConcentrateTimeslotDiversifyYearLevel(Scenario):
+    # This scenario concentrates gender, concentrates timeslot, and diversifies year level.
+    # It is the same as the above with a slightly different ordering.
     def __init__(
         self,
         max_num_choices: int,
-        value_of_female: int = Gender.FEMALE,
     ):
         super().__init__()
-        self.value_of_female = value_of_female
         self.max_num_choices = max_num_choices
 
     @property
     def name(self):
-        return "Concentrate on Timeslot, Diversify Female Min of Two, and Diversify Year Level"
+        return (
+            "Concentrate All Gender, Concentrate on Timeslot, and Diversify Year Level"
+        )
 
     @property
     def goals(self) -> List[Goal]:
         return [
             DiversityGoal(
-                DiversifyType.DIVERSIFY,
+                DiversifyType.CONCENTRATE,
                 ScenarioAttribute.GENDER.value,
-                tokenization_constraint=TokenizationConstraint(
-                    direction=TokenizationConstraintDirection.MIN_OF,
-                    threshold=2,
-                    value=self.value_of_female,
-                ),
+                max_num_choices=1,
             ),
             DiversityGoal(
                 DiversifyType.CONCENTRATE,
@@ -86,6 +77,7 @@ class DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel(Scenario):
             DiversityGoal(
                 DiversifyType.DIVERSIFY,
                 ScenarioAttribute.YEAR_LEVEL.value,
+                max_num_choices=1,
             ),
             WeightGoal(diversity_goal_weight=1),
         ]
