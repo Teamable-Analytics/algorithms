@@ -45,74 +45,82 @@ class Runtimes(Run):
             "diversity": OneDiversityScenario(value_of_female=Gender.FEMALE.value),
             "social": IncludeSocialFriends(max_num_friends=3, max_num_enemies=0),
         }
+        multipliers = [1, 2]
 
-        for class_size in class_sizes:
-            print(f"Class size: {class_size}")
-            student_provider = MockStudentProvider(
-                settings=MockStudentProviderSettings(
-                    number_of_students=class_size,
-                    friend_distribution="cluster",
-                    number_of_friends=3,
-                    attribute_ranges={
-                        ScenarioAttribute.GENDER.value: [
-                            (Gender.FEMALE, 0.5),
-                            (Gender.MALE, 0.5),
-                        ],
-                        ScenarioAttribute.GPA.value: [
-                            (Gpa.A, 0.5),
-                            (Gpa.B, 0.5),
-                        ],
-                    },
-                )
-            )
+        for multiplier in multipliers:
+            for class_size in class_sizes:
+                if class_size == 120 and multiplier == 2:
+                    # Skip large run for small class size
+                    continue
 
-            for scenario_name, scenario in scenarios.items():
-                artifact = SimulationSet(
-                    settings=SimulationSettings(
-                        num_teams=class_size // team_size,
-                        scenario=scenario,
-                        student_provider=student_provider,
-                        cache_key=f"priority_algorithm/default_parameters/{scenario_name}/class_size_{class_size}",
-                    ),
-                    algorithm_set={
-                        AlgorithmType.PRIORITY: [
-                            PriorityAlgorithmConfig(
-                                MAX_KEEP=30,
-                                MAX_SPREAD=100,
-                                MAX_ITERATE=250,
-                                MAX_TIME=1000000,
-                                name=f"config_250-100-30",
-                            )
-                            if "social" in scenario_name
-                            else PriorityAlgorithmConfig(
-                                MAX_KEEP=15,
-                                MAX_SPREAD=30,
-                                MAX_ITERATE=30,
-                                MAX_TIME=1000000,
-                                name=f"config_30-30-15",
-                            ),
-                        ],
-                    },
-                ).run(num_runs=num_trials)
+                student_provider = MockStudentProvider(
+                    settings=MockStudentProviderSettings(
+                        number_of_students=class_size,
+                        friend_distribution="cluster",
+                        number_of_friends=3,
+                        attribute_ranges={
+                            ScenarioAttribute.GENDER.value: [
+                                (Gender.FEMALE, 0.5),
+                                (Gender.MALE, 0.5),
+                            ],
+                            ScenarioAttribute.GPA.value: [
+                                (Gpa.A, 0.5),
+                                (Gpa.B, 0.5),
+                            ],
+                        },
+                    )
+                )
 
-                metrics = {
-                    "PrioritySatisfaction": PrioritySatisfaction(
-                        goals_to_priorities(scenario.goals),
-                        False,
-                    ),
-                    "AverageSocialSatisfaction": AverageSocialSatisfaction(
-                        metric_function=is_happy_team_1hp_friend,
-                    ),
-                }
-                insight_output = Insight.get_output_set(
-                    artifact, list(metrics.values())
-                )
-                print(scenario_name + ":")
-                print(
-                    f"Runtime: {Insight.average_metric(insight_output, Insight.KEY_RUNTIMES)}"
-                )
-                for name in metrics.keys():
-                    print(f"{name}: {Insight.average_metric(insight_output, name)}")
+                for scenario_name, scenario in scenarios.items():
+                    artifact = SimulationSet(
+                        settings=SimulationSettings(
+                            num_teams=class_size // team_size,
+                            scenario=scenario,
+                            student_provider=student_provider,
+                            cache_key=f"priority_algorithm/default_parameters/runtimes/{scenario_name}/class_size_{class_size}",
+                        ),
+                        algorithm_set={
+                            AlgorithmType.PRIORITY: [
+                                PriorityAlgorithmConfig(
+                                    MAX_KEEP=30,
+                                    MAX_SPREAD=100,
+                                    MAX_ITERATE=250 * multiplier,
+                                    MAX_TIME=1000000,
+                                    name=f"config_{250 * multiplier}-100-30",
+                                )
+                                if "social" in scenario_name
+                                else PriorityAlgorithmConfig(
+                                    MAX_KEEP=15,
+                                    MAX_SPREAD=30,
+                                    MAX_ITERATE=30 * multiplier,
+                                    MAX_TIME=1000000,
+                                    name=f"config_{30 * multiplier}-30-15",
+                                ),
+                            ],
+                        },
+                    ).run(num_runs=num_trials)
+
+                    metrics = {
+                        "PrioritySatisfaction": PrioritySatisfaction(
+                            goals_to_priorities(scenario.goals),
+                            False,
+                        ),
+                        "AverageSocialSatisfaction": AverageSocialSatisfaction(
+                            metric_function=is_happy_team_1hp_friend,
+                        ),
+                    }
+                    insight_output = Insight.get_output_set(
+                        artifact, list(metrics.values())
+                    )
+                    print(
+                        f"{scenario_name.title()} with {class_size} students, {'normal' if multiplier == 1 else 'bigger'} run"
+                    )
+                    print(
+                        f"Runtime: {Insight.average_metric(insight_output, Insight.KEY_RUNTIMES)}"
+                    )
+                    for name in metrics.keys():
+                        print(f"{name}: {Insight.average_metric(insight_output, name)}")
+                    print()
 
 
 class OneDiversityScenario(Scenario):
