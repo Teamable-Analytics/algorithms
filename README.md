@@ -16,7 +16,11 @@
    ```
    python3 -m pip install -r requirements.txt
    ```
-3. You're good to go!
+3. Initialize submodules.
+   ```
+   git submodule update --init --recursive
+   ```
+4. You're good to go!
    > Be sure to read any directory-specific README.md and CONVENTION.md files before starting to work.
 
 ### Metrics
