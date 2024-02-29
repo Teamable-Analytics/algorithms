@@ -29,11 +29,11 @@ from benchmarking.evaluations.metrics.utils.team_calculations import (
     is_strictly_happy_team_friend,
 )
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import (
+from benchmarking.runs.priority_algorithm.internal_parameter_exploration.custom_student_providers import (
     Major,
     Custom120SocialAndDiversityStudentProvider,
 )
-from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
+from benchmarking.runs.priority_algorithm.internal_parameter_exploration.run_utils import (
     plot_and_save_points_dict,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
@@ -89,7 +89,7 @@ class SocialAndDiversity(Run):
                 settings=SimulationSettings(
                     scenario=scenario,
                     student_provider=Custom120SocialAndDiversityStudentProvider(),
-                    cache_key=f"priority_algorithm/larger_simple_runs/class_size_120/social_and_diversity/",
+                    cache_key=f"priority_algorithm/internal_parameter_exploration/class_size_120/social_and_diversity/",
                     num_teams=30,
                 ),
                 algorithm_set={

@@ -32,7 +32,7 @@ from benchmarking.evaluations.metrics.average_project_requirements_coverage impo
 )
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
+from benchmarking.runs.priority_algorithm.internal_parameter_exploration.run_utils import (
     plot_and_save_points_dict,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
@@ -164,7 +164,7 @@ class RegularClassSize(Run):
                 settings=SimulationSettings(
                     scenario=scenario,
                     student_provider=MockStudentProvider(student_provider_settings),
-                    cache_key=f"priority_algorithm/larger_simple_runs/class_size_120/projects_run/",
+                    cache_key=f"priority_algorithm/internal_parameter_exploration/class_size_120/projects_run/",
                     initial_teams_provider=initial_teams_provider,
                 ),
                 algorithm_set={

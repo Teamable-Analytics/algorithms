@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple
 
 import typer
 
@@ -9,21 +9,6 @@ from api.ai.interfaces.algorithm_config import (
 )
 from api.models.enums import (
     AlgorithmType,
-    RequirementsCriteria,
-)
-from benchmarking.data.simulated_data.mock_initial_teams_provider import (
-    MockInitialTeamsProvider,
-    MockInitialTeamsProviderSettings,
-)
-from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubject
-from benchmarking.evaluations.goals import (
-    PreferenceGoal,
-    WeightGoal,
-    ProjectRequirementGoal,
-)
-from benchmarking.evaluations.interfaces import Scenario, Goal
-from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
-    AverageProjectRequirementsCoverage,
 )
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,
@@ -32,14 +17,14 @@ from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatis
 from benchmarking.evaluations.metrics.utils.team_calculations import (
     is_strictly_happy_team_friend,
 )
+from benchmarking.evaluations.scenarios.include_social_friends import (
+    IncludeSocialFriends,
+)
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_projects import (
-    get_custom_projects,
+from benchmarking.runs.priority_algorithm.internal_parameter_exploration.custom_student_providers import (
+    Custom120SocialStudentProvider,
 )
-from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import (
-    Custom120SocialAndProjectsStudentProvider,
-)
-from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
+from benchmarking.runs.priority_algorithm.internal_parameter_exploration.run_utils import (
     plot_and_save_points_dict,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
@@ -48,7 +33,7 @@ from benchmarking.simulation.simulation_set import SimulationSetArtifact, Simula
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
-class SocialAndProject(Run):
+class SocialRun(Run):
     CLASS_SIZE = 120
     NUMBER_OF_TEAMS = 30
     NUMBER_OF_STUDENTS_PER_TEAM = 4
@@ -59,10 +44,11 @@ class SocialAndProject(Run):
         max_spread_range = [1] + list(range(20, 101, 20))
         max_iterations_range = [1] + list(range(50, 251, 50))
 
-        scenario = SocialAndProjectScenario(
+        scenario = IncludeSocialFriends(
             max_num_friends=1,
             max_num_enemies=0,
         )
+
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
                 goals_to_priorities(scenario.goals),
@@ -71,13 +57,7 @@ class SocialAndProject(Run):
             "AverageSocialSatisfaction": AverageSocialSatisfaction(
                 metric_function=is_strictly_happy_team_friend
             ),
-            "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
         }
-        initial_teams_provider = MockInitialTeamsProvider(
-            settings=MockInitialTeamsProviderSettings(
-                projects=get_custom_projects(),
-            )
-        )
 
         start_types = [
             PriorityAlgorithmStartType.WEIGHT,
@@ -89,9 +69,9 @@ class SocialAndProject(Run):
             artifact: SimulationSetArtifact = SimulationSet(
                 settings=SimulationSettings(
                     scenario=scenario,
-                    student_provider=Custom120SocialAndProjectsStudentProvider(),
-                    initial_teams_provider=initial_teams_provider,
-                    cache_key=f"priority_algorithm/larger_simple_runs/class_size_120/social_and_project/",
+                    student_provider=Custom120SocialStudentProvider(),
+                    cache_key=f"priority_algorithm/internal_parameter_exploration/class_size_120/simple_social_run/",
+                    num_teams=30,
                 ),
                 algorithm_set={
                     AlgorithmType.PRIORITY: [
@@ -146,36 +126,10 @@ class SocialAndProject(Run):
                     points_dict,
                     max_iterations_range,
                     metric,
-                    "Social & Projects Scenario",
-                    "social_and_project",
+                    "Social Scenario",
+                    "social",
                 )
 
 
-class SocialAndProjectScenario(Scenario):
-    def __init__(self, max_num_friends: int, max_num_enemies: int, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.max_num_friends = max_num_friends
-        self.max_num_enemies = max_num_enemies
-
-    @property
-    def name(self):
-        return "Create teams that group social friends together after satisfying project requirements"
-
-    @property
-    def goals(self) -> List[Goal]:
-        return [
-            ProjectRequirementGoal(
-                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
-            ),
-            PreferenceGoal(
-                PreferenceDirection.INCLUDE,
-                PreferenceSubject.FRIENDS,
-                max_num_friends=self.max_num_friends,
-                max_num_enemies=self.max_num_enemies,
-            ),
-            WeightGoal(project_requirement_weight=2, social_preference_weight=1),
-        ]
-
-
 if __name__ == "__main__":
-    typer.run(SocialAndProject().start)
+    typer.run(SocialRun().start)

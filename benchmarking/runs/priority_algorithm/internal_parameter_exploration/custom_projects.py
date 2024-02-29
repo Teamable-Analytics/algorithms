@@ -2,7 +2,7 @@ from typing import List
 
 from api.models.enums import RequirementOperator
 from api.models.project import Project, ProjectRequirement
-from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import (
+from benchmarking.runs.priority_algorithm.internal_parameter_exploration.custom_student_providers import (
     PROGRAMMING_LANGUAGE,
 )
 

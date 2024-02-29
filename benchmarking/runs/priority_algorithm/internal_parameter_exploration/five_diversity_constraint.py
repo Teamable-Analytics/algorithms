@@ -25,11 +25,11 @@ from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStat
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.priority_algorithm.larger_simple_runs.custom_student_providers import (
+from benchmarking.runs.priority_algorithm.internal_parameter_exploration.custom_student_providers import (
     CustomOneHundredAndTwentyStudentProvider,
     Major,
 )
-from benchmarking.runs.priority_algorithm.larger_simple_runs.run_utils import (
+from benchmarking.runs.priority_algorithm.internal_parameter_exploration.run_utils import (
     plot_and_save_points_dict,
 )
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
@@ -90,7 +90,7 @@ class FiveDiversityConstraint(Run):
                         num_teams=num_teams,
                         scenario=scenario,
                         student_provider=student_providers[class_size],
-                        cache_key=f"priority_algorithm/larger_simple_runs/class_size_{class_size}/five_diversity_constraint/25_buckets",
+                        cache_key=f"priority_algorithm/internal_parameter_exploration/class_size_{class_size}/five_diversity_constraint/25_buckets",
                     ),
                     algorithm_set={
                         AlgorithmType.PRIORITY: [
