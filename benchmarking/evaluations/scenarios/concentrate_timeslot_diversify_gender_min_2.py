@@ -16,8 +16,8 @@ class ConcentrateTimeslotAndDiversifyGenderMin2Female(Scenario):
     def __init__(
         self,
         max_num_choices: int,
-        value_of_female: int = Gender.FEMALE,
-        value_of_african: int = Race.African,
+        value_of_female: int = Gender.FEMALE.value,
+        value_of_african: int = Race.African.value,
     ):
         super().__init__()
         self.value_of_female = value_of_female
