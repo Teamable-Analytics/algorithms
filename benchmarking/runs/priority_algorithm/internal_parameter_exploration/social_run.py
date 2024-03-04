@@ -79,7 +79,7 @@ class SocialRun(Run):
                             MAX_KEEP=max_keep,
                             MAX_SPREAD=max_spread,
                             MAX_ITERATE=max_iterations,
-                            MAX_TIME=10000000,
+                            MAX_TIME=1_000_000,
                             START_TYPE=start_type,
                             name=f"max_keep_{max_keep}-max_spread_{max_spread}-max_iterations_{max_iterations}-{start_type.value}_start",
                         )
