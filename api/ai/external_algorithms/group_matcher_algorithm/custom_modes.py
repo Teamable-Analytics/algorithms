@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from itertools import cycle
-from typing import Dict
+from typing import Dict, Iterator
 
 import faker
 from pandas import DataFrame
@@ -64,7 +64,7 @@ class GroupMatcherStudent(Student):
         output_data: DataFrame,
         team_trace: Dict[int, Team],
         student_trace: Dict[int, Student],
-        team_cycler: cycle[Team],
+        team_cycler: Iterator[Team],
     ) -> TeamSet:
         for _, row in output_data.iterrows():
             student_id = row["sid"]

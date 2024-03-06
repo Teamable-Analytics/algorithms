@@ -3,7 +3,7 @@ from itertools import cycle
 import os
 import time
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Iterator
 
 import pandas as pd
 
@@ -26,7 +26,7 @@ class GroupMatcherAlgorithm(Algorithm):
 
     student_trace: Dict[int, Student]
     team_trace: Dict[int, Team]
-    team_cycler: cycle[Team]
+    team_cycler: Iterator[Team]
 
     group_matcher_input_data_file_path: Path
     group_matcher_output_data_file_path: Path
