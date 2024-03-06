@@ -20,6 +20,10 @@ from api.models.team_set import TeamSet
 
 
 class GroupMatcherAlgorithm(Algorithm):
+    """
+    From paper: https://sigcse2023.sigcse.org/details/sigcse-ts-2023-papers/163/Inclusive-study-group-formation-at-scale
+    """
+
     student_trace: Dict[int, Student]
     team_trace: Dict[int, Team]
     team_cycler: cycle[Team]

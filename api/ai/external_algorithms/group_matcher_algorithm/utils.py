@@ -1,31 +1,11 @@
-# From paper: https://sigcse2023.sigcse.org/details/sigcse-ts-2023-papers/163/Inclusive-study-group-formation-at-scale
 from typing import List
 
-from api.models.enums import AttributeValueEnum, Gender, Race
-
-
-class AlRace(AttributeValueEnum):
-    White = "White"
-    Asian = "Asian"
-    Hispanic = "Hispanic"
-    Black_Or_African_American = "Black/African American"
-    Indegenous = "Indegenous"
-    Middle_Eastern = "Middle-Eastern"
-    Multiple_Races = "Multiple races"
-
-
-class AlYearLevel(AttributeValueEnum):
-    Freshman = "freshman"
-    Sophomore = "sophomore"
-    Junior = "junior"
-    Senior = "senior"
-    Graduate = "graduate"
-
-
-class AlGender(AttributeValueEnum):
-    Female = "Female"
-    Male = "Male"
-    Other = "Other"
+from api.ai.external_algorithms.group_matcher_algorithm.custom_modes import (
+    AlGender,
+    AlRace,
+    AlYearLevel,
+)
+from api.models.enums import Gender, Race
 
 
 def fromGenderToAlGender(gender: Gender) -> AlGender:
