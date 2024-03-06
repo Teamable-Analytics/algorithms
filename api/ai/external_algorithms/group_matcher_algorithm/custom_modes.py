@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from itertools import cycle
-from typing import List, Dict
+from typing import Dict
 
 import faker
 from pandas import DataFrame
@@ -11,34 +11,10 @@ from api.ai.external_algorithms.group_matcher_algorithm.utils import (
     fromGenderToAlGender,
     fromRaceToAlRace,
 )
-from api.models.enums import ScenarioAttribute, Gender, Race, AttributeValueEnum
+from api.models.enums import ScenarioAttribute, Gender, Race
 from api.models.student import Student
 from api.models.team import Team
 from api.models.team_set import TeamSet
-
-
-class AlRace(AttributeValueEnum):
-    White = "White"
-    Asian = "Asian"
-    Hispanic = "Hispanic"
-    Black_Or_African_American = "Black/African American"
-    Indegenous = "Indegenous"
-    Middle_Eastern = "Middle-Eastern"
-    Multiple_Races = "Multiple races"
-
-
-class AlYearLevel(AttributeValueEnum):
-    Freshman = "freshman"
-    Sophomore = "sophomore"
-    Junior = "junior"
-    Senior = "senior"
-    Graduate = "graduate"
-
-
-class AlGender(AttributeValueEnum):
-    Female = "Female"
-    Male = "Male"
-    Other = "Other"
 
 
 @dataclass
