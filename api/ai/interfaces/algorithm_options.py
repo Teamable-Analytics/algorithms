@@ -128,8 +128,8 @@ class WeightAlgorithmOptions(AlgorithmOptions):
                 SchemaOptional("enemy_behaviour"): Or(
                     *[behaviour.value for behaviour in RelationshipBehaviour]
                 ),
-                SchemaOptional("attributes_to_diversify"): List[int],
-                SchemaOptional("attributes_to_concentrate"): List[int],
+                SchemaOptional("attributes_to_diversify"): Or(List[int], []),
+                SchemaOptional("attributes_to_concentrate"): Or(List[int], []),
             }
         )
 
@@ -200,8 +200,8 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
                 SchemaOptional("enemy_behaviour"): Or(
                     *[behaviour.value for behaviour in RelationshipBehaviour]
                 ),
-                SchemaOptional("attributes_to_diversify"): List[int],
-                SchemaOptional("attributes_to_concentrate"): List[int],
+                SchemaOptional("attributes_to_diversify"): Or(List[int], []),
+                SchemaOptional("attributes_to_concentrate"): Or(List[int], []),
             }
         )
 
@@ -241,8 +241,8 @@ class SocialAlgorithmOptions(WeightAlgorithmOptions):
                 SchemaOptional("enemy_behaviour"): Or(
                     *[behaviour.value for behaviour in RelationshipBehaviour]
                 ),
-                SchemaOptional("attributes_to_diversify"): List[int],
-                SchemaOptional("attributes_to_concentrate"): List[int],
+                SchemaOptional("attributes_to_diversify"): Or(List[int], []),
+                SchemaOptional("attributes_to_concentrate"): Or(List[int], []),
             }
         )
 
