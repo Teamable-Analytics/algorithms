@@ -168,4 +168,4 @@ class DoubleRoundRobinAlgorithm(Algorithm):
             self.teams[team_idx].students = students
             self.teams[team_idx].is_locked = True
 
-        return TeamSet(teams=self.teams)
+        return TeamSet(teams=[team for team in self.teams if len(team.students) > 0])
