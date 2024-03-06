@@ -1,6 +1,8 @@
 from typing import List, TYPE_CHECKING
 
-from api.ai.external_algorithms.group_matcher_algorithm.group_matcher_algorithm import GroupMatcherAlgorithm
+from api.ai.external_algorithms.group_matcher_algorithm.group_matcher_algorithm import (
+    GroupMatcherAlgorithm,
+)
 from api.ai.geg_algorithm.geg_algorithm import GeneralizedEnvyGraphAlgorithm
 from api.ai.interfaces.algorithm_config import (
     AlgorithmConfig,

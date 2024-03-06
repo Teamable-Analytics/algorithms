@@ -5,8 +5,12 @@ from typing import List, Dict
 import faker
 from pandas import DataFrame
 
-from api.ai.external_algorithms.group_matcher_algorithm.utils import fromYearLevelToAlYearLevel, fromNumbersToTimeSlots, \
-    fromGenderToAlGender, fromRaceToAlRace
+from api.ai.external_algorithms.group_matcher_algorithm.utils import (
+    fromYearLevelToAlYearLevel,
+    fromNumbersToTimeSlots,
+    fromGenderToAlGender,
+    fromRaceToAlRace,
+)
 from api.models.enums import ScenarioAttribute, Gender, Race
 from api.models.student import Student
 from api.models.team import Team
@@ -57,10 +61,10 @@ class GroupMatcherStudent(Student):
 
     @staticmethod
     def transform_output_data_to_team_set(
-            output_data: DataFrame,
-            team_trace: Dict[int, Team],
-            student_trace: Dict[int, Student],
-            team_cycler: cycle[Team]
+        output_data: DataFrame,
+        team_trace: Dict[int, Team],
+        student_trace: Dict[int, Student],
+        team_cycler: cycle[Team],
     ) -> TeamSet:
         for _, row in output_data.iterrows():
             student_id = row["sid"]
@@ -82,4 +86,6 @@ class GroupMatcherStudent(Student):
             student.add_team(team)
             team.add_student(student)
 
-        return TeamSet(teams=[team for team in team_trace.values() if len(team.students) > 0])
+        return TeamSet(
+            teams=[team for team in team_trace.values() if len(team.students) > 0]
+        )
