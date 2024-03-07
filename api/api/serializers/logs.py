@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from app.models import APILog, APILogGenerate
+from api.api.models import APILog, APILogGenerate
 
 
 class APILogSerializer(serializers.ModelSerializer):

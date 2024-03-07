@@ -1,6 +1,6 @@
 from django.db import models
 
-from app.models.base_models import BaseModel
+from api.api.models.base_models import BaseModel
 
 
 class APIUseCase(models.TextChoices):
