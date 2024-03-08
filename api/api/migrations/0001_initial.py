@@ -5,37 +5,62 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='APILog',
+            name="APILog",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('endpoint', models.TextField()),
-                ('http_method', models.CharField(max_length=50)),
-                ('use_case', models.CharField(choices=[('Normal', 'Normal'), ('Internal Demo', 'Internal Demo')], max_length=50)),
-                ('api_version', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("endpoint", models.TextField()),
+                ("http_method", models.CharField(max_length=50)),
+                (
+                    "use_case",
+                    models.CharField(
+                        choices=[
+                            ("Normal", "Normal"),
+                            ("Internal Demo", "Internal Demo"),
+                        ],
+                        max_length=50,
+                    ),
+                ),
+                ("api_version", models.CharField(max_length=50)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='APILogGenerate',
+            name="APILogGenerate",
             fields=[
-                ('apilog_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='api.apilog')),
-                ('generation_configuration', models.JSONField()),
+                (
+                    "apilog_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="api.apilog",
+                    ),
+                ),
+                ("generation_configuration", models.JSONField()),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=('api.apilog',),
+            bases=("api.apilog",),
         ),
     ]
