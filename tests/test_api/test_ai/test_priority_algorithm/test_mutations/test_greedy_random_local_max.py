@@ -1,18 +1,14 @@
 import random
 import unittest
-from typing import List
 from collections import Counter
 
 from api.ai.priority_algorithm.custom_models import PriorityTeam, PriorityTeamSet
-from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.models.team import TeamShell
-from api.models.team_set import TeamSet
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
 from tests.test_api.test_ai.test_priority_algorithm.test_mutations._data import (
-    EvenPriority,
     get_mock_team_set,
     get_mock_student_dict,
     get_mock_students_v2,
