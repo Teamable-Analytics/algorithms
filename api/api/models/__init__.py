@@ -1,1 +1,1 @@
-from .logs import APILog, APILogGenerate, APIUseCase
+from .logs import APILog, APISource
