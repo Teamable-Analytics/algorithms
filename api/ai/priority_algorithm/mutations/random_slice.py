@@ -1,12 +1,8 @@
 import random
 from random import shuffle
 
-from typing import List, Dict
-
 from api.ai.priority_algorithm.custom_models import PriorityTeamSet
 from api.ai.priority_algorithm.mutations.utils import get_available_priority_teams
-from api.ai.priority_algorithm.priority.interfaces import Priority
-from api.models.student import Student
 
 
 def mutate_random_slice(
