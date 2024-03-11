@@ -1,12 +1,12 @@
 from typing import List
 
-from api.models.enums import (
+from api.dataclasses.enums import (
     Gender,
     DiversifyType,
     ScenarioAttribute,
     TokenizationConstraintDirection,
 )
-from api.models.tokenization_constraint import TokenizationConstraint
+from api.dataclasses.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 

@@ -10,15 +10,15 @@ from api.ai.priority_algorithm.priority.utils import (
     student_attribute_binary_vector,
 )
 from api.ai.weight_algorithm.utility.diversity_utility import _blau_index
-from api.models.enums import (
+from api.dataclasses.enums import (
     DiversifyType,
     TokenizationConstraintDirection,
     RequirementsCriteria,
     PriorityType,
     Relationship,
 )
-from api.models.student import Student
-from api.models.team import TeamShell
+from api.dataclasses.student import Student
+from api.dataclasses.team import TeamShell
 from benchmarking.evaluations.enums import PreferenceDirection
 from utils.math import change_range
 

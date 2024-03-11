@@ -5,9 +5,9 @@ from api.ai.interfaces.algorithm import ChooseAlgorithm
 from api.ai.interfaces.algorithm_config import RandomAlgorithmConfig
 from api.ai.interfaces.algorithm_options import RandomAlgorithmOptions
 from api.ai.utils import generate_with_choose
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 
 
 class RandomAlgorithm(ChooseAlgorithm):

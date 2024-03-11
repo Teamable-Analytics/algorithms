@@ -1,7 +1,7 @@
 from typing import List
 
-from api.ai.social_algorithm.custom_models import TeamWithCliques
-from api.models.student import Student
+from api.ai.social_algorithm.custom_dataclasses import TeamWithCliques
+from api.dataclasses.student import Student
 
 
 def clique_is_valid(clique: List[Student]) -> bool:

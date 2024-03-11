@@ -2,7 +2,7 @@ from typing import List
 
 import numpy as np
 
-from api.models.enums import (
+from api.dataclasses.enums import (
     Gender,
     ScenarioAttribute,
     Gpa,
@@ -10,7 +10,7 @@ from api.models.enums import (
     Relationship,
     AttributeValueEnum,
 )
-from api.models.student import Student
+from api.dataclasses.student import Student
 from benchmarking.data.interfaces import StudentProvider
 
 

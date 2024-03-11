@@ -6,7 +6,7 @@ from schema import SchemaError
 
 from api.api.utils.response_with_metadata import ResponseWithMetadata
 from api.api.validators.evaluate_team_set_validator import EvaluateTeamSetValidator
-from api.models.team_set.serializer import TeamSetSerializer
+from api.dataclasses.team_set.serializer import TeamSetSerializer
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
     AverageProjectRequirementsCoverage,

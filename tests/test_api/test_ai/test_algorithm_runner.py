@@ -1,7 +1,7 @@
 import unittest
 
 from api.ai.algorithm_runner import AlgorithmRunner
-from api.models.enums import AlgorithmType
+from api.dataclasses.enums import AlgorithmType
 
 
 class TestAlgorithmRunner(unittest.TestCase):

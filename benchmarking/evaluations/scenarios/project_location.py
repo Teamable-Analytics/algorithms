@@ -1,6 +1,6 @@
 from typing import List
 
-from api.models.enums import DiversifyType, ScenarioAttribute, RequirementsCriteria
+from api.dataclasses.enums import DiversifyType, ScenarioAttribute, RequirementsCriteria
 from benchmarking.evaluations.goals import (
     DiversityGoal,
     WeightGoal,
