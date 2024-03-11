@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from api.api.utils.response_with_metadata import ResponseWithMetadata
-from api.models.student import StudentSerializer
+from api.dataclasses.student import StudentSerializer
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
     MockStudentProvider,

@@ -28,9 +28,9 @@ from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.ai.double_round_robin_algorithm.double_round_robin_algorithm import (
     DoubleRoundRobinAlgorithm,
 )
-from api.models.enums import AlgorithmType
-from api.models.student import Student
-from api.models.team_set import TeamSet
+from api.dataclasses.enums import AlgorithmType
+from api.dataclasses.student import Student
+from api.dataclasses.team_set import TeamSet
 
 if TYPE_CHECKING:
     from api.ai.interfaces.algorithm_options import AlgorithmOptions

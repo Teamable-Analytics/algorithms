@@ -1,4 +1,4 @@
-from api.models.enums import Relationship
+from api.dataclasses.enums import Relationship
 
 
 def get_relationship(relationship: str) -> Relationship:

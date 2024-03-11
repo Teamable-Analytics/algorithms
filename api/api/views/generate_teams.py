@@ -6,7 +6,7 @@ from api.ai.algorithm_runner import AlgorithmRunner
 from api.api.utils.generate_teams_data_loader import GenerateTeamsDataLoader
 from api.api.utils.response_with_metadata import ResponseWithMetadata
 from api.api.validators.generate_teams_validator import GenerateTeamsValidator
-from api.models.team_set.serializer import TeamSetSerializer
+from api.dataclasses.team_set.serializer import TeamSetSerializer
 
 
 class GenerateTeamsViewSet(viewsets.GenericViewSet):

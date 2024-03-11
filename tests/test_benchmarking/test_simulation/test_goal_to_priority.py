@@ -5,12 +5,12 @@ from api.ai.priority_algorithm.priority.priority import (
     TokenizationPriority,
     DiversityPriority,
 )
-from api.models.enums import (
+from api.dataclasses.enums import (
     DiversifyType,
     ScenarioAttribute,
     TokenizationConstraintDirection,
 )
-from api.models.tokenization_constraint import TokenizationConstraint
+from api.dataclasses.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Goal
 from benchmarking.simulation.goal_to_priority import (

@@ -11,13 +11,13 @@ from api.ai.interfaces.algorithm_options import (
     WeightAlgorithmOptions,
     RandomAlgorithmOptions,
 )
-from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
+from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
 from api.ai.random_algorithm.random_algorithm import RandomAlgorithm
 from api.ai.utils import save_students_to_team
 from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 
 
 class PriorityAlgorithm(Algorithm):

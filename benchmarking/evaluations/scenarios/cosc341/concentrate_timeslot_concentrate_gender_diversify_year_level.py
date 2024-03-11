@@ -1,6 +1,6 @@
 from typing import List
 
-from api.models.enums import (
+from api.dataclasses.enums import (
     DiversifyType,
     ScenarioAttribute,
 )

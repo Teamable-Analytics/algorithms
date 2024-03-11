@@ -1,10 +1,10 @@
 import json
 import unittest
 
-from api.models.enums import RequirementOperator, Relationship
-from api.models.project import ProjectRequirement
-from api.models.student import Student
-from api.models.team import Team, TeamSerializer
+from api.dataclasses.enums import RequirementOperator, Relationship
+from api.dataclasses.project import ProjectRequirement
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team, TeamSerializer
 from utils.equality import teams_are_equal
 
 

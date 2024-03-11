@@ -1,4 +1,4 @@
-from api.models.student import Student
+from api.dataclasses.student import Student
 
 
 class Utility:

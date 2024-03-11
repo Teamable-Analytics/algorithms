@@ -12,12 +12,12 @@ from api.ai.interfaces.algorithm_options import (
 )
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.priority_algorithm.priority.interfaces import Priority
-from api.models.enums import (
+from api.dataclasses.enums import (
     AlgorithmType,
     DiversifyType,
     RelationshipBehaviour,
 )
-from api.models.team import TeamShell
+from api.dataclasses.team import TeamShell
 from benchmarking.evaluations.enums import PreferenceSubject
 from benchmarking.evaluations.goals import (
     WeightGoal,

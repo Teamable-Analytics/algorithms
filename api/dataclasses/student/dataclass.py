@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
 
-from api.models.enums import Relationship, RequirementOperator
-from api.models.project import ProjectRequirement
+from api.dataclasses.enums import Relationship, RequirementOperator
+from api.dataclasses.project import ProjectRequirement
 
 
 @dataclass

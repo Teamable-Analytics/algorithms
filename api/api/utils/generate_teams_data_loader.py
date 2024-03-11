@@ -4,9 +4,9 @@ from typing import Dict, Any, List
 from api.ai.algorithm_runner import AlgorithmRunner
 from api.ai.interfaces.algorithm_options import AlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.models.enums import AlgorithmType
-from api.models.student import Student, StudentSerializer
-from api.models.team import TeamSerializer
+from api.dataclasses.enums import AlgorithmType
+from api.dataclasses.student import Student, StudentSerializer
+from api.dataclasses.team import TeamSerializer
 
 
 @dataclass

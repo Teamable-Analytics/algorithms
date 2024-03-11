@@ -22,7 +22,7 @@ from benchmarking.evaluations.metrics.average_gini_index import AverageGiniIndex
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from benchmarking.evaluations.scenarios.concentrate_gpa import ConcentrateGPA
-from api.models.enums import ScenarioAttribute, Gpa, AlgorithmType
+from api.dataclasses.enums import ScenarioAttribute, Gpa, AlgorithmType
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact

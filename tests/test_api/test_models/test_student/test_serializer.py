@@ -1,8 +1,8 @@
 import json
 import unittest
 
-from api.models.enums import Relationship
-from api.models.student import Student, StudentSerializer
+from api.dataclasses.enums import Relationship
+from api.dataclasses.student import Student, StudentSerializer
 
 
 class TestStudentSerializer(unittest.TestCase):

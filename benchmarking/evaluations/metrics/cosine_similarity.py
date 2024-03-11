@@ -5,9 +5,9 @@ from typing import List, Dict, Union, Tuple
 from numpy import dot
 from numpy.linalg import norm
 
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
 
