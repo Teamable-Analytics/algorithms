@@ -6,8 +6,8 @@ from benchmarking.evaluations.enums import (
     PreferenceSubject,
 )
 from benchmarking.evaluations.interfaces import Goal
-from api.models.enums import DiversifyType, RequirementsCriteria
-from api.models.tokenization_constraint import TokenizationConstraint
+from api.dataclasses.enums import DiversifyType, RequirementsCriteria
+from api.dataclasses.tokenization_constraint import TokenizationConstraint
 
 
 @dataclass

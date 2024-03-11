@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
 
-from api.models.project import ProjectRequirement
-from api.models.student import Student
+from api.dataclasses.project import ProjectRequirement
+from api.dataclasses.student import Student
 
 
 @dataclass

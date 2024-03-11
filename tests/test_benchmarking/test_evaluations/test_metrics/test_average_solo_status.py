@@ -1,9 +1,9 @@
 import unittest
 
-from api.models.enums import ScenarioAttribute, Race, Gender
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.enums import ScenarioAttribute, Race, Gender
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 
 

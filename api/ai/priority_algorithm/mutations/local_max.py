@@ -7,8 +7,8 @@ from api.ai.priority_algorithm.mutations.utils import (
     score,
     get_available_priority_teams,
 )
-from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
-from api.models.student import Student
+from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
+from api.dataclasses.student import Student
 
 
 def mutate_local_max(

@@ -7,7 +7,7 @@ from api.ai.interfaces.algorithm_options import (
     WeightAlgorithmOptions,
 )
 from api.ai.social_algorithm.clique_finder import CliqueFinder
-from api.ai.social_algorithm.custom_models import TeamWithCliques
+from api.ai.social_algorithm.custom_dataclasses import TeamWithCliques
 from api.ai.social_algorithm.evaluation import TeamEvaluation
 from api.ai.social_algorithm.social_graph import SocialGraph
 from api.ai.social_algorithm.utils import (
@@ -23,10 +23,10 @@ from api.ai.weight_algorithm.utility import (
     get_preference_utility,
 )
 from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
-from api.models.enums import Relationship
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.enums import Relationship
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 
 
 class SocialAlgorithm(ChooseAlgorithm):

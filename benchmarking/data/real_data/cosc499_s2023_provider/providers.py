@@ -4,9 +4,9 @@ from typing import List
 
 import numpy as np
 
-from api.models.student import Student, StudentSerializer
-from api.models.team import TeamSerializer, TeamShell
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student, StudentSerializer
+from api.dataclasses.team import TeamSerializer, TeamShell
+from api.dataclasses.team_set import TeamSet
 from benchmarking.data.interfaces import (
     StudentProvider,
     TeamConfigurationProvider,

@@ -1,13 +1,13 @@
 from json import JSONEncoder
 from typing import Dict, Any, List
 
-from api.models.project import ProjectRequirementSerializer, ProjectRequirement
-from api.models.interfaces import ModelDecoder
-from api.models.student import StudentSerializer, Student
-from api.models.team import Team
+from api.dataclasses.project import ProjectRequirementSerializer, ProjectRequirement
+from api.dataclasses.interfaces import DataClassDecoder
+from api.dataclasses.student import StudentSerializer, Student
+from api.dataclasses.team import Team
 
 
-class TeamSerializer(JSONEncoder, ModelDecoder):
+class TeamSerializer(JSONEncoder, DataClassDecoder):
     def default(self, team: Team) -> Dict[str, any]:
         requirement_serializer = ProjectRequirementSerializer()
         student_serializer = StudentSerializer()

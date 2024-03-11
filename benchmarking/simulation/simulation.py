@@ -7,8 +7,8 @@ from typing import List, Tuple
 
 from api.ai.algorithm_runner import AlgorithmRunner
 from api.ai.interfaces.algorithm_config import AlgorithmConfig
-from api.models.enums import AlgorithmType
-from api.models.team_set import TeamSet
+from api.dataclasses.enums import AlgorithmType
+from api.dataclasses.team_set import TeamSet
 from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.simulation.mock_algorithm import MockAlgorithm
 from benchmarking.simulation.simulation_settings import SimulationSettings

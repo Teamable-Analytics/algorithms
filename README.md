@@ -54,7 +54,7 @@ python3 -m unittest discover tests
 - todo: the logic for each of our algorithms
 - todo: the api that serves these algorithms
 
-#### /models
+#### /dataclasses
 
 - dataclasses, types, and enums used in the rest of the repository
 

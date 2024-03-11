@@ -3,7 +3,7 @@ from typing import Dict, Any
 from schema import Schema, Optional, Or, SchemaError
 
 from api.api.validators.interface import Validator
-from api.models.enums import RequirementOperator, Relationship
+from api.dataclasses.enums import RequirementOperator, Relationship
 from api.api.utils.relationship import get_relationship_str
 from utils.validation import is_unique
 

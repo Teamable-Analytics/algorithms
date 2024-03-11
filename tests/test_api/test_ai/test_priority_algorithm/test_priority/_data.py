@@ -1,7 +1,7 @@
 from typing import List
 
-from api.models.enums import Relationship
-from api.models.student import Student
+from api.dataclasses.enums import Relationship
+from api.dataclasses.student import Student
 
 
 def create_neutral(_id: int):

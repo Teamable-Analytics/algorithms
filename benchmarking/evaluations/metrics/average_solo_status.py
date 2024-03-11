@@ -1,7 +1,7 @@
 from collections import Counter
 from typing import Dict, List, Set
 
-from api.models.team_set import TeamSet
+from api.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
 

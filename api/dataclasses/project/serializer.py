@@ -1,12 +1,12 @@
 from json import JSONEncoder
 from typing import Dict, Union, Any
 
-from api.models.enums import RequirementOperator
-from api.models.project import ProjectRequirement
-from api.models.interfaces import ModelDecoder
+from api.dataclasses.enums import RequirementOperator
+from api.dataclasses.project import ProjectRequirement
+from api.dataclasses.interfaces import DataClassDecoder
 
 
-class ProjectRequirementSerializer(JSONEncoder, ModelDecoder):
+class ProjectRequirementSerializer(JSONEncoder, DataClassDecoder):
     def default(
         self, project_requirement: ProjectRequirement
     ) -> Dict[str, Union[int, str]]:

@@ -7,8 +7,8 @@ from typing import Literal, List, Dict, Optional
 import numpy as np
 from numpy.random import Generator
 
-from api.models.enums import Relationship, AttributeValueEnum, ScenarioAttribute
-from api.models.student import Student
+from api.dataclasses.enums import Relationship, AttributeValueEnum, ScenarioAttribute
+from api.dataclasses.student import Student
 from benchmarking.data.interfaces import (
     StudentProvider,
     AttributeRangeConfig,

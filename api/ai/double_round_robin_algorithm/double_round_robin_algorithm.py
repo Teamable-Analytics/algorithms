@@ -28,14 +28,14 @@ Definition:
 """
 from typing import List, Dict, Set, Callable
 
-from api.ai.double_round_robin_algorithm.custom_models import Utility
+from api.ai.double_round_robin_algorithm.custom_dataclasses import Utility
 from api.ai.interfaces.algorithm import Algorithm
 from api.ai.interfaces.algorithm_config import DoubleRoundRobinAlgorithmConfig
 from api.ai.interfaces.algorithm_options import DoubleRoundRobinAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.models.student import Student
-from api.models.team import Team, TeamShell
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team, TeamShell
+from api.dataclasses.team_set import TeamSet
 
 
 class DoubleRoundRobinAlgorithm(Algorithm):

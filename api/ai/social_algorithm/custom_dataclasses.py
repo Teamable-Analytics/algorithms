@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from api.models.team import Team
+from api.dataclasses.team import Team
 
 
 @dataclass
