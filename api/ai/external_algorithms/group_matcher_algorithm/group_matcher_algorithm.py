@@ -7,7 +7,7 @@ from typing import List, Dict, Iterator
 
 import pandas as pd
 
-from api.ai.external_algorithms.group_matcher_algorithm.custom_modes import (
+from api.ai.external_algorithms.group_matcher_algorithm.custom_dataclasses import (
     GroupMatcherStudent,
 )
 from api.ai.interfaces.algorithm import Algorithm
