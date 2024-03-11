@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from itertools import cycle
 from typing import Dict, Iterator
 
 import faker
@@ -11,10 +10,10 @@ from api.ai.external_algorithms.group_matcher_algorithm.utils import (
     fromGenderToAlGender,
     fromRaceToAlRace,
 )
-from api.models.enums import ScenarioAttribute, Gender, Race
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.enums import ScenarioAttribute, Gender, Race
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 
 
 @dataclass

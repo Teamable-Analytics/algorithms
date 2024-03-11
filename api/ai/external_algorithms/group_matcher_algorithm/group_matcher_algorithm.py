@@ -14,9 +14,9 @@ from api.ai.interfaces.algorithm import Algorithm
 from api.ai.interfaces.algorithm_config import GroupMatcherAlgorithmConfig
 from api.ai.interfaces.algorithm_options import GroupMatcherAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 
 
 class GroupMatcherAlgorithm(Algorithm):

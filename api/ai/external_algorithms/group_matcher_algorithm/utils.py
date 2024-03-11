@@ -1,6 +1,6 @@
 from typing import List
 
-from api.models.enums import Gender, Race, AttributeValueEnum
+from api.dataclasses.enums import AttributeValueEnum, Gender, Race
 
 
 class AlRace(AttributeValueEnum):
