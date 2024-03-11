@@ -15,7 +15,9 @@ from benchmarking.evaluations.goals import (
 from benchmarking.evaluations.interfaces import Scenario, Goal
 
 
-class SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2(Scenario):
+class SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2(
+    Scenario
+):
     def __init__(self, value_of_female: int, value_of_african: int):
         super().__init__()
         self.value_of_female = value_of_female
