@@ -20,7 +20,7 @@ def mutate_random_slice(
         picked_students = []
         for team in available_priority_teams:
             picked_students.append(
-                team.student_ids[random.randrange(len(team.student_ids))]
+                team.student_ids.pop(random.randrange(len(team.student_ids)))
             )
 
         # Shuffle picked students
@@ -28,7 +28,7 @@ def mutate_random_slice(
 
         # Put them back into the teams
         for team in available_priority_teams:
-            team.student_ids.remove(picked_students.pop())
+            team.student_ids.append(picked_students.pop())
 
     except ValueError:
         return priority_team_set
