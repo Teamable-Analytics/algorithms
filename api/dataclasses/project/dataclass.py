@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from api.models.enums import RequirementOperator
+from api.dataclasses.enums import RequirementOperator
 
 
 @dataclass

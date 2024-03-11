@@ -7,8 +7,8 @@ from api.ai.priority_algorithm.scoring import (
     get_priority_satisfaction_array,
     get_multipliers,
 )
-from api.models.student import Student
-from api.models.team import TeamShell
+from api.dataclasses.student import Student
+from api.dataclasses.team import TeamShell
 
 """
 These dataclasses are used only in the priority algorithm.

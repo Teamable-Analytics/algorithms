@@ -1,6 +1,6 @@
 from typing import List
 
-from api.models.enums import DiversifyType, ScenarioAttribute
+from api.dataclasses.enums import DiversifyType, ScenarioAttribute
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.goals import (
     DiversityGoal,

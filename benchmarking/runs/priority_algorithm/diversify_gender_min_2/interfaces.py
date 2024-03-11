@@ -14,7 +14,7 @@ from api.ai.priority_algorithm.mutations import (
     mutate_local_max_double_random,
     mutate_local_max_random,
 )
-from api.models.enums import ScenarioAttribute, Gender, AlgorithmType
+from api.dataclasses.enums import ScenarioAttribute, Gender, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
     MockStudentProvider,

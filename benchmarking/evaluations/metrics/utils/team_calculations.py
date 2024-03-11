@@ -1,7 +1,7 @@
 from collections import defaultdict
 
-from api.models.enums import TokenizationConstraintDirection
-from api.models.team import Team
+from api.dataclasses.enums import TokenizationConstraintDirection
+from api.dataclasses.team import Team
 from benchmarking.evaluations.metrics.utils.student_calculations import (
     is_strictly_happy_student_friend,
     is_strictly_happy_student_enemy,
@@ -10,7 +10,7 @@ from benchmarking.evaluations.metrics.utils.student_calculations import (
     student_meets_requirement,
     has_friend_and_no_enemies,
 )
-from api.models.tokenization_constraint import TokenizationConstraint
+from api.dataclasses.tokenization_constraint import TokenizationConstraint
 
 
 def team_gini_index(team: Team, attribute: int) -> float:

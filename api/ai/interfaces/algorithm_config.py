@@ -4,8 +4,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Callable, Tuple, List
 
-from api.models.student import Student
-from api.models.team import TeamShell
+from api.dataclasses.student import Student
+from api.dataclasses.team import TeamShell
 
 
 @dataclass
@@ -94,6 +94,10 @@ class PriorityAlgorithmConfig(AlgorithmConfig):
 class MultipleRoundRobinAlgorithmConfig(AlgorithmConfig):
     utility_function: Callable[[Student, TeamShell], float]
 
+    def __init__(self, utility_function: Callable[[Student, TeamShell], float]):
+        super().__init__()
+        self.utility_function = utility_function
+
     def validate(self):
         super().validate()
 
@@ -101,12 +105,20 @@ class MultipleRoundRobinAlgorithmConfig(AlgorithmConfig):
 class DoubleRoundRobinAlgorithmConfig(AlgorithmConfig):
     utility_function: Callable[[Student, TeamShell], float]
 
+    def __init__(self, utility_function: Callable[[Student, TeamShell], float]):
+        super().__init__()
+        self.utility_function = utility_function
+
     def validate(self):
         super().validate()
 
 
 class GeneralizedEnvyGraphAlgorithmConfig(AlgorithmConfig):
     utility_function: Callable[[Student, TeamShell], float]
+
+    def __init__(self, utility_function: Callable[[Student, TeamShell], float]):
+        super().__init__()
+        self.utility_function = utility_function
 
     def validate(self):
         super().validate()

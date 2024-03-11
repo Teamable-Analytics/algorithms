@@ -10,7 +10,7 @@ from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
 )
 from api.ai.priority_algorithm.mutations import mutate_local_max, mutate_random_swap
-from api.models.enums import AlgorithmType
+from api.dataclasses.enums import AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
