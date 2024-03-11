@@ -1,7 +1,7 @@
 import random
 from random import shuffle
 
-from api.ai.priority_algorithm.custom_models import PriorityTeamSet
+from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet
 from api.ai.priority_algorithm.mutations.utils import get_available_priority_teams
 
 
