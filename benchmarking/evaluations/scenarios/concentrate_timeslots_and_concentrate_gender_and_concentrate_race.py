@@ -4,15 +4,13 @@ from api.dataclasses.enums import (
     DiversifyType,
     ScenarioAttribute,
     Gender,
-    TokenizationConstraintDirection,
     Race,
 )
-from api.dataclasses.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import WeightGoal, DiversityGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 
 
-class ConcentrateTimeslotAndDiversifyGenderMin2Female(Scenario):
+class ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRace(Scenario):
     def __init__(
         self,
         max_num_choices: int,
@@ -26,7 +24,7 @@ class ConcentrateTimeslotAndDiversifyGenderMin2Female(Scenario):
 
     @property
     def name(self):
-        return "Concentrate on Timeslots and Diversify Female min of 2"
+        return "Concentrate on Timeslots and Concentrate Gender and Concentrate Race"
 
     @property
     def goals(self) -> List[Goal]:
@@ -37,13 +35,14 @@ class ConcentrateTimeslotAndDiversifyGenderMin2Female(Scenario):
                 max_num_choices=self.max_num_choices,
             ),
             DiversityGoal(
-                DiversifyType.DIVERSIFY,
+                DiversifyType.CONCENTRATE,
                 ScenarioAttribute.GENDER.value,
-                tokenization_constraint=TokenizationConstraint(
-                    direction=TokenizationConstraintDirection.MIN_OF,
-                    threshold=2,
-                    value=self.value_of_female,
-                ),
+                max_num_choices=1,
+            ),
+            DiversityGoal(
+                DiversifyType.CONCENTRATE,
+                ScenarioAttribute.RACE.value,
+                max_num_choices=1,
             ),
             WeightGoal(diversity_goal_weight=1),
         ]
