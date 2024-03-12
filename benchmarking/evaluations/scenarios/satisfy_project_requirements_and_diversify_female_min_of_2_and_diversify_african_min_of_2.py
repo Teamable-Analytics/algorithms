@@ -4,7 +4,7 @@ from api.dataclasses.enums import (
     RequirementsCriteria,
     DiversifyType,
     ScenarioAttribute,
-    TokenizationConstraintDirection,
+    TokenizationConstraintDirection, Gender, Race,
 )
 from api.dataclasses.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import (
@@ -18,7 +18,11 @@ from benchmarking.evaluations.interfaces import Scenario, Goal
 class SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2(
     Scenario
 ):
-    def __init__(self, value_of_female: int, value_of_african: int):
+    def __init__(
+            self,
+            value_of_female: int = Gender.FEMALE.value,
+            value_of_african: int = Race.African.value,
+    ):
         super().__init__()
         self.value_of_female = value_of_female
         self.value_of_african = value_of_african
