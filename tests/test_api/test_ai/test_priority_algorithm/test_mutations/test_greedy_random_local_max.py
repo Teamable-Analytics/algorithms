@@ -2,8 +2,8 @@ import random
 import unittest
 from collections import Counter
 
-from api.ai.priority_algorithm.custom_models import PriorityTeam, PriorityTeamSet
-from api.models.team import TeamShell
+from api.ai.priority_algorithm.custom_dataclasses import PriorityTeam, PriorityTeamSet
+from api.dataclasses.team import TeamShell
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,

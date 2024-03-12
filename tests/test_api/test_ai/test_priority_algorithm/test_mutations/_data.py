@@ -3,10 +3,10 @@ from typing import List
 
 from schema import Schema
 
-from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
+from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
 from api.ai.priority_algorithm.priority.interfaces import Priority
-from api.models.student import Student
-from api.models.team import TeamShell, Team
+from api.dataclasses.student import Student
+from api.dataclasses.team import TeamShell, Team
 
 
 @dataclass
