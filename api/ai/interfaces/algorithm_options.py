@@ -295,6 +295,20 @@ class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
         raise NotImplementedError
 
 
+@dataclass
+class GroupMatcherAlgorithmOptions(AlgorithmOptions):
+    def validate(self):
+        super().validate()
+
+    @staticmethod
+    def parse_json(_: Dict[str, Any]):
+        raise NotImplementedError
+
+    @staticmethod
+    def get_schema() -> Schema:
+        raise NotImplementedError
+
+
 AnyAlgorithmOptions = Union[
     RandomAlgorithmOptions,
     WeightAlgorithmOptions,
@@ -303,4 +317,5 @@ AnyAlgorithmOptions = Union[
     MultipleRoundRobinAlgorithmOptions,
     GeneralizedEnvyGraphAlgorithmOptions,
     DoubleRoundRobinAlgorithmOptions,
+    GroupMatcherAlgorithmOptions,
 ]
