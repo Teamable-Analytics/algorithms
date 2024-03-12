@@ -7,7 +7,7 @@ from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     PriorityAlgorithmStartType,
 )
-from api.models.enums import (
+from api.dataclasses.enums import (
     AlgorithmType,
     RequirementsCriteria,
 )

@@ -1,6 +1,6 @@
 from typing import List
 
-from api.models.student import Student
+from api.dataclasses.student import Student
 
 
 def student_attribute_binary_vector(

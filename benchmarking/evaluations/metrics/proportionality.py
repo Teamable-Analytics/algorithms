@@ -1,8 +1,8 @@
 from typing import Callable, List
 
-from api.models.student import Student
-from api.models.team import TeamShell
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student
+from api.dataclasses.team import TeamShell
+from api.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
 

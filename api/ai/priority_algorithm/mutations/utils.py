@@ -1,12 +1,12 @@
 from typing import List, Dict
 
 from api.ai.priority_algorithm.priority.interfaces import Priority
-from api.ai.priority_algorithm.custom_models import PriorityTeam, PriorityTeamSet
+from api.ai.priority_algorithm.custom_dataclasses import PriorityTeam, PriorityTeamSet
 from api.ai.priority_algorithm.scoring import (
     get_multipliers,
     get_priority_satisfaction_array,
 )
-from api.models.student import Student
+from api.dataclasses.student import Student
 
 
 def score(

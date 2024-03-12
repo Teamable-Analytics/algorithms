@@ -1,13 +1,13 @@
 from typing import List
 
-from api.models.enums import (
+from api.dataclasses.enums import (
     DiversifyType,
     ScenarioAttribute,
     Gender,
     TokenizationConstraintDirection,
     Race,
 )
-from api.models.tokenization_constraint import TokenizationConstraint
+from api.dataclasses.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import WeightGoal, DiversityGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 
@@ -26,7 +26,7 @@ class ConcentrateTimeslotAndDiversifyGenderMin2Female(Scenario):
 
     @property
     def name(self):
-        return "Concentrate on Timeslot and Diversify Female min of 2"
+        return "Concentrate on Timeslots and Diversify Female min of 2"
 
     @property
     def goals(self) -> List[Goal]:

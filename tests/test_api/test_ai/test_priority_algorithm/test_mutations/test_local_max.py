@@ -1,7 +1,7 @@
 import unittest
 from typing import List
 
-from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
+from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
 from api.ai.priority_algorithm.mutations import (
     mutate_local_max_random,
     mutate_local_max,

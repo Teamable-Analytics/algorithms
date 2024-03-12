@@ -6,7 +6,7 @@ from api.ai.interfaces.algorithm_config import (
     WeightAlgorithmConfig,
     SocialAlgorithmConfig,
 )
-from api.models.enums import AlgorithmType
+from api.dataclasses.enums import AlgorithmType
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,

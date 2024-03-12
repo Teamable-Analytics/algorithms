@@ -3,9 +3,9 @@ from typing import List
 
 from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.ai.priority_algorithm.mutations.utils import score
-from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
-from api.models.student import Student
-from api.models.team import Team
+from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
 from tests.test_api.test_ai.test_priority_algorithm.test_mutations.test_local_max import (
     EvenPriority,
 )

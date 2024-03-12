@@ -1,7 +1,7 @@
 from typing import List, Dict, Set, Callable
 
-from api.models.student import Student
-from api.models.team import Team, TeamShell
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team, TeamShell
 
 
 class EnvyGraph:

@@ -1,7 +1,7 @@
 from typing import List, Dict
 
-from api.models.student import Student
-from api.models.team import Team
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
 
 
 def get_diversity_utility(

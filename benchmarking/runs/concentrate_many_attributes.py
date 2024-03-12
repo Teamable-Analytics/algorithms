@@ -24,7 +24,7 @@ from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import 
 from benchmarking.evaluations.scenarios.concentrate_multiple_attributes import (
     ConcentrateMultipleAttributes,
 )
-from api.models.enums import ScenarioAttribute, Gender, Race, AlgorithmType
+from api.dataclasses.enums import ScenarioAttribute, Gender, Race, AlgorithmType
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet

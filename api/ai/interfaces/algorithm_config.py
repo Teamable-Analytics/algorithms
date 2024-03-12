@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
 from typing import Callable, Tuple, List
 
-from api.models.student import Student
-from api.models.team import TeamShell
+from api.dataclasses.student import Student
+from api.dataclasses.team import TeamShell
 
 
 @dataclass
@@ -118,6 +119,19 @@ class GeneralizedEnvyGraphAlgorithmConfig(AlgorithmConfig):
     def __init__(self, utility_function: Callable[[Student, TeamShell], float]):
         super().__init__()
         self.utility_function = utility_function
+
+    def validate(self):
+        super().validate()
+
+
+class GroupMatcherAlgorithmConfig(AlgorithmConfig):
+    csv_input_path: Path
+    group_matcher_run_path: Path
+
+    def __init__(self, csv_output_path: str, group_matcher_run_path: str):
+        super().__init__()
+        self.csv_input_path = Path(csv_output_path)
+        self.group_matcher_run_path = Path(group_matcher_run_path)
 
     def validate(self):
         super().validate()

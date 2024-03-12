@@ -1,8 +1,8 @@
 from typing import List, Tuple, Dict
 
-from api.ai.social_algorithm.custom_models import TeamWithCliques
-from api.models.enums import Relationship
-from api.models.student import Student
+from api.ai.social_algorithm.custom_dataclasses import TeamWithCliques
+from api.dataclasses.enums import Relationship
+from api.dataclasses.student import Student
 
 UNREGISTERED_STUDENT_ID = -1
 

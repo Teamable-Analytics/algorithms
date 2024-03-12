@@ -7,7 +7,7 @@ from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     PriorityAlgorithmStartType,
 )
-from api.models.enums import (
+from api.dataclasses.enums import (
     AlgorithmType,
     DiversifyType,
     ScenarioAttribute,
@@ -16,7 +16,7 @@ from api.models.enums import (
     Gender,
     Age,
 )
-from api.models.tokenization_constraint import TokenizationConstraint
+from api.dataclasses.tokenization_constraint import TokenizationConstraint
 from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProvider,
     MockInitialTeamsProviderSettings,

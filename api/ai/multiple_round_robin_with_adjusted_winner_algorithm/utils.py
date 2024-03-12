@@ -1,7 +1,7 @@
 from typing import Callable
 
-from api.models.student import Student
-from api.models.team import TeamShell, Team
+from api.dataclasses.student import Student
+from api.dataclasses.team import TeamShell, Team
 
 
 def is_ordered_envy_freeness_up_to_one_item(

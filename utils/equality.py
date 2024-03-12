@@ -1,12 +1,12 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from api.models.student import Student
-    from api.models.team import Team
+    from api.dataclasses.student import Student
+    from api.dataclasses.team import Team
 
 
 def are_students_equal_ignoring_team(s1: "Student", s2: "Student"):
-    from api.models.student import Student
+    from api.dataclasses.student import Student
 
     for field_name in Student.__dataclass_fields__.keys():
         if field_name == "team":
@@ -17,7 +17,7 @@ def are_students_equal_ignoring_team(s1: "Student", s2: "Student"):
 
 
 def are_teams_equal_ignoring_students(t1: "Team", t2: "Team"):
-    from api.models.team import Team
+    from api.dataclasses.team import Team
 
     for field_name in Team.__dataclass_fields__.keys():
         if field_name == "students":

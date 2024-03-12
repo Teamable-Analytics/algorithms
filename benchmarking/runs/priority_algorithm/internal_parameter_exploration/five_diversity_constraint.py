@@ -7,7 +7,7 @@ from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     PriorityAlgorithmStartType,
 )
-from api.models.enums import (
+from api.dataclasses.enums import (
     AlgorithmType,
     Gender,
     DiversifyType,
@@ -17,7 +17,7 @@ from api.models.enums import (
     Race,
     Age,
 )
-from api.models.tokenization_constraint import TokenizationConstraint
+from api.dataclasses.tokenization_constraint import TokenizationConstraint
 from benchmarking.data.interfaces import StudentProvider
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
