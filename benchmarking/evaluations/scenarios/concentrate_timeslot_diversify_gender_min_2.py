@@ -26,7 +26,7 @@ class ConcentrateTimeslotAndDiversifyGenderMin2Female(Scenario):
 
     @property
     def name(self):
-        return "Concentrate on Timeslot and Diversify Female min of 2"
+        return "Concentrate on Timeslots and Diversify Female min of 2"
 
     @property
     def goals(self) -> List[Goal]:

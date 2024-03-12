@@ -24,7 +24,7 @@ class ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRace(Scenario):
 
     @property
     def name(self):
-        return "Concentrate on Timeslot and Concentrate Gender and Concentrate Race"
+        return "Concentrate on Timeslots and Concentrate Gender and Concentrate Race"
 
     @property
     def goals(self) -> List[Goal]:
