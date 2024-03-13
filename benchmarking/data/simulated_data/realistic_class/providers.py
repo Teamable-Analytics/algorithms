@@ -11,7 +11,12 @@ from api.dataclasses.enums import (
 )
 from api.dataclasses.project import Project, ProjectRequirement
 from api.dataclasses.student import Student
-from benchmarking.data.interfaces import StudentProvider
+from api.dataclasses.team import TeamShell
+from benchmarking.data.interfaces import StudentProvider, InitialTeamsProvider
+from benchmarking.data.simulated_data.mock_initial_teams_provider import (
+    MockInitialTeamsProvider,
+    MockInitialTeamsProviderSettings,
+)
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -130,6 +135,15 @@ class RealisticMockStudentProvider(StudentProvider):
 
         order = rng.permutation(len(students))
         return [students[_] for _ in order]
+
+
+class RealisticMockInitialTeamsProvider(InitialTeamsProvider):
+    def get(self) -> List[TeamShell]:
+        return MockInitialTeamsProvider(
+            settings=MockInitialTeamsProviderSettings(
+                projects=get_realistic_projects(),
+            )
+        ).get()
 
 
 def get_realistic_projects() -> List[Project]:
