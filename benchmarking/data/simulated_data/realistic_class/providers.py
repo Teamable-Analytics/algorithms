@@ -1,3 +1,4 @@
+import itertools
 from typing import List
 
 import numpy as np
@@ -138,10 +139,24 @@ class RealisticMockStudentProvider(StudentProvider):
 
 
 class RealisticMockInitialTeamsProvider(InitialTeamsProvider):
+    def __init__(self, num_teams: int):
+        self.num_teams = num_teams
+
     def get(self) -> List[TeamShell]:
+        projects = []
+        project_cycler = itertools.cycle(get_realistic_projects())
+        for i in range(self.num_teams):
+            next_project = next(project_cycler)
+            projects.append(
+                Project(
+                    _id=i,
+                    name=next_project.name + " " + str(i),
+                    requirements=next_project.requirements,
+                )
+            )
         return MockInitialTeamsProvider(
             settings=MockInitialTeamsProviderSettings(
-                projects=get_realistic_projects(),
+                projects=projects,
             )
         ).get()
 
