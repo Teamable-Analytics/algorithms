@@ -110,7 +110,7 @@ class MutationBenchmarking(Run):
                     settings=SimulationSettings(
                         scenario=scenario,
                         student_provider=RealisticMockStudentProvider(class_size),
-                        cache_key=f"priority_algorithm/mutations/{mutation_name}/class_size_{class_size}/",
+                        cache_key=f"mutations/mutation_benchmarking/{mutation_name}/class_size_{class_size}/",
                         initial_teams_provider=RealisticMockInitialTeamsProvider(class_size // team_size),
                     ),
                     algorithm_set={
