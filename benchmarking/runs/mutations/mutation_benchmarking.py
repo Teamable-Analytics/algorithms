@@ -41,6 +41,7 @@ class MutationBenchmarking(Run):
     def start(self, num_trials: int = 10, generate_graphs: bool = True):
         # class_sizes = [50, 100, 250, 500]
         class_sizes = [50, 100]
+        team_size = 5
 
         scenario = (
             SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2()
@@ -68,7 +69,6 @@ class MutationBenchmarking(Run):
             ),
         }
 
-        initial_teams_provider = RealisticMockInitialTeamsProvider()
         max_keep = 15
         max_spread = 30
         max_iterate = 30
@@ -86,17 +86,17 @@ class MutationBenchmarking(Run):
             ],
             "mutate_random_slice": [(mutate_random_slice, max_spread)],
             "mutate_half_random_slice": [
-                (mutate_random_slice, max_spread / 2),
-                (mutate_random_swap, max_spread / 2),
+                (mutate_random_slice, max_spread // 2),
+                (mutate_random_swap, max_spread // 2),
             ],
             "mutate_greedy_local_max": [(greedy_local_max_mutation, max_spread)],
             "mutate_greedy_local_max_with_random_swap": [
-                (greedy_local_max_mutation, max_spread / 2),
-                (mutate_random_swap, max_spread / 2),
+                (greedy_local_max_mutation, max_spread // 2),
+                (mutate_random_swap, max_spread // 2),
             ],
             "mutate_greedy_local_max_with_random_slice": [
-                (greedy_local_max_mutation, max_spread / 2),
-                (mutate_random_slice, max_spread / 2),
+                (greedy_local_max_mutation, max_spread // 2),
+                (mutate_random_slice, max_spread // 2),
             ],
         }
 
@@ -111,7 +111,7 @@ class MutationBenchmarking(Run):
                         scenario=scenario,
                         student_provider=RealisticMockStudentProvider(class_size),
                         cache_key=f"mutations/mutation_benchmarking/{mutation_name}/class_size_{class_size}/",
-                        initial_teams_provider=initial_teams_provider,
+                        initial_teams_provider=RealisticMockInitialTeamsProvider(class_size // team_size),
                     ),
                     algorithm_set={
                         AlgorithmType.PRIORITY: [
