@@ -17,7 +17,10 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
 )
 
+
 TECHNICAL_SKILLS = 410
+GITHUB_EXPERIENCE = 411
+WORK_EXPERIENCE = 412
 
 
 class DevelopmentSkills(AttributeValueEnum):
@@ -33,18 +36,12 @@ class DevelopmentSkills(AttributeValueEnum):
     AWS = 10
 
 
-GITHUB_EXPERIENCE = 411
-
-
 class GithubExperience(AttributeValueEnum):
     Beginner = 1  # What is git
     Intermediate = 2  # meaning you know how to push stuff to git
     Advanced = (
         3  # Meaning you know more than git add ., git commit -m, git push, git status
     )
-
-
-WORK_EXPERIENCE = 412
 
 
 class WorkExperience(AttributeValueEnum):
