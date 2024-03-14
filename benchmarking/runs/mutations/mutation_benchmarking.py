@@ -7,14 +7,11 @@ from api.ai.priority_algorithm.mutations import (
     mutate_local_max,
     mutate_random_swap,
     mutate_local_max_random,
-)
-from api.ai.priority_algorithm.mutations.greedy_random_local_max import (
+    mutate_random_slice,
     greedy_local_max_mutation,
 )
-from api.ai.priority_algorithm.mutations.random_slice import mutate_random_slice
 from api.dataclasses.enums import ScenarioAttribute, Gender, Race, AlgorithmType
 from benchmarking.data.simulated_data.realistic_class.providers import (
-    get_realistic_projects,
     RealisticMockInitialTeamsProvider,
     RealisticMockStudentProvider,
 )
@@ -39,8 +36,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 class MutationBenchmarking(Run):
     def start(self, num_trials: int = 10, generate_graphs: bool = True):
-        # class_sizes = [50, 100, 250, 500]
-        class_sizes = [50, 100]
+        class_sizes = [20, 100, 250, 500]
         team_size = 5
 
         scenario = (
@@ -62,10 +58,10 @@ class MutationBenchmarking(Run):
                 name="AverageCosineDifferenceRace",
             ),
             "AverageSoloStatus": AverageSoloStatus(
-                minority_groups={
-                    ScenarioAttribute.GENDER.value: [_.value for _ in Gender.values()],
-                    ScenarioAttribute.MAJOR.value: [_.value for _ in Race.values()],
-                }
+                minority_groups_map={
+                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
+                    ScenarioAttribute.RACE.value: [Race.African.value],
+                },
             ),
         }
 
@@ -111,7 +107,9 @@ class MutationBenchmarking(Run):
                         scenario=scenario,
                         student_provider=RealisticMockStudentProvider(class_size),
                         cache_key=f"mutations/mutation_benchmarking/{mutation_name}/class_size_{class_size}/",
-                        initial_teams_provider=RealisticMockInitialTeamsProvider(class_size // team_size),
+                        initial_teams_provider=RealisticMockInitialTeamsProvider(
+                            class_size // team_size
+                        ),
                     ),
                     algorithm_set={
                         AlgorithmType.PRIORITY: [
@@ -160,8 +158,8 @@ class MutationBenchmarking(Run):
                 line_graph(
                     LineGraphMetadata(
                         x_label="Class size",
-                        y_label="Score",
-                        title="Simulate including friends",
+                        y_label=metric_name,
+                        title=f"Class Size vs. {metric_name}",
                         data=graph_data,
                     )
                 )

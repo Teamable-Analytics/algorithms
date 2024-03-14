@@ -5,9 +5,7 @@ from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet
 from api.ai.priority_algorithm.mutations.utils import get_available_priority_teams
 
 
-def mutate_random_slice(
-    priority_team_set: PriorityTeamSet,
-):
+def mutate_random_slice(priority_team_set: PriorityTeamSet, *args, **kwargs):
     """
     This mutation takes one student from each team and swaps them
     """
