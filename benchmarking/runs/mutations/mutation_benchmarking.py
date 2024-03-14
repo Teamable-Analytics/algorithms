@@ -15,7 +15,7 @@ from benchmarking.data.simulated_data.realistic_class.providers import (
     RealisticMockInitialTeamsProvider,
     RealisticMockStudentProvider,
 )
-from benchmarking.evaluations.graphing.graph_metadata import GraphData
+from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
@@ -63,6 +63,7 @@ class MutationBenchmarking(Run):
                     ScenarioAttribute.RACE.value: [Race.African.value],
                 },
             ),
+            Insight.KEY_RUNTIMES: "runtime",
         }
 
         max_keep = 15
@@ -133,12 +134,12 @@ class MutationBenchmarking(Run):
                     for mutation_name, artifact in _.items():
                         insight_output_set = Insight.get_output_set(
                             artifact=artifact,
-                            metrics=[metric],
+                            metrics=[metric if metric != "runtime" else AverageProjectRequirementsCoverage()],
                         )
                         avg_metric = list(
                             Insight.average_metric(
                                 insight_output_set=insight_output_set,
-                                metric_name=metric.name,
+                                metric_name=metric_name if metric_name == Insight.KEY_RUNTIMES else metric.name,
                             ).values()
                         )[0]
                         data[class_size][mutation_name] = avg_metric
@@ -161,6 +162,8 @@ class MutationBenchmarking(Run):
                         y_label=metric_name,
                         title=f"Class Size vs. {metric_name}",
                         data=graph_data,
+                        y_lim=GraphAxisRange(0, 1),
+                        # save_graph=True,
                     )
                 )
 
