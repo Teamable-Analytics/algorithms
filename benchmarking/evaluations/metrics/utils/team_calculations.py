@@ -71,26 +71,6 @@ def is_happy_team_all_have_friend_no_enemy(team: Team) -> bool:
     return all([has_friend_and_no_enemies(s) for s in team.students])
 
 
-def has_team_met_requirements(team: Team) -> bool:
-    for requirement in team.requirements:
-        is_met = False
-        for student in team.students:
-            is_met |= student.meets_requirement(requirement)
-        if not is_met:
-            return False
-    return True
-
-
-def num_satisfied_requirements(team: Team) -> int:
-    num_satisfied = 0
-    for requirement in team.requirements:
-        is_met = False
-        for student in team.students:
-            is_met |= student.meets_requirement(requirement)
-        num_satisfied += is_met
-    return num_satisfied
-
-
 def is_priority_satisfied(
     team: Team, attribute: int, tokenization_constraint: TokenizationConstraint
 ) -> bool:

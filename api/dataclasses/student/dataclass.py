@@ -1,8 +1,11 @@
 from dataclasses import dataclass, field
-from typing import List, Dict
+from typing import List, Dict, TYPE_CHECKING
 
 from api.dataclasses.enums import Relationship, RequirementOperator
 from api.dataclasses.project import ProjectRequirement
+
+if TYPE_CHECKING:
+    from api.dataclasses.team import Team
 
 
 @dataclass

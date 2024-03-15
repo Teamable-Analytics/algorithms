@@ -48,9 +48,7 @@ class SatisfyProjectRequirements(Scenario):
     @property
     def goals(self) -> List[Goal]:
         return [
-            ProjectRequirementGoal(
-                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
-            ),
+            ProjectRequirementGoal(),
             WeightGoal(project_requirement_weight=1),
         ]
 

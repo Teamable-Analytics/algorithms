@@ -169,9 +169,7 @@ class DiversityAndProjectsScenario(Scenario):
     @property
     def goals(self) -> List[Goal]:
         return [
-            ProjectRequirementGoal(
-                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
-            ),
+            ProjectRequirementGoal(),
             DiversityGoal(
                 DiversifyType.DIVERSIFY,
                 ScenarioAttribute.GENDER.value,
