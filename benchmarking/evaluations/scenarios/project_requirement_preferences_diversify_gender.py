@@ -24,9 +24,7 @@ class ProjectRequirementPreferenceDiversifyGender(Scenario):
     def goals(self) -> List[Goal]:
         return [
             DiversityGoal(DiversifyType.DIVERSIFY, ScenarioAttribute.GENDER.value),
-            ProjectRequirementGoal(
-                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
-            ),
+            ProjectRequirementGoal(),
             PreferenceGoal(
                 direction=PreferenceDirection.INCLUDE,
                 subject=PreferenceSubject.PROJECTS,

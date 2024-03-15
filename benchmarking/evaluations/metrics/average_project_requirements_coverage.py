@@ -5,6 +5,9 @@ from benchmarking.evaluations.interfaces import TeamSetMetric
 class AverageProjectRequirementsCoverage(TeamSetMetric):
     """
     Calculate the average project requirements coverage for each team and average the results
+
+    Coverage in this case means 'for each requirement, does someone on the team meet it?'.
+    This is analogous to RequirementsCriteria.SOMEONE, and this metric will treat all requirements in this way
     """
 
     def __init__(self, *args, **kwargs):
@@ -25,7 +28,7 @@ class AverageProjectRequirementsCoverage(TeamSetMetric):
                 to_be_satisfied_requirements = [
                     requirement
                     for requirement in to_be_satisfied_requirements
-                    if not student.meets_requirement(requirement)
+                    if not requirement.met_by_student(student)
                 ]
 
             total += (num_requirements - len(to_be_satisfied_requirements)) / float(
