@@ -35,7 +35,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class MutationBenchmarking(Run):
-    def start(self, num_trials: int = 10, generate_graphs: bool = True):
+    def start(self, num_trials: int = 100, generate_graphs: bool = True):
         class_sizes = [20, 100, 300, 500]
         team_size = 5
 
@@ -66,9 +66,9 @@ class MutationBenchmarking(Run):
             Insight.KEY_RUNTIMES: "runtime",
         }
 
-        max_keep = 15
-        max_spread = 30
-        max_iterate = 30
+        max_keep = 30
+        max_spread = 100
+        max_iterate = 250
         max_time = 1_000_000
 
         mutation_sets = {
