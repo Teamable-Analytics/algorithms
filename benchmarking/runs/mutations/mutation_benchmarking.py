@@ -3,12 +3,15 @@ from typing import Dict
 import typer
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
-from api.ai.priority_algorithm.mutations import (
-    mutate_local_max,
-    mutate_random_swap,
-    mutate_local_max_random,
-    mutate_random_slice,
-    greedy_local_max_mutation,
+from api.ai.priority_algorithm.mutations.greedy_local_max import GreedyLocalMaxMutation
+from api.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
+from api.ai.priority_algorithm.mutations.local_max_random import LocalMaxRandomMutation
+from api.ai.priority_algorithm.mutations.mutation_set import MutationSet
+from api.ai.priority_algorithm.mutations.random_slice import RandomSliceMutation
+from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
+from api.ai.priority_algorithm.mutations.robinhood import RobinhoodMutation
+from api.ai.priority_algorithm.mutations.robinhood_holistic import (
+    RobinhoodHolisticMutation,
 )
 from api.dataclasses.enums import ScenarioAttribute, Gender, Race, AlgorithmType
 from benchmarking.data.simulated_data.realistic_class.providers import (
@@ -35,8 +38,9 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class MutationBenchmarking(Run):
-    def start(self, num_trials: int = 100, generate_graphs: bool = True):
-        class_sizes = [20, 100, 300, 500]
+    def start(self, num_trials: int = 2, generate_graphs: bool = True):
+        # class_sizes = [40, 100, 240, 500, 1000]
+        class_sizes = [40]
         team_size = 5
 
         scenario = (
@@ -70,31 +74,74 @@ class MutationBenchmarking(Run):
         max_spread = 100
         max_iterate = 250
         max_time = 1_000_000
-
         mutation_sets = {
-            "mutate_random": [(mutate_random_swap, max_spread)],
-            "mutate_local_max": [
-                (mutate_local_max, 1),
-                (mutate_random_swap, max_spread - 1),
-            ],
-            "mutate_local_max_random": [
-                (mutate_local_max_random, 5),
-                (mutate_random_swap, max_spread - 5),
-            ],
-            "mutate_random_slice": [(mutate_random_slice, max_spread)],
-            "mutate_half_random_slice": [
-                (mutate_random_slice, max_spread // 2),
-                (mutate_random_swap, max_spread // 2),
-            ],
-            "mutate_greedy_local_max": [(greedy_local_max_mutation, max_spread)],
-            "mutate_greedy_local_max_with_random_swap": [
-                (greedy_local_max_mutation, max_spread // 2),
-                (mutate_random_swap, max_spread // 2),
-            ],
-            "mutate_greedy_local_max_with_random_slice": [
-                (greedy_local_max_mutation, max_spread // 2),
-                (mutate_random_slice, max_spread // 2),
-            ],
+            "mutate_random": MutationSet([(RandomSwapMutation(), max_spread)]),
+            "mutate_local_max": MutationSet(
+                [
+                    (LocalMaxMutation(), 1),
+                    (RandomSwapMutation(), max_spread - 1),
+                ]
+            ),
+            "mutate_local_max_random": MutationSet(
+                [
+                    (LocalMaxRandomMutation(), 5),
+                    (RandomSwapMutation(), max_spread - 5),
+                ]
+            ),
+            "mutate_random_slice": MutationSet([(RandomSliceMutation(), max_spread)]),
+            "mutate_half_random_slice": MutationSet(
+                [
+                    (RandomSliceMutation(), max_spread // 2),
+                    (RandomSwapMutation(), max_spread // 2),
+                ]
+            ),
+            "mutate_greedy_local_max_n_2": MutationSet(
+                [(GreedyLocalMaxMutation(number_of_teams=2), max_spread)]
+            ),
+            "mutate_greedy_local_max_n_4": MutationSet(
+                [(GreedyLocalMaxMutation(number_of_teams=4), max_spread)]
+            ),
+            "mutate_greedy_local_max_n_8": MutationSet(
+                [(GreedyLocalMaxMutation(number_of_teams=8), max_spread)]
+            ),
+            "mutate_greedy_local_max_with_random_swap": MutationSet(
+                [
+                    (GreedyLocalMaxMutation(), max_spread // 2),
+                    (RandomSwapMutation, max_spread // 2),
+                ]
+            ),
+            "mutate_greedy_local_max_with_random_slice_n_2": MutationSet(
+                [
+                    (GreedyLocalMaxMutation(), max_spread // 2),
+                    (RandomSliceMutation(), max_spread // 2),
+                ]
+            ),
+            "mutate_greedy_local_max_with_random_slice_n_4": MutationSet(
+                [
+                    (GreedyLocalMaxMutation(number_of_teams=4), max_spread // 2),
+                    (RandomSliceMutation(), max_spread // 2),
+                ]
+            ),
+            "mutate_greedy_local_max_with_random_slice_n_8": MutationSet(
+                [
+                    (GreedyLocalMaxMutation(number_of_teams=8), max_spread // 2),
+                    (RandomSliceMutation(), max_spread // 2),
+                ]
+            ),
+            # "mutate_robinhood": MutationSet([(RobinhoodMutation(), max_spread)]),
+            "mutate_robinhood_half_random_swap": MutationSet(
+                [
+                    (RobinhoodMutation(), max_spread // 2),
+                    (RandomSwapMutation(), max_spread // 2),
+                ]
+            ),
+            # "mutate_robinhood_holistic": MutationSet([(RobinhoodHolisticMutation(), max_spread)]),
+            "mutate_robinhood_holistic_half_random_swap": MutationSet(
+                [
+                    (RobinhoodHolisticMutation(), max_spread // 2),
+                    (RandomSwapMutation(), max_spread // 2),
+                ]
+            ),
         }
 
         artifacts: Dict[int, Dict[str, SimulationSetArtifact]] = {}
@@ -134,12 +181,18 @@ class MutationBenchmarking(Run):
                     for mutation_name, artifact in _.items():
                         insight_output_set = Insight.get_output_set(
                             artifact=artifact,
-                            metrics=[metric if metric != "runtime" else AverageProjectRequirementsCoverage()],
+                            metrics=[
+                                metric
+                                if metric != "runtime"
+                                else AverageProjectRequirementsCoverage()
+                            ],
                         )
                         avg_metric = list(
                             Insight.average_metric(
                                 insight_output_set=insight_output_set,
-                                metric_name=metric_name if metric_name == Insight.KEY_RUNTIMES else metric.name,
+                                metric_name=metric_name
+                                if metric_name == Insight.KEY_RUNTIMES
+                                else metric.name,
                             ).values()
                         )[0]
                         data[class_size][mutation_name] = avg_metric
