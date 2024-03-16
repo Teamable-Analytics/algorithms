@@ -5,9 +5,9 @@ from schema import Schema
 
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
 from api.ai.priority_algorithm.mutations import utils
-from api.ai.priority_algorithm.mutations.robinhood import (
-    mutate_robinhood,
-    mutate_robinhood_holistic,
+from api.ai.priority_algorithm.mutations.robinhood import RobinhoodMutation
+from api.ai.priority_algorithm.mutations.robinhood_holistic import (
+    RobinhoodHolisticMutation,
 )
 from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.dataclasses.student import Student
@@ -101,11 +101,15 @@ class TestMutateRobinhood(unittest.TestCase):
         """
         Either no teams should change or two teams should change.
         """
-        for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
+        mutate_robinhood = RobinhoodMutation()
+        mutate_robinhood_holistic = RobinhoodHolisticMutation()
+        for mutation in [mutate_robinhood, mutate_robinhood_holistic]:
             priority_team_set, student_dict = create_new_priority_team_set(3, 9)
             priorities = [StudentListPriority([1, 2])]
 
-            mutated_team_set = mutate_func(priority_team_set, priorities, student_dict)
+            mutated_team_set = mutation.mutate(
+                priority_team_set, priorities, student_dict
+            )
 
             # Count the number of teams that changed
             changed_teams = 0
@@ -124,12 +128,14 @@ class TestMutateRobinhood(unittest.TestCase):
         """
         The mutated team set should be different from the original team set
         """
+        mutate_robinhood = RobinhoodMutation()
+        mutate_robinhood_holistic = RobinhoodHolisticMutation()
         functions = [mutate_robinhood, mutate_robinhood_holistic]
-        for mutate_func in functions:
+        for mutation in functions:
             priority_team_set, student_dict = create_new_priority_team_set(2, 4)
             priorities = [StudentListPriority([1, 2])]
 
-            mutated_team_set = mutate_func(
+            mutated_team_set = mutation.mutate(
                 priority_team_set.clone(), priorities, student_dict
             )
 
@@ -143,12 +149,16 @@ class TestMutateRobinhood(unittest.TestCase):
         Locked teams should not change
         """
 
-        for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
+        mutate_robinhood = RobinhoodMutation()
+        mutate_robinhood_holistic = RobinhoodHolisticMutation()
+        for mutation in [mutate_robinhood, mutate_robinhood_holistic]:
             priority_team_set, student_dict = create_new_priority_team_set(3, 9)
             priorities = [StudentListPriority([1, 2])]
             priority_team_set.priority_teams[0].team_shell.is_locked = True
 
-            mutated_team_set = mutate_func(priority_team_set, priorities, student_dict)
+            mutated_team_set = mutation.mutate(
+                priority_team_set, priorities, student_dict
+            )
 
             self.assertEqual(
                 get_priority_team(0, priority_team_set).student_ids,
@@ -160,11 +170,15 @@ class TestMutateRobinhood(unittest.TestCase):
         """
         The score of the mutated team set should be at least as good as the original team set
         """
-        for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
+        mutate_robinhood = RobinhoodMutation()
+        mutate_robinhood_holistic = RobinhoodHolisticMutation()
+        for mutation in [mutate_robinhood, mutate_robinhood_holistic]:
             priority_team_set, student_dict = create_new_priority_team_set(3, 9)
             priorities = [StudentListPriority([1, 2])]
 
-            mutated_team_set = mutate_func(priority_team_set, priorities, student_dict)
+            mutated_team_set = mutation.mutate(
+                priority_team_set, priorities, student_dict
+            )
 
             # Reset the scores to force them to be recalculated
             priority_team_set.score = None
@@ -182,7 +196,9 @@ class TestMutateRobinhood(unittest.TestCase):
             priority_team_set.priority_teams[1].student_ids = [3, 4, 5]
             priority_team_set.priority_teams[2].student_ids = [6, 7, 8]
 
-            mutated_team_set = mutate_func(priority_team_set, priorities, student_dict)
+            mutated_team_set = mutation.mutate(
+                priority_team_set, priorities, student_dict
+            )
 
             # Reset the scores to force them to be recalculated
             priority_team_set.score = None
@@ -198,19 +214,21 @@ class TestMutateRobinhood(unittest.TestCase):
         """
         All students in the original team set should be in the mutated team set
         """
-        for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
+        mutate_robinhood = RobinhoodMutation()
+        mutate_robinhood_holistic = RobinhoodHolisticMutation()
+        for mutation in [mutate_robinhood, mutate_robinhood_holistic]:
             priority_team_set, student_dict = create_new_priority_team_set(3, 9)
             priorities = [StudentListPriority([1, 2])]
 
-            mutated_team_set = mutate_robinhood(
+            mutated_team_set = mutation.mutate(
                 priority_team_set, priorities, student_dict
             )
 
             # Count the number of students in the original team set that are not in the mutated team set
             all_students = [
-                student.id
-                for priority_team in priority_team_set.priority_teams
-                for student in priority_team.team_shell.students
+                student_id
+                for priority_team in mutated_team_set.priority_teams
+                for student_id in priority_team.student_ids
             ]
 
             self.assertEqual(
@@ -232,11 +250,15 @@ class TestMutateRobinhood(unittest.TestCase):
         """
         mutate_robinhood should return a PriorityTeamSet object
         """
-        for mutate_func in [mutate_robinhood, mutate_robinhood_holistic]:
+        mutate_robinhood = RobinhoodMutation()
+        mutate_robinhood_holistic = RobinhoodHolisticMutation()
+        for mutation in [mutate_robinhood, mutate_robinhood_holistic]:
             priority_team_set, student_dict = create_new_priority_team_set(3, 9)
             priorities = [StudentListPriority([1, 2])]
 
-            mutated_team_set = mutate_func(priority_team_set, priorities, student_dict)
+            mutated_team_set = mutation.mutate(
+                priority_team_set, priorities, student_dict
+            )
 
             self.assertIsInstance(
                 mutated_team_set,
@@ -263,8 +285,8 @@ class TestMutateRobinhood(unittest.TestCase):
         other_team: int = (
             {0, 1, 2}.difference({min_scoring_team, max_scoring_team}).pop()
         )
-
-        mutated_team_set = mutate_robinhood_holistic(
+        mutate_robinhood_holistic = RobinhoodHolisticMutation()
+        mutated_team_set = mutate_robinhood_holistic.mutate(
             priority_team_set.clone(), priorities, student_dict
         )
 

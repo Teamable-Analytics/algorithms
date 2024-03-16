@@ -3,6 +3,7 @@ import unittest
 from collections import Counter
 
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeam, PriorityTeamSet
+from api.ai.priority_algorithm.mutations.greedy_local_max import GreedyLocalMaxMutation
 from api.dataclasses.team import TeamShell
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
@@ -15,9 +16,6 @@ from tests.test_api.test_ai.test_priority_algorithm.test_mutations._data import 
     JohnPriority,
     LooseEvenPriority,
 )
-from api.ai.priority_algorithm.mutations.greedy_random_local_max import (
-    greedy_local_max_mutation,
-)
 
 
 class TestGreedyRandomLocalMax(unittest.TestCase):
@@ -28,7 +26,8 @@ class TestGreedyRandomLocalMax(unittest.TestCase):
 
     def test_mutate__changes_team_set(self):
         initial_team_set = self.priority_team_set.clone()
-        greedy_local_max_mutation(
+        greedy_local_max = GreedyLocalMaxMutation()
+        greedy_local_max.mutate(
             self.priority_team_set,
             [JohnPriority(), LooseEvenPriority()],
             self.student_dict,
@@ -68,8 +67,9 @@ class TestGreedyRandomLocalMax(unittest.TestCase):
         result = PriorityTeamSet(
             priority_teams=teams,
         )
+        greedy_local_max = GreedyLocalMaxMutation()
         for _ in range(10):
-            result = greedy_local_max_mutation(
+            result = greedy_local_max.mutate(
                 result,
                 priorities,
                 student_dict,
@@ -82,7 +82,8 @@ class TestGreedyRandomLocalMax(unittest.TestCase):
     def test_mutate__returns_correct_score(self):
         # 🤌🤌🤌🤌🤌🤌🤌
         priorities = [JohnPriority(), LooseEvenPriority()]
-        result = greedy_local_max_mutation(
+        greedy_local_max = GreedyLocalMaxMutation()
+        result = greedy_local_max.mutate(
             self.priority_team_set,
             priorities,
             self.student_dict,
