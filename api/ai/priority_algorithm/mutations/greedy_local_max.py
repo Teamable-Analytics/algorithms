@@ -12,6 +12,13 @@ import random
 
 
 class GreedyLocalMaxMutation(Mutation):
+    def __init__(self, number_of_teams: int = 2):
+        self.number_of_teams = number_of_teams
+
+    def validate(self):
+        if self.number_of_teams < 2:
+            raise ValueError("Greedy local max must swap between at least 2 teams")
+
     def mutate(
         self,
         priority_team_set: PriorityTeamSet,
@@ -29,37 +36,41 @@ class GreedyLocalMaxMutation(Mutation):
             priority_team_set
         )
         try:
-            if len(available_priority_teams) < 2:
+            if len(available_priority_teams) < self.number_of_teams:
                 return priority_team_set
-            team_1, team_2 = random.sample(available_priority_teams, 2)
-            team_1_size = len(team_1.student_ids)
-            team_2_size = len(team_2.student_ids)
-            students = team_1.student_ids + team_2.student_ids
+            teams = random.sample(available_priority_teams, self.number_of_teams)
+            team_sizes = [len(team.student_ids) for team in teams]
+            students = [student_id for team in teams for student_id in team.student_ids]
             random.shuffle(students)
-            mutated_team_1 = []
-            mutated_team_2 = []
-            score1 = 0
-            score2 = 0
+            mutated_teams = [[] for _ in range(self.number_of_teams)]
+            scores = [0 for _ in range(self.number_of_teams)]
             for student in students:
-                if len(mutated_team_1) >= team_1_size:
-                    mutated_team_2.append(student)
-                elif len(mutated_team_2) >= team_2_size:
-                    mutated_team_1.append(student)
-                else:
-                    # Score with student in each new pool
-                    team_1.student_ids = mutated_team_1 + [student]
-                    team_2.student_ids = mutated_team_2 + [student]
-                    updated_score1 = score(team_1, priorities, student_dict)
-                    updated_score2 = score(team_2, priorities, student_dict)
+                max_index = None
+                max_score_increase = None
+                for i, mutated_team in enumerate(mutated_teams):
+                    # Check if there's space
+                    if len(mutated_team) >= team_sizes[i]:
+                        continue
 
-                    if updated_score1 - score1 > updated_score2 - score2:
-                        score1 = updated_score1
-                        mutated_team_1.append(student)
-                    else:
-                        score2 = updated_score2
-                        mutated_team_2.append(student)
-            team_1.student_ids = mutated_team_1
-            team_2.student_ids = mutated_team_2
+                    # Try adding student to team
+                    teams[i].student_ids = mutated_team + [student]
+                    updated_score = score(teams[i], priorities, student_dict)
+
+                    # Track which team benefits the most from the added student
+                    if (
+                        max_index is None
+                        or max_score_increase < updated_score - scores[i]
+                    ):
+                        max_index = i
+                        max_score_increase = updated_score - scores[i]
+
+                # Permanently add student to team the benefited the most
+                mutated_teams[max_index].append(student)
+                scores[max_index] += max_score_increase
+
+            # Set each team's students to the newly formed teams
+            for i, team in enumerate(teams):
+                team.student_ids = mutated_teams[i]
         except ValueError:
             return priority_team_set
         return priority_team_set
