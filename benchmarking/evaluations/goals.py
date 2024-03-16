@@ -74,9 +74,7 @@ class PreferenceGoal(Goal):
 
 @dataclass
 class ProjectRequirementGoal(Goal):
-    criteria: Optional[
-        RequirementsCriteria
-    ] = RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
+    pass
 
 
 @dataclass

@@ -18,8 +18,6 @@ class ProjectLocation(Scenario):
     def goals(self) -> List[Goal]:
         return [
             DiversityGoal(DiversifyType.CONCENTRATE, ScenarioAttribute.LOCATION.value),
-            ProjectRequirementGoal(
-                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
-            ),
+            ProjectRequirementGoal(),
             WeightGoal(diversity_goal_weight=2, project_requirement_weight=1),
         ]

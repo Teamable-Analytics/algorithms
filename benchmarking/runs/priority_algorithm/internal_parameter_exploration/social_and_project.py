@@ -164,9 +164,7 @@ class SocialAndProjectScenario(Scenario):
     @property
     def goals(self) -> List[Goal]:
         return [
-            ProjectRequirementGoal(
-                criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
-            ),
+            ProjectRequirementGoal(),
             PreferenceGoal(
                 PreferenceDirection.INCLUDE,
                 PreferenceSubject.FRIENDS,
