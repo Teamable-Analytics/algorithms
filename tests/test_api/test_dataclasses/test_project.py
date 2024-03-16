@@ -21,10 +21,7 @@ def student_meeting_requirement(requirement: ProjectRequirement) -> Student:
         correct_value = requirement.value + 1
 
     return Student(
-        _id=next(count()),
-        attributes={
-            requirement.attribute: [correct_value]
-        }
+        _id=next(count()), attributes={requirement.attribute: [correct_value]}
     )
 
 
@@ -38,10 +35,7 @@ def student_not_meeting_requirement(requirement: ProjectRequirement) -> Student:
         incorrect_value = requirement.value - 1
 
     return Student(
-        _id=next(count()),
-        attributes={
-            requirement.attribute: [incorrect_value]
-        }
+        _id=next(count()), attributes={requirement.attribute: [incorrect_value]}
     )
 
 
@@ -70,18 +64,8 @@ class TestProjectRequirementDataclass(unittest.TestCase):
             operator=RequirementOperator.EXACTLY,
             value=100,
         )
-        student_meeting = Student(
-            _id=1,
-            attributes={
-                1: [requirement.value]
-            }
-        )
-        student_not_meeting = Student(
-            _id=1,
-            attributes={
-                1: [requirement.value + 1]
-            }
-        )
+        student_meeting = Student(_id=1, attributes={1: [requirement.value]})
+        student_not_meeting = Student(_id=1, attributes={1: [requirement.value + 1]})
 
         self.assertTrue(requirement.met_by_student(student_meeting))
         self.assertFalse(requirement.met_by_student(student_not_meeting))
@@ -92,24 +76,11 @@ class TestProjectRequirementDataclass(unittest.TestCase):
             operator=RequirementOperator.LESS_THAN,
             value=100,
         )
-        student_meeting_1 = Student(
-            _id=1,
-            attributes={
-                1: [requirement.value - 1]
-            }
-        )
+        student_meeting_1 = Student(_id=1, attributes={1: [requirement.value - 1]})
         student_meeting_2 = Student(
-            _id=1,
-            attributes={
-                1: [requirement.value - 1, requirement.value]
-            }
+            _id=1, attributes={1: [requirement.value - 1, requirement.value]}
         )
-        student_not_meeting = Student(
-            _id=1,
-            attributes={
-                1: [requirement.value + 1]
-            }
-        )
+        student_not_meeting = Student(_id=1, attributes={1: [requirement.value + 1]})
 
         self.assertTrue(requirement.met_by_student(student_meeting_1))
         self.assertTrue(requirement.met_by_student(student_meeting_2))
@@ -121,30 +92,12 @@ class TestProjectRequirementDataclass(unittest.TestCase):
             operator=RequirementOperator.MORE_THAN,
             value=100,
         )
-        student_meeting_1 = Student(
-            _id=1,
-            attributes={
-                1: [requirement.value + 1]
-            }
-        )
+        student_meeting_1 = Student(_id=1, attributes={1: [requirement.value + 1]})
         student_meeting_2 = Student(
-            _id=1,
-            attributes={
-                1: [requirement.value + 1, requirement.value]
-            }
+            _id=1, attributes={1: [requirement.value + 1, requirement.value]}
         )
-        student_not_meeting_1 = Student(
-            _id=1,
-            attributes={
-                1: [requirement.value - 1]
-            }
-        )
-        student_not_meeting_2 = Student(
-            _id=1,
-            attributes={
-                1: [requirement.value]
-            }
-        )
+        student_not_meeting_1 = Student(_id=1, attributes={1: [requirement.value - 1]})
+        student_not_meeting_2 = Student(_id=1, attributes={1: [requirement.value]})
 
         self.assertTrue(requirement.met_by_student(student_meeting_1))
         self.assertTrue(requirement.met_by_student(student_meeting_2))
@@ -182,18 +135,15 @@ class TestProjectRequirementDataclass(unittest.TestCase):
 
         self.assertEqual(
             requirement.satisfaction_by_students(students_1),
-            requirement.satisfaction_by_students(students_2)
+            requirement.satisfaction_by_students(students_2),
         )
 
         self.assertEqual(
             requirement.satisfaction_by_students(students_2),
-            requirement.satisfaction_by_students(students_3)
+            requirement.satisfaction_by_students(students_3),
         )
 
-        self.assertEqual(
-            1,
-            requirement.satisfaction_by_students(students_1)
-        )
+        self.assertEqual(1, requirement.satisfaction_by_students(students_1))
 
         students_4 = [
             student_not_meeting_requirement(requirement),
@@ -202,10 +152,7 @@ class TestProjectRequirementDataclass(unittest.TestCase):
             student_not_meeting_requirement(requirement),
         ]
 
-        self.assertEqual(
-            0,
-            requirement.satisfaction_by_students(students_4)
-        )
+        self.assertEqual(0, requirement.satisfaction_by_students(students_4))
 
     def test_satisfaction_by_students__with_criteria__everyone(self):
         requirement = ProjectRequirement(
@@ -222,10 +169,7 @@ class TestProjectRequirementDataclass(unittest.TestCase):
             student_meeting_requirement(requirement),
         ]
 
-        self.assertEqual(
-            1,
-            requirement.satisfaction_by_students(students_1)
-        )
+        self.assertEqual(1, requirement.satisfaction_by_students(students_1))
 
         students_2 = [
             student_meeting_requirement(requirement),
@@ -257,23 +201,20 @@ class TestProjectRequirementDataclass(unittest.TestCase):
 
         self.assertGreater(
             requirement.satisfaction_by_students(students_2),
-            requirement.satisfaction_by_students(students_3)
+            requirement.satisfaction_by_students(students_3),
         )
 
         self.assertGreater(
             requirement.satisfaction_by_students(students_3),
-            requirement.satisfaction_by_students(students_4)
+            requirement.satisfaction_by_students(students_4),
         )
 
         self.assertGreater(
             requirement.satisfaction_by_students(students_4),
-            requirement.satisfaction_by_students(students_5)
+            requirement.satisfaction_by_students(students_5),
         )
 
-        self.assertEqual(
-            0,
-            requirement.satisfaction_by_students(students_5)
-        )
+        self.assertEqual(0, requirement.satisfaction_by_students(students_5))
 
     def test_satisfaction_by_students__with_criteria__n_members(self):
         requirement = ProjectRequirement(
@@ -291,10 +232,7 @@ class TestProjectRequirementDataclass(unittest.TestCase):
             student_meeting_requirement(requirement),
         ]
 
-        self.assertEqual(
-            1,
-            requirement.satisfaction_by_students(students_1)
-        )
+        self.assertEqual(1, requirement.satisfaction_by_students(students_1))
 
         students_2 = [
             student_meeting_requirement(requirement),
@@ -305,7 +243,7 @@ class TestProjectRequirementDataclass(unittest.TestCase):
 
         self.assertEqual(
             requirement.satisfaction_by_students(students_1),
-            requirement.satisfaction_by_students(students_2)
+            requirement.satisfaction_by_students(students_2),
         )
 
         students_3 = [
@@ -317,7 +255,7 @@ class TestProjectRequirementDataclass(unittest.TestCase):
 
         self.assertGreater(
             requirement.satisfaction_by_students(students_2),
-            requirement.satisfaction_by_students(students_3)
+            requirement.satisfaction_by_students(students_3),
         )
 
         students_4 = [
@@ -329,10 +267,7 @@ class TestProjectRequirementDataclass(unittest.TestCase):
 
         self.assertGreater(
             requirement.satisfaction_by_students(students_3),
-            requirement.satisfaction_by_students(students_4)
+            requirement.satisfaction_by_students(students_4),
         )
 
-        self.assertEqual(
-            0,
-            requirement.satisfaction_by_students(students_4)
-        )
+        self.assertEqual(0, requirement.satisfaction_by_students(students_4))
