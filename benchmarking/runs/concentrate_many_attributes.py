@@ -9,7 +9,9 @@ from api.ai.interfaces.algorithm_config import (
     WeightAlgorithmConfig,
     PriorityAlgorithmConfig,
 )
-from api.ai.priority_algorithm.mutations import mutate_local_max, mutate_random_swap
+from api.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
+from api.ai.priority_algorithm.mutations.mutation_set import MutationSet
+from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -82,7 +84,6 @@ class ConcentrateManyAttributesRun(Run):
                     ScenarioAttribute.YEAR_LEVEL.value: list(range(3, 5)),
                 },
             )
-
             simulation_set_artifact = SimulationSet(
                 settings=SimulationSettings(
                     num_teams=number_of_teams,
@@ -107,7 +108,9 @@ class ConcentrateManyAttributesRun(Run):
                         PriorityAlgorithmConfig(),
                         PriorityAlgorithmConfig(
                             name="local_max",
-                            MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
+                            MUTATIONS=MutationSet(
+                                [(LocalMaxMutation(), 1), (RandomSwapMutation(), 2)]
+                            ),
                         ),
                     ],
                 },

@@ -9,13 +9,14 @@ from api.ai.interfaces.algorithm_config import (
     WeightAlgorithmConfig,
     PriorityAlgorithmConfig,
 )
-from api.ai.priority_algorithm.mutations import mutate_local_max, mutate_random_swap
+from api.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
+from api.ai.priority_algorithm.mutations.mutation_set import MutationSet
+from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
 from api.dataclasses.enums import ScenarioAttribute, Gpa, Age, Race, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
     MockStudentProvider,
 )
-from benchmarking.evaluations.goals import DiversityGoal
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
@@ -135,7 +136,9 @@ class ThreeTokenizationConstraintsRun(Run):
                         PriorityAlgorithmConfig(),
                         PriorityAlgorithmConfig(
                             name="local_max",
-                            MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
+                            MUTATIONS=MutationSet(
+                                [(LocalMaxMutation(), 1), (RandomSwapMutation(), 2)]
+                            ),
                         ),
                     ],
                 },
