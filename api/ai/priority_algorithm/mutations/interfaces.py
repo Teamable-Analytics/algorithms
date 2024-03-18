@@ -7,17 +7,38 @@ from api.dataclasses.student import Student
 
 
 class Mutation(ABC):
+    def __init__(self, num_mutations: int = 1):
+        self._num_mutations = num_mutations
+
     def mutate(
         self,
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
         student_dict: Dict[int, Student],
-    ):
+    ) -> List[PriorityTeamSet]:
+        return [
+            self.mutate_one(
+                priority_team_set.clone(),
+                priorities,
+                student_dict,
+            )
+            for _ in range(self._num_mutations)
+        ]
+
+    def mutate_one(
+        self,
+        priority_team_set: PriorityTeamSet,
+        priorities: List[Priority],
+        student_dict: Dict[int, Student],
+    ) -> PriorityTeamSet:
         raise NotImplementedError
+
+    def num_mutations(self) -> int:
+        return self._num_mutations
 
 
 class MutationSet:
-    def __init__(self, mutations: List[Tuple[Mutation, int]]):
+    def __init__(self, mutations: List[Mutation]):
         """
         A set of mutations to be run in a single iteration of the priority algorithm.
 
@@ -34,18 +55,15 @@ class MutationSet:
         student_dict: Dict[int, Student],
     ) -> List[PriorityTeamSet]:
         mutated_team_sets: List[PriorityTeamSet] = []
-        for mutation, num_calls in self.mutations:
+        for mutation in self.mutations:
             mutated_team_sets.extend(
-                [
-                    mutation.mutate(
-                        team_set.clone(),
-                        priorities,
-                        student_dict,
-                    )
-                    for _ in range(num_calls)
-                ]
+                mutation.mutate(
+                    team_set,
+                    priorities,
+                    student_dict,
+                )
             )
         return mutated_team_sets
 
     def sum_of_calls(self) -> int:
-        return sum([num_calls for mutation, num_calls in self.mutations])
+        return sum([mutation.num_mutations() for mutation in self.mutations])

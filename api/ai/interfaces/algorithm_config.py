@@ -76,7 +76,9 @@ class PriorityAlgorithmConfig(AlgorithmConfig):
         super().__post_init__()
         # by default use random swap mutation for all the permitted mutation spread
         if not self.MUTATIONS:
-            self.MUTATIONS = MutationSet([(RandomSwapMutation(), self.MAX_SPREAD)])
+            self.MUTATIONS = MutationSet(
+                [RandomSwapMutation(num_mutations=self.MAX_SPREAD)]
+            )
 
     def validate(self):
         super().validate()

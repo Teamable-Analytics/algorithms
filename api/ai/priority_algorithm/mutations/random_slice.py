@@ -10,7 +10,7 @@ from api.dataclasses.student import Student
 
 
 class RandomSliceMutation(Mutation):
-    def mutate(
+    def mutate_one(
         self,
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
