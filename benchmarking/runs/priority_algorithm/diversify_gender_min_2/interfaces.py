@@ -172,7 +172,7 @@ class DiversifyGenderMin2PriorityAlgorithm(Run):
                     PriorityAlgorithmConfig(
                         name="robinhood_holistic",
                         MUTATIONS=MutationSet(
-                            [RobinhoodHolisticMutation(), max_spread]
+                            [(RobinhoodHolisticMutation(), max_spread)]
                         ),
                         MAX_TIME=max_time,
                         MAX_ITERATE=max_iterate,

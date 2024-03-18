@@ -6,14 +6,7 @@ from api.ai.interfaces.algorithm_config import (
     WeightAlgorithmConfig,
     PriorityAlgorithmConfig,
 )
-from api.ai.priority_algorithm.mutations import (
-    mutate_local_max,
-    mutate_random_swap,
-    mutate_robinhood_holistic,
-    mutate_robinhood,
-    mutate_local_max_double_random,
-    mutate_local_max_random,
-)
+from api.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
 from api.ai.priority_algorithm.mutations.local_max_double_random import (
     LocalMaxDoubleRandomMutation,
 )
