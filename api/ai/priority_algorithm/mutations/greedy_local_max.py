@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
-from api.ai.priority_algorithm.mutations.mutation import Mutation
+from api.ai.priority_algorithm.mutations.interfaces import Mutation
 from api.ai.priority_algorithm.mutations.utils import (
     get_available_priority_teams,
     score,

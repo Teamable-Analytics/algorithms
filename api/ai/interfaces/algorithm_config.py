@@ -4,7 +4,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Callable
 
-from api.ai.priority_algorithm.mutations.mutation_set import MutationSet
+from api.ai.priority_algorithm.mutations.interfaces import MutationSet
 from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
 from api.dataclasses.student import Student
 from api.dataclasses.team import TeamShell

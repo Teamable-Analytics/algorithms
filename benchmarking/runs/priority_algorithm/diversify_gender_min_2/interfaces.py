@@ -11,7 +11,7 @@ from api.ai.priority_algorithm.mutations.local_max_double_random import (
     LocalMaxDoubleRandomMutation,
 )
 from api.ai.priority_algorithm.mutations.local_max_random import LocalMaxRandomMutation
-from api.ai.priority_algorithm.mutations.mutation_set import MutationSet
+from api.ai.priority_algorithm.mutations.interfaces import MutationSet
 from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
 from api.ai.priority_algorithm.mutations.robinhood import RobinhoodMutation
 from api.ai.priority_algorithm.mutations.robinhood_holistic import (
