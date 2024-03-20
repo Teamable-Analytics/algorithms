@@ -3,7 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.request import Request
 from schema import SchemaError
 
+import api
 from api.ai.algorithm_runner import AlgorithmRunner
+from api.api.models import APISource
 from api.api.utils.generate_teams_data_loader import GenerateTeamsDataLoader
 from api.api.utils.logger import APILogger
 from api.api.utils.response_with_metadata import ResponseWithMetadata
@@ -34,6 +36,11 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
                             "team_generation_options"
                         ),
                     },
+                    source=(
+                        APISource.INTERNAL_DEMO
+                        if request.META.get("REMOTE_ADDR") in api.INTERNAL_DEMO_DOMAINS
+                        else APISource.NORMAL
+                    ),
                 )
 
             runner = AlgorithmRunner(
