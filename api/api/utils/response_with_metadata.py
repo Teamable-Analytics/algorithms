@@ -2,7 +2,7 @@ import time
 
 from rest_framework.response import Response
 
-import api
+from api import api
 
 
 class ResponseWithMetadata(Response):

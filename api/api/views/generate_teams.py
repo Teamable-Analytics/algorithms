@@ -3,11 +3,10 @@ from rest_framework.decorators import action
 from rest_framework.request import Request
 from schema import SchemaError
 
-import api
+from api import api
 from api.ai.algorithm_runner import AlgorithmRunner
-from api.api.models import APISource
+from api.api.models import APISource, APILog
 from api.api.utils.generate_teams_data_loader import GenerateTeamsDataLoader
-from api.api.utils.logger import APILogger
 from api.api.utils.response_with_metadata import ResponseWithMetadata
 from api.api.validators.generate_teams_validator import GenerateTeamsValidator
 from api.dataclasses.team_set.serializer import TeamSetSerializer
@@ -28,7 +27,7 @@ class GenerateTeamsViewSet(viewsets.GenericViewSet):
             # Don't log if it is a sandbox call
             if not params.get("sandbox") or params.get("sandbox").lower() != "true":
                 # Log API call. Do it after validation has completed.
-                APILogger.log(
+                APILog.log(
                     endpoint="/generate/teams",
                     data={
                         "algorithm_options": request_data.get("algorithm_options"),
