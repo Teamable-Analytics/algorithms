@@ -2,13 +2,12 @@ import unittest
 
 from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProvider,
-    projects_to_teams,
-    team_shells_to_teams,
+    projects_to_team_shells,
     MockInitialTeamsProviderSettings,
 )
-from api.models.enums import RequirementOperator
-from api.models.project import Project, ProjectRequirement
-from api.models.team import Team, TeamShell
+from api.dataclasses.enums import RequirementOperator
+from api.dataclasses.project import Project, ProjectRequirement
+from api.dataclasses.team import Team, TeamShell
 
 
 class TestMockInitialTeamsProvider(unittest.TestCase):
@@ -47,8 +46,8 @@ class TestMockInitialTeamsProvider(unittest.TestCase):
                 )
             )
 
-    def test_get__returns_team_objects_when_specifying_projects(self):
-        initial_teams = MockInitialTeamsProvider(
+    def test_get__returns_team_shell_objects_when_specifying_projects(self):
+        initial_teams_shells = MockInitialTeamsProvider(
             MockInitialTeamsProviderSettings(
                 projects=[
                     Project(
@@ -58,22 +57,22 @@ class TestMockInitialTeamsProvider(unittest.TestCase):
                 ]
             )
         ).get()
-        for team in initial_teams:
-            self.assertIsInstance(team, Team)
+        for team_shell in initial_teams_shells:
+            self.assertIsInstance(team_shell, TeamShell)
 
-    def test_get__returns_team_objects_when_specifying_team_shells(self):
-        initial_teams = MockInitialTeamsProvider(
+    def test_get__returns_team_shell_objects_when_specifying_team_shells(self):
+        initial_team_shells = MockInitialTeamsProvider(
             MockInitialTeamsProviderSettings(
                 initial_teams=[TeamShell(_id=i) for i in range(10)]
             )
         ).get()
-        for team in initial_teams:
-            self.assertIsInstance(team, Team)
+        for team_shell in initial_team_shells:
+            self.assertIsInstance(team_shell, TeamShell)
 
 
 class TestMockInitialTeamsProviderHelpers(unittest.TestCase):
     def test_projects_to_teams__creates_correct_number_of_teams(self):
-        teams_1 = projects_to_teams(
+        teams_1 = projects_to_team_shells(
             [
                 Project(
                     _id=1,
@@ -83,7 +82,7 @@ class TestMockInitialTeamsProviderHelpers(unittest.TestCase):
         )
         self.assertEqual(len(teams_1), 10)
 
-        teams_2 = projects_to_teams(
+        teams_2 = projects_to_team_shells(
             [
                 Project(
                     _id=1,
@@ -97,8 +96,8 @@ class TestMockInitialTeamsProviderHelpers(unittest.TestCase):
         )
         self.assertEqual(len(teams_2), 7)
 
-    def test_projects_to_teams__preserves_requirements(self):
-        teams = projects_to_teams(
+    def test_projects_to_team_shells__preserves_requirements(self):
+        teams = projects_to_team_shells(
             [
                 Project(
                     _id=4,
@@ -118,8 +117,8 @@ class TestMockInitialTeamsProviderHelpers(unittest.TestCase):
             self.assertEqual(team.requirements[0].operator, RequirementOperator.EXACTLY)
             self.assertEqual(team.requirements[0].value, 3)
 
-    def test_projects_to_teams__preserves_project_id_and_name(self):
-        teams = projects_to_teams(
+    def test_projects_to_team_shells__preserves_project_id_and_name(self):
+        teams = projects_to_team_shells(
             [
                 Project(
                     _id=4,
@@ -133,8 +132,8 @@ class TestMockInitialTeamsProviderHelpers(unittest.TestCase):
         for team in teams:
             self.assertEqual(team.project_id, 4)
 
-    def test_projects_to_teams__gives_default_team_name(self):
-        teams = projects_to_teams(
+    def test_projects_to_team_shells__gives_default_team_name(self):
+        teams = projects_to_team_shells(
             [
                 Project(
                     _id=4,
@@ -147,27 +146,3 @@ class TestMockInitialTeamsProviderHelpers(unittest.TestCase):
         for team in teams:
             self.assertIsNotNone(team.name)
             self.assertEqual(team.project_id, 4)
-
-    def test_team_shells_to_teams__creates_correct_number_of_teams(self):
-        teams = team_shells_to_teams([TeamShell(_id=i) for i in range(10)])
-        self.assertEqual(len(teams), 10)
-
-    def test_team_shells_to_teams__preserves_requirements(self):
-        teams = team_shells_to_teams(
-            [
-                TeamShell(
-                    _id=4,
-                    requirements=[
-                        ProjectRequirement(
-                            attribute=1, operator=RequirementOperator.EXACTLY, value=3
-                        )
-                    ],
-                )
-            ]
-        )
-
-        for team in teams:
-            self.assertTrue(team.requirements)
-            self.assertEqual(team.requirements[0].attribute, 1)
-            self.assertEqual(team.requirements[0].operator, RequirementOperator.EXACTLY)
-            self.assertEqual(team.requirements[0].value, 3)

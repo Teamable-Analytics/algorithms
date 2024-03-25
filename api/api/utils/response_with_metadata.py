@@ -6,7 +6,7 @@ from rest_framework.response import Response
 class ResponseWithMetadata(Response):
     def __init__(
         self,
-        data_label=None,
+        data_label,
         data=None,
         status=None,
         template_name=None,
@@ -18,7 +18,11 @@ class ResponseWithMetadata(Response):
     ):
         super().__init__(data, status, template_name, headers, exception, content_type)
 
-        data_label = data_label if data_label else "teams"
+        if not data and not error:
+            raise ValueError("data must be provided")
+        if not data_label:
+            raise ValueError("data_label must be provided")
+
         self.data = {
             data_label: self.data,
             "metadata": {

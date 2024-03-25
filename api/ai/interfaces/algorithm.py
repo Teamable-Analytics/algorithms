@@ -3,9 +3,9 @@ from typing import List, Tuple, Optional, TYPE_CHECKING
 
 from api.ai.interfaces.algorithm_options import AlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 
 if TYPE_CHECKING:
     from api.ai.interfaces.algorithm_config import AlgorithmConfig
@@ -28,6 +28,13 @@ class Algorithm(ABC):
     @abstractmethod
     def generate(self, students: List[Student]) -> TeamSet:
         raise NotImplementedError
+
+    def prepare(self, students: List[Student]) -> None:
+        """
+        This method is called before generate(). Used for any pre-processing that needs to be done before generate().
+        Run time of this method is still included in the total run time.
+        """
+        pass
 
     def get_remaining_students(self, students: List[Student]) -> List[Student]:
         return [student for student in students if not student.team]

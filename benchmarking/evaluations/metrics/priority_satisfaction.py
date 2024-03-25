@@ -1,8 +1,9 @@
+import statistics
 from typing import List
 
 from api.ai.priority_algorithm.priority.interfaces import Priority
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
 
@@ -25,23 +26,10 @@ class PrioritySatisfaction(TeamSetMetric):
         self.exponent_base = exponent_base
 
     def calculate(self, team_set: TeamSet) -> float:
-        weights = (
-            self.compute_linear_weights()
-            if self.is_linear
-            else self.computer_exponential_weights()
-        )
-        total_score = 0
-        for team in team_set.teams:
-            priorities = self.priorities_satisfied(team)
-            product = sum(w * p for w, p in zip(weights, priorities))
-            total_score += product
-        # Normalize the scores between 0 and 1 for easier comparison by dividing by the num teams
-        total_score /= team_set.num_teams
-        if self.is_linear:
-            # Need to also divide by the maximum possible score for linear ordered weights as they do not sum to one
-            theoretical_max = sum(range(1, len(self.priorities) + 1))
-            total_score /= theoretical_max
-        return total_score
+        return statistics.mean(self.team_priority_satisfaction(team_set))
+
+    def calculate_stdev(self, team_set: TeamSet) -> float:
+        return statistics.stdev(self.team_priority_satisfaction(team_set))
 
     def compute_linear_weights(self) -> List[int]:
         k = len(self.priorities)
@@ -62,3 +50,20 @@ class PrioritySatisfaction(TeamSetMetric):
             for priority in self.priorities
         ]
         return satisfied
+
+    def team_priority_satisfaction(self, team_set: TeamSet) -> List[float]:
+        weights = (
+            self.compute_linear_weights()
+            if self.is_linear
+            else self.computer_exponential_weights()
+        )
+        scores = []
+        theoretical_max = sum(range(1, len(self.priorities) + 1))
+        for team in team_set.teams:
+            priorities = self.priorities_satisfied(team)
+            product = sum(w * p for w, p in zip(weights, priorities))
+            if self.is_linear:
+                # Need to also divide by the maximum possible score for linear ordered weights as they do not sum to one
+                product /= theoretical_max
+            scores.append(product)
+        return scores

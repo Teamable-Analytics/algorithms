@@ -1,4 +1,5 @@
-from api.models.team_set import TeamSet
+import statistics
+from api.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
 
@@ -16,3 +17,6 @@ class AverageSocialSatisfaction(TeamSetMetric):
             sum([self.metric_function(team) for team in team_set.teams])
             / team_set.num_teams
         )
+
+    def calculate_stdev(self, team_set: TeamSet) -> float:
+        return statistics.stdev([self.metric_function(team) for team in team_set.teams])

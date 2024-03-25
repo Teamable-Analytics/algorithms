@@ -1,9 +1,10 @@
+import hashlib
 from typing import List, Dict
 
 import numpy as np
 
 from api.ai.interfaces.algorithm_config import AlgorithmConfig
-from api.models.enums import AlgorithmType
+from api.dataclasses.enums import AlgorithmType
 from benchmarking.simulation.simulation import SimulationArtifact, Simulation
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from utils.validation import is_unique
@@ -78,7 +79,13 @@ class SimulationSet:
 
 
 def _get_seeds(num_seeds: int, cache_key: str) -> List[int]:
-    seed_generator_seed = abs(hash(cache_key)) if cache_key else None
+    seed_length = 12
+    seed_generator_seed = (
+        abs(int(hashlib.sha256(cache_key.encode("utf-8")).hexdigest(), 16))
+        % (10**seed_length)
+        if cache_key
+        else None
+    )
     rng = np.random.default_rng(seed_generator_seed)
     return [
         # Arbitrary upper bound. Big number, so we have lower chance of duplicate seed.

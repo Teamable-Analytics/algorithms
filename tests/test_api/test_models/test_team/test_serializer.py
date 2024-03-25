@@ -1,10 +1,10 @@
 import json
 import unittest
 
-from api.models.enums import RequirementOperator, Relationship
-from api.models.project import ProjectRequirement
-from api.models.student import Student
-from api.models.team import Team, TeamSerializer
+from api.dataclasses.enums import RequirementOperator, Relationship
+from api.dataclasses.project import ProjectRequirement
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team, TeamSerializer
 from utils.equality import teams_are_equal
 
 
@@ -62,15 +62,15 @@ class TestTeamSerializer(unittest.TestCase):
             ),
         ]
 
-        json_students_team_1 = '[{"_id": 4, "name": "Teresa", "attributes": {"7": [2]}, "relationships": {"1": -1, "45": 1.1}, "project_preferences": [6]}, {"_id": 1, "name": "Sam", "attributes": {"1": [4, 5, 6]}, "relationships": {"100": 1.1, "45": 1.1, "1": 1.1}, "project_preferences": [4, 6]}]'
+        json_students_team_1 = '[{"id": 4, "name": "Teresa", "attributes": {"7": [2]}, "relationships": {"1": -1, "45": 1.1}, "project_preferences": [6]}, {"id": 1, "name": "Sam", "attributes": {"1": [4, 5, 6]}, "relationships": {"100": 1.1, "45": 1.1, "1": 1.1}, "project_preferences": [4, 6]}]'
         json_requirements_team_1 = '[{"attribute": 4, "operator": "exactly", "value": 3}, {"attribute": 1, "operator": "less than", "value": 1}]'
-        json_students_team_2 = '[{"_id": 45, "name": "James", "attributes": {}, "relationships": {}, "project_preferences": []}, {"_id": 46, "name": "Jessie", "attributes": {}, "relationships": {}, "project_preferences": []}, {"_id": 100, "name": "Meowth", "attributes": {}, "relationships": {}, "project_preferences": []}]'
+        json_students_team_2 = '[{"id": 45, "name": "James", "attributes": {}, "relationships": {}, "project_preferences": []}, {"id": 46, "name": "Jessie", "attributes": {}, "relationships": {}, "project_preferences": []}, {"id": 100, "name": "Meowth", "attributes": {}, "relationships": {}, "project_preferences": []}]'
         json_requirements_team_2 = (
             '[{"attribute": 2, "operator": "more than", "value": 6}]'
         )
         cls.json_teams = [
-            f'{{"_id": 1, "name": "Team 1", "project_id": 6, "requirements": {json_requirements_team_1}, "students": {json_students_team_1}}}',
-            f'{{"_id": 4, "name": "Team Rocket", "project_id": 4, "requirements": {json_requirements_team_2}, "students": {json_students_team_2}}}',
+            f'{{"id": 1, "name": "Team 1", "project_id": 6, "requirements": {json_requirements_team_1}, "students": {json_students_team_1}}}',
+            f'{{"id": 4, "name": "Team Rocket", "project_id": 4, "requirements": {json_requirements_team_2}, "students": {json_students_team_2}}}',
         ]
 
     def test_team_serializer__encodes_team_correctly_to_json(self):

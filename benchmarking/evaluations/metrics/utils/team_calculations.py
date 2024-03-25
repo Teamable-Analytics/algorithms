@@ -1,15 +1,16 @@
 from collections import defaultdict
 
-from api.models.enums import TokenizationConstraintDirection
-from api.models.team import Team
+from api.dataclasses.enums import TokenizationConstraintDirection
+from api.dataclasses.team import Team
 from benchmarking.evaluations.metrics.utils.student_calculations import (
     is_strictly_happy_student_friend,
     is_strictly_happy_student_enemy,
     is_happy_student_friend,
     is_happy_student_enemy,
     student_meets_requirement,
+    has_friend_and_no_enemies,
 )
-from api.models.tokenization_constraint import TokenizationConstraint
+from api.dataclasses.tokenization_constraint import TokenizationConstraint
 
 
 def team_gini_index(team: Team, attribute: int) -> float:
@@ -65,6 +66,10 @@ def is_happy_team_allshp_friend(team: Team) -> bool:
 
 def is_happy_team_allshp_enemy(team: Team) -> bool:
     return all([is_strictly_happy_student_enemy(s) for s in team.students])
+
+
+def is_happy_team_all_have_friend_no_enemy(team: Team) -> bool:
+    return all([has_friend_and_no_enemies(s) for s in team.students])
 
 
 def has_team_met_requirements(team: Team) -> bool:

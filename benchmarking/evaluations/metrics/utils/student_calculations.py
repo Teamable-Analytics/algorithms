@@ -1,6 +1,6 @@
-from api.models.enums import Relationship, RequirementOperator
-from api.models.project import ProjectRequirement
-from api.models.student import Student
+from api.dataclasses.enums import Relationship, RequirementOperator
+from api.dataclasses.project import ProjectRequirement
+from api.dataclasses.student import Student
 
 
 def num_friends_satisfied(student: Student) -> int:
@@ -41,6 +41,18 @@ def is_happy_student_enemy(student: Student) -> bool:
 def is_strictly_happy_student_enemy(student: Student) -> bool:
     total = list(student.relationships.values()).count(Relationship.ENEMY)
     return num_enemies_satisfied(student) == total
+
+
+def has_friend_and_no_enemies(student: Student) -> bool:
+    num_friend_requests = list(student.relationships.values()).count(
+        Relationship.FRIEND
+    )
+    friends_in_team = num_friends_satisfied(student)
+    if num_friend_requests > 0 and friends_in_team == 0:
+        return False
+    num_enemy_requests = list(student.relationships.values()).count(Relationship.ENEMY)
+    enemies_satisfied = num_enemies_satisfied(student)
+    return num_enemy_requests == enemies_satisfied
 
 
 def student_meets_requirement(student: Student, requirement: ProjectRequirement):

@@ -1,5 +1,5 @@
-from api.models.student import Student
-from api.models.team import Team
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
 
 
 def get_requirement_utility(team: Team, student: Student) -> float:

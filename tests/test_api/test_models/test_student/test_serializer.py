@@ -1,8 +1,8 @@
 import json
 import unittest
 
-from api.models.enums import Relationship
-from api.models.student import Student, StudentSerializer
+from api.dataclasses.enums import Relationship
+from api.dataclasses.student import Student, StudentSerializer
 
 
 class TestStudentSerializer(unittest.TestCase):
@@ -25,8 +25,8 @@ class TestStudentSerializer(unittest.TestCase):
             ),
         ]
         cls.json_students = [
-            '{"_id": 1, "name": "Harry", "attributes": {"4": [2, 56, 1], "11": [2], "234": [-1, 0]}, "relationships": {"2": -1}, "project_preferences": [6, 1]}',
-            '{"_id": 2, "name": "Jane", "attributes": {"4": [31, 2], "11": [], "234": [1, -1]}, "relationships": {"1": -1}, "project_preferences": [3, 2]}',
+            '{"id": 1, "name": "Harry", "attributes": {"4": [2, 56, 1], "11": [2], "234": [-1, 0]}, "relationships": {"2": -1}, "project_preferences": [6, 1]}',
+            '{"id": 2, "name": "Jane", "attributes": {"4": [31, 2], "11": [], "234": [1, -1]}, "relationships": {"1": -1}, "project_preferences": [3, 2]}',
         ]
 
     def test_encode__encodes_student_correctly_to_json(self):

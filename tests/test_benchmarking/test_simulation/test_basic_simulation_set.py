@@ -1,6 +1,6 @@
 import unittest
 
-from api.models.enums import AlgorithmType
+from api.dataclasses.enums import AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,

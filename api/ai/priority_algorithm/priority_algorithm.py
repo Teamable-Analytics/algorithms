@@ -2,17 +2,22 @@ import time
 from typing import cast, Dict, List
 
 from api.ai.interfaces.algorithm import Algorithm
-from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
+from api.ai.interfaces.algorithm_config import (
+    PriorityAlgorithmConfig,
+    PriorityAlgorithmStartType,
+)
 from api.ai.interfaces.algorithm_options import (
     PriorityAlgorithmOptions,
     WeightAlgorithmOptions,
+    RandomAlgorithmOptions,
 )
-from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
+from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
+from api.ai.random_algorithm.random_algorithm import RandomAlgorithm
 from api.ai.utils import save_students_to_team
 from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 
 
 class PriorityAlgorithm(Algorithm):
@@ -34,12 +39,21 @@ class PriorityAlgorithm(Algorithm):
         self,
         students: List[Student],
     ) -> PriorityTeamSet:
-        team_set = WeightAlgorithm(
-            algorithm_options=weight_options_from_priority_options(
-                self.algorithm_options
-            ),
-            team_generation_options=self.team_generation_options,
-        ).generate(students)
+        if self.algorithm_config.START_TYPE == PriorityAlgorithmStartType.RANDOM:
+            team_set = RandomAlgorithm(
+                algorithm_options=RandomAlgorithmOptions(),
+                team_generation_options=self.team_generation_options,
+            ).generate(students)
+        elif self.algorithm_config.START_TYPE == PriorityAlgorithmStartType.WEIGHT:
+            team_set = WeightAlgorithm(
+                algorithm_options=weight_options_from_priority_options(
+                    self.algorithm_options
+                ),
+                team_generation_options=self.team_generation_options,
+            ).generate(students)
+        else:
+            # This shouldn't trigger unless user intentionally sets it to None because the config has a default value set
+            raise ValueError("Priority algorithm start type must be set")
 
         return PriorityTeamSet(
             priority_teams=[
@@ -79,25 +93,6 @@ class PriorityAlgorithm(Algorithm):
         # the first team set is the "best" one
         return self._unpack_priority_team_set(team_sets[0])
 
-    def mutate(self, team_set: PriorityTeamSet) -> List[PriorityTeamSet]:
-        """
-        Mutate a single teamset into child teamsets
-        """
-        mutated_team_sets = []
-        for mutation_func, num_outputs in self.algorithm_config.MUTATIONS:
-            mutated_team_sets.extend(
-                [
-                    mutation_func(
-                        team_set.clone(),
-                        self.algorithm_options.priorities,
-                        self.student_dict,
-                    )
-                    for _ in range(num_outputs)
-                ]
-            )
-
-        return mutated_team_sets
-
     def _unpack_priority_team_set(self, priority_team_set: PriorityTeamSet) -> TeamSet:
         teams: List[Team] = []
 
@@ -115,6 +110,18 @@ class PriorityAlgorithm(Algorithm):
             teams.append(team)
 
         return TeamSet(teams=teams)
+
+    def mutate(
+        self,
+        team_set: PriorityTeamSet,
+    ) -> List[PriorityTeamSet]:
+        return [
+            mutated_set
+            for mutation in self.algorithm_config.MUTATIONS
+            for mutated_set in mutation.mutate(
+                team_set, self.algorithm_options.priorities, self.student_dict
+            )
+        ]
 
 
 def create_student_dict(students: List[Student]) -> Dict[int, Student]:

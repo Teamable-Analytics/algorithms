@@ -1,19 +1,24 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from schema import And, Or, Schema
 
 from api.ai.priority_algorithm.priority.interfaces import Priority
+from api.ai.priority_algorithm.priority.utils import (
+    infer_possible_values,
+    int_dot_product,
+    student_attribute_binary_vector,
+)
 from api.ai.weight_algorithm.utility.diversity_utility import _blau_index
-from api.models.enums import (
+from api.dataclasses.enums import (
     DiversifyType,
     TokenizationConstraintDirection,
     RequirementsCriteria,
     PriorityType,
     Relationship,
 )
-from api.models.student import Student
-from api.models.team import TeamShell
+from api.dataclasses.student import Student
+from api.dataclasses.team import TeamShell
 from benchmarking.evaluations.enums import PreferenceDirection
 from utils.math import change_range
 
@@ -43,12 +48,30 @@ class TokenizationPriority(Priority):
         raise NotImplementedError()
 
     def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
-        blau_index = _blau_index(students, self.attribute_id)
-        general_diversity = (
-            blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)
-        )
+        """
+        The score here is intended to reflect the following cases:
 
+            1. Diversification with min k of x (team size is T)
+                - If num_tokenized_students == k | score == 1
+                - If 0 < num_tokenized_students < k | score == 0
+                - If num_tokenized_students == 0 | score == ?
+                    + score would be equivalent to as if num_tokenized_students == T
+                - If num_tokenized_students > k | score == ?
+                    + score should DECREASE as num_tokenized_students INCREASES:
+                    i.e. score(num_tokenized_students == k + 1) >> score(num_tokenized_students == T)
+
+            2. Concentration with max k of x (team size is T)
+                - If num_tokenized_students == k | score == 1
+                - If k < num_tokenized_students < T | score == 0
+                - If num_tokenized_students == 0 | score == ?
+                    + score would be equivalent to as if num_tokenized_students == 1
+                - If num_tokenized_students < k | score == ?
+                    + score should DECREASE as num_tokenized_students DECREASES:
+                    i.e. score(num_tokenized_students == k - 1) >> score(num_tokenized_students == 1)
+        """
         tokenized_student_count = 0
+        _THETA = 0.2
+
         for student in students:
             tokenized_student_count += self.value in student.attributes.get(
                 self.attribute_id, []
@@ -58,12 +81,23 @@ class TokenizationPriority(Priority):
         if not meets_threshold:
             return 0
 
-        if meets_threshold and tokenized_student_count > 0:
-            return 0.8 + 0.2 * general_diversity
+        if tokenized_student_count == self.threshold:
+            return 1
 
-        # a slight boost is given so that even teams that are not diverse/concentrated are considered over
-        #   teams that break the tokenization constraint
-        return (general_diversity + 0.1) / 1.1
+        team_size = len(students)
+        if self.strategy == DiversifyType.DIVERSIFY:
+            if tokenized_student_count == 0 or tokenized_student_count == team_size:
+                return _THETA
+            return ((2 * _THETA - 1) / (team_size - self.threshold - 1)) * (
+                tokenized_student_count - team_size
+            ) + _THETA
+
+        if self.strategy == DiversifyType.CONCENTRATE:
+            if tokenized_student_count == 0 or tokenized_student_count == 1:
+                return _THETA
+            return ((1 - 2 * _THETA) / (self.threshold - 2)) * (
+                tokenized_student_count - 1
+            ) + _THETA
 
     def student_count_meets_threshold(self, count: int) -> bool:
         if count == 0:
@@ -107,15 +141,46 @@ class TokenizationPriority(Priority):
 class DiversityPriority(Priority):
     attribute_id: int
     strategy: DiversifyType
+    # the max number of values a student can have for the attribute_id
+    max_num_choices: Optional[int] = None
 
     def validate(self):
         super().validate()
+        if self.strategy == DiversifyType.CONCENTRATE and not self.max_num_choices:
+            raise ValueError(
+                "max_num_choices must be specified with strategy == CONCENTRATE and cannot be 0."
+            )
 
     def satisfaction(self, students: List[Student], team_shell: TeamShell) -> float:
-        blau_index = _blau_index(students, self.attribute_id)
-        return (
-            blau_index if self.strategy == DiversifyType.DIVERSIFY else (1 - blau_index)
-        )
+        if self.strategy == DiversifyType.CONCENTRATE:
+            if len(students) == 0:
+                return 0
+
+            possible_attribute_values = infer_possible_values(
+                students, self.attribute_id
+            )
+            dot_products = []  # will have length of (num students)choose(2)
+            for student_i in students:
+                for student_j in students:
+                    if student_i.id == student_j.id:
+                        break
+                    dot_product = int_dot_product(
+                        student_attribute_binary_vector(
+                            student_i, self.attribute_id, possible_attribute_values
+                        ),
+                        student_attribute_binary_vector(
+                            student_j, self.attribute_id, possible_attribute_values
+                        ),
+                    )
+                    dot_products.append(dot_product)
+
+            if len(dot_products) == 0:
+                return 0
+
+            return sum(dot_products) / (len(dot_products) * self.max_num_choices)
+
+        if self.strategy == DiversifyType.DIVERSIFY:
+            return _blau_index(students, self.attribute_id)
 
     @staticmethod
     def get_schema() -> Schema:

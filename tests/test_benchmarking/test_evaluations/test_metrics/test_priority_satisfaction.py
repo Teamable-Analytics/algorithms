@@ -1,8 +1,9 @@
+import statistics
 import unittest
 
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from tests.test_api.test_ai.test_priority_algorithm.test_mutations.test_local_max import (
     EvenPriority,
@@ -64,3 +65,8 @@ class TestPrioritySatisfactionMetric(unittest.TestCase):
         self.assertAlmostEqual(
             (2 + 2 + 1) / 3 / 3, actual_calculate_value, delta=0.000001
         )
+
+    def test_standard_deviation__evaluates_metric_correctly(self):
+        sd = statistics.stdev([1, 2 / 3, 0])
+        calculated_value = self.priority_satisfaction.calculate_stdev(self.team_set)
+        self.assertAlmostEqual(sd, calculated_value, delta=0.000001)
