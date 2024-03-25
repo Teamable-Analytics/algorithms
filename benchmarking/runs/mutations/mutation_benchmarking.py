@@ -106,7 +106,7 @@ class MutationBenchmarking(Run):
             "mutate_greedy_local_max_with_random_swap": MutationSet(
                 [
                     (GreedyLocalMaxMutation(), max_spread // 2),
-                    (RandomSwapMutation, max_spread // 2),
+                    (RandomSwapMutation(), max_spread // 2),
                 ]
             ),
             "mutate_greedy_local_max_with_random_slice_n_2": MutationSet(
