@@ -1,9 +1,9 @@
 from typing import List
 
 from api.ai.weight_algorithm.utility.social_network import SocialNetwork
-from api.models.enums import Weight
-from api.models.student import Student
-from api.models.team import Team
+from api.dataclasses.enums import Weight
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
 
 
 def get_social_utility(team: Team, students: List[Student]) -> float:

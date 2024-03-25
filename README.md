@@ -16,7 +16,11 @@
    ```
    python3 -m pip install -r requirements.txt
    ```
-3. You're good to go!
+3. Initialize submodules.
+   ```
+   git submodule update --init --recursive
+   ```
+4. You're good to go!
    > Be sure to read any directory-specific README.md and CONVENTION.md files before starting to work.
 
 ### Metrics
@@ -50,7 +54,7 @@ python3 -m unittest discover tests
 - todo: the logic for each of our algorithms
 - todo: the api that serves these algorithms
 
-#### /models
+#### /dataclasses
 
 - dataclasses, types, and enums used in the rest of the repository
 

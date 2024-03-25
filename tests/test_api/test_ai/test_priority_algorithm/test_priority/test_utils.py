@@ -5,7 +5,7 @@ from api.ai.priority_algorithm.priority.utils import (
     int_dot_product,
     infer_possible_values,
 )
-from api.models.student import Student
+from api.dataclasses.student import Student
 
 
 class TestPriorityUtils(unittest.TestCase):

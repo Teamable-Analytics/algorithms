@@ -3,7 +3,7 @@ from typing import List
 
 from schema import Schema
 
-from api.models.team import TeamShell
+from api.dataclasses.team import TeamShell
 from utils.validation import is_unique
 
 

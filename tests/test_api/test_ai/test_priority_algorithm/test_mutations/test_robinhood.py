@@ -3,15 +3,15 @@ from typing import List, Dict, Tuple
 
 from schema import Schema
 
-from api.ai.priority_algorithm.custom_models import PriorityTeamSet, PriorityTeam
+from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
 from api.ai.priority_algorithm.mutations import utils
 from api.ai.priority_algorithm.mutations.robinhood import (
     mutate_robinhood,
     mutate_robinhood_holistic,
 )
 from api.ai.priority_algorithm.priority.interfaces import Priority
-from api.models.student import Student
-from api.models.team import Team, TeamShell
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team, TeamShell
 
 
 class StudentListPriority(Priority):

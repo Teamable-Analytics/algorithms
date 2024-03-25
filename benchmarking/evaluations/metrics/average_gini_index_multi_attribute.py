@@ -1,6 +1,6 @@
 from typing import List
 
-from api.models.team_set import TeamSet
+from api.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.utils.team_calculations import (
     team_gini_index,

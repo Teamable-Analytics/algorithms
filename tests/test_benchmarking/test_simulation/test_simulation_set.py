@@ -6,7 +6,7 @@ from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     WeightAlgorithmConfig,
 )
-from api.models.enums import AlgorithmType
+from api.dataclasses.enums import AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,

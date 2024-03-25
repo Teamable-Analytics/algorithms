@@ -3,9 +3,9 @@ from typing import List, Tuple, Optional, TYPE_CHECKING
 
 from api.ai.interfaces.algorithm_options import AlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 
 if TYPE_CHECKING:
     from api.ai.interfaces.algorithm_config import AlgorithmConfig

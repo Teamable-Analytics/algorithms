@@ -1,7 +1,7 @@
 import unittest
 
-from api.models.project import Project
-from api.models.student import Student
+from api.dataclasses.project import Project
+from api.dataclasses.student import Student
 from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProviderSettings,
     MockInitialTeamsProvider,

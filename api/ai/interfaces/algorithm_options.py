@@ -9,16 +9,16 @@ from api.ai.priority_algorithm.priority.priority import (
     TokenizationPriority,
     get_priority_from_type,
 )
-from api.models.enums import (
+from api.dataclasses.enums import (
     RelationshipBehaviour,
     DiversifyType,
     TokenizationConstraintDirection,
     AlgorithmType,
     PriorityType,
 )
-from api.models.project import Project
-from api.models.student import Student
-from api.models.team import TeamShell
+from api.dataclasses.project import Project
+from api.dataclasses.student import Student
+from api.dataclasses.team import TeamShell
 
 
 class AlgorithmOptions(ABC):
@@ -128,8 +128,8 @@ class WeightAlgorithmOptions(AlgorithmOptions):
                 SchemaOptional("enemy_behaviour"): Or(
                     *[behaviour.value for behaviour in RelationshipBehaviour]
                 ),
-                SchemaOptional("attributes_to_diversify"): List[int],
-                SchemaOptional("attributes_to_concentrate"): List[int],
+                SchemaOptional("attributes_to_diversify"): Or(List[int], []),
+                SchemaOptional("attributes_to_concentrate"): Or(List[int], []),
             }
         )
 
@@ -200,8 +200,8 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
                 SchemaOptional("enemy_behaviour"): Or(
                     *[behaviour.value for behaviour in RelationshipBehaviour]
                 ),
-                SchemaOptional("attributes_to_diversify"): List[int],
-                SchemaOptional("attributes_to_concentrate"): List[int],
+                SchemaOptional("attributes_to_diversify"): Or(List[int], []),
+                SchemaOptional("attributes_to_concentrate"): Or(List[int], []),
             }
         )
 
@@ -241,8 +241,8 @@ class SocialAlgorithmOptions(WeightAlgorithmOptions):
                 SchemaOptional("enemy_behaviour"): Or(
                     *[behaviour.value for behaviour in RelationshipBehaviour]
                 ),
-                SchemaOptional("attributes_to_diversify"): List[int],
-                SchemaOptional("attributes_to_concentrate"): List[int],
+                SchemaOptional("attributes_to_diversify"): Or(List[int], []),
+                SchemaOptional("attributes_to_concentrate"): Or(List[int], []),
             }
         )
 
@@ -295,6 +295,20 @@ class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
         raise NotImplementedError
 
 
+@dataclass
+class GroupMatcherAlgorithmOptions(AlgorithmOptions):
+    def validate(self):
+        super().validate()
+
+    @staticmethod
+    def parse_json(_: Dict[str, Any]):
+        raise NotImplementedError
+
+    @staticmethod
+    def get_schema() -> Schema:
+        raise NotImplementedError
+
+
 AnyAlgorithmOptions = Union[
     RandomAlgorithmOptions,
     WeightAlgorithmOptions,
@@ -303,4 +317,5 @@ AnyAlgorithmOptions = Union[
     MultipleRoundRobinAlgorithmOptions,
     GeneralizedEnvyGraphAlgorithmOptions,
     DoubleRoundRobinAlgorithmOptions,
+    GroupMatcherAlgorithmOptions,
 ]

@@ -3,7 +3,7 @@ from typing import Dict, Any
 from schema import Schema, Optional, Or, SchemaError
 
 from api.api.validators.interface import Validator
-from api.models.enums import RequirementOperator, Relationship
+from api.dataclasses.enums import RequirementOperator, Relationship
 from api.api.utils.relationship import get_relationship_str
 from utils.validation import is_unique
 
@@ -24,7 +24,6 @@ class EvaluateTeamSetValidator(Validator):
 
     def validate_team_set(self):
         team_set = self.data.get("team_set", {})
-
         if "id" in team_set and team_set["id"] is not None:
             Schema(str).validate(team_set["id"])
             # Check if team_set[id] is a number
@@ -42,8 +41,8 @@ class EvaluateTeamSetValidator(Validator):
             [
                 {
                     "id": int,
-                    Optional("name"): str,
-                    Optional("project_id"): int,
+                    Optional("name"): Or(str, None),
+                    Optional("project_id"): Or(int, None),
                     Optional("requirements"): [
                         {
                             "attribute": int,
@@ -65,7 +64,6 @@ class EvaluateTeamSetValidator(Validator):
                                                 get_relationship_str(relationship)
                                                 for relationship in Relationship
                                             ]
-                                            + [float, int]
                                         )
                                     )
                                 },

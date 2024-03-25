@@ -1,5 +1,5 @@
 import statistics
-from api.models.team_set import TeamSet
+from api.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
 
