@@ -17,6 +17,8 @@ class GreedyLocalMaxMutation(Mutation):
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
         student_dict: Dict[int, Student],
+        min_team_size: int,
+        max_team_size: int,
     ):
         """
         1. Pick two random teams

@@ -119,7 +119,11 @@ class PriorityAlgorithm(Algorithm):
             mutated_set
             for mutation in self.algorithm_config.MUTATIONS
             for mutated_set in mutation.mutate(
-                team_set, self.algorithm_options.priorities, self.student_dict
+                team_set,
+                self.algorithm_options.priorities,
+                self.student_dict,
+                self.team_generation_options.min_team_size,
+                self.team_generation_options.max_team_size,
             )
         ]
 

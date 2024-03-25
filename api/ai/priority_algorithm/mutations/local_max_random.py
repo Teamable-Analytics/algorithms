@@ -18,6 +18,8 @@ class LocalMaxRandomMutation(Mutation):
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
         student_dict: Dict[int, Student],
+        min_team_size: int,
+        max_team_size: int,
     ) -> PriorityTeamSet:
         """
         This mutation finds the lowest scoring team and one random team, and then computes the scores of all possible

@@ -15,6 +15,8 @@ class RandomSliceMutation(Mutation):
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
         student_dict: Dict[int, Student],
+        min_team_size: int,
+        max_team_size: int,
     ):
         """
         This mutation takes one student from each team and swaps them

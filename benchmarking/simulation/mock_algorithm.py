@@ -35,13 +35,20 @@ from utils.dictionaries import prune_dictionary_keys
 class MockAlgorithm:
     @staticmethod
     def get_team_generation_options(
-        num_students: int, num_teams: int, initial_teams: List[TeamShell] = None
+        num_students: int,
+        num_teams: int,
+        initial_teams: List[TeamShell] = None,
+        min_team_size: int = None,
+        max_team_size: int = None,
     ) -> TeamGenerationOptions:
         _num_teams = len(initial_teams) if initial_teams else num_teams
-        min_team_size = num_students // _num_teams
-        max_team_size = (
-            min_team_size if num_students % _num_teams == 0 else min_team_size + 1
-        )
+        if min_team_size and not max_team_size or max_team_size and not min_team_size:
+            raise ValueError("Both or neither min and max team size are required")
+        if not min_team_size:
+            min_team_size = num_students // _num_teams
+            max_team_size = (
+                min_team_size if num_students % _num_teams == 0 else min_team_size + 1
+            )
         return TeamGenerationOptions(
             max_team_size=max_team_size,
             min_team_size=min_team_size,

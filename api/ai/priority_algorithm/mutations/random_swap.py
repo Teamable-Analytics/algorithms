@@ -14,6 +14,8 @@ class RandomSwapMutation(Mutation):
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
         student_dict: Dict[int, Student],
+        min_team_size: int,
+        max_team_size: int,
     ) -> PriorityTeamSet:
         available_priority_teams = get_available_priority_teams(priority_team_set)
         try:

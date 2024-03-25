@@ -108,7 +108,11 @@ class TestMutateRobinhood(unittest.TestCase):
             priorities = [StudentListPriority([1, 2])]
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set, priorities, student_dict
+                priority_team_set,
+                priorities,
+                student_dict,
+                0,
+                0,
             )
 
             # Count the number of teams that changed
@@ -136,7 +140,11 @@ class TestMutateRobinhood(unittest.TestCase):
             priorities = [StudentListPriority([1, 2])]
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set.clone(), priorities, student_dict
+                priority_team_set.clone(),
+                priorities,
+                student_dict,
+                0,
+                0,
             )
 
             self.assertFalse(
@@ -157,7 +165,11 @@ class TestMutateRobinhood(unittest.TestCase):
             priority_team_set.priority_teams[0].team_shell.is_locked = True
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set, priorities, student_dict
+                priority_team_set,
+                priorities,
+                student_dict,
+                0,
+                0,
             )
 
             self.assertEqual(
@@ -177,7 +189,11 @@ class TestMutateRobinhood(unittest.TestCase):
             priorities = [StudentListPriority([1, 2])]
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set, priorities, student_dict
+                priority_team_set,
+                priorities,
+                student_dict,
+                0,
+                0,
             )
 
             # Reset the scores to force them to be recalculated
@@ -197,7 +213,11 @@ class TestMutateRobinhood(unittest.TestCase):
             priority_team_set.priority_teams[2].student_ids = [6, 7, 8]
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set, priorities, student_dict
+                priority_team_set,
+                priorities,
+                student_dict,
+                0,
+                0,
             )
 
             # Reset the scores to force them to be recalculated
@@ -221,7 +241,11 @@ class TestMutateRobinhood(unittest.TestCase):
             priorities = [StudentListPriority([1, 2])]
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set, priorities, student_dict
+                priority_team_set,
+                priorities,
+                student_dict,
+                0,
+                0,
             )
 
             # Count the number of students in the original team set that are not in the mutated team set
@@ -257,7 +281,11 @@ class TestMutateRobinhood(unittest.TestCase):
             priorities = [StudentListPriority([1, 2])]
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set, priorities, student_dict
+                priority_team_set,
+                priorities,
+                student_dict,
+                0,
+                0,
             )
 
             self.assertIsInstance(
@@ -287,7 +315,11 @@ class TestMutateRobinhood(unittest.TestCase):
         )
         mutate_robinhood_holistic = RobinhoodHolisticMutation()
         mutated_team_set = mutate_robinhood_holistic.mutate_one(
-            priority_team_set.clone(), priorities, student_dict
+            priority_team_set.clone(),
+            priorities,
+            student_dict,
+            0,
+            0,
         )
 
         # check that the min and max scoring teams have changed

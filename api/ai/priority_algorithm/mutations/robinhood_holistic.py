@@ -18,6 +18,8 @@ class RobinhoodHolisticMutation(Mutation):
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
         student_dict: Dict[int, Student],
+        min_team_size: int,
+        max_team_size: int,
     ) -> PriorityTeamSet:
         """
         This is a variation of mutate_robinhood that does not consider individual priorities. Instead, it considers the entire set of priorities as a whole. This is done by calculating the score of each team in the team set, and then performing the local max portion of the robinhood mutation on the team with the lowest score and the team with the highest score.

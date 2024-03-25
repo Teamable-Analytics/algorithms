@@ -31,6 +31,8 @@ class TestGreedyRandomLocalMax(unittest.TestCase):
             self.priority_team_set,
             [JohnPriority(), LooseEvenPriority()],
             self.student_dict,
+            0,
+            0,
         )
 
         self.assertNotEqual(
@@ -69,11 +71,7 @@ class TestGreedyRandomLocalMax(unittest.TestCase):
         )
         greedy_local_max = GreedyLocalMaxMutation()
         for _ in range(10):
-            result = greedy_local_max.mutate_one(
-                result,
-                priorities,
-                student_dict,
-            )
+            result = greedy_local_max.mutate_one(result, priorities, student_dict, 0, 0)
 
         team_sizes = Counter([len(team.student_ids) for team in result.priority_teams])
 
@@ -84,9 +82,7 @@ class TestGreedyRandomLocalMax(unittest.TestCase):
         priorities = [JohnPriority(), LooseEvenPriority()]
         greedy_local_max = GreedyLocalMaxMutation()
         result = greedy_local_max.mutate_one(
-            self.priority_team_set,
-            priorities,
-            self.student_dict,
+            self.priority_team_set, priorities, self.student_dict, 0, 0
         )
         score = result.calculate_score(priorities, self.student_dict)
         self.assertEqual(score, 624)

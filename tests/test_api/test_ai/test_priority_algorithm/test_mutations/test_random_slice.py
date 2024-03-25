@@ -30,7 +30,7 @@ class TestRandomSlice(unittest.TestCase):
         )
         initial_team_set = team_set.clone()
         random_slice_mutation = RandomSliceMutation()
-        random_slice_mutation.mutate_one(team_set, [], {})
+        random_slice_mutation.mutate_one(team_set, [], {}, 0, 0)
 
         num_teams_changed = 0
         for initial_team, mutated_team in zip(
