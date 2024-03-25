@@ -107,7 +107,7 @@ class TestMutateRobinhood(unittest.TestCase):
             priority_team_set, student_dict = create_new_priority_team_set(3, 9)
             priorities = [StudentListPriority([1, 2])]
 
-            mutated_team_set = mutation.mutate(
+            mutated_team_set = mutation.mutate_one(
                 priority_team_set, priorities, student_dict
             )
 
@@ -135,7 +135,7 @@ class TestMutateRobinhood(unittest.TestCase):
             priority_team_set, student_dict = create_new_priority_team_set(2, 4)
             priorities = [StudentListPriority([1, 2])]
 
-            mutated_team_set = mutation.mutate(
+            mutated_team_set = mutation.mutate_one(
                 priority_team_set.clone(), priorities, student_dict
             )
 
@@ -156,7 +156,7 @@ class TestMutateRobinhood(unittest.TestCase):
             priorities = [StudentListPriority([1, 2])]
             priority_team_set.priority_teams[0].team_shell.is_locked = True
 
-            mutated_team_set = mutation.mutate(
+            mutated_team_set = mutation.mutate_one(
                 priority_team_set, priorities, student_dict
             )
 
@@ -176,7 +176,7 @@ class TestMutateRobinhood(unittest.TestCase):
             priority_team_set, student_dict = create_new_priority_team_set(3, 9)
             priorities = [StudentListPriority([1, 2])]
 
-            mutated_team_set = mutation.mutate(
+            mutated_team_set = mutation.mutate_one(
                 priority_team_set, priorities, student_dict
             )
 
@@ -196,7 +196,7 @@ class TestMutateRobinhood(unittest.TestCase):
             priority_team_set.priority_teams[1].student_ids = [3, 4, 5]
             priority_team_set.priority_teams[2].student_ids = [6, 7, 8]
 
-            mutated_team_set = mutation.mutate(
+            mutated_team_set = mutation.mutate_one(
                 priority_team_set, priorities, student_dict
             )
 
@@ -220,7 +220,7 @@ class TestMutateRobinhood(unittest.TestCase):
             priority_team_set, student_dict = create_new_priority_team_set(3, 9)
             priorities = [StudentListPriority([1, 2])]
 
-            mutated_team_set = mutation.mutate(
+            mutated_team_set = mutation.mutate_one(
                 priority_team_set, priorities, student_dict
             )
 
@@ -256,7 +256,7 @@ class TestMutateRobinhood(unittest.TestCase):
             priority_team_set, student_dict = create_new_priority_team_set(3, 9)
             priorities = [StudentListPriority([1, 2])]
 
-            mutated_team_set = mutation.mutate(
+            mutated_team_set = mutation.mutate_one(
                 priority_team_set, priorities, student_dict
             )
 
@@ -286,7 +286,7 @@ class TestMutateRobinhood(unittest.TestCase):
             {0, 1, 2}.difference({min_scoring_team, max_scoring_team}).pop()
         )
         mutate_robinhood_holistic = RobinhoodHolisticMutation()
-        mutated_team_set = mutate_robinhood_holistic.mutate(
+        mutated_team_set = mutate_robinhood_holistic.mutate_one(
             priority_team_set.clone(), priorities, student_dict
         )
 

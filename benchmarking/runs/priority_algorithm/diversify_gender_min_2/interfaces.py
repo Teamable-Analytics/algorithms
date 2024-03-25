@@ -11,7 +11,6 @@ from api.ai.priority_algorithm.mutations.local_max_double_random import (
     LocalMaxDoubleRandomMutation,
 )
 from api.ai.priority_algorithm.mutations.local_max_random import LocalMaxRandomMutation
-from api.ai.priority_algorithm.mutations.interfaces import MutationSet
 from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
 from api.ai.priority_algorithm.mutations.robinhood import RobinhoodMutation
 from api.ai.priority_algorithm.mutations.robinhood_holistic import (
@@ -114,12 +113,10 @@ class DiversifyGenderMin2PriorityAlgorithm(Run):
                     ),
                     PriorityAlgorithmConfig(
                         name="local_max",
-                        MUTATIONS=MutationSet(
-                            [
-                                (LocalMaxMutation(), 1),
-                                (RandomSwapMutation(), max_spread - 1),
-                            ]
-                        ),
+                        MUTATIONS=[
+                            LocalMaxMutation(1),
+                            RandomSwapMutation(max_spread - 1),
+                        ],
                         MAX_TIME=max_time,
                         MAX_ITERATE=max_iterate,
                         MAX_KEEP=max_keep,
@@ -127,12 +124,10 @@ class DiversifyGenderMin2PriorityAlgorithm(Run):
                     ),
                     PriorityAlgorithmConfig(
                         name="local_max_random",
-                        MUTATIONS=MutationSet(
-                            [
-                                (LocalMaxRandomMutation(), 1),
-                                (RandomSwapMutation(), max_spread - 1),
-                            ]
-                        ),
+                        MUTATIONS=[
+                            LocalMaxRandomMutation(1),
+                            RandomSwapMutation(max_spread - 1),
+                        ],
                         MAX_TIME=max_time,
                         MAX_ITERATE=max_iterate,
                         MAX_KEEP=max_keep,
@@ -140,12 +135,10 @@ class DiversifyGenderMin2PriorityAlgorithm(Run):
                     ),
                     PriorityAlgorithmConfig(
                         name="local_max_double_random",
-                        MUTATIONS=MutationSet(
-                            [
-                                (LocalMaxDoubleRandomMutation(), 1),
-                                (RandomSwapMutation(), max_spread - 1),
-                            ]
-                        ),
+                        MUTATIONS=[
+                            LocalMaxDoubleRandomMutation(1),
+                            RandomSwapMutation(max_spread - 1),
+                        ],
                         MAX_TIME=max_time,
                         MAX_ITERATE=max_iterate,
                         MAX_KEEP=max_keep,
@@ -153,9 +146,7 @@ class DiversifyGenderMin2PriorityAlgorithm(Run):
                     ),
                     PriorityAlgorithmConfig(
                         name="local_max_pure_double_random",
-                        MUTATIONS=MutationSet(
-                            [(LocalMaxDoubleRandomMutation(), max_spread)]
-                        ),
+                        MUTATIONS=[LocalMaxDoubleRandomMutation(max_spread)],
                         MAX_TIME=max_time,
                         MAX_ITERATE=max_iterate,
                         MAX_KEEP=max_keep,
@@ -163,7 +154,7 @@ class DiversifyGenderMin2PriorityAlgorithm(Run):
                     ),
                     PriorityAlgorithmConfig(
                         name="robinhood",
-                        MUTATIONS=MutationSet([(RobinhoodMutation(), max_spread)]),
+                        MUTATIONS=[RobinhoodMutation(max_spread)],
                         MAX_TIME=max_time,
                         MAX_ITERATE=max_iterate,
                         MAX_KEEP=max_keep,
@@ -171,9 +162,7 @@ class DiversifyGenderMin2PriorityAlgorithm(Run):
                     ),
                     PriorityAlgorithmConfig(
                         name="robinhood_holistic",
-                        MUTATIONS=MutationSet(
-                            [(RobinhoodHolisticMutation(), max_spread)]
-                        ),
+                        MUTATIONS=[RobinhoodHolisticMutation(max_spread)],
                         MAX_TIME=max_time,
                         MAX_ITERATE=max_iterate,
                         MAX_KEEP=max_keep,

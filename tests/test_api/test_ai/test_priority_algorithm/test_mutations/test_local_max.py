@@ -29,7 +29,7 @@ class TestMutations(unittest.TestCase):
         cls.local_max_double_random_mutation = LocalMaxDoubleRandomMutation()
 
     def test_local_max__returns_priority_teams(self):
-        priority_team_set = self.local_max_mutation.mutate(
+        priority_team_set = self.local_max_mutation.mutate_one(
             self.priority_team_set, self.priorities, self.student_dict
         )
         self.assertIsInstance(priority_team_set, PriorityTeamSet)
@@ -40,7 +40,7 @@ class TestMutations(unittest.TestCase):
         score_before = self.priority_team_set.calculate_score(
             self.priorities, self.student_dict
         )
-        priority_team_set = self.local_max_mutation.mutate(
+        priority_team_set = self.local_max_mutation.mutate_one(
             self.priority_team_set, self.priorities, self.student_dict
         )
         score_after = priority_team_set.calculate_score(
@@ -53,7 +53,7 @@ class TestMutations(unittest.TestCase):
         score_before = self.priority_team_set.calculate_score(
             self.priorities, self.student_dict
         )
-        priority_team_set = self.local_max_mutation.mutate(
+        priority_team_set = self.local_max_mutation.mutate_one(
             self.priority_team_set, self.priorities, self.student_dict
         )
         priority_team_set.score = None
@@ -63,7 +63,7 @@ class TestMutations(unittest.TestCase):
         self.assertGreater(score_after, score_before)
 
     def test_mutate_local_max_random__returns_priority_teams(self):
-        priority_team_set = self.local_max_random_mutation.mutate(
+        priority_team_set = self.local_max_random_mutation.mutate_one(
             self.priority_team_set, self.priorities, self.student_dict
         )
         self.assertIsInstance(priority_team_set, PriorityTeamSet)
@@ -75,7 +75,7 @@ class TestMutations(unittest.TestCase):
         score_before = self.priority_team_set.calculate_score(
             self.priorities, self.student_dict
         )
-        priority_team_set = self.local_max_random_mutation.mutate(
+        priority_team_set = self.local_max_random_mutation.mutate_one(
             self.priority_team_set, self.priorities, self.student_dict
         )
         priority_team_set.score = None
@@ -85,7 +85,7 @@ class TestMutations(unittest.TestCase):
         self.assertGreater(score_after, score_before)
 
     def test_mutate_local_max_double_random__returns_priority_teams(self):
-        priority_team_set = self.local_max_double_random_mutation.mutate(
+        priority_team_set = self.local_max_double_random_mutation.mutate_one(
             self.priority_team_set, self.priorities, self.student_dict
         )
         self.assertIsInstance(priority_team_set, PriorityTeamSet)
@@ -97,7 +97,7 @@ class TestMutations(unittest.TestCase):
         score_before = self.priority_team_set.calculate_score(
             self.priorities, self.student_dict
         )
-        priority_team_set = self.local_max_double_random_mutation.mutate(
+        priority_team_set = self.local_max_double_random_mutation.mutate_one(
             self.priority_team_set, self.priorities, self.student_dict
         )
         priority_team_set.score = None
