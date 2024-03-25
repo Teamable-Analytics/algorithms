@@ -38,7 +38,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class MutationBenchmarking(Run):
-    def start(self, num_trials: int = 100, generate_graphs: bool = True):
+    def start(self, num_trials: int = 100, generate_graphs: bool = False):
         class_sizes = [40, 100, 240, 500, 1000]
         team_size = 5
 
