@@ -78,9 +78,7 @@ class PriorityAlgorithm(Algorithm):
         ):
             new_team_sets: List[PriorityTeamSet] = []
             for team_set in team_sets:
-                new_team_sets += self.algorithm_config.MUTATIONS.generate_mutations(
-                    team_set, self.algorithm_options.priorities, self.student_dict
-                )
+                new_team_sets += self.mutate(team_set)
             team_sets = new_team_sets + team_sets
             team_sets = sorted(
                 team_sets,
@@ -112,6 +110,18 @@ class PriorityAlgorithm(Algorithm):
             teams.append(team)
 
         return TeamSet(teams=teams)
+
+    def mutate(
+        self,
+        team_set: PriorityTeamSet,
+    ) -> List[PriorityTeamSet]:
+        return [
+            mutated_set
+            for mutation in self.algorithm_config.MUTATIONS
+            for mutated_set in mutation.mutate(
+                team_set, self.algorithm_options.priorities, self.student_dict
+            )
+        ]
 
 
 def create_student_dict(students: List[Student]) -> Dict[int, Student]:

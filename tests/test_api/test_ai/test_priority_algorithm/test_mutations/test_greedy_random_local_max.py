@@ -27,7 +27,7 @@ class TestGreedyRandomLocalMax(unittest.TestCase):
     def test_mutate__changes_team_set(self):
         initial_team_set = self.priority_team_set.clone()
         greedy_local_max = GreedyLocalMaxMutation()
-        greedy_local_max.mutate(
+        greedy_local_max.mutate_one(
             self.priority_team_set,
             [JohnPriority(), LooseEvenPriority()],
             self.student_dict,
@@ -69,7 +69,7 @@ class TestGreedyRandomLocalMax(unittest.TestCase):
         )
         greedy_local_max = GreedyLocalMaxMutation()
         for _ in range(10):
-            result = greedy_local_max.mutate(
+            result = greedy_local_max.mutate_one(
                 result,
                 priorities,
                 student_dict,
@@ -83,7 +83,7 @@ class TestGreedyRandomLocalMax(unittest.TestCase):
         # 🤌🤌🤌🤌🤌🤌🤌
         priorities = [JohnPriority(), LooseEvenPriority()]
         greedy_local_max = GreedyLocalMaxMutation()
-        result = greedy_local_max.mutate(
+        result = greedy_local_max.mutate_one(
             self.priority_team_set,
             priorities,
             self.student_dict,
