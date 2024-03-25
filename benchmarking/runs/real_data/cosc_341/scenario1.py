@@ -7,10 +7,10 @@ import typer
 from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     WeightAlgorithmConfig,
-    GroupMatcherAlgorithmConfig,
     RandomAlgorithmConfig,
+    GroupMatcherAlgorithmConfig,
 )
-from api.models.enums import AlgorithmType, ScenarioAttribute, Gender
+from api.dataclasses.enums import ScenarioAttribute, Gender, AlgorithmType
 from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
     COSC341W2021T2AnsweredSurveysStudentProvider,
 )
