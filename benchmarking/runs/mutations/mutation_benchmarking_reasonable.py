@@ -9,10 +9,6 @@ from api.ai.priority_algorithm.mutations.local_max_random import LocalMaxRandomM
 from api.ai.priority_algorithm.mutations.mutation_set import MutationSet
 from api.ai.priority_algorithm.mutations.random_slice import RandomSliceMutation
 from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
-from api.ai.priority_algorithm.mutations.robinhood import RobinhoodMutation
-from api.ai.priority_algorithm.mutations.robinhood_holistic import (
-    RobinhoodHolisticMutation,
-)
 from api.dataclasses.enums import ScenarioAttribute, Gender, Race, AlgorithmType
 from benchmarking.data.simulated_data.realistic_class.providers import (
     RealisticMockInitialTeamsProvider,
@@ -71,7 +67,7 @@ class MutationBenchmarking(Run):
 
         max_keep = 15
         max_spread = 30
-        max_iterate = 100
+        max_iterate = 30
         max_time = 1_000_000
         mutation_sets = {
             "mutate_random": MutationSet([(RandomSwapMutation(), max_spread)]),
