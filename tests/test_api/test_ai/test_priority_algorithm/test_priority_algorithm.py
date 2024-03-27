@@ -1,5 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
+from typing import List
+from unittest.mock import MagicMock
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.ai.interfaces.algorithm_options import PriorityAlgorithmOptions
@@ -92,3 +94,24 @@ class TestPriorityAlgorithm(unittest.TestCase):
 
         mutated_team_sets = algorithm.mutate(self.team_set)
         self.assertEqual(10, len(mutated_team_sets))
+
+    def test_mutate__returns_correct_type(self):
+        mutation_set = [
+            RandomSwapMutation(7),
+            LocalMaxMutation(3),
+        ]
+        algorithm_config = PriorityAlgorithmConfig(
+            MAX_SPREAD=10,
+            MAX_TIME=100,
+            MAX_ITERATE=1,
+            MAX_KEEP=3,
+            MUTATIONS=mutation_set,
+        )
+        algorithm = PriorityAlgorithm(
+            algorithm_options=self.algorithm_options,
+            team_generation_options=self.team_generation_options,
+            algorithm_config=algorithm_config,
+        )
+        mutated_team_sets = algorithm.mutate(self.team_set)
+        self.assertIsInstance(mutated_team_sets, List)
+        self.assertIsInstance(mutated_team_sets[0], PriorityTeamSet)
