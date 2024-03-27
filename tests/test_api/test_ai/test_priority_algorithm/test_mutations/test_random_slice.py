@@ -1,7 +1,7 @@
 import unittest
 
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
-from api.ai.priority_algorithm.mutations.random_slice import mutate_random_slice
+from api.ai.priority_algorithm.mutations.random_slice import RandomSliceMutation
 from api.dataclasses.team import TeamShell
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
@@ -29,7 +29,8 @@ class TestRandomSlice(unittest.TestCase):
             ]
         )
         initial_team_set = team_set.clone()
-        mutate_random_slice(team_set)
+        random_slice_mutation = RandomSliceMutation()
+        random_slice_mutation.mutate_one(team_set, [], {})
 
         num_teams_changed = 0
         for initial_team, mutated_team in zip(
