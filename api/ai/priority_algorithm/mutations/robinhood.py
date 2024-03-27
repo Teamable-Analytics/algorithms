@@ -2,6 +2,7 @@ import itertools
 import random
 from typing import List, Dict, Tuple
 
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
 from api.ai.priority_algorithm.mutations.interfaces import Mutation
 from api.ai.priority_algorithm.mutations.utils import get_available_priority_teams
@@ -17,8 +18,7 @@ class RobinhoodMutation(Mutation):
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
         student_dict: Dict[int, Student],
-        min_team_size: int,
-        max_team_size: int,
+        team_generation_options: TeamGenerationOptions,
     ) -> PriorityTeamSet:
         """
         Robinhood is a mutation that finds a team t1 that does not satisfy a priority c, and a team t2 that does satisfy c. It then creates all possible team sets by mutating the students of t1 and t2, and chooses the best team. This is done across all constraints.

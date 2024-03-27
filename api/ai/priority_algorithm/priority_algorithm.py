@@ -122,8 +122,7 @@ class PriorityAlgorithm(Algorithm):
                 team_set,
                 self.algorithm_options.priorities,
                 self.student_dict,
-                self.team_generation_options.min_team_size,
-                self.team_generation_options.max_team_size,
+                self.team_generation_options,
             )
         ]
 

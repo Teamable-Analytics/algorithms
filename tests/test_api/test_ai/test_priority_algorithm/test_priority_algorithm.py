@@ -114,4 +114,3 @@ class TestPriorityAlgorithm(unittest.TestCase):
         mutated_team_sets = algorithm.mutate(self.team_set)
         self.assertIsInstance(mutated_team_sets, List)
         self.assertIsInstance(mutated_team_sets[0], PriorityTeamSet)
-
