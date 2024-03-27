@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet
-from api.ai.priority_algorithm.mutations.mutation import Mutation
+from api.ai.priority_algorithm.mutations.interfaces import Mutation
 from api.ai.priority_algorithm.mutations.utils import (
     score,
     get_available_priority_teams,
@@ -12,7 +12,7 @@ from api.dataclasses.student import Student
 
 
 class LocalMaxMutation(Mutation):
-    def mutate(
+    def mutate_one(
         self,
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],

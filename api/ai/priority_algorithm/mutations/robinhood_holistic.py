@@ -2,7 +2,7 @@ from typing import List, Dict, Tuple
 
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
 from api.ai.priority_algorithm.mutations import utils
-from api.ai.priority_algorithm.mutations.mutation import Mutation
+from api.ai.priority_algorithm.mutations.interfaces import Mutation
 from api.ai.priority_algorithm.mutations.robinhood import (
     valid_robinhood_arguments,
     perform_local_max_portion_of_robinhood,
@@ -13,7 +13,7 @@ from api.dataclasses.student import Student
 
 
 class RobinhoodHolisticMutation(Mutation):
-    def mutate(
+    def mutate_one(
         self,
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],

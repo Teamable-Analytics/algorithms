@@ -3,7 +3,7 @@ import random
 from typing import List, Dict, Tuple
 
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
-from api.ai.priority_algorithm.mutations.mutation import Mutation
+from api.ai.priority_algorithm.mutations.interfaces import Mutation
 from api.ai.priority_algorithm.mutations.utils import get_available_priority_teams
 from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.dataclasses.student import Student
@@ -12,7 +12,7 @@ ROBINHOOD_SATISFACTION_THRESHOLD = 0.8
 
 
 class RobinhoodMutation(Mutation):
-    def mutate(
+    def mutate_one(
         self,
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],

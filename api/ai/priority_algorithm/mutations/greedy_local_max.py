@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
-from api.ai.priority_algorithm.mutations.mutation import Mutation
+from api.ai.priority_algorithm.mutations.interfaces import Mutation
 from api.ai.priority_algorithm.mutations.utils import (
     get_available_priority_teams,
     score,
@@ -13,13 +13,14 @@ import random
 
 class GreedyLocalMaxMutation(Mutation):
     def __init__(self, number_of_teams: int = 2):
+        super().__init__()
         self.number_of_teams = number_of_teams
 
     def validate(self):
         if self.number_of_teams < 2:
             raise ValueError("Greedy local max must swap between at least 2 teams")
 
-    def mutate(
+    def mutate_one(
         self,
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],

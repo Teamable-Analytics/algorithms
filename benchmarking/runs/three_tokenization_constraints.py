@@ -10,7 +10,6 @@ from api.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
 )
 from api.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
-from api.ai.priority_algorithm.mutations.mutation_set import MutationSet
 from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
 from api.dataclasses.enums import ScenarioAttribute, Gpa, Age, Race, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
@@ -136,9 +135,7 @@ class ThreeTokenizationConstraintsRun(Run):
                         PriorityAlgorithmConfig(),
                         PriorityAlgorithmConfig(
                             name="local_max",
-                            MUTATIONS=MutationSet(
-                                [(LocalMaxMutation(), 1), (RandomSwapMutation(), 2)]
-                            ),
+                            MUTATIONS=[LocalMaxMutation(), RandomSwapMutation(2)],
                         ),
                     ],
                 },
