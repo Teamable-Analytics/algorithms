@@ -12,6 +12,7 @@ from api.ai.priority_algorithm.mutations.robinhood_holistic import (
 from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.dataclasses.student import Student
 from api.dataclasses.team import Team, TeamShell
+from benchmarking.simulation.mock_algorithm import MockAlgorithm
 
 
 class StudentListPriority(Priority):
@@ -108,7 +109,12 @@ class TestMutateRobinhood(unittest.TestCase):
             priorities = [StudentListPriority([1, 2])]
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set, priorities, student_dict
+                priority_team_set,
+                priorities,
+                student_dict,
+                MockAlgorithm.get_team_generation_options(
+                    num_students=10, num_teams=2, min_team_size=1, max_team_size=10
+                ),
             )
 
             # Count the number of teams that changed
@@ -136,7 +142,12 @@ class TestMutateRobinhood(unittest.TestCase):
             priorities = [StudentListPriority([1, 2])]
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set.clone(), priorities, student_dict
+                priority_team_set.clone(),
+                priorities,
+                student_dict,
+                MockAlgorithm.get_team_generation_options(
+                    num_students=10, num_teams=2, min_team_size=1, max_team_size=10
+                ),
             )
 
             self.assertFalse(
@@ -157,7 +168,12 @@ class TestMutateRobinhood(unittest.TestCase):
             priority_team_set.priority_teams[0].team_shell.is_locked = True
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set, priorities, student_dict
+                priority_team_set,
+                priorities,
+                student_dict,
+                MockAlgorithm.get_team_generation_options(
+                    num_students=10, num_teams=2, min_team_size=1, max_team_size=10
+                ),
             )
 
             self.assertEqual(
@@ -177,7 +193,12 @@ class TestMutateRobinhood(unittest.TestCase):
             priorities = [StudentListPriority([1, 2])]
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set, priorities, student_dict
+                priority_team_set,
+                priorities,
+                student_dict,
+                MockAlgorithm.get_team_generation_options(
+                    num_students=10, num_teams=2, min_team_size=1, max_team_size=10
+                ),
             )
 
             # Reset the scores to force them to be recalculated
@@ -197,7 +218,12 @@ class TestMutateRobinhood(unittest.TestCase):
             priority_team_set.priority_teams[2].student_ids = [6, 7, 8]
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set, priorities, student_dict
+                priority_team_set,
+                priorities,
+                student_dict,
+                MockAlgorithm.get_team_generation_options(
+                    num_students=10, num_teams=2, min_team_size=1, max_team_size=10
+                ),
             )
 
             # Reset the scores to force them to be recalculated
@@ -221,7 +247,12 @@ class TestMutateRobinhood(unittest.TestCase):
             priorities = [StudentListPriority([1, 2])]
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set, priorities, student_dict
+                priority_team_set,
+                priorities,
+                student_dict,
+                MockAlgorithm.get_team_generation_options(
+                    num_students=10, num_teams=2, min_team_size=1, max_team_size=10
+                ),
             )
 
             # Count the number of students in the original team set that are not in the mutated team set
@@ -257,7 +288,12 @@ class TestMutateRobinhood(unittest.TestCase):
             priorities = [StudentListPriority([1, 2])]
 
             mutated_team_set = mutation.mutate_one(
-                priority_team_set, priorities, student_dict
+                priority_team_set,
+                priorities,
+                student_dict,
+                MockAlgorithm.get_team_generation_options(
+                    num_students=10, num_teams=2, min_team_size=1, max_team_size=10
+                ),
             )
 
             self.assertIsInstance(
@@ -287,7 +323,12 @@ class TestMutateRobinhood(unittest.TestCase):
         )
         mutate_robinhood_holistic = RobinhoodHolisticMutation()
         mutated_team_set = mutate_robinhood_holistic.mutate_one(
-            priority_team_set.clone(), priorities, student_dict
+            priority_team_set.clone(),
+            priorities,
+            student_dict,
+            MockAlgorithm.get_team_generation_options(
+                num_students=10, num_teams=2, min_team_size=1, max_team_size=10
+            ),
         )
 
         # check that the min and max scoring teams have changed

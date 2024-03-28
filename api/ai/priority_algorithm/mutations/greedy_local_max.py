@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
 from api.ai.priority_algorithm.mutations.interfaces import Mutation
 from api.ai.priority_algorithm.mutations.utils import (
@@ -25,6 +26,7 @@ class GreedyLocalMaxMutation(Mutation):
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
         student_dict: Dict[int, Student],
+        team_generation_options: TeamGenerationOptions,
     ):
         """
         1. Pick two random teams
