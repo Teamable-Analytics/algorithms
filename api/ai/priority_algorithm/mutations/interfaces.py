@@ -1,6 +1,7 @@
 from abc import ABC
-from typing import List, Dict, Tuple
+from typing import List, Dict
 
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet
 from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.dataclasses.student import Student
@@ -15,16 +16,14 @@ class Mutation(ABC):
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
         student_dict: Dict[int, Student],
-        min_team_size: int,
-        max_team_size: int,
+        team_generation_options: TeamGenerationOptions,
     ) -> List[PriorityTeamSet]:
         return [
             self.mutate_one(
                 priority_team_set.clone(),
                 priorities,
                 student_dict,
-                min_team_size,
-                max_team_size,
+                team_generation_options,
             )
             for _ in range(self.num_mutations)
         ]
@@ -34,7 +33,6 @@ class Mutation(ABC):
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
         student_dict: Dict[int, Student],
-        min_team_size: int,
-        max_team_size: int,
+        team_generation_options: TeamGenerationOptions,
     ) -> PriorityTeamSet:
         raise NotImplementedError

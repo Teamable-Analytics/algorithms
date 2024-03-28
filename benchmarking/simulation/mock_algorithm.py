@@ -42,7 +42,9 @@ class MockAlgorithm:
         max_team_size: int = None,
     ) -> TeamGenerationOptions:
         _num_teams = len(initial_teams) if initial_teams else num_teams
-        if min_team_size and not max_team_size or max_team_size and not min_team_size:
+        if (min_team_size and not max_team_size) or (
+            max_team_size and not min_team_size
+        ):
             raise ValueError("Both or neither min and max team size are required")
         if not min_team_size:
             min_team_size = num_students // _num_teams

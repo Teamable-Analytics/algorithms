@@ -2,6 +2,7 @@ import random
 from random import shuffle
 from typing import List, Dict
 
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet
 from api.ai.priority_algorithm.mutations.interfaces import Mutation
 from api.ai.priority_algorithm.mutations.utils import get_available_priority_teams
@@ -15,8 +16,7 @@ class RandomSliceMutation(Mutation):
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
         student_dict: Dict[int, Student],
-        min_team_size: int,
-        max_team_size: int,
+        team_generation_options: TeamGenerationOptions,
     ):
         """
         This mutation takes one student from each team and swaps them
