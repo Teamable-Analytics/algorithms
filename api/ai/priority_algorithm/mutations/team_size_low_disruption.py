@@ -11,6 +11,18 @@ from api.dataclasses.student import Student
 
 
 class TeamSizeLowDisruptionMutation(Mutation):
+    """
+    Mutation to adjust team sizes within the bounds.
+
+    The idea is to first randomly generate the sizes of the new teams (with approx uniform distribution).
+    Then, only move students from teams with too many students to teams with not enough students.
+    This minimizes the change in teams and hopefully won't tear apart teams that are doing well.
+    """
+
+    def __init__(self, num_teams: int = 2, **kwargs):
+        super().__init__(**kwargs)
+        self.num_teams = num_teams
+
     def mutate_one(
         self,
         priority_team_set: PriorityTeamSet,
@@ -18,22 +30,23 @@ class TeamSizeLowDisruptionMutation(Mutation):
         student_dict: Dict[int, Student],
         team_generation_options: TeamGenerationOptions,
     ) -> PriorityTeamSet:
-        """
-        Mutation to adjust team sizes within the bounds.
-
-        The idea is to first randomly generate the sizes of the new teams (with approx uniform distribution).
-        Then, only move students from teams with too many students to teams with not enough students.
-        This minimizes the change in teams and hopefully won't tear apart teams that are doing well.
-        """
-
-        available_priority_teams = get_available_priority_teams(priority_team_set)
+        available_priority_teams: List[PriorityTeam] = get_available_priority_teams(
+            priority_team_set
+        )
         try:
-            if len(available_priority_teams) < 2:
+            if len(available_priority_teams) < self.num_teams:
                 return priority_team_set
 
+            selected_teams = [
+                available_priority_teams[i]
+                for i in np.random.choice(
+                    len(available_priority_teams), self.num_teams, replace=False
+                )
+            ]
+
             new_sizes = get_sizes(
-                len(available_priority_teams),
-                sum([len(team.student_ids) for team in available_priority_teams]),
+                len(selected_teams),
+                sum([len(team.student_ids) for team in selected_teams]),
                 team_generation_options.min_team_size,
                 team_generation_options.max_team_size,
             )
@@ -42,7 +55,7 @@ class TeamSizeLowDisruptionMutation(Mutation):
             shrinking_teams: List[Tuple[int, PriorityTeam]] = []
             growing_teams: List[Tuple[int, PriorityTeam]] = []
             done_teams: List[PriorityTeam] = []
-            for size, team in zip(new_sizes, available_priority_teams):
+            for size, team in zip(new_sizes, selected_teams):
                 if len(team.student_ids) > size:
                     shrinking_teams.append((size, team))
                 elif len(team.student_ids) < size:

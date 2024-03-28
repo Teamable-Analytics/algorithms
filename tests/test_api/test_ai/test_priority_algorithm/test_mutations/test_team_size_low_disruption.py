@@ -96,3 +96,21 @@ class TestTeamSizeLowDisruptionMutation(unittest.TestCase):
             self.assertGreaterEqual(
                 len(team.student_ids), self.team_generation_options.min_team_size
             )
+
+    def test_mutate_one__at_most_N_teams_are_changed(self):
+        mutated_team_set = TeamSizeLowDisruptionMutation(num_teams=4).mutate_one(
+            self.team_set.clone(),
+            [],
+            self.student_dict,
+            self.team_generation_options,
+        )
+        num_changed = 0
+        for mutated_team in mutated_team_set.priority_teams:
+            before = [
+                _
+                for _ in self.team_set.priority_teams
+                if _.team_shell.id == mutated_team.team_shell.id
+            ][0]
+            if set(before.student_ids) != set(mutated_team.student_ids):
+                num_changed += 1
+        self.assertLessEqual(num_changed, 4)
