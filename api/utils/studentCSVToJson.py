@@ -66,15 +66,26 @@ def student_csv_to_json(csv_file_name: str) -> str:
                     values[val] = next_avail_int
                 attributes.append((len(attributes), rows[0][i], values))
 
+        # Map student name to id
+        student_dict: Dict[str, int] = {
+            row[names_column]: i for i, row in enumerate(rows[1:])
+        }
+
         students: List[Student] = []
-        for index, row in enumerate(rows[1:]):
+        for row in rows[1:]:
             relationships = (
-                {name: Relationship.FRIEND for name in row[friends_column].split(",")}
+                {
+                    student_dict[name]: Relationship.FRIEND
+                    for name in row[friends_column].split(",")
+                }
                 if friends_column and row[friends_column] != ""
                 else {}
             )
             relationships.update(
-                {name: Relationship.ENEMY for name in row[enemies_column].split(",")}
+                {
+                    student_dict[name]: Relationship.ENEMY
+                    for name in row[enemies_column].split(",")
+                }
                 if enemies_column and row[enemies_column] != ""
                 else {}
             )
@@ -91,7 +102,7 @@ def student_csv_to_json(csv_file_name: str) -> str:
 
             students.append(
                 Student(
-                    _id=index,
+                    _id=student_dict[row[names_column]],
                     name=row[names_column],
                     relationships=relationships,
                     attributes=student_attributes,
