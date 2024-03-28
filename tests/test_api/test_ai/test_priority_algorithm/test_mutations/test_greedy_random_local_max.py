@@ -9,6 +9,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
+from benchmarking.simulation.mock_algorithm import MockAlgorithm
 from tests.test_api.test_ai.test_priority_algorithm.test_mutations._data import (
     get_mock_team_set,
     get_mock_student_dict,
@@ -31,6 +32,9 @@ class TestGreedyRandomLocalMax(unittest.TestCase):
             self.priority_team_set,
             [JohnPriority(), LooseEvenPriority()],
             self.student_dict,
+            MockAlgorithm.get_team_generation_options(
+                num_students=10, num_teams=2, min_team_size=1, max_team_size=10
+            ),
         )
 
         self.assertNotEqual(
@@ -73,6 +77,9 @@ class TestGreedyRandomLocalMax(unittest.TestCase):
                 result,
                 priorities,
                 student_dict,
+                MockAlgorithm.get_team_generation_options(
+                    num_students=10, num_teams=2, min_team_size=1, max_team_size=10
+                ),
             )
 
         team_sizes = Counter([len(team.student_ids) for team in result.priority_teams])
@@ -87,6 +94,9 @@ class TestGreedyRandomLocalMax(unittest.TestCase):
             self.priority_team_set,
             priorities,
             self.student_dict,
+            MockAlgorithm.get_team_generation_options(
+                num_students=10, num_teams=2, min_team_size=1, max_team_size=10
+            ),
         )
         score = result.calculate_score(priorities, self.student_dict)
         self.assertEqual(score, 624)

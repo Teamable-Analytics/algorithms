@@ -74,6 +74,8 @@ class Simulation:
             num_students=self.settings.student_provider.num_students,
             num_teams=self.settings.num_teams,
             initial_teams=custom_initial_teams,
+            min_team_size=self.settings.min_team_size,
+            max_team_size=self.settings.max_team_size,
         )
         algorithm_options = MockAlgorithm.algorithm_options_from_scenario(
             algorithm_type=self.algorithm_type,
