@@ -328,8 +328,8 @@ class ExactAttributeRatiosMaker(AttributeValueMaker):
                     if number_of_students_with_value != int(
                         number_of_students_with_value
                     ):
-                        raise ValueError(
-                            f"Cannot ensure exact attribute ratios when specifying num_values_per_attribute. "
+                        print(
+                            f"WARNING: Cannot ensure exact attribute ratios when specifying num_values_per_attribute. "
                             f"Found chance of {chance} with class size of {number_of_students} for attribute {attribute_id}"
                         )
 

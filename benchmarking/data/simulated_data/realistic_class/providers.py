@@ -1,3 +1,4 @@
+import itertools
 from typing import List
 
 import numpy as np
@@ -11,7 +12,12 @@ from api.dataclasses.enums import (
 )
 from api.dataclasses.project import Project, ProjectRequirement
 from api.dataclasses.student import Student
-from benchmarking.data.interfaces import StudentProvider
+from api.dataclasses.team import TeamShell
+from benchmarking.data.interfaces import StudentProvider, InitialTeamsProvider
+from benchmarking.data.simulated_data.mock_initial_teams_provider import (
+    MockInitialTeamsProvider,
+    MockInitialTeamsProviderSettings,
+)
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -60,8 +66,12 @@ class RealisticMockStudentProvider(StudentProvider):
         ratio_of_african_students: float = 0.15,
     ):
         self.class_size = class_size
-        self.ratio_of_female_students = ratio_of_female_students
-        self.ratio_of_african_students = ratio_of_african_students
+        self.ratio_of_female_students = self._ensure_even_divisibility(
+            ratio_of_female_students
+        )
+        self.ratio_of_african_students = self._ensure_even_divisibility(
+            ratio_of_african_students
+        )
 
     @property
     def max_project_preferences_per_student(self) -> int:
@@ -85,23 +95,47 @@ class RealisticMockStudentProvider(StudentProvider):
                         (Race.European, 1 - self.ratio_of_african_students),
                     ],
                     ScenarioAttribute.YEAR_LEVEL.value: [
-                        (0, 0.3),
-                        (1, 0.25),
-                        (2, 0.2),
-                        (3, 0.2),
-                        (4, 0.05),
+                        (0, self._ensure_even_divisibility(0.3)),
+                        (1, self._ensure_even_divisibility(0.25)),
+                        (2, self._ensure_even_divisibility(0.2)),
+                        (3, self._ensure_even_divisibility(0.2)),
+                        (4, self._ensure_even_divisibility(0.05)),
                     ],
                     GITHUB_EXPERIENCE: [
-                        (GithubExperience.Beginner, 0.2),
-                        (GithubExperience.Intermediate, 0.7),
-                        (GithubExperience.Advanced, 0.1),
+                        (
+                            GithubExperience.Beginner,
+                            self._ensure_even_divisibility(0.2),
+                        ),
+                        (
+                            GithubExperience.Intermediate,
+                            self._ensure_even_divisibility(0.7),
+                        ),
+                        (
+                            GithubExperience.Advanced,
+                            self._ensure_even_divisibility(0.1),
+                        ),
                     ],
                     WORK_EXPERIENCE: [
-                        (WorkExperience.No_Experience, 0.4),
-                        (WorkExperience.One_Semester, 0.05),
-                        (WorkExperience.Two_Semesters, 0.2),
-                        (WorkExperience.Three_Semesters, 0.3),
-                        (WorkExperience.More_Than_Three_Semesters, 0.05),
+                        (
+                            WorkExperience.No_Experience,
+                            self._ensure_even_divisibility(0.4),
+                        ),
+                        (
+                            WorkExperience.One_Semester,
+                            self._ensure_even_divisibility(0.05),
+                        ),
+                        (
+                            WorkExperience.Two_Semesters,
+                            self._ensure_even_divisibility(0.2),
+                        ),
+                        (
+                            WorkExperience.Three_Semesters,
+                            self._ensure_even_divisibility(0.3),
+                        ),
+                        (
+                            WorkExperience.More_Than_Three_Semesters,
+                            self._ensure_even_divisibility(0.05),
+                        ),
                     ],
                 },
             )
@@ -109,16 +143,16 @@ class RealisticMockStudentProvider(StudentProvider):
 
         # Edit to add skills
         skills = [
-            (DevelopmentSkills.Typescript.value, 0.4),
-            (DevelopmentSkills.Next.value, 0.3),
-            (DevelopmentSkills.Python.value, 0.8),
-            (DevelopmentSkills.Django.value, 0.1),
-            (DevelopmentSkills.Backend.value, 0.3),
-            (DevelopmentSkills.Frontend.value, 0.6),
-            (DevelopmentSkills.Design.value, 0.4),
-            (DevelopmentSkills.ReactNative.value, 0.2),
-            (DevelopmentSkills.Mobile.value, 0.8),
-            (DevelopmentSkills.AWS.value, 0.2),
+            (DevelopmentSkills.Typescript.value, self._ensure_even_divisibility(0.4)),
+            (DevelopmentSkills.Next.value, self._ensure_even_divisibility(0.3)),
+            (DevelopmentSkills.Python.value, self._ensure_even_divisibility(0.8)),
+            (DevelopmentSkills.Django.value, self._ensure_even_divisibility(0.1)),
+            (DevelopmentSkills.Backend.value, self._ensure_even_divisibility(0.3)),
+            (DevelopmentSkills.Frontend.value, self._ensure_even_divisibility(0.6)),
+            (DevelopmentSkills.Design.value, self._ensure_even_divisibility(0.4)),
+            (DevelopmentSkills.ReactNative.value, self._ensure_even_divisibility(0.2)),
+            (DevelopmentSkills.Mobile.value, self._ensure_even_divisibility(0.8)),
+            (DevelopmentSkills.AWS.value, self._ensure_even_divisibility(0.2)),
         ]
 
         rng = np.random.default_rng(seed=seed)
@@ -130,6 +164,32 @@ class RealisticMockStudentProvider(StudentProvider):
 
         order = rng.permutation(len(students))
         return [students[_] for _ in order]
+
+    def _ensure_even_divisibility(self, value: float) -> float:
+        return round(self.class_size * value) / self.class_size
+
+
+class RealisticMockInitialTeamsProvider(InitialTeamsProvider):
+    def __init__(self, num_teams: int):
+        self.num_teams = num_teams
+
+    def get(self) -> List[TeamShell]:
+        projects = []
+        project_cycler = itertools.cycle(get_realistic_projects())
+        for i in range(self.num_teams):
+            next_project = next(project_cycler)
+            projects.append(
+                Project(
+                    _id=i,
+                    name=next_project.name + " " + str(i),
+                    requirements=next_project.requirements,
+                )
+            )
+        return MockInitialTeamsProvider(
+            settings=MockInitialTeamsProviderSettings(
+                projects=projects,
+            )
+        ).get()
 
 
 def get_realistic_projects() -> List[Project]:
