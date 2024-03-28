@@ -10,8 +10,8 @@ from api.dataclasses.student import Student
 
 
 class RandomTeamSizeMutation(Mutation):
-    def __init__(self, num_mutations: int = 1, number_of_teams: int = 2):
-        super().__init__(num_mutations)
+    def __init__(self, number_of_teams: int = 2, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.number_of_teams = number_of_teams
 
     def validate(self):
@@ -26,19 +26,16 @@ class RandomTeamSizeMutation(Mutation):
         team_generation_options: TeamGenerationOptions,
     ) -> PriorityTeamSet:
         if (
-            team_generation_options.max_team_size
-            - team_generation_options.min_team_size
-            < 2
+            team_generation_options.min_team_size
+            == team_generation_options.max_team_size
         ):
-            print(
-                "Warning: There is little to no effect if there is not at least a gap of two between the min and max team sizes."
-            )
+            return priority_team_set
         try:
             available_priority_teams = get_available_priority_teams(priority_team_set)
             if len(available_priority_teams) < self.number_of_teams:
                 return priority_team_set
             teams = random.sample(available_priority_teams, self.number_of_teams)
-            students = [
+            movable_students = [
                 student_id
                 for team in teams
                 for student_id in team.student_ids[
@@ -49,8 +46,8 @@ class RandomTeamSizeMutation(Mutation):
                 team.student_ids = team.student_ids[
                     : team_generation_options.min_team_size
                 ]
-            random.shuffle(students)
-            for student in students:
+            random.shuffle(movable_students)
+            for student in movable_students:
                 index = random.randrange(0, self.number_of_teams)
                 for i in range(self.number_of_teams):
                     j = (index + i) % self.number_of_teams

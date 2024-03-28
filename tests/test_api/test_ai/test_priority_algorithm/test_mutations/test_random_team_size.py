@@ -1,7 +1,7 @@
 import unittest
 
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
-from api.ai.priority_algorithm.mutations.random_team_size_change import (
+from api.ai.priority_algorithm.mutations.random_team_size import (
     RandomTeamSizeMutation,
 )
 from api.dataclasses.team import TeamShell
@@ -12,11 +12,11 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 from benchmarking.simulation.mock_algorithm import MockAlgorithm
 
 
-class TestRandomSlice(unittest.TestCase):
+class TestRandomTeamSizeMutation(unittest.TestCase):
     def test_mutate__produces_team_sizes_in_bounds(self):
         students = MockStudentProvider(
             settings=MockStudentProviderSettings(
-                number_of_students=100,
+                number_of_students=2000,
             )
         ).get()
         team_set = PriorityTeamSet(
@@ -28,7 +28,7 @@ class TestRandomSlice(unittest.TestCase):
                     ],
                     team_shell=TeamShell(team_id),
                 )
-                for team_id in range(20)
+                for team_id in range(40)
             ]
         )
         random_team_size_mutation = RandomTeamSizeMutation()
@@ -37,14 +37,14 @@ class TestRandomSlice(unittest.TestCase):
             [],
             {},
             MockAlgorithm.get_team_generation_options(
-                num_students=100, num_teams=20, min_team_size=3, max_team_size=7
+                num_students=200, num_teams=40, min_team_size=2, max_team_size=10
             ),
         )
         after_students = []
         for team in team_set.priority_teams:
             team_size = len(team.student_ids)
-            self.assertGreaterEqual(team_size, 3)
-            self.assertLessEqual(team_size, 7)
+            self.assertGreaterEqual(team_size, 2)
+            self.assertLessEqual(team_size, 10)
             for student in team.student_ids:
                 after_students.append(student)
-        self.assertEqual(len(after_students), 100)
+        self.assertEqual(len(after_students), 200)
