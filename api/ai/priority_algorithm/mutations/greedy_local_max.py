@@ -13,8 +13,8 @@ import random
 
 
 class GreedyLocalMaxMutation(Mutation):
-    def __init__(self, number_of_teams: int = 2):
-        super().__init__()
+    def __init__(self, num_mutations: int = 1, number_of_teams: int = 2):
+        super().__init__(num_mutations)
         self.number_of_teams = number_of_teams
 
     def validate(self):
