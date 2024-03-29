@@ -128,7 +128,3 @@ def student_csv_to_json(csv_file_name: str) -> str:
                     student["relationships"][related_student] = "default"
 
         return json.dumps(students_dict, indent=4)
-
-
-if __name__ == "__main__":
-    print(student_csv_to_json("example_students.csv"))
