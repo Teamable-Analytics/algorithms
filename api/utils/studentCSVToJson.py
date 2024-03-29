@@ -108,4 +108,27 @@ def student_csv_to_json(csv_file_name: str) -> str:
                     attributes=student_attributes,
                 )
             )
-        return json.dumps(students, cls=StudentSerializer, indent=4)
+
+        # Convert to a dict, so we can fix the relationship values for the API
+        students_json = json.dumps(students, cls=StudentSerializer)
+        students_dict = json.loads(students_json)
+        for student in students_dict:
+            for related_student in student["relationships"].keys():
+                if (
+                    student["relationships"][related_student]
+                    == Relationship.FRIEND.value
+                ):
+                    student["relationships"][related_student] = "friend"
+                elif (
+                    student["relationships"][related_student]
+                    == Relationship.ENEMY.value
+                ):
+                    student["relationships"][related_student] = "enemy"
+                else:
+                    student["relationships"][related_student] = "default"
+
+        return json.dumps(students_dict, indent=4)
+
+
+if __name__ == "__main__":
+    print(student_csv_to_json("example_students.csv"))
