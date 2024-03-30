@@ -13,27 +13,29 @@ import random
 
 
 class GreedyLocalMaxMutation(Mutation):
-    def __init__(self, num_mutations: int = 1, number_of_teams: int = 2):
-        super().__init__(num_mutations)
+    def __init__(self, number_of_teams: int = 2, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # This is controls the number of teams (N) which are changed by the mutation. If N is four, four teams will be randomly choosen and mutated with greedy local max.
         self.number_of_teams = number_of_teams
+        self.validate()
 
     def validate(self):
         if self.number_of_teams < 2:
             raise ValueError("Greedy local max must swap between at least 2 teams")
 
     def mutate_one(
-        self,
-        priority_team_set: PriorityTeamSet,
-        priorities: List[Priority],
-        student_dict: Dict[int, Student],
-        team_generation_options: TeamGenerationOptions,
+            self,
+            priority_team_set: PriorityTeamSet,
+            priorities: List[Priority],
+            student_dict: Dict[int, Student],
+            team_generation_options: TeamGenerationOptions,
     ):
         """
-        1. Pick two random teams
-        2. Pool all students of the two team together
-        3. Add each student from pool back into two new pools by doing the following for each student in the pool
+        1. Pick N random teams
+        2. Pool all students of the N teams together
+        3. Add each student from pool back into N new pools by doing the following for each student in the pool
             - If one of the pools is full add student to not full pool, else
-            - Add student to each pool and get score of each pool, keeping the student in the pool whose score increases the most
+            - Add student to every pool and get score of every pool, keeping the student in the pool whose score increases the most
         """
         available_priority_teams: List[PriorityTeam] = get_available_priority_teams(
             priority_team_set
@@ -61,8 +63,8 @@ class GreedyLocalMaxMutation(Mutation):
 
                     # Track which team benefits the most from the added student
                     if (
-                        max_index is None
-                        or max_score_increase < updated_score - scores[i]
+                            max_index is None
+                            or max_score_increase < updated_score - scores[i]
                     ):
                         max_index = i
                         max_score_increase = updated_score - scores[i]
