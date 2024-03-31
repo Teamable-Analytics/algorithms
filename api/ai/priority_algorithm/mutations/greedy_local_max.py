@@ -24,11 +24,11 @@ class GreedyLocalMaxMutation(Mutation):
             raise ValueError("Greedy local max must swap between at least 2 teams")
 
     def mutate_one(
-            self,
-            priority_team_set: PriorityTeamSet,
-            priorities: List[Priority],
-            student_dict: Dict[int, Student],
-            team_generation_options: TeamGenerationOptions,
+        self,
+        priority_team_set: PriorityTeamSet,
+        priorities: List[Priority],
+        student_dict: Dict[int, Student],
+        team_generation_options: TeamGenerationOptions,
     ):
         """
         1. Pick N random teams
@@ -63,8 +63,8 @@ class GreedyLocalMaxMutation(Mutation):
 
                     # Track which team benefits the most from the added student
                     if (
-                            max_index is None
-                            or max_score_increase < updated_score - scores[i]
+                        max_index is None
+                        or max_score_increase < updated_score - scores[i]
                     ):
                         max_index = i
                         max_score_increase = updated_score - scores[i]
