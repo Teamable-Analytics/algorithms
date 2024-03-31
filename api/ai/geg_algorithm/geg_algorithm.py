@@ -32,119 +32,103 @@ class GeneralizedEnvyGraphAlgorithm(Algorithm):
     """
 
     envy_graph: EnvyGraph
-    trace_dictionary: Dict[int, Student]
-
-    algorithm_run_time: float
+    allocation: Dict[int, List[Student]]
 
     def __init__(
-        self,
-        algorithm_options: GeneralizedEnvyGraphAlgorithmOptions,
-        team_generation_options: TeamGenerationOptions,
-        algorithm_config: GeneralizedEnvyGraphAlgorithmConfig,
-        *args,
-        **kwargs,
+            self,
+            algorithm_options: GeneralizedEnvyGraphAlgorithmOptions,
+            team_generation_options: TeamGenerationOptions,
+            algorithm_config: GeneralizedEnvyGraphAlgorithmConfig,
     ):
         super().__init__(algorithm_options, team_generation_options)
 
-        self.allocation: Dict[int, List[int]] = {}
-        self.utilities: Dict[int, Dict[int, int]] = {}
-        self.project_ids_to_projects = {team.project_id: team for team in self.teams}
+        self.allocation = {}
+        self.utilities = {team.id: {} for team in self.teams}
+
+        self.team_id_to_team = {team.id: team for team in self.teams}
         self.utility_function = algorithm_config.utility_function
 
     def prepare(self, students: List[Student]) -> None:
-        self.utilities = self._calculate_utilities(
-            students=students,
-            utility_function=self.utility_function,
-        )
-
-    def _calculate_utilities(
-        self,
-        students: List[Student],
-        utility_function: Callable[[Student, TeamShell], float],
-    ) -> Dict[int, Dict[int, float]]:
-        utilities: Dict[int, Dict[int, float]] = {
-            team.project_id: {} for team in self.teams
-        }
-
         for team in self.teams:
             for student in students:
-                project_id = team.project_id
-                utilities[project_id][student.id] = utility_function(
+                self.utilities[team.id][student.id] = self.utility_function(
                     student, team.to_shell()
                 )
 
-        return utilities
+    def _calculate_utility(
+            self,
+            students: List[Student],
+            team: Team,
+    ) -> float:
+        """
+        Calculate the utilities given a list of students and teams
+        """
+        return sum(
+            [
+                self.utility_function(student, team.to_shell())
+                for student in students
+            ]
+        )
 
-    def _get_team_with_positive_utilities(self, student: Student) -> List[Team]:
-        """
-        This run in O(N)
-        """
-        return [
-            team
-            for team in self.teams
-            if self.utilities[team.project_id][student.id] >= 0
-        ]
+    def _calculate_marginal_utility(self, student: Student, team: Team) -> float:
+        original_utility = self._calculate_utility(self.allocation[team.id], team)
+        union_utility = self._calculate_utility(self.allocation[team.id] + [student], team)
 
-    def _construct_team_from_allocation(self) -> TeamSet:
-        """
-        This run in O(N*M)
-        """
-        new_team_set = TeamSet()
-        for index, alloc_items in enumerate(self.allocation.items()):
-            project_id, student_ids = alloc_items
-            new_team = Team(
-                _id=index + 1,
-                students=[
-                    self.trace_dictionary.get(student_id) for student_id in student_ids
-                ],
-                requirements=self.project_ids_to_projects.get(project_id).requirements,
-            )
-            new_team_set.teams.append(new_team)
+        return union_utility - original_utility
 
-        return new_team_set
+    def _get_team_with_positive_marginal_utilities(self, student: Student) -> List[Team]:
+        return [team for team in self.teams if self._calculate_marginal_utility(student, team) >= 0]
+
+    def _get_source(self, teams: List[Team]) -> int:
+        for team in teams:
+            if self.envy_graph.is_source(team.id):
+                return team.id
+
+    def _get_sink(self, teams: List[Team]) -> int:
+        for team in teams:
+            if self.envy_graph.is_sink(team.id):
+                return team.id
+
+    def _exchange_over_cycle(self, cycle: List[int]):
+        first_allocation = self.allocation[cycle[0]]
+
+        for i in range(len(cycle) - 1):
+            self.allocation[cycle[i]] = self.allocation[cycle[i + 1]]
+
+        self.allocation[cycle[-1]] = first_allocation
+
+    def _construct_team_set_from_allocation(self) -> TeamSet:
+        teams = []
+        for team_id, students in self.allocation.items():
+            if len(students) == 0:
+                continue
+            team = self.team_id_to_team[team_id]
+            team.students = students
+            teams.append(team)
+
+        return TeamSet(teams=teams)
 
     def generate(self, students: List[Student]) -> TeamSet:
         self.envy_graph = EnvyGraph(self.teams, students, self.utility_function)
-        self.allocation: Dict[int, List[int]] = {
-            team.project_id: [] for team in self.teams
+        self.allocation = {
+            team.id: [] for team in self.teams
         }
-        self.trace_dictionary = {student.id: student for student in students}
 
-        i_star: int = -1
         for student in students:
-            positive_utilities = self._get_team_with_positive_utilities(student)
-            if len(positive_utilities) != 0:
-                for project in positive_utilities:
-                    if self.envy_graph.is_source(project.id):
-                        i_star = project.id
-                        break
+            positive_marginal_utility_teams = self._get_team_with_positive_marginal_utilities(student)
+            if len(positive_marginal_utility_teams) > 0:
+                i_star = self._get_source(positive_marginal_utility_teams)
             else:
-                for team in self.teams:
-                    if self.envy_graph.is_sink(team.project_id):
-                        i_star = team.project_id
-                        break
+                i_star = self._get_sink(self.teams)
 
-            if i_star == -1:
-                raise ValueError("No i_star found")
+            if i_star is None:
+                continue
 
-            self.allocation[i_star].append(student.id)
-            self.envy_graph.update_envy_graph(i_star, self.allocation)
+            self.allocation[i_star].append(student)
 
-            while True:
-                all_directed_cycles = self.envy_graph.get_all_directed_cycles()
-                if len(all_directed_cycles) == 0:
-                    break
+            envy_graph_cycles = self.envy_graph.get_all_directed_cycles()
+            while len(envy_graph_cycles) > 0:
+                self._exchange_over_cycle(envy_graph_cycles.pop())
+                envy_graph_cycles = self.envy_graph.get_all_directed_cycles()
 
-                cycle = all_directed_cycles[0]
-                last_cycle_allocation = self.allocation[cycle[-1]]
-                for i in range(len(cycle)):
-                    project_id = cycle[i]
-                    if i < len(cycle) - 1:
-                        next_project_id_allocation = self.allocation[cycle[i + 1]]
-                    else:
-                        next_project_id_allocation = last_cycle_allocation
-
-                    self.allocation[project_id] = next_project_id_allocation
-                    self.envy_graph.update_envy_graph(project_id, self.allocation)
-
-        return self._construct_team_from_allocation()
+        return self._construct_team_set_from_allocation()
