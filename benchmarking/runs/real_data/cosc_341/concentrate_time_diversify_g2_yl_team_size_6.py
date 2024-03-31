@@ -28,7 +28,9 @@ from benchmarking.evaluations.scenarios.cosc341.concentrate_timeslot_diversify_a
     ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevelSwitchedOrdering,
 )
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.real_data.cosc_341.metrics import calculate_inter_homogeneity_score
+from benchmarking.runs.real_data.cosc_341.metrics import (
+    calculate_inter_homogeneity_score,
+)
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet
@@ -46,7 +48,6 @@ class ConcentrateTimeDiversifyG2YLTeamSize6(Run):
     MAX_KEEP = 30
     MAX_SPREAD = 100
     MAX_ITERATE = 250
-
 
     def start(self, num_trials: int = 1, compute_metrics: bool = True):
         scenario_1 = ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel()
@@ -179,7 +180,9 @@ class ConcentrateTimeDiversifyG2YLTeamSize6(Run):
                             name=algorithm_name,
                         )
                     else:
-                        graph_data[metric_name][algorithm_name].x_data.append(self.CLASS_SIZE)
+                        graph_data[metric_name][algorithm_name].x_data.append(
+                            self.CLASS_SIZE
+                        )
                         graph_data[metric_name][algorithm_name].y_data.append(value)
 
             # Print data as csv
@@ -199,11 +202,15 @@ class ConcentrateTimeDiversifyG2YLTeamSize6(Run):
 
             # Calculate Inter-Homogeneity for year level
             print("YearLevelInterHomogeneity", end="")
-            calculate_inter_homogeneity_score(artifacts, ScenarioAttribute.YEAR_LEVEL.value)
+            calculate_inter_homogeneity_score(
+                artifacts, ScenarioAttribute.YEAR_LEVEL.value
+            )
 
             # Calculate Inter-Homogeneity for timeslots
             print("TimeslotLevelInterHomogeneity", end="")
-            calculate_inter_homogeneity_score(artifacts, ScenarioAttribute.TIMESLOT_AVAILABILITY.value)
+            calculate_inter_homogeneity_score(
+                artifacts, ScenarioAttribute.TIMESLOT_AVAILABILITY.value
+            )
 
 
 if __name__ == "__main__":

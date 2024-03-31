@@ -7,9 +7,9 @@ def calculate_inter_homogeneity_score(artifacts, scenario_attribute_value: int):
         cosine_diffs = []
         for team_set in team_sets:
             cosine_diffs.append(
-                AverageCosineDifference(
-                    [scenario_attribute_value]
-                ).calculate_stdev(team_set)
+                AverageCosineDifference([scenario_attribute_value]).calculate_stdev(
+                    team_set
+                )
             )
         print(f",{sum(cosine_diffs) / len(cosine_diffs)}", end="")
     print()
