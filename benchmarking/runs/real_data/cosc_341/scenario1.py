@@ -96,14 +96,14 @@ class Scenario1(Run):
                             os.path.join(
                                 os.path.dirname(__file__),
                                 "../../../..",
-                                f"api/ai/group_matcher_algorithm/group-matcher/inpData/{175}-generated.csv",
+                                f"api/ai/external_algorithms/group_matcher_algorithm/group-matcher/inpData/{175}-generated.csv",
                             )
                         ),
                         group_matcher_run_path=os.path.abspath(
                             os.path.join(
                                 os.path.dirname(__file__),
                                 "../../../..",
-                                "api/ai/group_matcher_algorithm/group-matcher/run.py",
+                                "api/ai/external_algorithms/group_matcher_algorithm/group-matcher/run.py",
                             )
                         ),
                     ),
