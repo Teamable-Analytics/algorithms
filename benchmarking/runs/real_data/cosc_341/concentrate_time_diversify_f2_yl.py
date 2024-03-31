@@ -4,31 +4,20 @@ from typing import Dict
 
 import typer
 
-from api.ai.interfaces.algorithm_config import (
-    PriorityAlgorithmConfig,
-    WeightAlgorithmConfig,
-    GroupMatcherAlgorithmConfig,
-    RandomAlgorithmConfig,
-)
+from api.ai.interfaces.algorithm_config import WeightAlgorithmConfig, PriorityAlgorithmConfig, \
+    GroupMatcherAlgorithmConfig, RandomAlgorithmConfig
 from api.dataclasses.enums import ScenarioAttribute, Gender, AlgorithmType
-from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
-    COSC341W2021T2AnsweredSurveysStudentProvider,
-)
+from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import COSC341W2021T2AnsweredSurveysStudentProvider
 from benchmarking.evaluations.graphing.graph_metadata import GraphData
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
-from benchmarking.evaluations.metrics.average_timeslot_coverage import (
-    AverageTimeslotCoverage,
-)
-from benchmarking.evaluations.metrics.cosine_similarity import (
-    AverageCosineDifference,
-)
+from benchmarking.evaluations.metrics.average_timeslot_coverage import AverageTimeslotCoverage
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.cosc341.concentrate_timeslot_diversify_gender_min_2_and_diversify_year_level import (
-    ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel,
-    DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel,
-)
+from benchmarking.evaluations.scenarios.cosc341.concentrate_timeslot_diversify_gender_min_2_and_diversify_year_level import \
+    ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel, \
+    DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.real_data.cosc_341.utils import calculate_inter_homogeneity_score
+from benchmarking.runs.real_data.cosc_341.metrics import calculate_inter_homogeneity_score
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet
@@ -68,7 +57,7 @@ class ConcentrateTimeDiversifyF2YL(Run):
                 attribute_filter=[ScenarioAttribute.YEAR_LEVEL.value],
             ),
             "AverageSoloStatus": AverageSoloStatus(
-                minority_groups={
+                minority_groups_map={
                     ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
                 }
             ),

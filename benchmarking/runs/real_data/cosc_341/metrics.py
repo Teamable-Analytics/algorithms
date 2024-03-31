@@ -1,8 +1,7 @@
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
-from benchmarking.simulation.simulation_set import SimulationSetArtifact
 
 
-def calculate_inter_homogeneity_score(artifacts: SimulationSetArtifact, scenario_attribute_value: int):
+def calculate_inter_homogeneity_score(artifacts, scenario_attribute_value: int):
     # Calculate Inter-Homogeneity from stdev of cosine difference
     for algorithm_name, (team_sets, run_times) in artifacts.items():
         cosine_diffs = []

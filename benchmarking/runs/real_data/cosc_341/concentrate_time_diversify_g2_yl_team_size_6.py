@@ -28,7 +28,7 @@ from benchmarking.evaluations.scenarios.cosc341.concentrate_timeslot_diversify_a
     ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevelSwitchedOrdering,
 )
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.real_data.cosc_341.utils import calculate_inter_homogeneity_score
+from benchmarking.runs.real_data.cosc_341.metrics import calculate_inter_homogeneity_score
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet
@@ -48,7 +48,7 @@ class ConcentrateTimeDiversifyG2YLTeamSize6(Run):
     MAX_ITERATE = 250
 
 
-    def start(self, num_trials: int = 1, compute_metrics: bool = False):
+    def start(self, num_trials: int = 1, compute_metrics: bool = True):
         scenario_1 = ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevel()
         scenario_2 = (
             ConcentrateTimeSlotDiversifyAllGenderMin2DiversifyYearLevelSwitchedOrdering()
@@ -71,7 +71,7 @@ class ConcentrateTimeDiversifyG2YLTeamSize6(Run):
                 attribute_filter=[ScenarioAttribute.YEAR_LEVEL.value],
             ),
             "AverageSoloStatus": AverageSoloStatus(
-                minority_groups={
+                minority_groups_map={
                     ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
                 }
             ),
