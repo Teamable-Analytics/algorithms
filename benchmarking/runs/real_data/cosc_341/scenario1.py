@@ -41,7 +41,7 @@ class Scenario1(Run):
     on year level (third year vs. graduate students).
     """
 
-    def start(self, num_trials: int = 1, compute_metrics: bool = True):
+    def start(self, num_trials: int = 1, compute_metrics: bool = False):
         scenario_1 = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel()
         scenario_2 = DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel()
 

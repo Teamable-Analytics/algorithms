@@ -50,7 +50,7 @@ class Scenario3(Run):
     on year level (third year vs. graduate students) and team size 6.
     """
 
-    def start(self, num_trials: int = 1, generate_graphs: bool = True):
+    def start(self, num_trials: int = 1, compute_metrics: bool = False):
         scenario_1 = ConcentrateTimeSlotDiversifyGenderMin2AndDiversifyYearLevel()
         scenario_2 = DiversifyGenderMin2ConcentrateTimeSlotAndDiversifyYearLevel()
 
@@ -156,7 +156,7 @@ class Scenario3(Run):
             ).run(num_runs=num_trials)
         )
 
-        if generate_graphs:
+        if compute_metrics:
             graph_data: Dict[str, Dict[str, GraphData]] = {}
             insight_set: Dict[str, InsightOutput] = Insight.get_output_set(
                 artifact=artifacts, metrics=list(metrics.values())
