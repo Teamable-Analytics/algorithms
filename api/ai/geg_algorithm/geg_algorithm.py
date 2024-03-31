@@ -35,10 +35,10 @@ class GeneralizedEnvyGraphAlgorithm(Algorithm):
     allocation: Dict[int, List[Student]]
 
     def __init__(
-            self,
-            algorithm_options: GeneralizedEnvyGraphAlgorithmOptions,
-            team_generation_options: TeamGenerationOptions,
-            algorithm_config: GeneralizedEnvyGraphAlgorithmConfig,
+        self,
+        algorithm_options: GeneralizedEnvyGraphAlgorithmOptions,
+        team_generation_options: TeamGenerationOptions,
+        algorithm_config: GeneralizedEnvyGraphAlgorithmConfig,
     ):
         super().__init__(algorithm_options, team_generation_options)
 
@@ -56,28 +56,33 @@ class GeneralizedEnvyGraphAlgorithm(Algorithm):
                 )
 
     def _calculate_utility(
-            self,
-            students: List[Student],
-            team: Team,
+        self,
+        students: List[Student],
+        team: Team,
     ) -> float:
         """
         Calculate the utilities given a list of students and teams
         """
         return sum(
-            [
-                self.utility_function(student, team.to_shell())
-                for student in students
-            ]
+            [self.utility_function(student, team.to_shell()) for student in students]
         )
 
     def _calculate_marginal_utility(self, student: Student, team: Team) -> float:
         original_utility = self._calculate_utility(self.allocation[team.id], team)
-        union_utility = self._calculate_utility(self.allocation[team.id] + [student], team)
+        union_utility = self._calculate_utility(
+            self.allocation[team.id] + [student], team
+        )
 
         return union_utility - original_utility
 
-    def _get_team_with_positive_marginal_utilities(self, student: Student) -> List[Team]:
-        return [team for team in self.teams if self._calculate_marginal_utility(student, team) >= 0]
+    def _get_team_with_positive_marginal_utilities(
+        self, student: Student
+    ) -> List[Team]:
+        return [
+            team
+            for team in self.teams
+            if self._calculate_marginal_utility(student, team) >= 0
+        ]
 
     def _get_source(self, teams: List[Team]) -> int:
         for team in teams:
@@ -110,12 +115,12 @@ class GeneralizedEnvyGraphAlgorithm(Algorithm):
 
     def generate(self, students: List[Student]) -> TeamSet:
         self.envy_graph = EnvyGraph(self.teams, students, self.utility_function)
-        self.allocation = {
-            team.id: [] for team in self.teams
-        }
+        self.allocation = {team.id: [] for team in self.teams}
 
         for student in students:
-            positive_marginal_utility_teams = self._get_team_with_positive_marginal_utilities(student)
+            positive_marginal_utility_teams = (
+                self._get_team_with_positive_marginal_utilities(student)
+            )
             if len(positive_marginal_utility_teams) > 0:
                 i_star = self._get_source(positive_marginal_utility_teams)
             else:

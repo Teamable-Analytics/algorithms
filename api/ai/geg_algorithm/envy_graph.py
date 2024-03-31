@@ -43,9 +43,7 @@ class EnvyGraph:
         """
         return all([team_id not in targets for targets in self.graph.values()])
 
-    def update_envy_graph(
-        self, team_id: int, allocation: Dict[int, List[int]]
-    ) -> None:
+    def update_envy_graph(self, team_id: int, allocation: Dict[int, List[int]]) -> None:
         team = self.team_id_traces.get(team_id)
         new_utility_value = sum(
             [
