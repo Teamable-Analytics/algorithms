@@ -2,6 +2,8 @@ import time
 
 from rest_framework.response import Response
 
+from api import api
+
 
 class ResponseWithMetadata(Response):
     def __init__(
@@ -26,7 +28,7 @@ class ResponseWithMetadata(Response):
         self.data = {
             data_label: self.data,
             "metadata": {
-                "version": "v0.1.0",
+                "version": api.VERSION,
                 "timestamp": timestamp if timestamp else time.time(),
             },
             "error": error,
