@@ -1,8 +1,9 @@
 from typing import List, Dict, Tuple
 
+from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
 from api.ai.priority_algorithm.mutations import utils
-from api.ai.priority_algorithm.mutations.mutation import Mutation
+from api.ai.priority_algorithm.mutations.interfaces import Mutation
 from api.ai.priority_algorithm.mutations.robinhood import (
     valid_robinhood_arguments,
     perform_local_max_portion_of_robinhood,
@@ -13,11 +14,12 @@ from api.dataclasses.student import Student
 
 
 class RobinhoodHolisticMutation(Mutation):
-    def mutate(
+    def mutate_one(
         self,
         priority_team_set: PriorityTeamSet,
         priorities: List[Priority],
         student_dict: Dict[int, Student],
+        team_generation_options: TeamGenerationOptions,
     ) -> PriorityTeamSet:
         """
         This is a variation of mutate_robinhood that does not consider individual priorities. Instead, it considers the entire set of priorities as a whole. This is done by calculating the score of each team in the team set, and then performing the local max portion of the robinhood mutation on the team with the lowest score and the team with the highest score.

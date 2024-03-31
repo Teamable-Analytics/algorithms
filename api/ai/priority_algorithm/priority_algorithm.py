@@ -113,6 +113,21 @@ class PriorityAlgorithm(Algorithm):
 
         return TeamSet(teams=teams)
 
+    def mutate(
+        self,
+        team_set: PriorityTeamSet,
+    ) -> List[PriorityTeamSet]:
+        return [
+            mutated_set
+            for mutation in self.algorithm_config.MUTATIONS
+            for mutated_set in mutation.mutate(
+                team_set,
+                self.algorithm_options.priorities,
+                self.student_dict,
+                self.team_generation_options,
+            )
+        ]
+
 
 def create_student_dict(students: List[Student]) -> Dict[int, Student]:
     student_dict = {}

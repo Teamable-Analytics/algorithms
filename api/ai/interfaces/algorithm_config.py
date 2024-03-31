@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Callable
+from typing import Callable, List
 
-from api.ai.priority_algorithm.mutations.mutation_set import MutationSet
+from api.ai.priority_algorithm.mutations.interfaces import Mutation
 from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
 from api.dataclasses.student import Student
 from api.dataclasses.team import TeamShell
@@ -70,17 +70,21 @@ class PriorityAlgorithmConfig(AlgorithmConfig):
             (local_max_mutation, 5),
         ]
     """
-    MUTATIONS: MutationSet = None
+    MUTATIONS: List[Mutation] = None
 
     def __post_init__(self):
         super().__post_init__()
         # by default use random swap mutation for all the permitted mutation spread
         if not self.MUTATIONS:
-            self.MUTATIONS = MutationSet([(RandomSwapMutation(), self.MAX_SPREAD)])
+            self.MUTATIONS = [RandomSwapMutation(num_mutations=self.MAX_SPREAD)]
 
     def validate(self):
         super().validate()
-        if self.MUTATIONS and self.MUTATIONS.sum_of_calls() != self.MAX_SPREAD:
+        if (
+            self.MUTATIONS
+            and sum([mutation.num_mutations for mutation in self.MUTATIONS])
+            != self.MAX_SPREAD
+        ):
             raise ValueError(
                 "The total number of outputted team sets from specified mutations =/= MAX_SPREAD!"
             )

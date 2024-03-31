@@ -7,6 +7,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
+from benchmarking.simulation.mock_algorithm import MockAlgorithm
 
 
 class TestRandomSlice(unittest.TestCase):
@@ -30,7 +31,14 @@ class TestRandomSlice(unittest.TestCase):
         )
         initial_team_set = team_set.clone()
         random_slice_mutation = RandomSliceMutation()
-        random_slice_mutation.mutate(team_set, [], {})
+        random_slice_mutation.mutate_one(
+            team_set,
+            [],
+            {},
+            MockAlgorithm.get_team_generation_options(
+                num_students=10, num_teams=2, min_team_size=1, max_team_size=10
+            ),
+        )
 
         num_teams_changed = 0
         for initial_team, mutated_team in zip(
