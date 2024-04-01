@@ -19,9 +19,9 @@ class TeamSizeLowDisruptionMutation(Mutation):
     This minimizes the change in teams and hopefully won't tear apart teams that are doing well.
     """
 
-    def __init__(self, num_teams: int = 2, *args, **kwargs):
+    def __init__(self, number_of_teams: int = 2, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.num_teams = num_teams
+        self.num_teams = number_of_teams
 
     def mutate_one(
         self,
