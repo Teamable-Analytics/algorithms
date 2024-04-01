@@ -72,13 +72,14 @@ class GreedyLocalMaxBenchmarking(Run):
                 artifacts[class_size] = {}
             for ratio in portion_of_teams:
                 name = f"mutate_greedy_local_max_{ratio}"
+                num_teams = class_size // team_size
                 artifacts[class_size][name] = SimulationSet(
                     settings=SimulationSettings(
                         scenario=scenario,
                         student_provider=RealisticMockStudentProvider(class_size),
                         cache_key=f"mutations/greedy_local_max_benchmarking/{name}/class_size_{class_size}/",
                         initial_teams_provider=RealisticMockInitialTeamsProvider(
-                            class_size // team_size
+                            num_teams
                         ),
                     ),
                     algorithm_set={
@@ -90,7 +91,7 @@ class GreedyLocalMaxBenchmarking(Run):
                                 MAX_TIME=max_time,
                                 MUTATIONS=[
                                     GreedyLocalMaxMutation(
-                                        number_of_teams=round(class_size * ratio),
+                                        number_of_teams=round(num_teams * ratio),
                                         num_mutations=max_spread,
                                     )
                                 ],
