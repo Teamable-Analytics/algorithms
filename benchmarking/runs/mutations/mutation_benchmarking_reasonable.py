@@ -9,7 +9,9 @@ from api.ai.priority_algorithm.mutations.local_max_random import LocalMaxRandomM
 from api.ai.priority_algorithm.mutations.random_slice import RandomSliceMutation
 from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
 from api.ai.priority_algorithm.mutations.robinhood import RobinhoodMutation
-from api.ai.priority_algorithm.mutations.robinhood_holistic import RobinhoodHolisticMutation
+from api.ai.priority_algorithm.mutations.robinhood_holistic import (
+    RobinhoodHolisticMutation,
+)
 from api.dataclasses.enums import ScenarioAttribute, Gender, Race, AlgorithmType
 from benchmarking.data.simulated_data.realistic_class.providers import (
     RealisticMockInitialTeamsProvider,
@@ -35,7 +37,12 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class MutationBenchmarking(Run):
-    def start(self, num_trials: int = 100, generate_graphs: bool = False):
+    def start(
+        self,
+        num_trials: int = 100,
+        generate_graphs: bool = False,
+        run_with_robinhood: bool = False,
+    ):
         class_sizes = [40, 100, 240, 500, 1000]
         team_size = 5
 
@@ -70,75 +77,69 @@ class MutationBenchmarking(Run):
         max_spread = 30
         max_iterate = 30
         max_time = 1_000_000
+
         mutation_sets = {
             "mutate_random": [RandomSwapMutation(num_mutations=max_spread)],
-            "mutate_local_max":
-                [
-                    LocalMaxMutation(num_mutations=1),
-                    RandomSwapMutation(num_mutations=max_spread - 1),
-                ]
-            ,
-            "mutate_local_max_random":
-                [
-                    LocalMaxRandomMutation(num_mutations=5),
-                    RandomSwapMutation(num_mutations=max_spread - 5),
-                ]
-            ,
+            "mutate_local_max": [
+                LocalMaxMutation(num_mutations=1),
+                RandomSwapMutation(num_mutations=max_spread - 1),
+            ],
+            "mutate_local_max_random": [
+                LocalMaxRandomMutation(num_mutations=5),
+                RandomSwapMutation(num_mutations=max_spread - 5),
+            ],
             "mutate_random_slice": [RandomSliceMutation(num_mutations=max_spread)],
-            "mutate_half_random_slice":
-                [
-                    RandomSliceMutation(num_mutations=max_spread // 2),
-                    RandomSwapMutation(num_mutations=max_spread // 2),
-                ]
-            ,
-            "mutate_greedy_local_max_n_2":
-                [GreedyLocalMaxMutation(number_of_teams=2, num_mutations=max_spread)]
-            ,
-            "mutate_greedy_local_max_n_4":
-                [GreedyLocalMaxMutation(number_of_teams=4, num_mutations=max_spread)]
-            ,
-            "mutate_greedy_local_max_n_8":
-                [GreedyLocalMaxMutation(number_of_teams=8, num_mutations=max_spread)]
-            ,
-            "mutate_greedy_local_max_with_random_swap":
-                [
-                    GreedyLocalMaxMutation(num_mutations=max_spread // 2),
-                    RandomSwapMutation(num_mutations=max_spread // 2),
-                ]
-            ,
-            "mutate_greedy_local_max_with_random_slice_n_2":
-                [
-                    GreedyLocalMaxMutation(num_mutations=max_spread // 2),
-                    RandomSliceMutation(num_mutations=max_spread // 2),
-                ]
-            ,
-            "mutate_greedy_local_max_with_random_slice_n_4":
-                [
-                    GreedyLocalMaxMutation(number_of_teams=4, num_mutations=max_spread // 2),
-                    RandomSliceMutation(num_mutations=max_spread // 2),
-                ]
-            ,
-            "mutate_greedy_local_max_with_random_slice_n_8":
-                [
-                    GreedyLocalMaxMutation(number_of_teams=8, num_mutations=max_spread // 2),
-                    RandomSliceMutation(num_mutations=max_spread // 2),
-                ]
-            ,
-            # "mutate_robinhood": [RobinhoodMutation(max_spread)],
-            # "mutate_robinhood_half_random_swap":
-            #     [
-            #         RobinhoodMutation(num_mutations=max_spread // 2),
-            #         RandomSwapMutation(num_mutations=max_spread // 2),
-            #     ]
-            # ,
-            # "mutate_robinhood_holistic": [RobinhoodHolisticMutation(max_spread)],
-            # "mutate_robinhood_holistic_half_random_swap":
-            #     [
-            #         RobinhoodHolisticMutation(num_mutations=max_spread // 2),
-            #         RandomSwapMutation(num_mutations=max_spread // 2),
-            #     ]
-            # ,
+            "mutate_half_random_slice": [
+                RandomSliceMutation(num_mutations=max_spread // 2),
+                RandomSwapMutation(num_mutations=max_spread // 2),
+            ],
+            "mutate_greedy_local_max_n_2": [
+                GreedyLocalMaxMutation(number_of_teams=2, num_mutations=max_spread)
+            ],
+            "mutate_greedy_local_max_n_4": [
+                GreedyLocalMaxMutation(number_of_teams=4, num_mutations=max_spread)
+            ],
+            "mutate_greedy_local_max_n_8": [
+                GreedyLocalMaxMutation(number_of_teams=8, num_mutations=max_spread)
+            ],
+            "mutate_greedy_local_max_with_random_swap": [
+                GreedyLocalMaxMutation(num_mutations=max_spread // 2),
+                RandomSwapMutation(num_mutations=max_spread // 2),
+            ],
+            "mutate_greedy_local_max_with_random_slice_n_2": [
+                GreedyLocalMaxMutation(num_mutations=max_spread // 2),
+                RandomSliceMutation(num_mutations=max_spread // 2),
+            ],
+            "mutate_greedy_local_max_with_random_slice_n_4": [
+                GreedyLocalMaxMutation(
+                    number_of_teams=4, num_mutations=max_spread // 2
+                ),
+                RandomSliceMutation(num_mutations=max_spread // 2),
+            ],
+            "mutate_greedy_local_max_with_random_slice_n_8": [
+                GreedyLocalMaxMutation(
+                    number_of_teams=8, num_mutations=max_spread // 2
+                ),
+                RandomSliceMutation(num_mutations=max_spread // 2),
+            ],
         }
+        if run_with_robinhood:
+            mutation_sets.update(
+                {
+                    "mutate_robinhood": [RobinhoodMutation(max_spread)],
+                    "mutate_robinhood_half_random_swap": [
+                        RobinhoodMutation(num_mutations=max_spread // 2),
+                        RandomSwapMutation(num_mutations=max_spread // 2),
+                    ],
+                    "mutate_robinhood_holistic": [
+                        RobinhoodHolisticMutation(max_spread)
+                    ],
+                    "mutate_robinhood_holistic_half_random_swap": [
+                        RobinhoodHolisticMutation(num_mutations=max_spread // 2),
+                        RandomSwapMutation(num_mutations=max_spread // 2),
+                    ],
+                }
+            )
 
         artifacts: Dict[int, Dict[str, SimulationSetArtifact]] = {}
 
@@ -212,7 +213,6 @@ class MutationBenchmarking(Run):
                         title=f"Class Size vs. {metric_name}",
                         data=graph_data,
                         y_lim=GraphAxisRange(0, 1),
-                        # save_graph=True,
                     )
                 )
 

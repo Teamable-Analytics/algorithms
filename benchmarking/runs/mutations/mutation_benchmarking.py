@@ -200,7 +200,6 @@ class MutationBenchmarking(Run):
                         title=f"Class Size vs. {metric_name}",
                         data=graph_data,
                         y_lim=GraphAxisRange(0, 1),
-                        # save_graph=True,
                     )
                 )
 
