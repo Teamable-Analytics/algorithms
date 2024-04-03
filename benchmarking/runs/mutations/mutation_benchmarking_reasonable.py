@@ -74,6 +74,7 @@ class MutationBenchmarking(Run):
         }
 
         max_keep = 15
+        # In this run, max_spread must be divisible by two so the mutation configs below sum to max_spread
         max_spread = 30
         max_iterate = 30
         max_time = 1_000_000
