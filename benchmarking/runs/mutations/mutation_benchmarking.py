@@ -69,6 +69,7 @@ class MutationBenchmarking(Run):
         }
 
         max_keep = 30
+        # In this run, max_spread must be divisible by two so the mutation configs below sum to max_spread
         max_spread = 100
         max_iterate = 250
         max_time = 1_000_000
@@ -200,7 +201,6 @@ class MutationBenchmarking(Run):
                         title=f"Class Size vs. {metric_name}",
                         data=graph_data,
                         y_lim=GraphAxisRange(0, 1),
-                        # save_graph=True,
                     )
                 )
 

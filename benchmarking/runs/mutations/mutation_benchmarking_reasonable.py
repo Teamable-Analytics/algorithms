@@ -37,7 +37,12 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class MutationBenchmarking(Run):
-    def start(self, num_trials: int = 100, generate_graphs: bool = False):
+    def start(
+        self,
+        num_trials: int = 100,
+        generate_graphs: bool = False,
+        run_with_robinhood: bool = False,
+    ):
         class_sizes = [40, 100, 240, 500, 1000]
         team_size = 5
 
@@ -69,9 +74,11 @@ class MutationBenchmarking(Run):
         }
 
         max_keep = 15
+        # In this run, max_spread must be divisible by two so the mutation configs below sum to max_spread
         max_spread = 30
         max_iterate = 30
         max_time = 1_000_000
+
         mutation_sets = {
             "mutate_random": [RandomSwapMutation(num_mutations=max_spread)],
             "mutate_local_max": [
@@ -116,21 +123,24 @@ class MutationBenchmarking(Run):
                 ),
                 RandomSliceMutation(num_mutations=max_spread // 2),
             ],
-            # "mutate_robinhood": [RobinhoodMutation(max_spread)],
-            # "mutate_robinhood_half_random_swap":
-            #     [
-            #         RobinhoodMutation(num_mutations=max_spread // 2),
-            #         RandomSwapMutation(num_mutations=max_spread // 2),
-            #     ]
-            # ,
-            # "mutate_robinhood_holistic": [RobinhoodHolisticMutation(max_spread)],
-            # "mutate_robinhood_holistic_half_random_swap":
-            #     [
-            #         RobinhoodHolisticMutation(num_mutations=max_spread // 2),
-            #         RandomSwapMutation(num_mutations=max_spread // 2),
-            #     ]
-            # ,
         }
+        if run_with_robinhood:
+            mutation_sets.update(
+                {
+                    "mutate_robinhood": [RobinhoodMutation(max_spread)],
+                    "mutate_robinhood_half_random_swap": [
+                        RobinhoodMutation(num_mutations=max_spread // 2),
+                        RandomSwapMutation(num_mutations=max_spread // 2),
+                    ],
+                    "mutate_robinhood_holistic": [
+                        RobinhoodHolisticMutation(max_spread)
+                    ],
+                    "mutate_robinhood_holistic_half_random_swap": [
+                        RobinhoodHolisticMutation(num_mutations=max_spread // 2),
+                        RandomSwapMutation(num_mutations=max_spread // 2),
+                    ],
+                }
+            )
 
         artifacts: Dict[int, Dict[str, SimulationSetArtifact]] = {}
 
@@ -204,7 +214,6 @@ class MutationBenchmarking(Run):
                         title=f"Class Size vs. {metric_name}",
                         data=graph_data,
                         y_lim=GraphAxisRange(0, 1),
-                        # save_graph=True,
                     )
                 )
 
