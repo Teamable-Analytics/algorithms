@@ -20,7 +20,7 @@ class MockInitialTeamsProvider(InitialTeamsProvider):
     Currently, NO support for specifying individual students that are already in a team.
     """
 
-    def __init__(self, settings: MockInitialTeamsProviderSettings):
+    def __init__(self, settings: MockInitialTeamsProviderSettings) -> object:
         if settings.initial_teams and settings.projects:
             raise ValueError("Please specify EITHER initial_teams OR projects.")
         if not settings.initial_teams and not settings.projects:
