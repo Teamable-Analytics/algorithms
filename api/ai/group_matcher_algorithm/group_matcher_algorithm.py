@@ -40,7 +40,9 @@ class GroupMatcherAlgorithm(Algorithm):
             Path(self.group_matcher_run_path).parent / "example_config.py"
         )
 
-        self.team_trace = {team_idx + 1: team for team_idx, team in enumerate(self.teams)}
+        self.team_trace = {
+            team_idx + 1: team for team_idx, team in enumerate(self.teams)
+        }
         self.team_cycler = itertools.cycle(self.teams)
 
         if not self.csv_input_path.parent.exists():
