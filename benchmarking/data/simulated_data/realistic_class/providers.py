@@ -1,3 +1,4 @@
+import itertools
 from typing import List
 
 import numpy as np
@@ -11,7 +12,12 @@ from api.dataclasses.enums import (
 )
 from api.dataclasses.project import Project, ProjectRequirement
 from api.dataclasses.student import Student
-from benchmarking.data.interfaces import StudentProvider
+from api.dataclasses.team import TeamShell
+from benchmarking.data.interfaces import StudentProvider, InitialTeamsProvider
+from benchmarking.data.simulated_data.mock_initial_teams_provider import (
+    MockInitialTeamsProvider,
+    MockInitialTeamsProviderSettings,
+)
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -92,16 +98,40 @@ class RealisticMockStudentProvider(StudentProvider):
                         (4, 0.05),
                     ],
                     GITHUB_EXPERIENCE: [
-                        (GithubExperience.Beginner, 0.2),
-                        (GithubExperience.Intermediate, 0.7),
-                        (GithubExperience.Advanced, 0.1),
+                        (
+                            GithubExperience.Beginner,
+                            0.2,
+                        ),
+                        (
+                            GithubExperience.Intermediate,
+                            0.7,
+                        ),
+                        (
+                            GithubExperience.Advanced,
+                            0.1,
+                        ),
                     ],
                     WORK_EXPERIENCE: [
-                        (WorkExperience.No_Experience, 0.4),
-                        (WorkExperience.One_Semester, 0.05),
-                        (WorkExperience.Two_Semesters, 0.2),
-                        (WorkExperience.Three_Semesters, 0.3),
-                        (WorkExperience.More_Than_Three_Semesters, 0.05),
+                        (
+                            WorkExperience.No_Experience,
+                            0.4,
+                        ),
+                        (
+                            WorkExperience.One_Semester,
+                            0.05,
+                        ),
+                        (
+                            WorkExperience.Two_Semesters,
+                            0.2,
+                        ),
+                        (
+                            WorkExperience.Three_Semesters,
+                            0.3,
+                        ),
+                        (
+                            WorkExperience.More_Than_Three_Semesters,
+                            0.05,
+                        ),
                     ],
                 },
             )
@@ -130,6 +160,29 @@ class RealisticMockStudentProvider(StudentProvider):
 
         order = rng.permutation(len(students))
         return [students[_] for _ in order]
+
+
+class RealisticMockInitialTeamsProvider(InitialTeamsProvider):
+    def __init__(self, num_teams: int):
+        self.num_teams = num_teams
+
+    def get(self) -> List[TeamShell]:
+        projects = []
+        project_cycler = itertools.cycle(get_realistic_projects())
+        for i in range(self.num_teams):
+            next_project = next(project_cycler)
+            projects.append(
+                Project(
+                    _id=i,
+                    name=next_project.name + " " + str(i),
+                    requirements=next_project.requirements,
+                )
+            )
+        return MockInitialTeamsProvider(
+            settings=MockInitialTeamsProviderSettings(
+                projects=projects,
+            )
+        ).get()
 
 
 def get_realistic_projects() -> List[Project]:

@@ -93,25 +93,6 @@ class PriorityAlgorithm(Algorithm):
         # the first team set is the "best" one
         return self._unpack_priority_team_set(team_sets[0])
 
-    def mutate(self, team_set: PriorityTeamSet) -> List[PriorityTeamSet]:
-        """
-        Mutate a single teamset into child teamsets
-        """
-        mutated_team_sets = []
-        for mutation_func, num_outputs in self.algorithm_config.MUTATIONS:
-            mutated_team_sets.extend(
-                [
-                    mutation_func(
-                        team_set.clone(),
-                        self.algorithm_options.priorities,
-                        self.student_dict,
-                    )
-                    for _ in range(num_outputs)
-                ]
-            )
-
-        return mutated_team_sets
-
     def _unpack_priority_team_set(self, priority_team_set: PriorityTeamSet) -> TeamSet:
         teams: List[Team] = []
 
@@ -129,6 +110,21 @@ class PriorityAlgorithm(Algorithm):
             teams.append(team)
 
         return TeamSet(teams=teams)
+
+    def mutate(
+        self,
+        team_set: PriorityTeamSet,
+    ) -> List[PriorityTeamSet]:
+        return [
+            mutated_set
+            for mutation in self.algorithm_config.MUTATIONS
+            for mutated_set in mutation.mutate(
+                team_set,
+                self.algorithm_options.priorities,
+                self.student_dict,
+                self.team_generation_options,
+            )
+        ]
 
 
 def create_student_dict(students: List[Student]) -> Dict[int, Student]:

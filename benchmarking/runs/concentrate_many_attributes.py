@@ -9,7 +9,9 @@ from api.ai.interfaces.algorithm_config import (
     WeightAlgorithmConfig,
     PriorityAlgorithmConfig,
 )
-from api.ai.priority_algorithm.mutations import mutate_local_max, mutate_random_swap
+from api.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
+from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
+from api.dataclasses.enums import ScenarioAttribute, Gender, Race, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -24,7 +26,6 @@ from benchmarking.evaluations.metrics.average_gini_index_multi_attribute import 
 from benchmarking.evaluations.scenarios.concentrate_multiple_attributes import (
     ConcentrateMultipleAttributes,
 )
-from api.dataclasses.enums import ScenarioAttribute, Gender, Race, AlgorithmType
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
@@ -82,7 +83,6 @@ class ConcentrateManyAttributesRun(Run):
                     ScenarioAttribute.YEAR_LEVEL.value: list(range(3, 5)),
                 },
             )
-
             simulation_set_artifact = SimulationSet(
                 settings=SimulationSettings(
                     num_teams=number_of_teams,
@@ -107,7 +107,7 @@ class ConcentrateManyAttributesRun(Run):
                         PriorityAlgorithmConfig(),
                         PriorityAlgorithmConfig(
                             name="local_max",
-                            MUTATIONS=[(mutate_local_max, 1), (mutate_random_swap, 2)],
+                            MUTATIONS=[LocalMaxMutation(), RandomSwapMutation(2)],
                         ),
                     ],
                 },
