@@ -4,8 +4,8 @@ from typing import Literal, List
 
 import numpy as np
 
-from api.models.enums import Gpa, Relationship
-from api.models.student import Student
+from api.dataclasses.enums import Gpa, Relationship
+from api.dataclasses.student import Student
 from benchmarking.data.simulated_data.mock_student_provider import (
     create_mock_students,
     MockStudentProvider,
@@ -303,6 +303,40 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
 
         self.assertEqual(3, len(cliques))
 
+    def test_create_mock_students__num_attributes_accurate(self):
+        dist_types: List[Literal["random", "cluster"]] = ["random", "cluster"]
+        for dist_type in dist_types:
+            students = create_mock_students(
+                number_of_students=4,
+                number_of_friends=2,
+                number_of_enemies=1,
+                friend_distribution=dist_type,
+                attribute_ranges={
+                    1: [1, 2, 3, 4],
+                    2: [(100, 0.5), (200, 0.5)],
+                    3: [Gpa.A, Gpa.B, Gpa.C],
+                    4: [(Gpa.A, 0.25), (Gpa.B, 0.5), (Gpa.C, 0.25)],
+                    5: [1000],
+                },
+                num_values_per_attribute={
+                    1: 2,
+                    2: 0,  # explicitly setting 0 is allowed and enforced
+                    3: [2, 3],
+                    4: None,
+                    # 5 skipped intentionally
+                },
+                project_preference_options=[],
+                num_project_preferences_per_student=0,
+                ensure_exact_attribute_ratios=False,
+            )
+
+            for student in students:
+                self.assertEqual(2, len(student.attributes.get(1)))
+                self.assertEqual(0, len(student.attributes.get(2)))
+                self.assertTrue(len(student.attributes.get(3)) in [2, 3])
+                self.assertEqual(1, len(student.attributes.get(4)))
+                self.assertEqual(1, len(student.attributes.get(5)))
+
     def test_create_mock_students__students_are_reproducible(self):
         dist_types: List[Literal["random", "cluster"]] = ["random", "cluster"]
         for dist_type in dist_types:
@@ -326,12 +360,10 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             }
 
             students_1 = create_mock_students(**config)
-
             students_2 = create_mock_students(**config)
             students_3 = create_mock_students(**{**config, "random_seed": 2})
 
             self.assertListEqual(students_1, students_2)
-
             self.assertNotEqual(students_1, students_3)
 
     def test_num_values_for_attribute__returns_int_within_range(self):
@@ -351,6 +383,23 @@ class TestMockStudentProviderHelpers(unittest.TestCase):
             self.assertIsInstance(value, list)
             self.assertIsInstance(value[0], int)
             self.assertIsInstance(value[-1], int)
+
+    def test_random_choice__returns_correct_number_of_items(self):
+        items = list(range(0, 100))
+        values_1 = random_choice(possible_values=items, size=0)
+        self.assertEqual(len(values_1), 0)
+
+        values_2 = random_choice(possible_values=items, size=1)
+        self.assertEqual(len(values_2), 1)
+
+        values_3 = random_choice(possible_values=items, size=2)
+        self.assertEqual(len(values_3), 2)
+
+        values_4 = random_choice(possible_values=items, size=50)
+        self.assertEqual(len(values_4), 50)
+
+        values_5 = random_choice(possible_values=items, size=100)
+        self.assertEqual(len(values_5), 100)
 
     def test_all__reproducible_with_seed(self):
         num_values_for_attribute_values = []

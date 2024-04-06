@@ -1,3 +1,6 @@
-[submodule "api/ai/group_matcher_algorithm/group-matcher"]
-	path = api/ai/group_matcher_algorithm/group-matcher
+[submodule "simulation_cache"]
+    path = simulation_cache
+    url = https://github.com/Teamable-Analytics/algorithms-simulation-cache.git
+[submodule "api/ai/external_algorithms/group_matcher_algorithm/group-matcher"]
+	path = api/ai/external_algorithms/group_matcher_algorithm/group-matcher
 	url = https://github.com/ketphan02/group-matcher.git

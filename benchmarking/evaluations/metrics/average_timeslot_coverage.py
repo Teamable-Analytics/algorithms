@@ -1,7 +1,7 @@
 from typing import List
 
-from api.models.enums import ScenarioAttribute
-from api.models.team_set import TeamSet
+from api.dataclasses.enums import ScenarioAttribute
+from api.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
 
@@ -12,7 +12,7 @@ class AverageTimeslotCoverage(TeamSetMetric):
 
     def __init__(
         self,
-        available_timeslots: List[int],
+        available_timeslots: List[int] = None,
         timeslot_attribute_id: int = ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
         *args,
         **kwargs,
@@ -21,12 +21,11 @@ class AverageTimeslotCoverage(TeamSetMetric):
         self.available_timeslots = available_timeslots
         self.timeslot_attribute_value = timeslot_attribute_id
 
-        if len(available_timeslots) == 0:
-            raise ValueError("There must be at least one available timeslot")
-
     def calculate(self, team_set: TeamSet) -> float:
         if len(team_set.teams) == 0:
             raise ValueError("Team set must have at least one team")
+        if self.available_timeslots is None:
+            raise ValueError("Available timeslots must be set")
 
         for student in [
             student for team in team_set.teams for student in team.students

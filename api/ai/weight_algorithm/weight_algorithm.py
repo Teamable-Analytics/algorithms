@@ -12,9 +12,9 @@ from api.ai.weight_algorithm.utility import (
     get_diversity_utility,
     get_preference_utility,
 )
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 
 
 class WeightAlgorithm(ChooseAlgorithm):

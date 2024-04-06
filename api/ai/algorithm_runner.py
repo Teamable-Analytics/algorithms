@@ -1,5 +1,8 @@
 from typing import List, TYPE_CHECKING
 
+from api.ai.external_algorithms.group_matcher_algorithm.group_matcher_algorithm import (
+    GroupMatcherAlgorithm,
+)
 from api.ai.geg_algorithm.geg_algorithm import GeneralizedEnvyGraphAlgorithm
 from api.ai.interfaces.algorithm_config import (
     AlgorithmConfig,
@@ -30,10 +33,9 @@ from api.ai.weight_algorithm.weight_algorithm import WeightAlgorithm
 from api.ai.double_round_robin_algorithm.double_round_robin_algorithm import (
     DoubleRoundRobinAlgorithm,
 )
-from api.ai.group_matcher_algorithm.group_matcher_algorithm import GroupMatcherAlgorithm
-from api.models.enums import AlgorithmType
-from api.models.student import Student
-from api.models.team_set import TeamSet
+from api.dataclasses.enums import AlgorithmType
+from api.dataclasses.student import Student
+from api.dataclasses.team_set import TeamSet
 
 if TYPE_CHECKING:
     from api.ai.interfaces.algorithm_options import AlgorithmOptions

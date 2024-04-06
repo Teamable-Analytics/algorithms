@@ -7,8 +7,8 @@ from typing import Literal, List, Dict, Optional
 import numpy as np
 from numpy.random import Generator
 
-from api.models.enums import Relationship, AttributeValueEnum, ScenarioAttribute
-from api.models.student import Student
+from api.dataclasses.enums import Relationship, AttributeValueEnum, ScenarioAttribute
+from api.dataclasses.student import Student
 from benchmarking.data.interfaces import (
     StudentProvider,
     AttributeRangeConfig,
@@ -34,7 +34,7 @@ class MockStudentProviderSettings:
         self.validate()
 
     def validate(self):
-        # todo: add validation for attribute_ranges vs num_values_per_attribute
+        # todo: add validation for num_values_per_attribute
         if not is_non_negative_integer(self.number_of_students):
             raise ValueError(
                 f"number_of_students ({self.number_of_students}) must be a non-negative integer."
@@ -47,6 +47,11 @@ class MockStudentProviderSettings:
             raise ValueError(
                 f"number_of_enemies ({self.number_of_enemies}) must be a non-negative integer."
             )
+        if not is_non_negative_integer(self.num_project_preferences_per_student):
+            raise ValueError(
+                f"num_project_preferences_per_student ({self.num_project_preferences_per_student}) must be a "
+                f"non-negative integer."
+            )
         if (
             len(self.project_preference_options)
             < self.num_project_preferences_per_student
@@ -54,11 +59,6 @@ class MockStudentProviderSettings:
             raise ValueError(
                 f"num_project_preferences_per_student ({self.num_project_preferences_per_student}) cannot "
                 "be > the number of project options."
-            )
-        if not is_non_negative_integer(self.num_project_preferences_per_student):
-            raise ValueError(
-                f"num_project_preferences_per_student ({self.num_project_preferences_per_student}) must be a "
-                f"non-negative integer."
             )
         if not is_unique(self.project_preference_options):
             raise ValueError(f"project_preference_options must be unique if specified.")
@@ -69,12 +69,40 @@ class MockStudentProviderSettings:
 
         # Validate when attribute ranges are specified as a list of (value, % chance) tuples
         for attribute_id, range_config in self.attribute_ranges.items():
-            if isinstance(range_config[0], (int, AttributeValueEnum)):
+            if not isinstance(attribute_id, int):
+                raise ValueError(
+                    f"attribute_ranges keys must be integers. Found {attribute_id}"
+                )
+            if not is_non_negative_integer(attribute_id):
+                raise ValueError(
+                    f"attribute_ranges keys must be non-negative integers. Found {attribute_id}"
+                )
+
+            # TODO: this validation is not complete, we only check the first element on both levels
+            # (https://github.com/Teamable-Analytics/algorithms/issues/369)
+            if not range_config:
+                raise ValueError(f"attribute_ranges[{attribute_id}] must not be empty.")
+            if range_config[0][0] is not None and isinstance(
+                range_config[0][0], (int, AttributeValueEnum)
+            ):
                 total_chance = sum([_[1] for _ in range_config])
                 if not math.isclose(total_chance, 1):
                     raise ValueError(
                         f"attribute_ranges[{attribute_id}] must sum to 1. Found {total_chance}"
                     )
+
+        if self.number_of_enemies >= self.number_of_students:
+            raise ValueError(
+                "Cannot request more enemies than there are people in the class"
+            )
+        if self.number_of_friends >= self.number_of_students:
+            raise ValueError(
+                "Cannot request more friends than there are people in the class"
+            )
+        if self.friend_distribution not in ["cluster", "random"]:
+            raise ValueError(
+                f"friend_distribution ({self.friend_distribution}) must be either 'cluster' or 'random'."
+            )
 
 
 class MockStudentProvider(StudentProvider):
@@ -192,11 +220,12 @@ def create_mock_students(
         for attribute_id, attribute_range_config in attribute_ranges.items():
             # We only need to retrieve the num_values per attribute dynamically when ensure_exact_attribute_ratios == False
             if not ensure_exact_attribute_ratios:
+                # assume we pick 1 value per student for this attribute if no explicit value is given
                 num_value_config = num_values_per_attribute.get(attribute_id, None)
                 num_values = (
                     num_values_for_attribute(num_value_config, generator=rng)
-                    if num_value_config
-                    else None
+                    if num_value_config is not None
+                    else 1
                 )
             else:
                 num_values = 1
@@ -235,18 +264,17 @@ def num_values_for_attribute(num_values_config: NumValuesConfig, generator=None)
 
 
 def random_choice(
-    possible_values: List, size=None, replace=False, weights=None, generator=None
+    possible_values: List, size=1, replace=False, weights=None, generator=None
 ) -> List[int]:
     """
     Uses np.random.choice() but always returns a list of int
     (np.random.choice return numpy.int64 if size=1 and ndarray otherwise)
     """
-    if not possible_values:
+    if not possible_values or size == 0:
         return []
 
     _generator = generator or np.random.default_rng()
 
-    size = size or 1
     values = _generator.choice(possible_values, size=size, replace=replace, p=weights)
 
     if size == 1:

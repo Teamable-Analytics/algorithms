@@ -1,9 +1,9 @@
 import json
 from typing import List
 
-from api.models.enums import Gender, ScenarioAttribute, Relationship, YearLevel
-from api.models.student import Student, StudentSerializer
-from api.models.team import Team, TeamSerializer
+from api.dataclasses.enums import Gender, ScenarioAttribute, Relationship, YearLevel
+from api.dataclasses.student import Student, StudentSerializer
+from api.dataclasses.team import Team, TeamSerializer
 
 if __name__ == "__main__":
     output = {

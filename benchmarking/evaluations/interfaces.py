@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List, Tuple, Optional
 
-from api.models.team_set import TeamSet
+from api.dataclasses.team_set import TeamSet
 
 
 @dataclass

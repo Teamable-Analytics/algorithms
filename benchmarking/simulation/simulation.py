@@ -7,8 +7,8 @@ from typing import List, Tuple
 
 from api.ai.algorithm_runner import AlgorithmRunner
 from api.ai.interfaces.algorithm_config import AlgorithmConfig
-from api.models.enums import AlgorithmType
-from api.models.team_set import TeamSet
+from api.dataclasses.enums import AlgorithmType
+from api.dataclasses.team_set import TeamSet
 from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.simulation.mock_algorithm import MockAlgorithm
 from benchmarking.simulation.simulation_settings import SimulationSettings
@@ -74,6 +74,8 @@ class Simulation:
             num_students=self.settings.student_provider.num_students,
             num_teams=self.settings.num_teams,
             initial_teams=custom_initial_teams,
+            min_team_size=self.settings.min_team_size,
+            max_team_size=self.settings.max_team_size,
         )
         algorithm_options = MockAlgorithm.algorithm_options_from_scenario(
             algorithm_type=self.algorithm_type,

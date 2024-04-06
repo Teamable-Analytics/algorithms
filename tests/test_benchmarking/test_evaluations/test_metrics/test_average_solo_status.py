@@ -1,9 +1,9 @@
 import unittest
 
-from api.models.enums import ScenarioAttribute, Race, Gender
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.enums import ScenarioAttribute, Race, Gender
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 
 
@@ -194,7 +194,7 @@ class TestAverageSoloStatus(unittest.TestCase):
         self,
     ):
         metric = AverageSoloStatus(
-            minority_groups={
+            minority_groups_map={
                 ScenarioAttribute.RACE.value: [
                     race.value for race in Race if race != Race.Other
                 ]
@@ -209,7 +209,7 @@ class TestAverageSoloStatus(unittest.TestCase):
         self,
     ):
         metric = AverageSoloStatus(
-            minority_groups={ScenarioAttribute.RACE.value: [Race.European.value]}
+            minority_groups_map={ScenarioAttribute.RACE.value: [Race.European.value]}
         )
 
         actual = metric.calculate(self.class_with_only_1_minority_student)
@@ -220,7 +220,7 @@ class TestAverageSoloStatus(unittest.TestCase):
         self,
     ):
         metric = AverageSoloStatus(
-            minority_groups={
+            minority_groups_map={
                 ScenarioAttribute.RACE.value: [race.value for race in Race]
             }
         )
@@ -233,7 +233,7 @@ class TestAverageSoloStatus(unittest.TestCase):
         self,
     ):
         metric = AverageSoloStatus(
-            minority_groups={
+            minority_groups_map={
                 ScenarioAttribute.RACE.value: [Race.European.value],
                 ScenarioAttribute.GENDER.value: [Gender.MALE.value],
             }
@@ -247,7 +247,7 @@ class TestAverageSoloStatus(unittest.TestCase):
 
         # Sanity check: ensure that the metric is not affected by the order of the teams
         metric_sanity = AverageSoloStatus(
-            minority_groups={
+            minority_groups_map={
                 ScenarioAttribute.RACE.value: [Race.European.value],
             }
         )
@@ -262,7 +262,7 @@ class TestAverageSoloStatus(unittest.TestCase):
         self,
     ):
         metric = AverageSoloStatus(
-            minority_groups={
+            minority_groups_map={
                 ScenarioAttribute.RACE.value: [Race.European.value],
                 ScenarioAttribute.GENDER.value: [Gender.MALE.value],
             }
