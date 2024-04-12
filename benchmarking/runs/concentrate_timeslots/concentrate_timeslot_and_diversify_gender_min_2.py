@@ -21,9 +21,12 @@ from benchmarking.evaluations.metrics.average_timeslot_coverage import (
     AverageTimeslotCoverage,
 )
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
-from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_gender_min_2 import \
-    ConcentrateTimeslotAndDiversifyGenderMin2Female
-from benchmarking.runs.concentrate_timeslots.custom_dataclasses import TimeslotCustomStudentProvider
+from benchmarking.evaluations.scenarios.concentrate_timeslot_diversify_gender_min_2 import (
+    ConcentrateTimeslotAndDiversifyGenderMin2Female,
+)
+from benchmarking.runs.concentrate_timeslots.custom_dataclasses import (
+    TimeslotCustomStudentProvider,
+)
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
@@ -67,7 +70,9 @@ class TimeSlotAndDiversifyGenderMin2(Run):
 
     TEAM_SIZE = 4
 
-    def start(self, num_trials: int = 100, generate_graphs: bool = True, analyze: bool = False):
+    def start(
+        self, num_trials: int = 100, generate_graphs: bool = True, analyze: bool = False
+    ):
         scenario = ConcentrateTimeslotAndDiversifyGenderMin2Female(max_num_choices=5)
 
         metrics = {
@@ -79,7 +84,10 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                 available_timeslots=list(range(10)),
             ),
             "AverageCosineDifference": AverageCosineDifference(
-                attribute_filter=[ScenarioAttribute.GENDER.value, ScenarioAttribute.RACE.value],
+                attribute_filter=[
+                    ScenarioAttribute.GENDER.value,
+                    ScenarioAttribute.RACE.value,
+                ],
             ),
             "AverageSoloStatus": AverageSoloStatus(
                 minority_groups={
@@ -133,24 +141,26 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                                 os.path.join(
                                     os.path.dirname(__file__),
                                     "../../..",
-                                    f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
+                                    f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv",
                                 )
                             ),
                             group_matcher_run_path=os.path.abspath(
                                 os.path.join(
                                     os.path.dirname(__file__),
                                     "../../..",
-                                    "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                                    "api/ai/group_matcher_algorithm/group-matcher/run.py",
                                 )
-                            )
+                            ),
                         ),
-                    ]
-                }
+                    ],
+                },
             ).run(num_runs=num_trials)
 
         if analyze:
-            for algorithm_name in ['AlgorithmType.DRR-default', 'AlgorithmType.GROUP_MATCHER-default']:
-
+            for algorithm_name in [
+                "AlgorithmType.DRR-default",
+                "AlgorithmType.GROUP_MATCHER-default",
+            ]:
                 max_max_team_size = []
                 min_min_team_size = []
                 average_average_team_size = []
@@ -185,21 +195,29 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                         min_team_sizes.append(min_team_size)
                         min_min_team_size.append(min_team_size)
                         average_team_sizes_in_teamset.append(
-                            float(average_team_size_in_teamset) / float(teamset.num_teams))
-                        average_average_team_size.append(float(average_team_size_in_teamset) / float(teamset.num_teams))
+                            float(average_team_size_in_teamset)
+                            / float(teamset.num_teams)
+                        )
+                        average_average_team_size.append(
+                            float(average_team_size_in_teamset)
+                            / float(teamset.num_teams)
+                        )
 
                     average_team_generated /= float(len(teamsets))
 
                     print(f"Class size: {class_size}, Algorithm: {algorithm_name}")
                     print(
-                        f"Max num team: {max_num_team}, Min num team: {min_num_team}, Average num team: {average_team_generated}")
+                        f"Max num team: {max_num_team}, Min num team: {min_num_team}, Average num team: {average_team_generated}"
+                    )
                     print(
-                        f"Max team sizes: {max(max_team_sizes)}, Min team sizes: {min(min_team_sizes)}, Average team sizes: {sum(average_team_sizes_in_teamset) / float(len(average_team_sizes_in_teamset))}")
+                        f"Max team sizes: {max(max_team_sizes)}, Min team sizes: {min(min_team_sizes)}, Average team sizes: {sum(average_team_sizes_in_teamset) / float(len(average_team_sizes_in_teamset))}"
+                    )
                     print()
 
                 print(f"Summary for Algorithm {algorithm_name}")
                 print(
-                    f"Max team sizes: {max(max_max_team_size)}, Min team sizes: {min(min_min_team_size)}, Average team sizes: {sum(average_average_team_size) / float(len(average_average_team_size))}")
+                    f"Max team sizes: {max(max_max_team_size)}, Min team sizes: {min(min_min_team_size)}, Average team sizes: {sum(average_average_team_size) / float(len(average_average_team_size))}"
+                )
                 print()
                 print()
 
@@ -233,7 +251,9 @@ class TimeSlotAndDiversifyGenderMin2(Run):
                             graph_data[metric_name][new_algorithm_name].x_data.append(
                                 class_size
                             )
-                            graph_data[metric_name][new_algorithm_name].y_data.append(value)
+                            graph_data[metric_name][new_algorithm_name].y_data.append(
+                                value
+                            )
 
             for metric_name in metrics.keys():
                 y_label = self.better_metric_name(metrics[metric_name].name)

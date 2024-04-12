@@ -17,12 +17,17 @@ from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxi
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
-from benchmarking.evaluations.metrics.average_timeslot_coverage import AverageTimeslotCoverage
+from benchmarking.evaluations.metrics.average_timeslot_coverage import (
+    AverageTimeslotCoverage,
+)
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.concentrate_timeslots_and_concentrate_gender_and_concentrate_race import \
-    ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRace
-from benchmarking.runs.concentrate_timeslots.custom_dataclasses import TimeslotCustomStudentProvider
+from benchmarking.evaluations.scenarios.concentrate_timeslots_and_concentrate_gender_and_concentrate_race import (
+    ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRace,
+)
+from benchmarking.runs.concentrate_timeslots.custom_dataclasses import (
+    TimeslotCustomStudentProvider,
+)
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
@@ -68,7 +73,9 @@ class ConcentrateTimeSlotAndConcentrateGenderRace(Run):
     TEAM_SIZE = 4
 
     def start(self, num_trials: int = 30, generate_graphs: bool = True):
-        scenario = ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRace(max_num_choices=5)
+        scenario = ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRace(
+            max_num_choices=5
+        )
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
@@ -79,7 +86,10 @@ class ConcentrateTimeSlotAndConcentrateGenderRace(Run):
                 available_timeslots=list(range(10)),
             ),
             "AverageCosineDifference": AverageCosineDifference(
-                attribute_filter=[ScenarioAttribute.GENDER.value, ScenarioAttribute.RACE.value],
+                attribute_filter=[
+                    ScenarioAttribute.GENDER.value,
+                    ScenarioAttribute.RACE.value,
+                ],
             ),
             "AverageSoloStatus": AverageSoloStatus(
                 minority_groups={
@@ -145,18 +155,18 @@ class ConcentrateTimeSlotAndConcentrateGenderRace(Run):
                             os.path.join(
                                 os.path.dirname(__file__),
                                 "../../../..",
-                                f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
+                                f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv",
                             )
                         ),
                         group_matcher_run_path=os.path.abspath(
                             os.path.join(
                                 os.path.dirname(__file__),
                                 "../../../..",
-                                "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                                "api/ai/group_matcher_algorithm/group-matcher/run.py",
                             )
-                        )
+                        ),
                     ),
-                ]
+                ],
             }
 
             simulation_sets[class_size] = SimulationSet(
@@ -164,15 +174,19 @@ class ConcentrateTimeSlotAndConcentrateGenderRace(Run):
                 algorithm_set=algorithm_set,
             ).run(num_runs=30)
 
-            simulation_sets[class_size].update(SimulationSet(
-                settings=simulation_settings_2,
-                algorithm_set=algorithm_set,
-            ).run(num_runs=35))
+            simulation_sets[class_size].update(
+                SimulationSet(
+                    settings=simulation_settings_2,
+                    algorithm_set=algorithm_set,
+                ).run(num_runs=35)
+            )
 
-            simulation_sets[class_size].update(SimulationSet(
-                settings=simulation_settings_3,
-                algorithm_set=algorithm_set,
-            ).run(num_runs=35))
+            simulation_sets[class_size].update(
+                SimulationSet(
+                    settings=simulation_settings_3,
+                    algorithm_set=algorithm_set,
+                ).run(num_runs=35)
+            )
 
         if generate_graphs:
             graph_data: Dict[str, Dict[str, GraphData]] = {}
@@ -204,7 +218,9 @@ class ConcentrateTimeSlotAndConcentrateGenderRace(Run):
                             graph_data[metric_name][new_algorithm_name].x_data.append(
                                 class_size
                             )
-                            graph_data[metric_name][new_algorithm_name].y_data.append(value)
+                            graph_data[metric_name][new_algorithm_name].y_data.append(
+                                value
+                            )
 
             for metric_name in metrics.keys():
                 y_label = self.better_metric_name(metrics[metric_name].name)
