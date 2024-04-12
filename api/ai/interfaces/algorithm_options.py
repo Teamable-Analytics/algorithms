@@ -128,8 +128,14 @@ class WeightAlgorithmOptions(AlgorithmOptions):
                 SchemaOptional("enemy_behaviour"): Or(
                     *[behaviour.value for behaviour in RelationshipBehaviour]
                 ),
-                SchemaOptional("attributes_to_diversify"): Or(List[int], []),
-                SchemaOptional("attributes_to_concentrate"): Or(List[int], []),
+                SchemaOptional("attributes_to_diversify"): And(
+                    list,
+                    lambda _data: all(isinstance(i, int) for i in _data),
+                ),
+                SchemaOptional("attributes_to_concentrate"): And(
+                    list,
+                    lambda _data: all(isinstance(i, int) for i in _data),
+                ),
             }
         )
 
@@ -200,8 +206,14 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
                 SchemaOptional("enemy_behaviour"): Or(
                     *[behaviour.value for behaviour in RelationshipBehaviour]
                 ),
-                SchemaOptional("attributes_to_diversify"): Or(List[int], []),
-                SchemaOptional("attributes_to_concentrate"): Or(List[int], []),
+                SchemaOptional("attributes_to_diversify"): And(
+                    list,
+                    lambda _data: all(isinstance(i, int) for i in _data),
+                ),
+                SchemaOptional("attributes_to_concentrate"): And(
+                    list,
+                    lambda _data: all(isinstance(i, int) for i in _data),
+                ),
             }
         )
 
@@ -241,8 +253,14 @@ class SocialAlgorithmOptions(WeightAlgorithmOptions):
                 SchemaOptional("enemy_behaviour"): Or(
                     *[behaviour.value for behaviour in RelationshipBehaviour]
                 ),
-                SchemaOptional("attributes_to_diversify"): Or(List[int], []),
-                SchemaOptional("attributes_to_concentrate"): Or(List[int], []),
+                SchemaOptional("attributes_to_diversify"): And(
+                    list,
+                    lambda _data: all(isinstance(i, int) for i in _data),
+                ),
+                SchemaOptional("attributes_to_concentrate"): And(
+                    list,
+                    lambda _data: all(isinstance(i, int) for i in _data),
+                ),
             }
         )
 

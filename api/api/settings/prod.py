@@ -29,7 +29,8 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = list(os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(" "))
+CORS_ALLOW_HEADERS = "*"
+CORS_ALLOW_ORIGINS = list(os.environ.get("DJANGO_ALLOWED_ORIGINS", "").split(" "))
 
 
 # Application definition
@@ -75,6 +76,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "api.api.wsgi.application"
+
+# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+DATABASES = {
+    "default": {
+        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.environ.get("DB_DATABASE", os.environ.get("RDS_DB_NAME")),
+        "USER": os.environ.get("DB_USER", os.environ.get("RDS_USERNAME")),
+        "PASSWORD": os.environ.get("DB_PASSWORD", os.environ.get("RDS_PASSWORD")),
+        "HOST": os.environ.get("DB_HOST", os.environ.get("RDS_HOSTNAME")),
+        "PORT": os.environ.get("DB_PORT", os.environ.get("RDS_PORT")),
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
