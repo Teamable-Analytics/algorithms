@@ -29,7 +29,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run):
-    def start(self, num_trials: int = 100, generate_graphs: bool = False):
+    def start(self, num_trials: int = 1, generate_graphs: bool = False):
         CLASS_SIZES = [20, 100, 200, 300, 400, 500]
         MAX_TEAM_SIZE = 5
 
@@ -143,17 +143,16 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                             utility_function=calculate_student_utility,
                         )
                     ],
-                    # Wait for a fix
-                    # AlgorithmType.MRR: [
-                    #     MultipleRoundRobinAlgorithmConfig(
-                    #         utility_function=calculate_student_utility,
-                    #     )
-                    # ],
-                    # AlgorithmType.GEG: [
-                    #     GeneralizedEnvyGraphAlgorithmConfig(
-                    #         utility_function=calculate_student_utility,
-                    #     ),
-                    # ],
+                    AlgorithmType.MRR: [
+                        MultipleRoundRobinAlgorithmConfig(
+                            utility_function=calculate_student_utility,
+                        )
+                    ],
+                    AlgorithmType.GEG: [
+                        GeneralizedEnvyGraphAlgorithmConfig(
+                            utility_function=calculate_student_utility,
+                        ),
+                    ],
                     AlgorithmType.GROUP_MATCHER: [
                         GroupMatcherAlgorithmConfig(
                             csv_output_path=os.path.abspath(
