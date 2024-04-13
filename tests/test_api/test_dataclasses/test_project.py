@@ -2,6 +2,7 @@ import unittest
 
 from api.dataclasses.enums import RequirementOperator, RequirementsCriteria
 from api.dataclasses.project import ProjectRequirement
+from api.dataclasses.project.dataclass import MIN_NON_ZERO_SATISFACTION
 from api.dataclasses.student import Student
 
 
@@ -103,6 +104,43 @@ class TestProjectRequirementDataclass(unittest.TestCase):
         self.assertTrue(requirement.met_by_student(student_meeting_2))
         self.assertFalse(requirement.met_by_student(student_not_meeting_1))
         self.assertFalse(requirement.met_by_student(student_not_meeting_2))
+
+    def test_satisfaction_by_students__cannot_produce_non_zero_value_below_min(self):
+        for criteria in RequirementsCriteria:
+            requirement = ProjectRequirement(
+                attribute=1,
+                operator=RequirementOperator.EXACTLY,
+                value=100,
+                criteria=criteria,
+                num_members_required=2,
+            )
+
+            student_groups_set = [
+                [
+                    student_not_meeting_requirement(requirement),
+                    student_not_meeting_requirement(requirement),
+                    student_not_meeting_requirement(requirement),
+                    student_not_meeting_requirement(requirement),
+                ],
+                [
+                    student_meeting_requirement(requirement),
+                    student_not_meeting_requirement(requirement),
+                    student_not_meeting_requirement(requirement),
+                    student_not_meeting_requirement(requirement),
+                ],
+                [
+                    student_meeting_requirement(requirement),
+                    student_meeting_requirement(requirement),
+                    student_not_meeting_requirement(requirement),
+                    student_not_meeting_requirement(requirement),
+                ],
+            ]
+
+            for student_group in student_groups_set:
+                satisfaction = requirement.satisfaction_by_students(student_group)
+                if satisfaction == 0:
+                    continue
+                self.assertGreaterEqual(satisfaction, MIN_NON_ZERO_SATISFACTION, msg=f"All non-zero requirement satisfaction scores for a team should be greater than or equal to {MIN_NON_ZERO_SATISFACTION}")
 
     def test_satisfaction_by_students__with_criteria__someone(self):
         requirement = ProjectRequirement(
@@ -216,13 +254,39 @@ class TestProjectRequirementDataclass(unittest.TestCase):
 
         self.assertEqual(0, requirement.satisfaction_by_students(students_5))
 
+    def test_satisfaction_by_students__with_criteria__everyone__prefers_first_student(self):
+        requirement = ProjectRequirement(
+            attribute=1,
+            operator=RequirementOperator.EXACTLY,
+            value=100,
+            criteria=RequirementsCriteria.EVERYONE,
+        )
+
+        original_team_a = [
+            student_meeting_requirement(requirement),
+            student_meeting_requirement(requirement),
+            student_not_meeting_requirement(requirement),
+        ]
+        original_satisfaction_a = requirement.satisfaction_by_students(original_team_a)
+        new_satisfaction_a = requirement.satisfaction_by_students(original_team_a + [student_meeting_requirement(requirement)])
+
+        original_team_b = [
+            student_not_meeting_requirement(requirement),
+            student_not_meeting_requirement(requirement),
+            student_not_meeting_requirement(requirement),
+        ]
+        original_satisfaction_b = requirement.satisfaction_by_students(original_team_b)
+        new_satisfaction_b = requirement.satisfaction_by_students(original_team_b + [student_meeting_requirement(requirement)])
+
+        self.assertGreater(new_satisfaction_b - original_satisfaction_b, new_satisfaction_a - original_satisfaction_a)
+
     def test_satisfaction_by_students__with_criteria__n_members(self):
         requirement = ProjectRequirement(
             attribute=1,
             operator=RequirementOperator.EXACTLY,
             value=100,
             criteria=RequirementsCriteria.N_MEMBERS,
-            num_members_meeting=2,
+            num_members_required=2,
         )
 
         students_1 = [
@@ -271,3 +335,30 @@ class TestProjectRequirementDataclass(unittest.TestCase):
         )
 
         self.assertEqual(0, requirement.satisfaction_by_students(students_4))
+
+    def test_satisfaction_by_students__with_criteria__n_members__prefers_first_student(self):
+        requirement = ProjectRequirement(
+            attribute=1,
+            operator=RequirementOperator.EXACTLY,
+            value=100,
+            criteria=RequirementsCriteria.N_MEMBERS,
+            num_members_required=2,
+        )
+
+        original_team_a = [
+            student_meeting_requirement(requirement),
+            student_not_meeting_requirement(requirement),
+            student_not_meeting_requirement(requirement),
+        ]
+        original_satisfaction_a = requirement.satisfaction_by_students(original_team_a)
+        new_satisfaction_a = requirement.satisfaction_by_students(original_team_a + [student_meeting_requirement(requirement)])
+
+        original_team_b = [
+            student_not_meeting_requirement(requirement),
+            student_not_meeting_requirement(requirement),
+            student_not_meeting_requirement(requirement),
+        ]
+        original_satisfaction_b = requirement.satisfaction_by_students(original_team_b)
+        new_satisfaction_b = requirement.satisfaction_by_students(original_team_b + [student_meeting_requirement(requirement)])
+
+        self.assertGreater(new_satisfaction_b - original_satisfaction_b, new_satisfaction_a - original_satisfaction_a)

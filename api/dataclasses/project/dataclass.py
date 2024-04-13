@@ -2,9 +2,13 @@ from dataclasses import dataclass, field
 from typing import List, TYPE_CHECKING, Optional
 
 from api.dataclasses.enums import RequirementOperator, RequirementsCriteria
+from utils.math import change_range
 
 if TYPE_CHECKING:
     from api.dataclasses.student import Student
+
+
+MIN_NON_ZERO_SATISFACTION = 0.2
 
 
 @dataclass
@@ -13,7 +17,7 @@ class ProjectRequirement:
     operator: RequirementOperator
     value: int
     criteria: RequirementsCriteria = RequirementsCriteria.SOMEONE
-    num_members_meeting: Optional[int] = None
+    num_members_required: Optional[int] = None
 
     def __post_init__(self):
         self.validate()
@@ -21,17 +25,17 @@ class ProjectRequirement:
     def validate(self):
         if (
             self.criteria == RequirementsCriteria.N_MEMBERS
-            and self.num_members_meeting is None
+            and self.num_members_required is None
         ):
             raise ValueError(
-                "'num_members_meeting' is required when using RequirementsCriteria.N_MEMBERS"
+                "'num_members_required' is required when using RequirementsCriteria.N_MEMBERS"
             )
         if (
             self.criteria != RequirementsCriteria.N_MEMBERS
-            and self.num_members_meeting is not None
+            and self.num_members_required is not None
         ):
             print(
-                "[WARNING]:'num_members_meeting' has no effect when not using RequirementsCriteria.N_MEMBERS"
+                "[WARNING]:'num_members_required' has no effect when not using RequirementsCriteria.N_MEMBERS"
             )
 
     def met_by_student(self, student: "Student") -> bool:
@@ -60,10 +64,20 @@ class ProjectRequirement:
 
         if self.criteria == RequirementsCriteria.SOMEONE:
             return 1 if num_members_meeting_requirement > 0 else 0
+
+        # The intended behaviour here is that putting a member who meets a requirement
+        # into a team where no one else does is more important than adding that member to
+        # a team where many people already meet the requirement.
         if self.criteria == RequirementsCriteria.EVERYONE:
-            return num_members_meeting_requirement / len(students)
+            if num_members_meeting_requirement == 0:
+                return 0
+            ratio = num_members_meeting_requirement / len(students)
+            return change_range(ratio, (0, 1), (MIN_NON_ZERO_SATISFACTION, 1))
         if self.criteria == RequirementsCriteria.N_MEMBERS:
-            return min(num_members_meeting_requirement / self.num_members_meeting, 1)
+            if num_members_meeting_requirement == 0:
+                return 0
+            ratio = min(num_members_meeting_requirement / self.num_members_required, 1)
+            return change_range(ratio, (0, 1), (MIN_NON_ZERO_SATISFACTION, 1))
 
 
 @dataclass
