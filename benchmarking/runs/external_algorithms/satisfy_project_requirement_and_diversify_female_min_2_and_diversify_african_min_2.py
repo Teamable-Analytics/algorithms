@@ -165,7 +165,7 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                             group_matcher_run_path=os.path.abspath(
                                 os.path.join(
                                     os.path.dirname(__file__),
-                                    "../../../..",
+                                    "../../..",
                                     "api/ai/external_algorithms/group_matcher_algorithm/group-matcher/run.py",
                                 )
                             ),
