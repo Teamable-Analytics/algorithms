@@ -127,7 +127,7 @@ class TestProportionality(unittest.TestCase):
             [
                 sum(
                     [
-                        student.meets_requirement(requirement)
+                        requirement.met_by_student(student)
                         for requirement in team.requirements
                     ]
                 )
