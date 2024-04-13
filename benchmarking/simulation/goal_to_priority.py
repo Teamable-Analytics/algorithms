@@ -41,9 +41,7 @@ def goal_to_priority(goal: Goal) -> Priority:
             )
 
     if isinstance(goal, ProjectRequirementGoal):
-        return RequirementPriority(
-            criteria=goal.criteria,
-        )
+        return RequirementPriority()
 
     if isinstance(goal, DiversityGoal):
         if goal.tokenization_constraint is None:
