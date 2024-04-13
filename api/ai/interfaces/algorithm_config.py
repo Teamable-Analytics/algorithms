@@ -93,10 +93,9 @@ class PriorityAlgorithmConfig(AlgorithmConfig):
 class MultipleRoundRobinAlgorithmConfig(AlgorithmConfig):
     utility_function: Callable[[Student, TeamShell], float]
 
-    def __init__(self, utility_function: Callable[[Student, TeamShell], float], use_new_version: bool = True, name: str = None):
-        super().__init__(name)
+    def __init__(self, utility_function: Callable[[Student, TeamShell], float]):
+        super().__init__()
         self.utility_function = utility_function
-        self.use_new_version = use_new_version
 
     def validate(self):
         super().validate()
