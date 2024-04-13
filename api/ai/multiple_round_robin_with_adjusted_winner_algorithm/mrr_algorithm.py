@@ -55,7 +55,7 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         self.utility_function = algorithm_config.utility_function
 
     def generate(self, students: List[Student]) -> TeamSet:
-        teams = self._new_mrr(students)
+        teams = [team for team in self._new_mrr(students) if len(team.students) > 0]
         return self._adjust_allocation_with_adjusted_winner(teams)
 
     def _is_there_a_student_with_positive_value_for_a_team(

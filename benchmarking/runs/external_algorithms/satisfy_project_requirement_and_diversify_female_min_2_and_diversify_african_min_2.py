@@ -1,5 +1,5 @@
 import os
-from typing import Dict
+from typing import Dict, List
 
 import math
 
@@ -13,6 +13,9 @@ from api.ai.interfaces.algorithm_config import (
 )
 from api.dataclasses.enums import Gpa, ScenarioAttribute, Gender, Race, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProviderSettings, MockStudentProvider
+from benchmarking.evaluations.graphing.graph_metadata import GraphData
+from benchmarking.evaluations.graphing.line_graph import line_graph
+from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import AverageProjectRequirementsCoverage
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
@@ -24,6 +27,7 @@ from benchmarking.runs.external_algorithms.custom_dataclasses import ExternalAlg
     ExternalAlgorithmDevelopmentSkill, ExternalAlgorithmYearCoding, ExternalAlgorithmInitialTeamProvider
 from benchmarking.runs.external_algorithms.utils import calculate_students_utilities, calculate_student_utility
 from benchmarking.runs.interfaces import Run
+from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
@@ -52,21 +56,26 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
         ]
 
         artifacts: Dict[int, SimulationSetArtifact] = {}
+        metrics: Dict[str, TeamSetMetric] = {
+            "EnvyFreenessUpToOneItem": EnvyFreenessUpToOneItem(
+                calculate_utilities=calculate_students_utilities,
+            ),
+            "ProportionalityUpToOneItem": ProportionalityUpToOneItem(
+                calculate_utilities=calculate_students_utilities,
+            ),
+            "AverageSoloStatus": AverageSoloStatus(
+                minority_groups_map={
+                    ScenarioAttribute.GENDER.value: [Gender.FEMALE],
+                    ScenarioAttribute.RACE.value: [Race.African],
+                },
+            ),
+            "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
+        }
 
         for class_size in CLASS_SIZES:
             print("CLASS SIZE /", class_size)
 
             number_of_teams = math.ceil(class_size / MAX_TEAM_SIZE)
-            metrics: Dict[str, TeamSetMetric] = {
-                "EnvyFreenessUpToOneItem": EnvyFreenessUpToOneItem(
-                    calculate_utilities=calculate_students_utilities,
-                ),
-                "ProportionalityUpToOneItem": ProportionalityUpToOneItem(
-                    calculate_utilities=calculate_students_utilities,
-                ),
-                "AverageSoloStatus": AverageSoloStatus(),
-                "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
-            }
 
             student_provider = MockStudentProvider(
                 settings=MockStudentProviderSettings(
@@ -176,6 +185,81 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
 
             artifacts[class_size] = simulation_set_artifact
 
+        if generate_graphs:
+            for class_size, artifact in artifacts.items():
+                insight_set: Dict[str, Dict[str, List[float]]] = Insight.get_output_set(
+                    artifact=artifact, metrics=list(metrics.values())
+                )
+                ef1 = Insight.average_metric(
+                    insight_set, "EnvyFreenessUpToOneItem"
+                )
+                prop1 = Insight.average_metric(
+                    insight_set, "ProportionalityUpToOneItem"
+                )
+                avg_solo_status = Insight.average_metric(
+                    insight_set, "AverageSoloStatus"
+                )
+                project_requirement_coverage = Insight.average_metric(
+                    insight_set, "AverageProjectRequirementsCoverage"
+                )
+                metric_values = [ef1, prop1, avg_solo_status, project_requirement_coverage]
+
+                for i, metric in enumerate(metric_values):
+                    for name, data in metric.items():
+                        if name not in graph_dicts[i]:
+                            graph_dicts[i][name] = GraphData(
+                                x_data=[class_size],
+                                y_data=[data],
+                                name=name,
+                            )
+                        else:
+                            graph_dicts[i][name].x_data.append(class_size)
+                            graph_dicts[i][name].y_data.append(data)
+
+            line_graph(
+                LineGraphMetadata(
+                    x_label="Class size",
+                    y_label="Envy freeness up to one item",
+                    title="Envy freeness up to one item",
+                    data=list(graph_ef1_dict.values()),
+                )
+            )
+
+            line_graph(
+                LineGraphMetadata(
+                    x_label="Class size",
+                    y_label="Proportionality up to one item",
+                    title="Proportionality up to one item",
+                    data=list(graph_prop1_dict.values()),
+                )
+            )
+
+            line_graph(
+                LineGraphMetadata(
+                    x_label="Class size",
+                    y_label="Average solo status",
+                    title="Average solo status",
+                    data=list(graph_avg_solo_status_dict.values()),
+                )
+            )
+
+            line_graph(
+                LineGraphMetadata(
+                    x_label="Class size",
+                    y_label="Average project requirements coverage",
+                    title="Average project requirements coverage",
+                    data=list(graph_project_requirement_coverage_dict.values()),
+                )
+            )
+
+            line_graph(
+                LineGraphMetadata(
+                    x_label="Class size",
+                    y_label="Run time (seconds)",
+                    title="Run time",
+                    data=list(graph_runtime_dict.values()),
+                )
+            )
 
 if __name__ == "__main__":
     SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2().start()
