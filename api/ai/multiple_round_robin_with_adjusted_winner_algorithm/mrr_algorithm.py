@@ -33,8 +33,12 @@ from api.ai.interfaces.algorithm import Algorithm
 from api.ai.interfaces.algorithm_config import MultipleRoundRobinAlgorithmConfig
 from api.ai.interfaces.algorithm_options import MultipleRoundRobinAlgorithmOptions
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.ai.multiple_round_robin_with_adjusted_winner_algorithm.custom_dataclasses import TeamWithValues
-from api.ai.multiple_round_robin_with_adjusted_winner_algorithm.utils import is_ordered_envy_freeness_up_to_one_item
+from api.ai.multiple_round_robin_with_adjusted_winner_algorithm.custom_dataclasses import (
+    TeamWithValues,
+)
+from api.ai.multiple_round_robin_with_adjusted_winner_algorithm.utils import (
+    is_ordered_envy_freeness_up_to_one_item,
+)
 from api.dataclasses.student import Student
 from api.dataclasses.team import Team
 from api.dataclasses.team_set import TeamSet
@@ -42,10 +46,10 @@ from api.dataclasses.team_set import TeamSet
 
 class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
     def __init__(
-            self,
-            algorithm_options: MultipleRoundRobinAlgorithmOptions,
-            team_generation_options: TeamGenerationOptions,
-            algorithm_config: MultipleRoundRobinAlgorithmConfig,
+        self,
+        algorithm_options: MultipleRoundRobinAlgorithmOptions,
+        team_generation_options: TeamGenerationOptions,
+        algorithm_config: MultipleRoundRobinAlgorithmConfig,
     ):
         super().__init__(algorithm_options, team_generation_options, algorithm_config)
         self.utility_function = algorithm_config.utility_function
@@ -55,9 +59,7 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         return self._adjust_allocation_with_adjusted_winner(teams)
 
     def _is_there_a_student_with_positive_value_for_a_team(
-            self,
-            teams: List[TeamWithValues],
-            students: List[Student]
+        self, teams: List[TeamWithValues], students: List[Student]
     ) -> bool:
         for team in teams:
             for student in students:
@@ -67,9 +69,7 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         return False
 
     def _is_there_no_student_with_positive_value_but_there_is_some_dummy_student(
-            self,
-            team: TeamWithValues,
-            students: List[Student]
+        self, team: TeamWithValues, students: List[Student]
     ) -> bool:
         has_dummy_student = False
         for student in students:
@@ -80,8 +80,9 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
                 has_dummy_student = True
         return has_dummy_student
 
-    def _add_dummy_till_number_of_students_is_multiple_of_number_of_teams(self, students: List[Student],
-                                                                          num_teams: int):
+    def _add_dummy_till_number_of_students_is_multiple_of_number_of_teams(
+        self, students: List[Student], num_teams: int
+    ):
         i = 0
         while len(students) % num_teams != 0:
             i += 1
@@ -100,7 +101,9 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
                 students.remove(student)
                 return
 
-    def _assign_highest_utility_student_to_team(self, team: TeamWithValues, students: List[Student]):
+    def _assign_highest_utility_student_to_team(
+        self, team: TeamWithValues, students: List[Student]
+    ):
         best_student: Student = students[0]
 
         for student in students[1:]:
@@ -118,11 +121,15 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
         while len(students) > 0:
             teams.sort()
             if self._is_there_a_student_with_positive_value_for_a_team(teams, students):
-                self._add_dummy_till_number_of_students_is_multiple_of_number_of_teams(students, len(teams))
+                self._add_dummy_till_number_of_students_is_multiple_of_number_of_teams(
+                    students, len(teams)
+                )
 
             for team_idx in range(len(teams)):
                 team = teams[team_idx]
-                if self._is_there_no_student_with_positive_value_but_there_is_some_dummy_student(team, students):
+                if self._is_there_no_student_with_positive_value_but_there_is_some_dummy_student(
+                    team, students
+                ):
                     self._add_dummy_student_to_team(team, students)
                 else:
                     self._assign_highest_utility_student_to_team(team, students)
@@ -137,7 +144,7 @@ class MultipleRoundRobinWithAdjustedWinnerAlgorithm(Algorithm):
                 if team_i is team_j:
                     continue
                 if is_ordered_envy_freeness_up_to_one_item(
-                        team_i, team_j, self.utility_function
+                    team_i, team_j, self.utility_function
                 ):
                     continue
 

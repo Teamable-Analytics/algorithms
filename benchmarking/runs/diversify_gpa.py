@@ -10,8 +10,10 @@ from api.ai.interfaces.algorithm_config import (
 from api.dataclasses.project import Project, ProjectRequirement
 from api.dataclasses.student import Student
 from api.dataclasses.team import TeamShell
-from benchmarking.data.simulated_data.mock_initial_teams_provider import MockInitialTeamsProvider, \
-    MockInitialTeamsProviderSettings
+from benchmarking.data.simulated_data.mock_initial_teams_provider import (
+    MockInitialTeamsProvider,
+    MockInitialTeamsProviderSettings,
+)
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -20,9 +22,19 @@ from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxi
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.interfaces import TeamSetMetric
-from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
-from api.dataclasses.enums import ScenarioAttribute, Gpa, AlgorithmType, RequirementOperator, Gender
-from benchmarking.evaluations.metrics.proportionality_up_to_one_item import ProportionalityUpToOneItem
+from benchmarking.evaluations.metrics.envy_free_up_to_one_item import (
+    EnvyFreenessUpToOneItem,
+)
+from api.dataclasses.enums import (
+    ScenarioAttribute,
+    Gpa,
+    AlgorithmType,
+    RequirementOperator,
+    Gender,
+)
+from benchmarking.evaluations.metrics.proportionality_up_to_one_item import (
+    ProportionalityUpToOneItem,
+)
 from benchmarking.evaluations.scenarios.diversify_gpa import DiversifyGPA
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.insight import Insight
@@ -45,7 +57,9 @@ def utility_function(students: List[Student], team: TeamShell) -> float:
                 entire_team_student.attributes[attribute] = []
             entire_team_student.attributes[attribute].extend(value)
 
-    return team.num_requirements_met_by_student(entire_team_student) / len(team.requirements)
+    return team.num_requirements_met_by_student(entire_team_student) / len(
+        team.requirements
+    )
 
 
 class DiversifyGpaRun(Run):
@@ -71,8 +85,12 @@ class DiversifyGpaRun(Run):
         ]
 
         metrics: Dict[str, TeamSetMetric] = {
-            "EnvyFreenessUpToOneItem": EnvyFreenessUpToOneItem(calculate_utilities=utility_function),
-            "ProportionalityUpToOneItem": ProportionalityUpToOneItem(calculate_utilities=utility_function),
+            "EnvyFreenessUpToOneItem": EnvyFreenessUpToOneItem(
+                calculate_utilities=utility_function
+            ),
+            "ProportionalityUpToOneItem": ProportionalityUpToOneItem(
+                calculate_utilities=utility_function
+            ),
         }
 
         artifacts: Dict[int, SimulationSetArtifact] = {}
@@ -93,7 +111,7 @@ class DiversifyGpaRun(Run):
                     ScenarioAttribute.GENDER.value: [
                         (Gender.FEMALE, 0.2),
                         (Gender.MALE, 0.8),
-                    ]
+                    ],
                 },
             )
 
@@ -114,7 +132,7 @@ class DiversifyGpaRun(Run):
                                     attribute=ScenarioAttribute.GENDER.value,
                                     operator=RequirementOperator.EXACTLY,
                                     value=Gender.FEMALE.value,
-                                )
+                                ),
                             ],
                         ),
                     ],
@@ -154,7 +172,9 @@ class DiversifyGpaRun(Run):
                 )
 
                 ef1 = Insight.average_metric(insight_set, "EnvyFreenessUpToOneItem")
-                prop1 = Insight.average_metric(insight_set, "ProportionalityUpToOneItem")
+                prop1 = Insight.average_metric(
+                    insight_set, "ProportionalityUpToOneItem"
+                )
                 average_runtimes = Insight.average_metric(
                     insight_set, Insight.KEY_RUNTIMES
                 )
@@ -191,9 +211,7 @@ class DiversifyGpaRun(Run):
                     y_label="Envy Free Up To One Item",
                     title="Diversify GPA Envy Free Up To One Item",
                     data=list(ef1_dict.values()),
-                    y_lim=GraphAxisRange(
-                        start=0, end=1.01
-                    ),
+                    y_lim=GraphAxisRange(start=0, end=1.01),
                 )
             )
 
@@ -203,9 +221,7 @@ class DiversifyGpaRun(Run):
                     y_label="Proportionality Up To One Item",
                     title="Diversify GPA Proportionality Up To One Item",
                     data=list(prop1_dict.values()),
-                    y_lim=GraphAxisRange(
-                        start=0, end=1.01
-                    ),
+                    y_lim=GraphAxisRange(start=0, end=1.01),
                 )
             )
 
