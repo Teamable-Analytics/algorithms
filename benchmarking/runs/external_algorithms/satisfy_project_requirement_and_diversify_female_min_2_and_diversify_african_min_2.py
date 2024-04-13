@@ -30,13 +30,11 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run):
     def start(self, num_trials: int = 100, generate_graphs: bool = False):
-        CLASS_SIZES = list(range(20, 501, 40))
+        CLASS_SIZES = [20, 100, 200, 300, 400, 500]
         MAX_TEAM_SIZE = 5
 
-        ratio_of_female_students = 0.3
-
-        ratio_of_african_students = 0.3
-        ratio_of_other_race_students = 0.1
+        ratio_of_female_students = 0.4
+        ratio_of_african_students = 0.4
 
         # Graphs
         graph_runtime_dict = {}
@@ -80,8 +78,7 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                         ],
                         ScenarioAttribute.RACE.value: [
                             (Race.African, ratio_of_african_students),
-                            (Race.Other, ratio_of_other_race_students),
-                            (Race.European, 1 - ratio_of_african_students - ratio_of_other_race_students),
+                            (Race.European, 1 - ratio_of_african_students),
                         ],
                         ExternalAlgorithmScenarioAttribute.GPA.value: [
                             (Gpa.A, 0.2),
@@ -129,7 +126,7 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                     scenario=SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2(),
                     student_provider=student_provider,
                     initial_teams_provider=ExternalAlgorithmInitialTeamProvider(num_teams=number_of_teams),
-                    cache_key=f"external_algorithm/satisfy_project_requirement_and_diversify_female_min_2_and_diversify_african_min_2_{number_of_teams}",
+                    cache_key=f"external_algorithms/satisfy_project_requirement_and_diversify_female_min_2_and_diversify_african_min_2_{number_of_teams}",
                 ),
                 algorithm_set={
                     AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
