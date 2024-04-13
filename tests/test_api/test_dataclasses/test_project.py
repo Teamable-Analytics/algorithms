@@ -140,7 +140,11 @@ class TestProjectRequirementDataclass(unittest.TestCase):
                 satisfaction = requirement.satisfaction_by_students(student_group)
                 if satisfaction == 0:
                     continue
-                self.assertGreaterEqual(satisfaction, MIN_NON_ZERO_SATISFACTION, msg=f"All non-zero requirement satisfaction scores for a team should be greater than or equal to {MIN_NON_ZERO_SATISFACTION}")
+                self.assertGreaterEqual(
+                    satisfaction,
+                    MIN_NON_ZERO_SATISFACTION,
+                    msg=f"All non-zero requirement satisfaction scores for a team should be greater than or equal to {MIN_NON_ZERO_SATISFACTION}",
+                )
 
     def test_satisfaction_by_students__with_criteria__someone(self):
         requirement = ProjectRequirement(
@@ -254,7 +258,9 @@ class TestProjectRequirementDataclass(unittest.TestCase):
 
         self.assertEqual(0, requirement.satisfaction_by_students(students_5))
 
-    def test_satisfaction_by_students__with_criteria__everyone__prefers_first_student(self):
+    def test_satisfaction_by_students__with_criteria__everyone__prefers_first_student(
+        self,
+    ):
         requirement = ProjectRequirement(
             attribute=1,
             operator=RequirementOperator.EXACTLY,
@@ -268,7 +274,9 @@ class TestProjectRequirementDataclass(unittest.TestCase):
             student_not_meeting_requirement(requirement),
         ]
         original_satisfaction_a = requirement.satisfaction_by_students(original_team_a)
-        new_satisfaction_a = requirement.satisfaction_by_students(original_team_a + [student_meeting_requirement(requirement)])
+        new_satisfaction_a = requirement.satisfaction_by_students(
+            original_team_a + [student_meeting_requirement(requirement)]
+        )
 
         original_team_b = [
             student_not_meeting_requirement(requirement),
@@ -276,9 +284,14 @@ class TestProjectRequirementDataclass(unittest.TestCase):
             student_not_meeting_requirement(requirement),
         ]
         original_satisfaction_b = requirement.satisfaction_by_students(original_team_b)
-        new_satisfaction_b = requirement.satisfaction_by_students(original_team_b + [student_meeting_requirement(requirement)])
+        new_satisfaction_b = requirement.satisfaction_by_students(
+            original_team_b + [student_meeting_requirement(requirement)]
+        )
 
-        self.assertGreater(new_satisfaction_b - original_satisfaction_b, new_satisfaction_a - original_satisfaction_a)
+        self.assertGreater(
+            new_satisfaction_b - original_satisfaction_b,
+            new_satisfaction_a - original_satisfaction_a,
+        )
 
     def test_satisfaction_by_students__with_criteria__n_members(self):
         requirement = ProjectRequirement(
@@ -336,7 +349,9 @@ class TestProjectRequirementDataclass(unittest.TestCase):
 
         self.assertEqual(0, requirement.satisfaction_by_students(students_4))
 
-    def test_satisfaction_by_students__with_criteria__n_members__prefers_first_student(self):
+    def test_satisfaction_by_students__with_criteria__n_members__prefers_first_student(
+        self,
+    ):
         requirement = ProjectRequirement(
             attribute=1,
             operator=RequirementOperator.EXACTLY,
@@ -351,7 +366,9 @@ class TestProjectRequirementDataclass(unittest.TestCase):
             student_not_meeting_requirement(requirement),
         ]
         original_satisfaction_a = requirement.satisfaction_by_students(original_team_a)
-        new_satisfaction_a = requirement.satisfaction_by_students(original_team_a + [student_meeting_requirement(requirement)])
+        new_satisfaction_a = requirement.satisfaction_by_students(
+            original_team_a + [student_meeting_requirement(requirement)]
+        )
 
         original_team_b = [
             student_not_meeting_requirement(requirement),
@@ -359,6 +376,11 @@ class TestProjectRequirementDataclass(unittest.TestCase):
             student_not_meeting_requirement(requirement),
         ]
         original_satisfaction_b = requirement.satisfaction_by_students(original_team_b)
-        new_satisfaction_b = requirement.satisfaction_by_students(original_team_b + [student_meeting_requirement(requirement)])
+        new_satisfaction_b = requirement.satisfaction_by_students(
+            original_team_b + [student_meeting_requirement(requirement)]
+        )
 
-        self.assertGreater(new_satisfaction_b - original_satisfaction_b, new_satisfaction_a - original_satisfaction_a)
+        self.assertGreater(
+            new_satisfaction_b - original_satisfaction_b,
+            new_satisfaction_a - original_satisfaction_a,
+        )
