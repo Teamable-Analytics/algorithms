@@ -82,14 +82,15 @@ class MockStudentProviderSettings:
             # (https://github.com/Teamable-Analytics/algorithms/issues/369)
             if not range_config:
                 raise ValueError(f"attribute_ranges[{attribute_id}] must not be empty.")
-            if range_config[0][0] is not None and isinstance(
-                range_config[0][0], (int, AttributeValueEnum)
-            ):
-                total_chance = sum([_[1] for _ in range_config])
-                if not math.isclose(total_chance, 1):
-                    raise ValueError(
-                        f"attribute_ranges[{attribute_id}] must sum to 1. Found {total_chance}"
-                    )
+            if type(range_config[0]) is list:
+                if range_config[0][0] is not None and isinstance(
+                    range_config[0][0], (int, AttributeValueEnum)
+                ):
+                    total_chance = sum([_[1] for _ in range_config])
+                    if not math.isclose(total_chance, 1):
+                        raise ValueError(
+                            f"attribute_ranges[{attribute_id}] must sum to 1. Found {total_chance}"
+                        )
 
         if self.number_of_enemies >= self.number_of_students:
             raise ValueError(

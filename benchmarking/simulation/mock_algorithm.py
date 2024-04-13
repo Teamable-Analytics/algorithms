@@ -9,6 +9,7 @@ from api.ai.interfaces.algorithm_options import (
     WeightAlgorithmOptions,
     MultipleRoundRobinAlgorithmOptions,
     DoubleRoundRobinAlgorithmOptions,
+    GeneralizedEnvyGraphAlgorithmOptions,
     GroupMatcherAlgorithmOptions,
 )
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
@@ -75,6 +76,8 @@ class MockAlgorithm:
             return MultipleRoundRobinAlgorithmOptions
         if algorithm_type == AlgorithmType.DRR:
             return DoubleRoundRobinAlgorithmOptions
+        if algorithm_type == AlgorithmType.GEG:
+            return GeneralizedEnvyGraphAlgorithmOptions
         if algorithm_type == AlgorithmType.GROUP_MATCHER:
             return GroupMatcherAlgorithmOptions
 
