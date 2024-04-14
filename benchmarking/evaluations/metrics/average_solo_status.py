@@ -20,7 +20,7 @@ class AverageSoloStatus(TeamSetMetric):
     def __init__(
         self, minority_groups_map: Dict[int, List[int]] = None, *args, **kwargs
     ):
-        super().__init__(*args, **kwargs)
+        super().__init__(theoretical_range=(0, 1), *args, **kwargs)
         self.minority_groups_map = minority_groups_map
 
     def calculate(self, team_set: TeamSet) -> float:

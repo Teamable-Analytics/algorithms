@@ -13,12 +13,13 @@ from api.ai.interfaces.algorithm_config import (
 )
 from api.dataclasses.enums import Gpa, ScenarioAttribute, Gender, Race, AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import MockStudentProviderSettings, MockStudentProvider
-from benchmarking.evaluations.graphing.graph_metadata import GraphData
+from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import AverageProjectRequirementsCoverage
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
 from benchmarking.evaluations.metrics.proportionality_up_to_one_item import ProportionalityUpToOneItem
 from benchmarking.evaluations.scenarios.satisfy_project_requirements_and_diversify_female_min_of_2_and_diversify_african_min_of_2 import \
@@ -33,12 +34,12 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run):
-    def start(self, num_trials: int = 1, generate_graphs: bool = False):
-        CLASS_SIZES = [20, 100, 200, 300, 400, 500]
+    def start(self, num_trials: int = 1, generate_graphs: bool = True):
+        CLASS_SIZES = [20, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
         MAX_TEAM_SIZE = 5
 
-        ratio_of_female_students = 0.4
-        ratio_of_african_students = 0.4
+        ratio_of_female_students = 0.2
+        ratio_of_african_students = 0.2
 
         # Graphs
         graph_runtime_dict = {}
@@ -46,6 +47,8 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
         graph_prop1_dict = {}
         graph_avg_solo_status_dict = {}
         graph_project_requirement_coverage_dict = {}
+        graph_gender_cosine_difference_dict = {}
+        graph_race_cosine_difference_dict = {}
 
         graph_dicts = [
             graph_runtime_dict,
@@ -53,6 +56,8 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
             graph_prop1_dict,
             graph_avg_solo_status_dict,
             graph_project_requirement_coverage_dict,
+            graph_gender_cosine_difference_dict,
+            graph_race_cosine_difference_dict,
         ]
 
         artifacts: Dict[int, SimulationSetArtifact] = {}
@@ -70,6 +75,14 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                 },
             ),
             "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
+            "GenderCosineDifference": AverageCosineDifference(
+                name="GenderCosineDifference",
+                attribute_filter=[ScenarioAttribute.GENDER.value],
+            ),
+            "RaceCosineDifference": AverageCosineDifference(
+                name="RaceCosineDifference",
+                attribute_filter=[ScenarioAttribute.RACE.value],
+            ),
         }
 
         for class_size in CLASS_SIZES:
@@ -90,35 +103,35 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                             (Race.European, 1 - ratio_of_african_students),
                         ],
                         ExternalAlgorithmScenarioAttribute.GPA.value: [
-                            (Gpa.A, 0.2),
-                            (Gpa.B, 0.2),
+                            (Gpa.A, 0.1),
+                            (Gpa.B, 0.4),
                             (Gpa.C, 0.2),
                             (Gpa.D, 0.2),
-                            (Gpa.F, 0.2),
+                            (Gpa.F, 0.1),
                         ],
                         ExternalAlgorithmScenarioAttribute.NUMBER_OF_YEARS_CODING.value: [
-                            (ExternalAlgorithmYearCoding.LESS_THAN_ONE_YEAR, 0.25),
-                            (ExternalAlgorithmYearCoding.ONE_YEAR, 0.25),
-                            (ExternalAlgorithmYearCoding.TWO_YEAR, 0.25),
-                            (ExternalAlgorithmYearCoding.MORE_THAN_TWO_YEARS, 0.25),
+                            (ExternalAlgorithmYearCoding.LESS_THAN_ONE_YEAR, 0.2),
+                            (ExternalAlgorithmYearCoding.ONE_YEAR, 0.5),
+                            (ExternalAlgorithmYearCoding.TWO_YEAR, 0.2),
+                            (ExternalAlgorithmYearCoding.MORE_THAN_TWO_YEARS, 0.1),
                         ],
                         ExternalAlgorithmScenarioAttribute.GIT_SKILL.value: [
-                            (ExternalAlgorithmDevelopmentSkill.NO_SKILL, 0.25),
-                            (ExternalAlgorithmDevelopmentSkill.BASIC_SKILL, 0.25),
-                            (ExternalAlgorithmDevelopmentSkill.INTERMEDIATE_SKILL, 0.25),
-                            (ExternalAlgorithmDevelopmentSkill.ADVANCED_SKILL, 0.25),
+                            (ExternalAlgorithmDevelopmentSkill.NO_SKILL, 0.2),
+                            (ExternalAlgorithmDevelopmentSkill.BASIC_SKILL, 0.4),
+                            (ExternalAlgorithmDevelopmentSkill.INTERMEDIATE_SKILL, 0.2),
+                            (ExternalAlgorithmDevelopmentSkill.ADVANCED_SKILL, 0.2),
                         ],
                         ExternalAlgorithmScenarioAttribute.FE_DEVELOPMENT_SKILL.value: [
-                            (ExternalAlgorithmDevelopmentSkill.NO_SKILL, 0.25),
-                            (ExternalAlgorithmDevelopmentSkill.BASIC_SKILL, 0.25),
-                            (ExternalAlgorithmDevelopmentSkill.INTERMEDIATE_SKILL, 0.25),
-                            (ExternalAlgorithmDevelopmentSkill.ADVANCED_SKILL, 0.25),
+                            (ExternalAlgorithmDevelopmentSkill.NO_SKILL, 0.4),
+                            (ExternalAlgorithmDevelopmentSkill.BASIC_SKILL, 0.3),
+                            (ExternalAlgorithmDevelopmentSkill.INTERMEDIATE_SKILL, 0.2),
+                            (ExternalAlgorithmDevelopmentSkill.ADVANCED_SKILL, 0.1),
                         ],
                         ExternalAlgorithmScenarioAttribute.BE_DEVELOPMENT_SKILL.value: [
-                            (ExternalAlgorithmDevelopmentSkill.NO_SKILL, 0.25),
-                            (ExternalAlgorithmDevelopmentSkill.BASIC_SKILL, 0.25),
-                            (ExternalAlgorithmDevelopmentSkill.INTERMEDIATE_SKILL, 0.25),
-                            (ExternalAlgorithmDevelopmentSkill.ADVANCED_SKILL, 0.25),
+                            (ExternalAlgorithmDevelopmentSkill.NO_SKILL, 0.4),
+                            (ExternalAlgorithmDevelopmentSkill.BASIC_SKILL, 0.3),
+                            (ExternalAlgorithmDevelopmentSkill.INTERMEDIATE_SKILL, 0.2),
+                            (ExternalAlgorithmDevelopmentSkill.ADVANCED_SKILL, 0.1),
                         ],
                         ExternalAlgorithmScenarioAttribute.COMMUNICATION_SKILL.value: [
                             (ExternalAlgorithmDevelopmentSkill.NO_SKILL, 0.25),
@@ -202,7 +215,17 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                 project_requirement_coverage = Insight.average_metric(
                     insight_set, "AverageProjectRequirementsCoverage"
                 )
-                metric_values = [ef1, prop1, avg_solo_status, project_requirement_coverage]
+                gender_cosine_difference = Insight.average_metric(
+                    insight_set, "GenderCosineDifference"
+                )
+                race_cosine_difference = Insight.average_metric(
+                    insight_set, "RaceCosineDifference"
+                )
+                average_runtimes = Insight.average_metric(
+                    insight_set, Insight.KEY_RUNTIMES
+                )
+                metric_values = [average_runtimes, ef1, prop1, avg_solo_status, project_requirement_coverage, gender_cosine_difference, race_cosine_difference]
+
 
                 for i, metric in enumerate(metric_values):
                     for name, data in metric.items():
@@ -219,9 +242,12 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
             line_graph(
                 LineGraphMetadata(
                     x_label="Class size",
-                    y_label="Envy freeness up to one item",
-                    title="Envy freeness up to one item",
+                    y_label="Envy-freeness up to one item",
+                    title="EF1",
                     data=list(graph_ef1_dict.values()),
+                    y_lim=GraphAxisRange(
+                        *metrics["EnvyFreenessUpToOneItem"].theoretical_range
+                    ),
                 )
             )
 
@@ -229,8 +255,11 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                 LineGraphMetadata(
                     x_label="Class size",
                     y_label="Proportionality up to one item",
-                    title="Proportionality up to one item",
+                    title="PROP1",
                     data=list(graph_prop1_dict.values()),
+                    y_lim=GraphAxisRange(
+                        *metrics["ProportionalityUpToOneItem"].theoretical_range
+                    ),
                 )
             )
 
@@ -240,6 +269,9 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                     y_label="Average solo status",
                     title="Average solo status",
                     data=list(graph_avg_solo_status_dict.values()),
+                    y_lim=GraphAxisRange(
+                        *metrics["AverageSoloStatus"].theoretical_range
+                    ),
                 )
             )
 
@@ -249,6 +281,29 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                     y_label="Average project requirements coverage",
                     title="Average project requirements coverage",
                     data=list(graph_project_requirement_coverage_dict.values()),
+                    y_lim=GraphAxisRange(
+                        *metrics["AverageProjectRequirementsCoverage"].theoretical_range
+                    ),
+                )
+            )
+
+            line_graph(
+                LineGraphMetadata(
+                    x_label="Class size",
+                    y_label="Gender Inter-Homogeneity",
+                    title="Gender Inter-Homogeneity",
+                    data=list(graph_gender_cosine_difference_dict.values()),
+                    y_lim=GraphAxisRange(start=0, end=1),
+                )
+            )
+
+            line_graph(
+                LineGraphMetadata(
+                    x_label="Class size",
+                    y_label="Race Inter-Homogeneity",
+                    title="Race Inter-Homogeneity",
+                    data=list(graph_race_cosine_difference_dict.values()),
+                    y_lim=GraphAxisRange(start=0, end=1),
                 )
             )
 
