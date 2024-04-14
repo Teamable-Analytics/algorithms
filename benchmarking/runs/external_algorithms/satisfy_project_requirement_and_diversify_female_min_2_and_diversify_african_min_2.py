@@ -2,6 +2,7 @@ import os
 from typing import Dict, List
 
 import math
+import typer
 
 from api.ai.interfaces.algorithm_config import (
     RandomAlgorithmConfig,
@@ -34,7 +35,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run):
-    def start(self, num_trials: int = 1, generate_graphs: bool = True):
+    def start(self, num_trials: int = 1, generate_graphs: bool = False):
         CLASS_SIZES = [20, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
         MAX_TEAM_SIZE = 5
 
@@ -317,4 +318,4 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
             )
 
 if __name__ == "__main__":
-    SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2().start()
+    typer.run(SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2().start)
