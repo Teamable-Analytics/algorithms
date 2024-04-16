@@ -22,6 +22,7 @@ from benchmarking.evaluations.metrics.average_project_requirements_coverage impo
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
+from benchmarking.evaluations.metrics.num_teams import NumberOfTeams
 from benchmarking.evaluations.metrics.proportionality_up_to_one_item import ProportionalityUpToOneItem
 from benchmarking.evaluations.scenarios.satisfy_project_requirements_and_diversify_female_min_of_2_and_diversify_african_min_of_2 import \
     SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2
@@ -50,6 +51,7 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
         graph_project_requirement_coverage_dict = {}
         graph_gender_cosine_difference_dict = {}
         graph_race_cosine_difference_dict = {}
+        graph_num_teams_dict = {}
 
         graph_dicts = [
             graph_runtime_dict,
@@ -59,6 +61,7 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
             graph_project_requirement_coverage_dict,
             graph_gender_cosine_difference_dict,
             graph_race_cosine_difference_dict,
+            graph_num_teams_dict,
         ]
 
         artifacts: Dict[int, SimulationSetArtifact] = {}
@@ -71,8 +74,8 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
             ),
             "AverageSoloStatus": AverageSoloStatus(
                 minority_groups_map={
-                    ScenarioAttribute.GENDER.value: [Gender.FEMALE],
-                    ScenarioAttribute.RACE.value: [Race.African],
+                    ScenarioAttribute.GENDER.value: [Gender.FEMALE.value],
+                    ScenarioAttribute.RACE.value: [Race.African.value],
                 },
             ),
             "AverageProjectRequirementsCoverage": AverageProjectRequirementsCoverage(),
@@ -84,6 +87,7 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                 name="RaceCosineDifference",
                 attribute_filter=[ScenarioAttribute.RACE.value],
             ),
+            "NumberOfTeams": NumberOfTeams(),
         }
 
         for class_size in CLASS_SIZES:
@@ -155,9 +159,9 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                     AlgorithmType.RANDOM: [RandomAlgorithmConfig()],
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
-                            MAX_KEEP=15,
-                            MAX_SPREAD=30,
-                            MAX_ITERATE=30,
+                            MAX_KEEP=30,
+                            MAX_SPREAD=100,
+                            MAX_ITERATE=250,
                             MAX_TIME=10000000,
                         ),
                     ],
@@ -225,7 +229,10 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                 average_runtimes = Insight.average_metric(
                     insight_set, Insight.KEY_RUNTIMES
                 )
-                metric_values = [average_runtimes, ef1, prop1, avg_solo_status, project_requirement_coverage, gender_cosine_difference, race_cosine_difference]
+                num_teams = Insight.average_metric(
+                    insight_set, "NumberOfTeams"
+                )
+                metric_values = [average_runtimes, ef1, prop1, avg_solo_status, project_requirement_coverage, gender_cosine_difference, race_cosine_difference, num_teams]
 
 
                 for i, metric in enumerate(metric_values):
@@ -305,6 +312,15 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                     title="Race Inter-Homogeneity",
                     data=list(graph_race_cosine_difference_dict.values()),
                     y_lim=GraphAxisRange(start=0, end=1),
+                )
+            )
+
+            line_graph(
+                LineGraphMetadata(
+                    x_label="Class size",
+                    y_label="Number of teams",
+                    title="Number of teams",
+                    data=list(graph_num_teams_dict.values()),
                 )
             )
 
