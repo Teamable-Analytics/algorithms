@@ -72,7 +72,7 @@ class ConcentrateTimeSlotAndConcentrateGenderRace(Run):
 
     TEAM_SIZE = 4
 
-    def start(self, num_trials: int = 30, generate_graphs: bool = True):
+    def start(self, num_trials: int = 100, generate_graphs: bool = False):
         scenario = ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRace(
             max_num_choices=5
         )
@@ -101,32 +101,17 @@ class ConcentrateTimeSlotAndConcentrateGenderRace(Run):
         simulation_sets = {}
 
         class_sizes = [20, 100, 240, 500, 1000]
-        # class_sizes = [20, 40, 60, 80, 100]
 
         for class_size in class_sizes:
             print("CLASS SIZE /", class_size)
             student_provider = TimeslotCustomStudentProvider(class_size)
-            cache_key = f"timeslot_stuff/concentrate_timeslots_gender_race/class_size_{class_size}"
+            cache_key = f"concentrate_timeslots_gender_race/class_size_{class_size}"
 
-            simulation_settings_1 = SimulationSettings(
+            simulation_settings = SimulationSettings(
                 num_teams=class_size // self.TEAM_SIZE,
                 student_provider=student_provider,
                 scenario=scenario,
-                cache_key=f"timeslot_stuff/concentrate_timeslots_gender_race/class_size_{class_size}",
-            )
-
-            simulation_settings_2 = SimulationSettings(
-                num_teams=class_size // self.TEAM_SIZE,
-                student_provider=student_provider,
-                scenario=scenario,
-                cache_key=f"timeslot_stuff/braun_one/class_size_{class_size}",
-            )
-
-            simulation_settings_3 = SimulationSettings(
-                num_teams=class_size // self.TEAM_SIZE,
-                student_provider=student_provider,
-                scenario=scenario,
-                cache_key=f"timeslot_stuff/braun_three/class_size_{class_size}",
+                cache_key=cache_key,
             )
 
             algorithm_set = {
@@ -170,23 +155,9 @@ class ConcentrateTimeSlotAndConcentrateGenderRace(Run):
             }
 
             simulation_sets[class_size] = SimulationSet(
-                settings=simulation_settings_1,
+                settings=simulation_settings,
                 algorithm_set=algorithm_set,
             ).run(num_runs=30)
-
-            simulation_sets[class_size].update(
-                SimulationSet(
-                    settings=simulation_settings_2,
-                    algorithm_set=algorithm_set,
-                ).run(num_runs=35)
-            )
-
-            simulation_sets[class_size].update(
-                SimulationSet(
-                    settings=simulation_settings_3,
-                    algorithm_set=algorithm_set,
-                ).run(num_runs=35)
-            )
 
         if generate_graphs:
             graph_data: Dict[str, Dict[str, GraphData]] = {}
