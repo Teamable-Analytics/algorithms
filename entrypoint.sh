@@ -8,8 +8,6 @@ done
 
 echo "Migrate the Database at startup of project"
 
-echo api/api/settings/prod.py
-
 # Wait for few minute and run db migraiton
 while ! python manage.py migrate --settings=api.api.settings.prod  2>&1; do
    echo "Migration is in progress status"
