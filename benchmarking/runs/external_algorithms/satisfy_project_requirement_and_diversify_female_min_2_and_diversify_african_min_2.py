@@ -10,25 +10,42 @@ from api.ai.interfaces.algorithm_config import (
     DoubleRoundRobinAlgorithmConfig,
     MultipleRoundRobinAlgorithmConfig,
     GeneralizedEnvyGraphAlgorithmConfig,
-    GroupMatcherAlgorithmConfig
+    GroupMatcherAlgorithmConfig,
 )
 from api.dataclasses.enums import Gpa, ScenarioAttribute, Gender, Race, AlgorithmType
-from benchmarking.data.simulated_data.mock_student_provider import MockStudentProviderSettings, MockStudentProvider
+from benchmarking.data.simulated_data.mock_student_provider import (
+    MockStudentProviderSettings,
+    MockStudentProvider,
+)
 from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxisRange
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.interfaces import TeamSetMetric
-from benchmarking.evaluations.metrics.average_project_requirements_coverage import AverageProjectRequirementsCoverage
+from benchmarking.evaluations.metrics.average_project_requirements_coverage import (
+    AverageProjectRequirementsCoverage,
+)
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
-from benchmarking.evaluations.metrics.envy_free_up_to_one_item import EnvyFreenessUpToOneItem
+from benchmarking.evaluations.metrics.envy_free_up_to_one_item import (
+    EnvyFreenessUpToOneItem,
+)
 from benchmarking.evaluations.metrics.num_teams import NumberOfTeams
-from benchmarking.evaluations.metrics.proportionality_up_to_one_item import ProportionalityUpToOneItem
-from benchmarking.evaluations.scenarios.satisfy_project_requirements_and_diversify_female_min_of_2_and_diversify_african_min_of_2 import \
-    SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2
-from benchmarking.runs.external_algorithms.custom_dataclasses import ExternalAlgorithmScenarioAttribute, \
-    ExternalAlgorithmDevelopmentSkill, ExternalAlgorithmYearCoding, ExternalAlgorithmInitialTeamProvider
-from benchmarking.runs.external_algorithms.utils import calculate_students_utilities, calculate_student_utility
+from benchmarking.evaluations.metrics.proportionality_up_to_one_item import (
+    ProportionalityUpToOneItem,
+)
+from benchmarking.evaluations.scenarios.satisfy_project_requirements_and_diversify_female_min_of_2_and_diversify_african_min_of_2 import (
+    SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2,
+)
+from benchmarking.runs.external_algorithms.custom_dataclasses import (
+    ExternalAlgorithmScenarioAttribute,
+    ExternalAlgorithmDevelopmentSkill,
+    ExternalAlgorithmYearCoding,
+    ExternalAlgorithmInitialTeamProvider,
+)
+from benchmarking.runs.external_algorithms.utils import (
+    calculate_students_utilities,
+    calculate_student_utility,
+)
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.insight import Insight
 from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
@@ -141,7 +158,10 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                         ExternalAlgorithmScenarioAttribute.COMMUNICATION_SKILL.value: [
                             (ExternalAlgorithmDevelopmentSkill.NO_SKILL, 0.25),
                             (ExternalAlgorithmDevelopmentSkill.BASIC_SKILL, 0.25),
-                            (ExternalAlgorithmDevelopmentSkill.INTERMEDIATE_SKILL, 0.25),
+                            (
+                                ExternalAlgorithmDevelopmentSkill.INTERMEDIATE_SKILL,
+                                0.25,
+                            ),
                             (ExternalAlgorithmDevelopmentSkill.ADVANCED_SKILL, 0.25),
                         ],
                     },
@@ -152,7 +172,9 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                 settings=SimulationSettings(
                     scenario=SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2(),
                     student_provider=student_provider,
-                    initial_teams_provider=ExternalAlgorithmInitialTeamProvider(num_teams=number_of_teams),
+                    initial_teams_provider=ExternalAlgorithmInitialTeamProvider(
+                        num_teams=number_of_teams
+                    ),
                     cache_key=f"external_algorithms/satisfy_project_requirement_and_diversify_female_min_2_and_diversify_african_min_2_{number_of_teams}",
                 ),
                 algorithm_set={
@@ -208,9 +230,7 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                 insight_set: Dict[str, Dict[str, List[float]]] = Insight.get_output_set(
                     artifact=artifact, metrics=list(metrics.values())
                 )
-                ef1 = Insight.average_metric(
-                    insight_set, "EnvyFreenessUpToOneItem"
-                )
+                ef1 = Insight.average_metric(insight_set, "EnvyFreenessUpToOneItem")
                 prop1 = Insight.average_metric(
                     insight_set, "ProportionalityUpToOneItem"
                 )
@@ -229,11 +249,17 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                 average_runtimes = Insight.average_metric(
                     insight_set, Insight.KEY_RUNTIMES
                 )
-                num_teams = Insight.average_metric(
-                    insight_set, "NumberOfTeams"
-                )
-                metric_values = [average_runtimes, ef1, prop1, avg_solo_status, project_requirement_coverage, gender_cosine_difference, race_cosine_difference, num_teams]
-
+                num_teams = Insight.average_metric(insight_set, "NumberOfTeams")
+                metric_values = [
+                    average_runtimes,
+                    ef1,
+                    prop1,
+                    avg_solo_status,
+                    project_requirement_coverage,
+                    gender_cosine_difference,
+                    race_cosine_difference,
+                    num_teams,
+                ]
 
                 for i, metric in enumerate(metric_values):
                     for name, data in metric.items():
@@ -333,5 +359,8 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                 )
             )
 
+
 if __name__ == "__main__":
-    typer.run(SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2().start)
+    typer.run(
+        SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2().start
+    )

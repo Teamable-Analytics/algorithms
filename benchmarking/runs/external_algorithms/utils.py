@@ -21,4 +21,6 @@ def calculate_students_utilities(students: List[Student], team: TeamShell) -> fl
     if len(students) == 0:
         return 0
 
-    return sum([calculate_student_utility(student, team) for student in students]) / len(students)
+    return sum(
+        [calculate_student_utility(student, team) for student in students]
+    ) / len(students)

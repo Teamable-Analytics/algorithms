@@ -7,8 +7,10 @@ from api.dataclasses.enums import AttributeValueEnum, RequirementOperator, Gpa
 from api.dataclasses.project import Project, ProjectRequirement
 from api.dataclasses.team import TeamShell
 from benchmarking.data.interfaces import InitialTeamsProvider
-from benchmarking.data.simulated_data.mock_initial_teams_provider import MockInitialTeamsProvider, \
-    MockInitialTeamsProviderSettings
+from benchmarking.data.simulated_data.mock_initial_teams_provider import (
+    MockInitialTeamsProvider,
+    MockInitialTeamsProviderSettings,
+)
 
 
 class ExternalAlgorithmScenarioAttribute(Enum):
