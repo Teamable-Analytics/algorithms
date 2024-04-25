@@ -33,6 +33,8 @@ from benchmarking.evaluations.metrics.num_teams import NumberOfTeams
 from benchmarking.evaluations.metrics.proportionality_up_to_one_item import (
     ProportionalityUpToOneItem,
 )
+from benchmarking.evaluations.scenarios.satisfy_project_requirements_and_concentrate_gender_and_concentrate_race import \
+    SatisfyProjectRequirementsAndConcentrateGenderAndConcentrateRace
 from benchmarking.evaluations.scenarios.satisfy_project_requirements_and_diversify_female_min_of_2_and_diversify_african_min_of_2 import (
     SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2,
 )
@@ -53,7 +55,7 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run):
-    def start(self, num_trials: int = 1, generate_graphs: bool = False):
+    def start(self, num_trials: int = 1, generate_graphs: bool = True):
         CLASS_SIZES = [20, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
         MAX_TEAM_SIZE = 5
 
@@ -223,6 +225,28 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
                 },
             ).run(num_runs=num_trials)
 
+            new_simulation_set_artifact = SimulationSet(
+                settings=SimulationSettings(
+                    scenario=SatisfyProjectRequirementsAndConcentrateGenderAndConcentrateRace(),
+                    student_provider=student_provider,
+                    initial_teams_provider=ExternalAlgorithmInitialTeamProvider(
+                        num_teams=number_of_teams
+                    ),
+                    cache_key=f"external_algorithms/satisfy_project_requirement_and_diversify_female_min_2_and_diversify_african_min_2_{number_of_teams}",
+                ),
+                algorithm_set={
+                    AlgorithmType.PRIORITY: [
+                        PriorityAlgorithmConfig(
+                            MAX_KEEP=30,
+                            MAX_SPREAD=100,
+                            MAX_ITERATE=250,
+                            MAX_TIME=10000000,
+                            name="Priority Algorithm Concentrate"
+                        )
+                    ]
+                },
+            ).run(num_runs=30)
+
             artifacts[class_size] = simulation_set_artifact
 
         if generate_graphs:
@@ -324,8 +348,8 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
             line_graph(
                 LineGraphMetadata(
                     x_label="Class size",
-                    y_label="Gender Inter-Homogeneity",
-                    title="Gender Inter-Homogeneity",
+                    y_label="Gender Intra-Heterogeneity",
+                    title="Gender Intra-Heterogeneity",
                     data=list(graph_gender_cosine_difference_dict.values()),
                     y_lim=GraphAxisRange(start=0, end=1),
                 )
@@ -334,8 +358,8 @@ class SatisfyProjectRequirementAndDiversifyFemaleMin2AndDiversifyAfricanMin2(Run
             line_graph(
                 LineGraphMetadata(
                     x_label="Class size",
-                    y_label="Race Inter-Homogeneity",
-                    title="Race Inter-Homogeneity",
+                    y_label="Race Intra-Heterogeneity",
+                    title="Race Intra-Heterogeneity",
                     data=list(graph_race_cosine_difference_dict.values()),
                     y_lim=GraphAxisRange(start=0, end=1),
                 )
