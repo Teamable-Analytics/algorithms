@@ -11,7 +11,7 @@ class AverageProjectRequirementsCoverage(TeamSetMetric):
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(theoretical_range=(0, 1), *args, **kwargs)
 
     def calculate(self, team_set: TeamSet) -> float:
         if not team_set.teams or len(team_set.teams) == 0:
