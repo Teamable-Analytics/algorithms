@@ -332,7 +332,7 @@ class SocialPreferencePriority(Priority):
     def parse_json(data: Dict) -> "SocialPreferencePriority":
         return SocialPreferencePriority(
             max_num_friends=data["max_num_friends"],
-            max_num_enemies=data["max_num_enemies"]
+            max_num_enemies=data["max_num_enemies"],
         )
 
 

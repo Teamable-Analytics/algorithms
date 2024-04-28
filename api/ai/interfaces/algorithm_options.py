@@ -137,7 +137,6 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
 
     @staticmethod
     def parse_json(json: Dict[str, Any]) -> "PriorityAlgorithmOptions":
-        priorities = json.get("priorities", [])
         requirement_weight = json.get("requirement_weight", 0)
         social_weight = json.get("social_weight", 0)
         diversity_weight = json.get("diversity_weight", 0)
@@ -149,12 +148,13 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
         attributes_to_diversify = json.get("attributes_to_diversify", [])
         attributes_to_concentrate = json.get("attributes_to_concentrate", [])
         max_project_preferences = json.get("max_project_preferences")
+        priorities = [
+            get_priority_from_type(PriorityType(p.get("priority_type"))).parse_json(p)
+            for p in json.get("priorities", [])
+        ]
 
         return PriorityAlgorithmOptions(
-            priorities=[
-                get_priority_from_type(PriorityType(p.get("priority_type"))).parse_json(p)
-                for p in priorities
-            ],
+            priorities=priorities,
             requirement_weight=requirement_weight,
             social_weight=social_weight,
             diversity_weight=diversity_weight,
