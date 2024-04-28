@@ -4,7 +4,7 @@ from bcrypt import hashpw, gensalt, checkpw
 from pathlib import Path
 import dotenv
 
-env_file = next((Path(__file__).parent.parent / "env").glob("*.env"))
+env_file = next((Path(__file__).parent.parent / "env").glob(".env*"))
 dotenv.load_dotenv(dotenv_path=env_file)
 
 

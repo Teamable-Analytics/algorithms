@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Dict
 
-from schema import And, Or, Schema
+from schema import And, Or, Schema, Optional as SchemaOptional
 
 from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.ai.priority_algorithm.priority.utils import (
@@ -136,6 +136,16 @@ class TokenizationPriority(Priority):
             }
         )
 
+    @staticmethod
+    def parse_json(data: Dict) -> "TokenizationPriority":
+        return TokenizationPriority(
+            attribute_id=data["attribute_id"],
+            strategy=DiversifyType(data["strategy"]),
+            direction=TokenizationConstraintDirection(data["direction"]),
+            threshold=data["threshold"],
+            value=data["value"],
+        )
+
 
 @dataclass
 class DiversityPriority(Priority):
@@ -190,7 +200,16 @@ class DiversityPriority(Priority):
                 "strategy": And(
                     str, Or(*[strategy.value for strategy in DiversifyType])
                 ),
+                SchemaOptional("max_num_choices"): int,
             }
+        )
+
+    @staticmethod
+    def parse_json(data: Dict) -> "DiversityPriority":
+        return DiversityPriority(
+            attribute_id=data["attribute_id"],
+            strategy=DiversifyType(data["strategy"]),
+            max_num_choices=data.get("max_num_choices"),
         )
 
 
@@ -220,6 +239,10 @@ class RequirementPriority(Priority):
                 ),
             }
         )
+
+    @staticmethod
+    def parse_json(data: Dict) -> "RequirementPriority":
+        return RequirementPriority()
 
 
 @dataclass
@@ -253,6 +276,13 @@ class ProjectPreferencePriority(Priority):
                 ),
                 "max_project_preferences": int,
             }
+        )
+
+    @staticmethod
+    def parse_json(data: Dict) -> "ProjectPreferencePriority":
+        return ProjectPreferencePriority(
+            direction=PreferenceDirection(data["direction"]),
+            max_project_preferences=data["max_project_preferences"],
         )
 
 
@@ -296,6 +326,13 @@ class SocialPreferencePriority(Priority):
                 "max_num_friends": int,
                 "max_num_enemies": int,
             }
+        )
+
+    @staticmethod
+    def parse_json(data: Dict) -> "SocialPreferencePriority":
+        return SocialPreferencePriority(
+            max_num_friends=data["max_num_friends"],
+            max_num_enemies=data["max_num_enemies"]
         )
 
 

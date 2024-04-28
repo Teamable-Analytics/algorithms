@@ -1,24 +1,18 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import List, Union, Dict, Any, Callable
+from typing import List, Union, Dict, Any
 
 from schema import Schema, SchemaError, Const, Or, Optional as SchemaOptional, And
 
 from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.ai.priority_algorithm.priority.priority import (
-    TokenizationPriority,
     get_priority_from_type,
 )
 from api.dataclasses.enums import (
     RelationshipBehaviour,
-    DiversifyType,
-    TokenizationConstraintDirection,
     AlgorithmType,
     PriorityType,
 )
-from api.dataclasses.project import Project
-from api.dataclasses.student import Student
-from api.dataclasses.team import TeamShell
 
 
 class AlgorithmOptions(ABC):
@@ -158,13 +152,7 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
 
         return PriorityAlgorithmOptions(
             priorities=[
-                TokenizationPriority(
-                    attribute_id=p.get("attribute_id"),
-                    strategy=DiversifyType(p.get("strategy")),
-                    direction=TokenizationConstraintDirection(p.get("direction")),
-                    threshold=p.get("threshold"),
-                    value=p.get("value"),
-                )
+                get_priority_from_type(PriorityType(p.get("priority_type"))).parse_json(p)
                 for p in priorities
             ],
             requirement_weight=requirement_weight,
@@ -217,6 +205,7 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
             raise SchemaError("Priority type not supported.")
 
         priority_cls.get_schema().validate(priority_data)
+        priority_data["priority_type"] = priority_type
         return True
 
 
