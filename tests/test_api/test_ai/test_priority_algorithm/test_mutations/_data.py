@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict
 
 from schema import Schema
 
@@ -28,6 +28,10 @@ class EvenPriority(Priority):
     def get_schema() -> Schema:
         return Schema({})
 
+    @staticmethod
+    def parse_json(data: Dict) -> "Priority":
+        return EvenPriority()
+
 
 @dataclass
 class LooseEvenPriority(Priority):
@@ -48,6 +52,10 @@ class LooseEvenPriority(Priority):
     def get_schema() -> Schema:
         return Schema({})
 
+    @staticmethod
+    def parse_json(data: Dict) -> "Priority":
+        return LooseEvenPriority()
+
 
 @dataclass
 class JohnPriority(Priority):
@@ -67,6 +75,10 @@ class JohnPriority(Priority):
     @staticmethod
     def get_schema() -> Schema:
         return Schema({})
+
+    @staticmethod
+    def parse_json(data: Dict) -> "Priority":
+        return JohnPriority()
 
 
 def get_mock_students():
