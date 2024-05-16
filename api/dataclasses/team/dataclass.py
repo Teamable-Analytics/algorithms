@@ -26,7 +26,7 @@ class TeamShell:
     def num_requirements_met_by_student(self, student: "Student") -> int:
         return sum(
             [
-                int(student.meets_requirement(requirement))
+                int(requirement.met_by_student(student))
                 for requirement in self.requirements
             ]
         )
