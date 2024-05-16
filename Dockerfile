@@ -1,4 +1,8 @@
-FROM python:3.9-slim-buster as builder
+FROM python:3.9.5-slim-buster as builder
+
+RUN apt-get update \
+    && apt-get -y install libpq-dev gcc \
+    && pip install psycopg2
 
 WORKDIR /usr/src/app
 
@@ -16,3 +20,5 @@ RUN pip install -r requirements.txt
 
 # copy project
 COPY . .
+
+ENTRYPOINT ["./entrypoint.sh"]
