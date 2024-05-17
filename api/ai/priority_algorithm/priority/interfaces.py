@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict
 
 from schema import Schema
 
@@ -25,4 +25,9 @@ class Priority(ABC):
     @staticmethod
     @abstractmethod
     def get_schema() -> Schema:
+        raise NotImplementedError
+
+    @staticmethod
+    @abstractmethod
+    def parse_json(data: Dict) -> "Priority":
         raise NotImplementedError

@@ -1,24 +1,18 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import List, Union, Dict, Any, Callable
+from typing import List, Union, Dict, Any
 
 from schema import Schema, SchemaError, Const, Or, Optional as SchemaOptional, And
 
 from api.ai.priority_algorithm.priority.interfaces import Priority
 from api.ai.priority_algorithm.priority.priority import (
-    TokenizationPriority,
     get_priority_from_type,
 )
 from api.dataclasses.enums import (
     RelationshipBehaviour,
-    DiversifyType,
-    TokenizationConstraintDirection,
     AlgorithmType,
     PriorityType,
 )
-from api.dataclasses.project import Project
-from api.dataclasses.student import Student
-from api.dataclasses.team import TeamShell
 
 
 class AlgorithmOptions(ABC):
@@ -143,7 +137,6 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
 
     @staticmethod
     def parse_json(json: Dict[str, Any]) -> "PriorityAlgorithmOptions":
-        priorities = json.get("priorities", [])
         requirement_weight = json.get("requirement_weight", 0)
         social_weight = json.get("social_weight", 0)
         diversity_weight = json.get("diversity_weight", 0)
@@ -155,18 +148,13 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
         attributes_to_diversify = json.get("attributes_to_diversify", [])
         attributes_to_concentrate = json.get("attributes_to_concentrate", [])
         max_project_preferences = json.get("max_project_preferences")
+        priorities = [
+            get_priority_from_type(PriorityType(p.get("priority_type"))).parse_json(p)
+            for p in json.get("priorities", [])
+        ]
 
         return PriorityAlgorithmOptions(
-            priorities=[
-                TokenizationPriority(
-                    attribute_id=p.get("attribute_id"),
-                    strategy=DiversifyType(p.get("strategy")),
-                    direction=TokenizationConstraintDirection(p.get("direction")),
-                    threshold=p.get("threshold"),
-                    value=p.get("value"),
-                )
-                for p in priorities
-            ],
+            priorities=priorities,
             requirement_weight=requirement_weight,
             social_weight=social_weight,
             diversity_weight=diversity_weight,
@@ -217,6 +205,7 @@ class PriorityAlgorithmOptions(WeightAlgorithmOptions):
             raise SchemaError("Priority type not supported.")
 
         priority_cls.get_schema().validate(priority_data)
+        priority_data["priority_type"] = priority_type
         return True
 
 
