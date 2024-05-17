@@ -91,7 +91,8 @@ class Insight:
         insight_output_set: Dict[str, InsightOutput], metric_name: str
     ) -> Dict[str, float]:
         return {
-            item: max(insight_output[metric_name]) for item, insight_output in insight_output_set.items()
+            item: max(insight_output[metric_name])
+            for item, insight_output in insight_output_set.items()
         }
 
     @staticmethod
@@ -99,5 +100,6 @@ class Insight:
         insight_output_set: Dict[str, InsightOutput], metric_name: str
     ) -> Dict[str, float]:
         return {
-            item: min(insight_output[metric_name]) for item, insight_output in insight_output_set.items()
+            item: min(insight_output[metric_name])
+            for item, insight_output in insight_output_set.items()
         }

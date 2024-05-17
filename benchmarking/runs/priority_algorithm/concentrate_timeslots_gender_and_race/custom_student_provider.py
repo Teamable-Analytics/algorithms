@@ -13,10 +13,10 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 
 class TimeslotCustomStudentProvider(StudentProvider):
     def __init__(
-            self,
-            class_size: int,
-            ratio_of_female_students: float = 0.2,
-            ratio_of_african_students: float = 0.15,
+        self,
+        class_size: int,
+        ratio_of_female_students: float = 0.2,
+        ratio_of_african_students: float = 0.15,
     ):
         self.class_size = class_size
         self.ratio_of_female_students = ratio_of_female_students

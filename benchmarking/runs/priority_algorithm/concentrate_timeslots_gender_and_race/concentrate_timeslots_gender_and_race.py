@@ -18,14 +18,18 @@ from benchmarking.evaluations.graphing.graph_metadata import GraphData, GraphAxi
 from benchmarking.evaluations.graphing.line_graph import line_graph
 from benchmarking.evaluations.graphing.line_graph_metadata import LineGraphMetadata
 from benchmarking.evaluations.metrics.average_solo_status import AverageSoloStatus
-from benchmarking.evaluations.metrics.average_timeslot_coverage import AverageTimeslotCoverage
+from benchmarking.evaluations.metrics.average_timeslot_coverage import (
+    AverageTimeslotCoverage,
+)
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
-from benchmarking.evaluations.scenarios.concentrate_timeslots_and_concentrate_gender_and_concentrate_race import \
-    ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRace
+from benchmarking.evaluations.scenarios.concentrate_timeslots_and_concentrate_gender_and_concentrate_race import (
+    ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRace,
+)
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.priority_algorithm.concentrate_timeslots_gender_and_race.custom_student_provider import \
-    TimeslotCustomStudentProvider
+from benchmarking.runs.priority_algorithm.concentrate_timeslots_gender_and_race.custom_student_provider import (
+    TimeslotCustomStudentProvider,
+)
 from benchmarking.simulation.goal_to_priority import goals_to_priorities
 from benchmarking.simulation.insight import InsightOutput, Insight
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
@@ -69,8 +73,15 @@ class ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRaceRun(Run):
 
     TEAM_SIZE = 4
 
-    def start(self, num_trials: int = 100, generate_graphs: bool = False, analytics: bool = False):
-        scenario = ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRace(max_num_choices=5)
+    def start(
+        self,
+        num_trials: int = 100,
+        generate_graphs: bool = False,
+        analytics: bool = False,
+    ):
+        scenario = ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRace(
+            max_num_choices=5
+        )
 
         metrics = {
             "PrioritySatisfaction": PrioritySatisfaction(
@@ -81,7 +92,10 @@ class ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRaceRun(Run):
                 available_timeslots=list(range(10)),
             ),
             "AverageCosineDifference": AverageCosineDifference(
-                attribute_filter=[ScenarioAttribute.GENDER.value, ScenarioAttribute.RACE.value],
+                attribute_filter=[
+                    ScenarioAttribute.GENDER.value,
+                    ScenarioAttribute.RACE.value,
+                ],
             ),
             "AverageSoloStatus": AverageSoloStatus(
                 minority_groups_map={
@@ -145,18 +159,18 @@ class ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRaceRun(Run):
                             os.path.join(
                                 os.path.dirname(__file__),
                                 "../../..",
-                                f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv"
+                                f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv",
                             )
                         ),
                         group_matcher_run_path=os.path.abspath(
                             os.path.join(
                                 os.path.dirname(__file__),
                                 "../../..",
-                                "api/ai/group_matcher_algorithm/group-matcher/run.py"
+                                "api/ai/group_matcher_algorithm/group-matcher/run.py",
                             )
-                        )
+                        ),
                     ),
-                ]
+                ],
             }
 
             simulation_sets[class_size] = SimulationSet(
@@ -164,15 +178,19 @@ class ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRaceRun(Run):
                 algorithm_set=algorithm_set,
             ).run(num_runs=30)
 
-            simulation_sets[class_size].update(SimulationSet(
-                settings=simulation_settings_2,
-                algorithm_set=algorithm_set,
-            ).run(num_runs=35))
+            simulation_sets[class_size].update(
+                SimulationSet(
+                    settings=simulation_settings_2,
+                    algorithm_set=algorithm_set,
+                ).run(num_runs=35)
+            )
 
-            simulation_sets[class_size].update(SimulationSet(
-                settings=simulation_settings_3,
-                algorithm_set=algorithm_set,
-            ).run(num_runs=35))
+            simulation_sets[class_size].update(
+                SimulationSet(
+                    settings=simulation_settings_3,
+                    algorithm_set=algorithm_set,
+                ).run(num_runs=35)
+            )
 
         if generate_graphs:
             graph_data: Dict[str, Dict[str, GraphData]] = {}
@@ -204,7 +222,9 @@ class ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRaceRun(Run):
                             graph_data[metric_name][new_algorithm_name].x_data.append(
                                 class_size
                             )
-                            graph_data[metric_name][new_algorithm_name].y_data.append(value)
+                            graph_data[metric_name][new_algorithm_name].y_data.append(
+                                value
+                            )
 
             for metric_name in metrics.keys():
                 y_label = self.better_metric_name(metrics[metric_name].name)
@@ -237,7 +257,9 @@ class ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRaceRun(Run):
                 _max = Insight.metric_max(insight_set, metrics[metric].name)
 
                 for algorithm_name in avg.keys():
-                    analytics_map[class_size][self.better_algorithm_name(algorithm_name)] = {
+                    analytics_map[class_size][
+                        self.better_algorithm_name(algorithm_name)
+                    ] = {
                         "Average": avg[algorithm_name],
                         "Standard Deviation": stdev[algorithm_name],
                         "Minimum": _min[algorithm_name],
@@ -246,19 +268,30 @@ class ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRaceRun(Run):
 
             # Make a multi-header table with 1st header as Algorithm name, 2nd header is the avg, stdev, min, max in pandas
             columns = pd.MultiIndex(
-                levels=[analytics_map[class_sizes[0]].keys(), ["Average", "Standard Deviation", "Minimum", "Maximum"]],
-                codes=[[0, 0, 0, 0, 1, 1, 1, 1], [0, 1, 2, 3, 0, 1, 2, 3]])
+                levels=[
+                    analytics_map[class_sizes[0]].keys(),
+                    ["Average", "Standard Deviation", "Minimum", "Maximum"],
+                ],
+                codes=[[0, 0, 0, 0, 1, 1, 1, 1], [0, 1, 2, 3, 0, 1, 2, 3]],
+            )
             df = pd.DataFrame(index=list(analytics_map.keys()), columns=columns)
             # Fill the table
             for class_size in class_sizes:
                 for algorithm_name in analytics_map[class_size].keys():
                     for metric_name in analytics_map[class_size][algorithm_name].keys():
-                        df.loc[class_size, (algorithm_name, metric_name)] = analytics_map[class_size][algorithm_name][metric_name]
+                        df.loc[
+                            class_size, (algorithm_name, metric_name)
+                        ] = analytics_map[class_size][algorithm_name][metric_name]
 
             # Print the table to
-            df.to_(os.path.abspath(os.path.join(os.path.dirname(__file__), "concentrate_timeslots_gender_and_race.csv")))
-
-
+            df.to_(
+                os.path.abspath(
+                    os.path.join(
+                        os.path.dirname(__file__),
+                        "concentrate_timeslots_gender_and_race.csv",
+                    )
+                )
+            )
 
 
 if __name__ == "__main__":
