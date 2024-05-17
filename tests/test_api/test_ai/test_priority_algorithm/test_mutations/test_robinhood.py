@@ -35,6 +35,10 @@ class StudentListPriority(Priority):
     def get_schema() -> Schema:
         return Schema({})
 
+    @staticmethod
+    def parse_json(data: Dict) -> "Priority":
+        return StudentListPriority([])
+
 
 def equal_priority_team_sets(a: PriorityTeamSet, b: PriorityTeamSet) -> bool:
     """
