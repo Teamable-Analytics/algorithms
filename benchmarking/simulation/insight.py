@@ -85,3 +85,19 @@ class Insight:
             insight_output_set[item] = insight
 
         return insight_output_set
+
+    @staticmethod
+    def metric_max(
+        insight_output_set: Dict[str, InsightOutput], metric_name: str
+    ) -> Dict[str, float]:
+        return {
+            item: max(insight_output[metric_name]) for item, insight_output in insight_output_set.items()
+        }
+
+    @staticmethod
+    def metric_min(
+        insight_output_set: Dict[str, InsightOutput], metric_name: str
+    ) -> Dict[str, float]:
+        return {
+            item: min(insight_output[metric_name]) for item, insight_output in insight_output_set.items()
+        }
