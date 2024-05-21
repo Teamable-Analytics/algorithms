@@ -67,6 +67,7 @@ class SatisfyProjectsAndDiversifyFemaleMinOf2AndDiversifyRaceMinOf2Run(Run):
             "AlgorithmType.PRIORITY-default": "Priority",
             "AlgorithmType.RANDOM-default": "Random",
             "AlgorithmType.GROUP_MATCHER-default": "Group Matcher",
+            "AlgorithmType.PRIORITY-SmallerParam": "Priority (smaller parameters)",
         }
 
         return algorithm_name_dict.get(algorithm_name, algorithm_name)
@@ -84,7 +85,7 @@ class SatisfyProjectsAndDiversifyFemaleMinOf2AndDiversifyRaceMinOf2Run(Run):
         return metric_name_dict.get(metric_name, metric_name)
 
     def start(
-            self, num_trials: int = 100, generate_graphs: bool = False, analysis: bool = False
+            self, num_trials: int = 100, generate_graphs: bool = True, analysis: bool = False
     ):
         scenario = (
             SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2(
@@ -283,13 +284,6 @@ class SatisfyProjectsAndDiversifyFemaleMinOf2AndDiversifyRaceMinOf2Run(Run):
                             MAX_SPREAD=100,
                             MAX_ITERATE=250,
                         ),
-                        PriorityAlgorithmConfig(
-                            MAX_TIME=10000000,
-                            MAX_KEEP=15,
-                            MAX_SPREAD=30,
-                            MAX_ITERATE=30,
-                            name='SmallerParam'
-                        ),
                     ],
                     AlgorithmType.RANDOM: [
                         RandomAlgorithmConfig(),
@@ -314,6 +308,22 @@ class SatisfyProjectsAndDiversifyFemaleMinOf2AndDiversifyRaceMinOf2Run(Run):
                     ],
                 },
             ).run(num_runs=100)
+
+            deterministic_artifacts.update(
+                SimulationSet(
+                    settings=simulation_settings,
+                    algorithm_set={
+                    AlgorithmType.PRIORITY: [
+                        PriorityAlgorithmConfig(
+                            MAX_TIME=10000000,
+                            MAX_KEEP=15,
+                            MAX_SPREAD=30,
+                            MAX_ITERATE=30,
+                            name='SmallerParam'
+                        ),
+                    ],
+                }).run(num_runs=100)
+            )
 
             simulation_sets[class_size] = deterministic_artifacts
 
