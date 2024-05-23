@@ -12,7 +12,7 @@ from benchmarking.evaluations.goals import WeightGoal, DiversityGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 
 
-class ConcentrateTimeslotAndDiversifyGenderMin2Female(Scenario):
+class ConcentrateTimeslotAndDiversifyGenderMin2FemaleAndDiversifyRaceMin2African(Scenario):
     def __init__(
         self,
         max_num_choices: int,
