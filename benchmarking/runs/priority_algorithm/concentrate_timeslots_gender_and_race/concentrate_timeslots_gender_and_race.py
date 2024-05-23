@@ -116,21 +116,21 @@ class ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRaceRun(Run):
                 num_teams=class_size // self.TEAM_SIZE,
                 student_provider=student_provider,
                 scenario=scenario,
-                cache_key=f"timeslot_stuff/concentrate_timeslots_gender_race/part_1/class_size_{class_size}",
+                cache_key=f"timeslot_runs/concentrate_timeslots_gender_race/part_1/class_size_{class_size}",
             )
 
             simulation_settings_2 = SimulationSettings(
                 num_teams=class_size // self.TEAM_SIZE,
                 student_provider=student_provider,
                 scenario=scenario,
-                cache_key=f"timeslot_stuff/concentrate_timeslots_gender_race/part_2/class_size_{class_size}",
+                cache_key=f"timeslot_runs/concentrate_timeslots_gender_race/part_2/class_size_{class_size}",
             )
 
             simulation_settings_3 = SimulationSettings(
                 num_teams=class_size // self.TEAM_SIZE,
                 student_provider=student_provider,
                 scenario=scenario,
-                cache_key=f"timeslot_stuff/concentrate_timeslots_gender_race/part_3/class_size_{class_size}",
+                cache_key=f"timeslot_runs/concentrate_timeslots_gender_race/part_3/class_size_{class_size}",
             )
 
             algorithm_set = {
