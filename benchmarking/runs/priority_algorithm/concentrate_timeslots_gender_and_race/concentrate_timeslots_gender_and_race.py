@@ -76,7 +76,7 @@ class ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRaceRun(Run):
     def start(
         self,
         num_trials: int = 100,
-        generate_graphs: bool = False,
+        generate_graphs: bool = True,
         analytics: bool = False,
     ):
         scenario = ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRace(
@@ -233,8 +233,9 @@ class ConcentrateTimeslotsAndConcentrateGenderAndConcentrateRaceRun(Run):
                     LineGraphMetadata(
                         x_label="Class Size",
                         y_label=y_label,
-                        title=f"Mock Data Scenario: Concentrate Timeslot Availability,\nand Concentrate Gender and Race\n~ {y_label} vs Class Size",
+                        # title=f"Mock Data Scenario: Concentrate Timeslot Availability,\nand Concentrate Gender and Race\n~ {y_label} vs Class Size",
                         data=list(graph_data[metric_name].values()),
+                        title=None,
                         y_lim=y_lim,
                     ),
                 )
