@@ -37,15 +37,12 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class Runtimes(Run):
-    def start(self, num_trials: int = 1, generate_graphs: bool = True):
-        class_sizes = [120, 1000]
+    def start(self, num_trials: int = 100, generate_graphs: bool = True):
+        class_sizes = [100]
         team_size = 4
 
         scenario = OneDiversityScenario(value_of_female=Gender.FEMALE.value)
-        parameter_configs = {
-            "lower": [15, 30, 30],
-            "higher": [30, 100, 250]
-        }
+        parameter_configs = {"lower": [15, 30, 30], "higher": [30, 100, 250]}
 
         for config_name, config in parameter_configs.items():
             for class_size in class_sizes:
@@ -72,7 +69,7 @@ class Runtimes(Run):
                         num_teams=class_size // team_size,
                         scenario=scenario,
                         student_provider=student_provider,
-                        cache_key=f"priority_algorithm/default_parameters/sanity_check/{config_name}/class_size_{class_size}",
+                        cache_key=f"priority_algorithm/default_parameters/updated_runtimes/{config_name}/class_size_{class_size}",
                     ),
                     algorithm_set={
                         AlgorithmType.PRIORITY: [
@@ -99,9 +96,7 @@ class Runtimes(Run):
                 insight_output = Insight.get_output_set(
                     artifact, list(metrics.values())
                 )
-                print(
-                    f"{config_name} configuration with {class_size} students"
-                )
+                print(f"{config_name} configuration with {class_size} students")
                 print(
                     f"Runtime: {Insight.average_metric(insight_output, Insight.KEY_RUNTIMES)}"
                 )
