@@ -37,15 +37,15 @@ from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class Runtimes(Run):
-    def start(self, num_trials: int = 100, generate_graphs: bool = False):
-        class_sizes = [120, 1000]
+    def start(self, num_trials: int = 1, generate_graphs: bool = True):
+        class_sizes = [20, 100, 240, 500, 1000]
         team_size = 4
 
         scenarios = {
             "diversity": OneDiversityScenario(value_of_female=Gender.FEMALE.value),
-            "social": IncludeSocialFriends(max_num_friends=3, max_num_enemies=0),
+            # "social": IncludeSocialFriends(max_num_friends=3, max_num_enemies=0),
         }
-        multipliers = [1, 2]
+        multipliers = [1]
 
         for multiplier in multipliers:
             for class_size in class_sizes:
@@ -77,7 +77,8 @@ class Runtimes(Run):
                             num_teams=class_size // team_size,
                             scenario=scenario,
                             student_provider=student_provider,
-                            cache_key=f"priority_algorithm/default_parameters/runtimes/{scenario_name}/class_size_{class_size}",
+                            # cache_key=f"priority_algorithm/default_parameters/runtimes/{scenario_name}/class_size_{class_size}",
+                            cache_key=f"priority_algorithm/default_parameters/new_runtimes/{scenario_name}/class_size_{class_size}",
                         ),
                         algorithm_set={
                             AlgorithmType.PRIORITY: [
