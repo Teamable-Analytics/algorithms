@@ -85,7 +85,7 @@ class SatisfyProjectsAndDiversifyFemaleMinOf2AndDiversifyRaceMinOf2Run(Run):
         return metric_name_dict.get(metric_name, metric_name)
 
     def start(
-        self, num_trials: int = 1, generate_graphs: bool = False, analysis: bool = False
+        self, num_trials: int = 1, generate_graphs: bool = True, analysis: bool = True
     ):
         scenario = (
             SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2(
