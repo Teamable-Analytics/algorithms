@@ -252,7 +252,7 @@ class SatisfyProjectsAndDiversifyFemaleMinOf2AndDiversifyRaceMinOf2Run(Run):
 
         for class_size in class_sizes:
             print("CLASS SIZE /", class_size)
-            cache_key = f"algorithms_comparison/satisfy_projects_and_diversify_female_min_of_2_and_diversify_race_min_of_2/sanity_check/class_size_{class_size}"
+            cache_key = f"algorithms_comparison/sanity_check/class_size_{class_size}"
 
             initial_team_provider = RealisticMockInitialTeamsProvider(
                 num_teams=class_size // team_size
