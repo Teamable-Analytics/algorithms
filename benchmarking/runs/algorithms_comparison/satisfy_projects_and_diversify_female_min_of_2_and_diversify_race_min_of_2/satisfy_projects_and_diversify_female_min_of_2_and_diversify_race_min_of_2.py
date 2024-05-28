@@ -85,7 +85,7 @@ class SatisfyProjectsAndDiversifyFemaleMinOf2AndDiversifyRaceMinOf2Run(Run):
         return metric_name_dict.get(metric_name, metric_name)
 
     def start(
-            self, num_trials: int = 100, generate_graphs: bool = True, analysis: bool = False
+        self, num_trials: int = 1, generate_graphs: bool = False, analysis: bool = False
     ):
         scenario = (
             SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2(
@@ -245,14 +245,14 @@ class SatisfyProjectsAndDiversifyFemaleMinOf2AndDiversifyRaceMinOf2Run(Run):
             # Solo status
         }
 
-        class_sizes = [20, 100, 240, 500, 1000]
+        class_sizes = [100, 1000]
         team_size = 4
 
         simulation_sets: Dict[int, SimulationSetArtifact] = {}
 
         for class_size in class_sizes:
             print("CLASS SIZE /", class_size)
-            cache_key = f"algorithms_comparison/satisfy_projects_and_diversify_female_min_of_2_and_diversify_race_min_of_2/class_size_{class_size}"
+            cache_key = f"algorithms_comparison/satisfy_projects_and_diversify_female_min_of_2_and_diversify_race_min_of_2/sanity_check/class_size_{class_size}"
 
             initial_team_provider = RealisticMockInitialTeamsProvider(
                 num_teams=class_size // team_size
@@ -269,60 +269,33 @@ class SatisfyProjectsAndDiversifyFemaleMinOf2AndDiversifyRaceMinOf2Run(Run):
             deterministic_artifacts = SimulationSet(
                 settings=simulation_settings,
                 algorithm_set={
-                    AlgorithmType.DRR: [
-                        DoubleRoundRobinAlgorithmConfig(
-                            utility_function=additive_utility_function
-                        ),
-                    ],
-                    AlgorithmType.WEIGHT: [
-                        WeightAlgorithmConfig(),
-                    ],
                     AlgorithmType.PRIORITY: [
                         PriorityAlgorithmConfig(
                             MAX_TIME=10000000,
                             MAX_KEEP=30,
                             MAX_SPREAD=100,
                             MAX_ITERATE=250,
-                        ),
-                    ],
-                    AlgorithmType.RANDOM: [
-                        RandomAlgorithmConfig(),
-                    ],
-                    AlgorithmType.GROUP_MATCHER: [
-                        GroupMatcherAlgorithmConfig(
-                            csv_output_path=os.path.abspath(
-                                os.path.join(
-                                    os.path.dirname(__file__),
-                                    "../../../..",
-                                    f"api/ai/group_matcher_algorithm/group-matcher/inpData/{class_size}-generated.csv",
-                                )
-                            ),
-                            group_matcher_run_path=os.path.abspath(
-                                os.path.join(
-                                    os.path.dirname(__file__),
-                                    "../../../..",
-                                    "api/ai/group_matcher_algorithm/group-matcher/run.py",
-                                )
-                            ),
+                            name="LargerParams",
                         ),
                     ],
                 },
-            ).run(num_runs=100)
+            ).run(num_runs=num_trials)
 
             deterministic_artifacts.update(
                 SimulationSet(
                     settings=simulation_settings,
                     algorithm_set={
-                    AlgorithmType.PRIORITY: [
-                        PriorityAlgorithmConfig(
-                            MAX_TIME=10000000,
-                            MAX_KEEP=15,
-                            MAX_SPREAD=30,
-                            MAX_ITERATE=30,
-                            name='SmallerParam'
-                        ),
-                    ],
-                }).run(num_runs=100)
+                        AlgorithmType.PRIORITY: [
+                            PriorityAlgorithmConfig(
+                                MAX_TIME=10000000,
+                                MAX_KEEP=15,
+                                MAX_SPREAD=30,
+                                MAX_ITERATE=30,
+                                name="SmallerParam",
+                            ),
+                        ],
+                    },
+                ).run(num_runs=num_trials)
             )
 
             simulation_sets[class_size] = deterministic_artifacts
