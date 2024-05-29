@@ -85,7 +85,7 @@ class SatisfyProjectsAndDiversifyFemaleMinOf2AndDiversifyRaceMinOf2Run(Run):
         return metric_name_dict.get(metric_name, metric_name)
 
     def start(
-        self, num_trials: int = 1, generate_graphs: bool = False, analysis: bool = False
+        self, num_trials: int = 1, generate_graphs: bool = True, analysis: bool = True
     ):
         scenario = (
             SatisfyProjectRequirementsAndDiversifyFemaleMinOf2AndDiversifyAfricanMinOf2(
@@ -252,7 +252,7 @@ class SatisfyProjectsAndDiversifyFemaleMinOf2AndDiversifyRaceMinOf2Run(Run):
 
         for class_size in class_sizes:
             print("CLASS SIZE /", class_size)
-            cache_key = f"algorithms_comparison/satisfy_projects_and_diversify_female_min_of_2_and_diversify_race_min_of_2/sanity_check/class_size_{class_size}"
+            cache_key = f"algorithms_comparison/sanity_check/class_size_{class_size}"
 
             initial_team_provider = RealisticMockInitialTeamsProvider(
                 num_teams=class_size // team_size
