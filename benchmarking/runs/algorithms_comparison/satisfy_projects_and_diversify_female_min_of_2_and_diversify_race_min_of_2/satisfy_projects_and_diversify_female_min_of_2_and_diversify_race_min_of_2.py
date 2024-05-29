@@ -245,7 +245,7 @@ class SatisfyProjectsAndDiversifyFemaleMinOf2AndDiversifyRaceMinOf2Run(Run):
             # Solo status
         }
 
-        class_sizes = [100, 1000]
+        class_sizes = [20, 100, 240, 500, 1000]
         team_size = 4
 
         simulation_sets: Dict[int, SimulationSetArtifact] = {}
