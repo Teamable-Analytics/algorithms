@@ -36,7 +36,7 @@ class DataProvider(StudentProvider):
         if not csv_files:
             raise FileNotFoundError("No CSV files found in the directory")
 
-        # This code lets the user select a file so that they can choose which file to use
+        # User selects a file so that they can choose which file to use
         selected_file = input(f"Select a file from {csv_files}: ")
         csv_file_path = path.join(folder_path, selected_file)
         

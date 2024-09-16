@@ -1,7 +1,6 @@
+import csv
 from enum import Enum
 from os import path
-
-import csv
 from typing import Dict
 
 import numpy as np
@@ -9,7 +8,6 @@ import numpy as np
 from api.models.enums import ScenarioAttribute
 from api.models.student import Student
 from benchmarking.data.interfaces import StudentProvider
-
 
 ATTRIBUTE_VALUE = 0
 
@@ -155,3 +153,9 @@ class BowensDataProvider2(StudentProvider):
         if len(self._sid_map) == 0:
             self.get()
         return self._sid_map[sid]
+
+if __name__ == "__main__":
+    print("test")
+    provider = BowensDataProvider()
+    students = provider.get()
+    print(students)
