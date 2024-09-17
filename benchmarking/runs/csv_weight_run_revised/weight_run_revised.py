@@ -1,34 +1,30 @@
+import csv
+import os
 from math import ceil
+from os import path
 from typing import List
 
 import typer
-import csv
 
-from api.ai.interfaces.algorithm_config import (
-    PriorityAlgorithmConfig,
-)
+from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.models.enums import AlgorithmType, DiversifyType, ScenarioAttribute
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
-from benchmarking.evaluations.interfaces import Scenario, Goal
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
+from benchmarking.evaluations.interfaces import Goal, Scenario
+from benchmarking.evaluations.metrics.cosine_similarity import \
+    AverageCosineDifference
+from benchmarking.runs.csv_weight_run_revised.attributes import Attributes
+from benchmarking.runs.csv_weight_run_revised.data_provider_revised import \
+    DataProvider
 from benchmarking.runs.interfaces import Run
-from benchmarking.runs.weight_run_for_bowen.bowens_data_provider import (
-    Attributes,
-    BowensDataProvider2,
-)
-
-from benchmarking.runs.csv_weight_run_revised.data_provider_revised import (
-    Attributes,
-    DataProvider,
-)
 from benchmarking.simulation.insight import Insight
-from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
+from benchmarking.simulation.simulation_set import (SimulationSet,
+                                                    SimulationSetArtifact)
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
 class WeightRun(Run):
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
-        scenario = BowenScenario2()
+        scenario = DefaultScenario()
 
         metrics = [
             AverageCosineDifference(
@@ -40,12 +36,13 @@ class WeightRun(Run):
                 attribute_filter=[ScenarioAttribute.TIMESLOT_AVAILABILITY.value],
             ),
         ]
-
-        student_provider = BowensDataProvider2()
-
+        
+        student_provider = DataProvider()
+        print("student provider: ",student_provider.num_students)
+        team_size = 4 # enter the desired team size
         artifact: SimulationSetArtifact = SimulationSet(
             settings=SimulationSettings(
-                num_teams=ceil(student_provider.num_students / 4),
+                num_teams=ceil(student_provider.num_students / team_size),
                 scenario=scenario,
                 student_provider=student_provider,
                 cache_key=f"weight_run_for_bowen/weight_run_2/",
@@ -53,10 +50,10 @@ class WeightRun(Run):
             algorithm_set={
                 AlgorithmType.PRIORITY: [
                     PriorityAlgorithmConfig(
-                        MAX_KEEP=15,
-                        MAX_SPREAD=30,
-                        MAX_ITERATE=30,
-                        MAX_TIME=100000,
+                        MAX_KEEP=15, # max num of solutions the algorithm is allowed to keep
+                        MAX_SPREAD=30, # max num of of team sets genereated by mutation at each step
+                        MAX_ITERATE=30, # max num of iterations the algorithm is allowed to run
+                        MAX_TIME=100000, # max time is seconds to algorithm can run for.
                     ),
                 ]
             },
@@ -65,7 +62,6 @@ class WeightRun(Run):
         team_set = list(artifact.values())[0][0][0]
 
         insight_output_set = Insight.get_output_set(artifact, metrics)
-        print(insight_output_set)
 
         data = [["ResponseId", "Q8", "Q4", "Q5", "zPos", "TeamId", "TeamSizeViolation"]]
 
@@ -121,14 +117,24 @@ class WeightRun(Run):
                 )
 
                 data.append([responseId, q8, q4, q5, zPos, team.id, teamSizeViolation])
+        # Directory where the new CSV file will be written
+        output_dir = path.join(path.dirname(__file__), "new_csv")
 
-        with open("result.csv", "w+", newline="") as f:
+        # Ensure the directory exists, if not, create it
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        # Path to the new CSV file in the 'new_csv' folder
+        output_file = os.path.join(output_dir, "result.csv")
+
+        # Writing the CSV data into the file in the 'new_csv' folder
+        with open(output_file, "w+", newline="") as f:
             writer = csv.writer(f)
             for row in data:
                 writer.writerow(row)
 
 
-class BowenScenario2(Scenario):
+class DefaultScenario(Scenario):
     @property
     def name(self) -> str:
         return "Diversify on score and concentrate on timeslot"
@@ -136,14 +142,17 @@ class BowenScenario2(Scenario):
     @property
     def goals(self) -> List[Goal]:
         return [
+            # Concentrate on student timeslot availability
             DiversityGoal(
                 DiversifyType.CONCENTRATE,
                 ScenarioAttribute.TIMESLOT_AVAILABILITY.value,
             ),
+            # Diversify students on tutor preference
             DiversityGoal(
                 DiversifyType.DIVERSIFY,
                 Attributes.TUTOR_PREFERENCE.value,
             ),
+            # Diversify students on score
             DiversityGoal(
                 DiversifyType.DIVERSIFY,
                 Attributes.SCORE.value,

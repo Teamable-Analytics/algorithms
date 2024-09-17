@@ -16,3 +16,6 @@ env/.env*
 
 # Nginx
 logs/nginx/
+
+# csv files
+*.csv
