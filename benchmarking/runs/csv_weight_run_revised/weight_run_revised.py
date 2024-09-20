@@ -10,15 +10,12 @@ from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.models.enums import AlgorithmType, DiversifyType, ScenarioAttribute
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Goal, Scenario
-from benchmarking.evaluations.metrics.cosine_similarity import \
-    AverageCosineDifference
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.runs.csv_weight_run_revised.attributes import Attributes
-from benchmarking.runs.csv_weight_run_revised.data_provider_revised import \
-    DataProvider
+from benchmarking.runs.csv_weight_run_revised.data_provider_revised import DataProvider
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.insight import Insight
-from benchmarking.simulation.simulation_set import (SimulationSet,
-                                                    SimulationSetArtifact)
+from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
@@ -39,7 +36,7 @@ class WeightRun(Run):
         ]
         student_provider = DataProvider()
         print(student_provider)
-        team_size = 4 # enter the desired team size
+        team_size = 4  # enter the desired team size
         artifact: SimulationSetArtifact = SimulationSet(
             settings=SimulationSettings(
                 num_teams=ceil(student_provider.num_students / team_size),
@@ -51,10 +48,10 @@ class WeightRun(Run):
             algorithm_set={
                 AlgorithmType.PRIORITY: [
                     PriorityAlgorithmConfig(
-                        MAX_KEEP=15, # max num of solutions the algorithm is allowed to keep
-                        MAX_SPREAD=30, # max num of team sets genereated by mutation at each step
-                        MAX_ITERATE=30, # max num of iterations the algorithm is allowed to run
-                        MAX_TIME=100000, # max time in seconds the algorithm can run for.
+                        MAX_KEEP=15,  # max num of solutions the algorithm is allowed to keep
+                        MAX_SPREAD=30,  # max num of team sets genereated by mutation at each step
+                        MAX_ITERATE=30,  # max num of iterations the algorithm is allowed to run
+                        MAX_TIME=100000,  # max time in seconds the algorithm can run for.
                     ),
                 ]
             },
@@ -63,27 +60,30 @@ class WeightRun(Run):
 
         insight_output_set = Insight.get_output_set(artifact, metrics)
         print(insight_output_set)
-        
+
         # Enter the data fields from the provided CSV file
-        data_fields = [["ResponseId", "Q8", "Q4", "Q5", "zPos", "TeamSizeViolation", "TeamId"]]
+        data_fields = [
+            ["ResponseId", "Q8", "Q4", "Q5", "zPos", "TeamSizeViolation", "TeamId"]
+        ]
         for team in team_set.teams:
             for student in team.students:
                 attributes = student.attributes
-                
+
                 unique_id = student_provider.get_student(student.id)
                 time_slot = attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value][0]
                 tutor_preference = attributes[Attributes.TUTOR_PREFERENCE.value][0]
                 group_size = attributes[Attributes.GROUP_SIZE.value][0]
-                
+
                 data_fields_input_1 = Attributes.revert_timeslot(time_slot)
-                data_fields_input_2 = Attributes.revert_tutor_preference(tutor_preference)
+                data_fields_input_2 = Attributes.revert_tutor_preference(
+                    tutor_preference
+                )
                 data_fields_input_3 = Attributes.revert_group_size(group_size)
-                
-                
+
                 # Process score and team size violation
                 positive_z = "1" if attributes[Attributes.SCORE.value][0] == 1 else "0"
                 num_teams = len(team.students)
-                
+
                 # Can be customize to fit the team size preference
                 team_size_violation = (
                     "Yes"
@@ -96,13 +96,23 @@ class WeightRun(Run):
                     else ""
                 )
 
-                data_fields.append([unique_id, data_fields_input_1, data_fields_input_2, data_fields_input_3, positive_z, team_size_violation, team.id])
-        
+                data_fields.append(
+                    [
+                        unique_id,
+                        data_fields_input_1,
+                        data_fields_input_2,
+                        data_fields_input_3,
+                        positive_z,
+                        team_size_violation,
+                        team.id,
+                    ]
+                )
+
         # Directory where the new CSV file will be written
         output_dir = path.join(path.dirname(__file__), "new_csv_output")
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-            
+
         output_file = os.path.join(output_dir, "result.csv")
 
         with open(output_file, "w+", newline="") as f:

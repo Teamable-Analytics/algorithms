@@ -134,7 +134,7 @@ class BowensDataProvider2(StudentProvider):
                 score = 1 if score >= 0 else 0
 
                 count += 1
-                
+
                 # Add the student to the list of students
                 students.append(
                     Student(

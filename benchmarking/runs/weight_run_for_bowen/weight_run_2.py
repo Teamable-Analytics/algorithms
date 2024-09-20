@@ -8,14 +8,14 @@ from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.models.enums import AlgorithmType, DiversifyType, ScenarioAttribute
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Goal, Scenario
-from benchmarking.evaluations.metrics.cosine_similarity import \
-    AverageCosineDifference
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.runs.interfaces import Run
 from benchmarking.runs.weight_run_for_bowen.bowens_data_provider import (
-    Attributes, BowensDataProvider2)
+    Attributes,
+    BowensDataProvider2,
+)
 from benchmarking.simulation.insight import Insight
-from benchmarking.simulation.simulation_set import (SimulationSet,
-                                                    SimulationSetArtifact)
+from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 
@@ -101,7 +101,7 @@ class WeightRun(Run):
                 )
 
                 print(count, ": ", timeslot, ", ", tutor_preference, ", ", group_size)
-                
+
                 zPos = "1" if attributes[Attributes.SCORE.value][0] == 1 else "0"
 
                 team_size = len(team.students)
