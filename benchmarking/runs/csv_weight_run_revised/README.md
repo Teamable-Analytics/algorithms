@@ -11,4 +11,3 @@
 ```
 python3 -m benchmarking.runs.csv_weight_run_revised.weight_run_revised
 ```
-- In the terminal choose which CSV file you want to run the agorithm on.

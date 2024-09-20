@@ -155,9 +155,3 @@ class BowensDataProvider2(StudentProvider):
         if len(self._sid_map) == 0:
             self.get()
         return self._sid_map[sid]
-
-if __name__ == "__main__":
-    print("test")
-    provider = BowensDataProvider2()
-    students = provider.get()
-    print(students)
