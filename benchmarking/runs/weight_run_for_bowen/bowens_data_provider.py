@@ -156,6 +156,6 @@ class BowensDataProvider2(StudentProvider):
 
 if __name__ == "__main__":
     print("test")
-    provider = BowensDataProvider()
+    provider = BowensDataProvider2()
     students = provider.get()
     print(students)

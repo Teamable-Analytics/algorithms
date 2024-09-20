@@ -12,8 +12,7 @@ from benchmarking.runs.csv_weight_run_revised.attributes import Attributes
 
 
 class DataProvider(StudentProvider):
-    def __init__(self, file_name: str):
-        self.file_name = file_name
+    def __init__(self):
         self._sid_map: Dict[int, str] = {}
         self._num_students = 26  # input the num of students in the CSV file
         self._max_project_preferences_per_student = 0  # input the max num of project preferences per student
@@ -26,36 +25,38 @@ class DataProvider(StudentProvider):
     def max_project_preferences_per_student(self) -> int:
         return self._max_project_preferences_per_student
 
-    def get_csv_data(self, seed: int = None) -> List[Student]:
+    def get(self, seed: int = None) -> List[Student]:
+        '''
+        This function reads the CSV file and returns a list of students
+        
+        Args:
+            seed: int, seed for the random number generator
+            
+        Returns:
+            List[Student]: list of students
+        '''
         students = []
         folder_path = path.join(path.dirname(__file__), "input_csv")
-
-        # List all CSV files in the directory
         csv_files = [f for f in os.listdir(folder_path) if f.endswith('.csv')]
-
         if not csv_files:
             raise FileNotFoundError("No CSV files found in the directory")
 
-        # User selects a file so that they can choose which file to use
-        selected_file = input(f"Select a file from {csv_files}: ")
+        selected_file = csv_files[0] # adjust to choose which file to use
         csv_file_path = path.join(folder_path, selected_file)
 
         # Open the selected CSV file for reading
         with open(csv_file_path, "r") as file:
             csv_reader = csv.reader(file)
 
-            # Iterate over each row in the CSV file
             for i, row in enumerate(csv_reader):
                 if i == 0:  # assuming the first row is the header, skip it
                     continue
 
-                sid = row[0]  # student ID should be in the first column
+                sid = row[0]  # student ID or an identifier such as responseId should be in the first column
                 self._sid_map[i] = sid
 
-                # Use the Attributes class to process the row
                 processed_data = Attributes.process_row(row)
-
-                # Add the student to the list of students
+                # Ajdust the attributes based on the CSV file
                 students.append(
                     Student(
                         _id=sid,
@@ -74,11 +75,11 @@ class DataProvider(StudentProvider):
 
     def get_student(self, sid: int):
         if len(self._sid_map) == 0:
-            self.get_csv_data()
-        return self._sid_map.get(sid, "Student ID not found.")
+            self.get()
+        return self._sid_map[sid]
     
 if __name__ == "__main__":
     print("Running data_provider_revised...")
     provider = DataProvider()
-    students = provider.get_csv_data()
+    students = provider.get()
     print(students)

@@ -26,6 +26,7 @@ class WeightRun(Run):
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
         scenario = DefaultScenario()
 
+        # Metrics to be used for evaluation
         metrics = [
             AverageCosineDifference(
                 name="Score Cosine Difference",
@@ -38,22 +39,21 @@ class WeightRun(Run):
         ]
         
         student_provider = DataProvider()
-        print("student provider: ",student_provider.num_students)
         team_size = 4 # enter the desired team size
         artifact: SimulationSetArtifact = SimulationSet(
             settings=SimulationSettings(
                 num_teams=ceil(student_provider.num_students / team_size),
                 scenario=scenario,
                 student_provider=student_provider,
-                cache_key=f"weight_run_for_bowen/weight_run_2/",
+                cache_key=f"csv_weight_run_revised/weight_run_revised/",
             ),
             algorithm_set={
                 AlgorithmType.PRIORITY: [
                     PriorityAlgorithmConfig(
                         MAX_KEEP=15, # max num of solutions the algorithm is allowed to keep
-                        MAX_SPREAD=30, # max num of of team sets genereated by mutation at each step
+                        MAX_SPREAD=30, # max num of team sets genereated by mutation at each step
                         MAX_ITERATE=30, # max num of iterations the algorithm is allowed to run
-                        MAX_TIME=100000, # max time is seconds to algorithm can run for.
+                        MAX_TIME=100000, # max time in seconds the algorithm can run for.
                     ),
                 ]
             },
@@ -61,76 +61,49 @@ class WeightRun(Run):
 
         team_set = list(artifact.values())[0][0][0]
 
-        insight_output_set = Insight.get_output_set(artifact, metrics)
-
-        data = [["ResponseId", "Q8", "Q4", "Q5", "zPos", "TeamId", "TeamSizeViolation"]]
+        # Enter the data fields from the provided CSV file
+        data_fields = [["ResponseId", "Q8", "Q4", "Q5", "zPos", "TeamSizeViolation", "TeamId"]]
 
         for team in team_set.teams:
             for student in team.students:
                 attributes = student.attributes
-
-                responseId = student_provider.get_student(student.id)
-
-                timeslot = attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value][0]
-                q8 = (
-                    "In-person before or after class"
-                    if timeslot == 1
-                    else (
-                        "In-person nights or weekends" if timeslot == 2 else "On zoom"
-                    )
-                )
-
+                
+                unique_id = student_provider.get_student(student.id)
+                time_slot = attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value][0]
                 tutor_preference = attributes[Attributes.TUTOR_PREFERENCE.value][0]
-                q4 = (
-                    "I am looking for a classmate to tutor me in BIOC 202"
-                    if tutor_preference == 1
-                    else (
-                        "I am open to being a peer tutor or having a classmate tutor me in BIOC 202. I am uncertain if I should sign up as a tutor or tutee"
-                        if tutor_preference == 2
-                        else "I am interested in being a peer tutor in BIOC 202"
-                    )
-                )
-
                 group_size = attributes[Attributes.GROUP_SIZE.value][0]
-                q5 = (
-                    "1"
-                    if group_size == 1
-                    else (
-                        "2 to 3"
-                        if group_size == 2
-                        else ("3+" if group_size == 3 else "")
-                    )
-                )
+                
+                data_fields_input_1 = Attributes.revert_timeslot(time_slot)
+                data_fields_input_2 = Attributes.revert_tutor_preference(tutor_preference)
+                data_fields_input_3 = Attributes.revert_group_size(group_size)
 
-                zPos = "1" if attributes[Attributes.SCORE.value][0] == 1 else "0"
-
-                team_size = len(team.students)
-                teamSizeViolation = (
+                # Process score and team size violation
+                positive_z = "1" if attributes[Attributes.SCORE.value][0] == 1 else "0"
+                num_teams = len(team.students)
+                
+                # Can be customize to fit the team size preference
+                team_size_violation = (
                     "Yes"
                     if tutor_preference == 3
                     and (
-                        (group_size == 1 and team_size != 2)
-                        or (group_size == 2 and (team_size > 4 or team_size < 3))
-                        or (group_size == 3 and team_size < 4)
+                        (group_size == 1 and num_teams != 2)
+                        or (group_size == 2 and (num_teams > 4 or num_teams < 3))
+                        or (group_size == 3 and num_teams < 4)
                     )
                     else ""
                 )
 
-                data.append([responseId, q8, q4, q5, zPos, team.id, teamSizeViolation])
+                data_fields.append([unique_id, data_fields_input_1, data_fields_input_2, data_fields_input_3, positive_z, team_size_violation, team.id])
         # Directory where the new CSV file will be written
         output_dir = path.join(path.dirname(__file__), "new_csv")
-
-        # Ensure the directory exists, if not, create it
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-
-        # Path to the new CSV file in the 'new_csv' folder
+            
         output_file = os.path.join(output_dir, "result.csv")
 
-        # Writing the CSV data into the file in the 'new_csv' folder
         with open(output_file, "w+", newline="") as f:
             writer = csv.writer(f)
-            for row in data:
+            for row in data_fields:
                 writer.writerow(row)
 
 
@@ -141,6 +114,12 @@ class DefaultScenario(Scenario):
 
     @property
     def goals(self) -> List[Goal]:
+        """
+        This function is meant to create a list of scenerio goals to be followed for team formation.
+
+        Returns:
+            List[Goal]: A list of goals for team formation.
+        """
         return [
             # Concentrate on student timeslot availability
             DiversityGoal(
@@ -161,5 +140,6 @@ class DefaultScenario(Scenario):
         ]
 
 
+# Run script from command line: python3 -m benchmarking.runs.csv_weight_run_revised.weight_run_revised
 if __name__ == "__main__":
     typer.run(WeightRun().start)
