@@ -62,10 +62,11 @@ class WeightRun(Run):
 
         data = [["ResponseId", "Q8", "Q4", "Q5", "zPos", "TeamId", "TeamSizeViolation"]]
 
+        count = 0
         for team in team_set.teams:
             for student in team.students:
                 attributes = student.attributes
-
+                count += 1
                 responseId = student_provider.get_student(student.id)
 
                 timeslot = attributes[ScenarioAttribute.TIMESLOT_AVAILABILITY.value][0]
@@ -99,6 +100,8 @@ class WeightRun(Run):
                     )
                 )
 
+                print(count, ": ", timeslot, ", ", tutor_preference, ", ", group_size)
+                
                 zPos = "1" if attributes[Attributes.SCORE.value][0] == 1 else "0"
 
                 team_size = len(team.students)

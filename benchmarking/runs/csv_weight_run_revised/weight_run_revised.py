@@ -37,14 +37,15 @@ class WeightRun(Run):
                 attribute_filter=[ScenarioAttribute.TIMESLOT_AVAILABILITY.value],
             ),
         ]
-        
         student_provider = DataProvider()
+        print(student_provider)
         team_size = 4 # enter the desired team size
         artifact: SimulationSetArtifact = SimulationSet(
             settings=SimulationSettings(
                 num_teams=ceil(student_provider.num_students / team_size),
                 scenario=scenario,
                 student_provider=student_provider,
+                # cache_key=f"weight_run_for_bowen/weight_run_2/",
                 cache_key=f"csv_weight_run_revised/weight_run_revised/",
             ),
             algorithm_set={
@@ -58,7 +59,6 @@ class WeightRun(Run):
                 ]
             },
         ).run(num_runs=num_trials)
-
         team_set = list(artifact.values())[0][0][0]
 
         insight_output_set = Insight.get_output_set(artifact, metrics)
@@ -66,7 +66,6 @@ class WeightRun(Run):
         
         # Enter the data fields from the provided CSV file
         data_fields = [["ResponseId", "Q8", "Q4", "Q5", "zPos", "TeamSizeViolation", "TeamId"]]
-
         for team in team_set.teams:
             for student in team.students:
                 attributes = student.attributes
@@ -79,7 +78,8 @@ class WeightRun(Run):
                 data_fields_input_1 = Attributes.revert_timeslot(time_slot)
                 data_fields_input_2 = Attributes.revert_tutor_preference(tutor_preference)
                 data_fields_input_3 = Attributes.revert_group_size(group_size)
-
+                
+                
                 # Process score and team size violation
                 positive_z = "1" if attributes[Attributes.SCORE.value][0] == 1 else "0"
                 num_teams = len(team.students)
@@ -97,8 +97,9 @@ class WeightRun(Run):
                 )
 
                 data_fields.append([unique_id, data_fields_input_1, data_fields_input_2, data_fields_input_3, positive_z, team_size_violation, team.id])
+        
         # Directory where the new CSV file will be written
-        output_dir = path.join(path.dirname(__file__), "new_csv")
+        output_dir = path.join(path.dirname(__file__), "new_csv_output")
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
             

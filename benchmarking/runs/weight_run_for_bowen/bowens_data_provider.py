@@ -83,7 +83,7 @@ class BowensDataProvider2(StudentProvider):
         with open(csv_file_path, "r") as file:
             # Create a CSV reader object
             csv_reader = csv.reader(file)
-
+            count = 0
             # Iterate over each row in the CSV file
             for i, row in enumerate(csv_reader):
                 if i == 0:
@@ -133,6 +133,8 @@ class BowensDataProvider2(StudentProvider):
                 score = float(row[20])
                 score = 1 if score >= 0 else 0
 
+                count += 1
+                
                 # Add the student to the list of students
                 students.append(
                     Student(
