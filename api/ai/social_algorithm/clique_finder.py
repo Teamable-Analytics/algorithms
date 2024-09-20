@@ -2,7 +2,7 @@ from itertools import combinations
 from typing import List, Set, Tuple
 
 from api.ai.social_algorithm.social_graph import SocialGraph
-from api.models.student import Student
+from api.dataclasses.student import Student
 
 
 class CliqueFinder:

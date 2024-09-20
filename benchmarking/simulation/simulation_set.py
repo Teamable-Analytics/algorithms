@@ -4,7 +4,7 @@ from typing import List, Dict
 import numpy as np
 
 from api.ai.interfaces.algorithm_config import AlgorithmConfig
-from api.models.enums import AlgorithmType
+from api.dataclasses.enums import AlgorithmType
 from benchmarking.simulation.simulation import SimulationArtifact, Simulation
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from utils.validation import is_unique

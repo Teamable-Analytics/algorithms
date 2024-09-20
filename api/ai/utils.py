@@ -1,9 +1,9 @@
 from typing import List
 
 from api.ai.interfaces.algorithm import ChooseAlgorithm
-from api.models.student import Student
-from api.models.team import Team
-from api.models.team_set import TeamSet
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team
+from api.dataclasses.team_set import TeamSet
 
 
 def save_students_to_team(team: Team, students: List[Student]):

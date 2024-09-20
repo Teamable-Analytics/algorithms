@@ -10,15 +10,15 @@ from api.ai.priority_algorithm.priority.utils import (
     student_attribute_binary_vector,
 )
 from api.ai.weight_algorithm.utility.diversity_utility import _blau_index
-from api.models.enums import (
+from api.dataclasses.enums import (
     DiversifyType,
     TokenizationConstraintDirection,
     RequirementsCriteria,
     PriorityType,
     Relationship,
 )
-from api.models.student import Student
-from api.models.team import TeamShell
+from api.dataclasses.student import Student
+from api.dataclasses.team import TeamShell
 from benchmarking.evaluations.enums import PreferenceDirection
 from utils.math import change_range
 
@@ -196,8 +196,6 @@ class DiversityPriority(Priority):
 
 @dataclass
 class RequirementPriority(Priority):
-    criteria: RequirementsCriteria
-
     def validate(self):
         super().validate()
 
@@ -207,24 +205,11 @@ class RequirementPriority(Priority):
             # If a team has no requirements then the student is a perfect match
             return 1
 
-        if self.criteria == RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED:
-            total_met_requirements = 0
-            for req in team_shell.requirements:
-                for student in students:
-                    if student.meets_requirement(req):
-                        total_met_requirements += 1
-                        break
+        total_requirement_satisfaction = 0
+        for req in team_shell.requirements:
+            total_requirement_satisfaction += req.satisfaction_by_students(students)
 
-            return total_met_requirements / num_team_requirements
-
-        if self.criteria == RequirementsCriteria.STUDENT_ATTRIBUTES_ARE_RELEVANT:
-            num_students_that_meet_any_req = sum(
-                [
-                    (team_shell.num_requirements_met_by_student(student) > 0)
-                    for student in students
-                ]
-            )
-            return num_students_that_meet_any_req / len(students)
+        return total_requirement_satisfaction / num_team_requirements
 
     @staticmethod
     def get_schema() -> Schema:

@@ -17,5 +17,8 @@ env/.env*
 # Nginx
 logs/nginx/
 
+# Local database
+.data/
+
 # csv files
 *.csv

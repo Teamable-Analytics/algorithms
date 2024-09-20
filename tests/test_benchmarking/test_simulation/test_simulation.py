@@ -5,10 +5,10 @@ from datetime import datetime
 from os import path
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
-from api.models.enums import AlgorithmType
-from api.models.project import Project
-from api.models.team_set import TeamSet
-from api.models.team_set.serializer import TeamSetSerializer
+from api.dataclasses.enums import AlgorithmType
+from api.dataclasses.project import Project
+from api.dataclasses.team_set import TeamSet
+from api.dataclasses.team_set.serializer import TeamSetSerializer
 from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProvider,

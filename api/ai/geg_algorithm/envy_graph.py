@@ -1,7 +1,7 @@
 from typing import List, Dict, Set, Callable
 
-from api.models.student import Student
-from api.models.team import Team, TeamShell
+from api.dataclasses.student import Student
+from api.dataclasses.team import Team, TeamShell
 
 
 class EnvyGraph:
@@ -14,88 +14,76 @@ class EnvyGraph:
         """
         Initialize an envy graph
         """
-        vertices = [team.project_id for team in teams]
+        vertices = [team.id for team in teams]
         self.graph: Dict[int, Set[int]] = {vertex: set([]) for vertex in vertices}
         self.additive_utilities: Dict[int, int] = {vertex: 0 for vertex in vertices}
-        self.project_id_traces: Dict[int, Team] = {t.project_id: t for t in teams}
+        self.team_id_traces: Dict[int, Team] = {t.id: t for t in teams}
         self.student_id_traces: Dict[int, Student] = {s.id: s for s in students}
         self.utility_function = utility_function
 
-    def add_edge(self, envy_project: int, other_project: int) -> None:
-        """
-        This run in O(1)
-        """
-        self.graph[envy_project].add(other_project)
+    def add_edge(self, envy_team_id: int, other_team_id: int) -> None:
+        self.graph[envy_team_id].add(other_team_id)
 
-    def remove_edge(self, no_loger_envy_project: int, other_project: int) -> None:
-        """
-        This run in O(1)
-        """
-        if other_project in self.graph[no_loger_envy_project]:
-            self.graph[no_loger_envy_project].remove(other_project)
+    def remove_edge(self, no_loger_envy_team_id: int, other_team_id: int) -> None:
+        if other_team_id in self.graph[no_loger_envy_team_id]:
+            self.graph[no_loger_envy_team_id].remove(other_team_id)
 
-    def get_envy_targets(self, envy_project: int) -> Set[int]:
-        """
-        This run in O(1)
-        """
+    def get_envy_targets(self, envy_team_id: int) -> Set[int]:
+        return self.graph[envy_team_id]
 
-        return self.graph[envy_project]
+    def is_sink(self, team_id: int) -> bool:
+        """
+        A node is sink if there is no outgoing edge
+        """
+        return len(self.graph[team_id]) == 0
 
-    def is_sink(self, project: int) -> bool:
+    def is_source(self, team_id: int) -> bool:
         """
-        A project is sink if there is no outgoing edge
+        A node is source if there is no incoming edge
         """
-        return len(self.graph[project]) == 0
+        return all([team_id not in targets for targets in self.graph.values()])
 
-    def is_source(self, project: int) -> bool:
-        """
-        A project is source if there is no incoming edge
-        """
-        return all([project not in targets for targets in self.graph.values()])
-
-    def update_envy_graph(
-        self, project_id: int, allocation: Dict[int, List[int]]
-    ) -> None:
-        team = self.project_id_traces.get(project_id)
+    def update_envy_graph(self, team_id: int, allocation: Dict[int, List[int]]) -> None:
+        team = self.team_id_traces.get(team_id)
         new_utility_value = sum(
             [
                 self.utility_function(self.student_id_traces.get(s), team.to_shell())
-                for s in allocation[project_id]
+                for s in allocation[team_id]
             ]
         )
-        self.additive_utilities[project_id] = new_utility_value
+        self.additive_utilities[team_id] = new_utility_value
 
-        updated_utility = self.additive_utilities[project_id]
-        for other_project_id in self.additive_utilities.keys():
-            if project_id == other_project_id:
+        updated_utility = self.additive_utilities[team_id]
+        for other_team_id in self.additive_utilities.keys():
+            if team_id == other_team_id:
                 continue
 
-            other_team = self.project_id_traces.get(other_project_id)
-            other_project_utilities_with_curr_project_allocation = sum(
+            other_team = self.team_id_traces.get(other_team_id)
+            other_team_utility_with_current_team_allocation = sum(
                 [
                     self.utility_function(
                         self.student_id_traces.get(s), other_team.to_shell()
                     )
-                    for s in allocation[project_id]
+                    for s in allocation[team_id]
                 ]
             )
             # In case utility increases, no loger envy with some and some will start envy
-            if updated_utility > other_project_utilities_with_curr_project_allocation:
-                self.remove_edge(project_id, other_project_id)
-                self.add_edge(other_project_id, project_id)
+            if updated_utility > other_team_utility_with_current_team_allocation:
+                self.remove_edge(team_id, other_team_id)
+                self.add_edge(other_team_id, team_id)
 
             # In case utility decreases, will start envy with more and some will stop envying
-            if updated_utility < other_project_utilities_with_curr_project_allocation:
-                self.add_edge(project_id, other_project_id)
-                self.remove_edge(other_project_id, project_id)
+            if updated_utility < other_team_utility_with_current_team_allocation:
+                self.add_edge(team_id, other_team_id)
+                self.remove_edge(other_team_id, team_id)
 
             # In case utility is equal to other, noone will envy
-            if updated_utility == other_project_utilities_with_curr_project_allocation:
-                self.remove_edge(project_id, other_project_id)
-                self.remove_edge(other_project_id, project_id)
+            if updated_utility == other_team_utility_with_current_team_allocation:
+                self.remove_edge(team_id, other_team_id)
+                self.remove_edge(other_team_id, team_id)
 
     def get_all_directed_cycles(self) -> List[List[int]]:
-        visited = set([])
+        visited = set()
         cycles: List[List[int]] = []
 
         for start_node in self.graph:
@@ -108,6 +96,9 @@ class EnvyGraph:
                 cycles.extend(local_cycles)
 
         return cycles
+
+    def has_cycle(self) -> bool:
+        return len(self.get_all_directed_cycles()) > 0
 
     def _dfs(
         self, node: int, visited: Set[int], path: List[int], cycles: List[List[int]]

@@ -5,7 +5,7 @@ from schema import Schema, SchemaError, Or, Optional
 from api.ai.algorithm_runner import AlgorithmRunner
 from api.api.validators.interface import Validator
 from api.api.utils.relationship import get_relationship_str
-from api.models.enums import AlgorithmType, Relationship, RequirementOperator
+from api.dataclasses.enums import AlgorithmType, Relationship, RequirementOperator
 
 
 class GenerateTeamsValidator(Validator):
@@ -272,8 +272,8 @@ class GenerateTeamsValidator(Validator):
                 "initial_teams": [
                     {
                         "id": int,
-                        Optional("name"): str,
-                        Optional("project_id"): int,
+                        Optional("name"): Or(str, None),
+                        Optional("project_id"): Or(int, None),
                         Optional("requirements"): [
                             {
                                 "attribute": int,

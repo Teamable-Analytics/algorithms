@@ -9,16 +9,16 @@ from api.ai.priority_algorithm.priority.priority import (
     ProjectPreferencePriority,
     SocialPreferencePriority,
 )
-from api.models.enums import (
+from api.dataclasses.enums import (
     RequirementOperator,
     RequirementsCriteria,
     DiversifyType,
     TokenizationConstraintDirection,
     Relationship,
 )
-from api.models.project import ProjectRequirement
-from api.models.student import Student
-from api.models.team import TeamShell
+from api.dataclasses.project import ProjectRequirement
+from api.dataclasses.student import Student
+from api.dataclasses.team import TeamShell
 from benchmarking.evaluations.enums import PreferenceDirection
 from tests.test_api.test_ai.test_priority_algorithm.test_priority._data import (
     create_social_students,
@@ -280,27 +280,8 @@ class TestRequirementPriority(unittest.TestCase):
             },
         )
 
-    def test_satisfaction__with_student_attributes_are_relevant_criteria(self):
-        requirement_priority = RequirementPriority(
-            criteria=RequirementsCriteria.STUDENT_ATTRIBUTES_ARE_RELEVANT
-        )
-        high_satisfaction = requirement_priority.satisfaction(
-            [self.student_a, self.student_b], self.team_shell_1
-        )
-        medium_satisfaction = requirement_priority.satisfaction(
-            [self.student_b, self.student_c], self.team_shell_1
-        )
-        low_satisfaction = requirement_priority.satisfaction(
-            [self.student_c], self.team_shell_1
-        )
-
-        self.assertGreater(high_satisfaction, medium_satisfaction)
-        self.assertGreater(medium_satisfaction, low_satisfaction)
-
-    def test_satisfaction__with_project_requirements_are_satisfied_criteria(self):
-        requirement_priority = RequirementPriority(
-            criteria=RequirementsCriteria.PROJECT_REQUIREMENTS_ARE_SATISFIED
-        )
+    def test_satisfaction(self):
+        requirement_priority = RequirementPriority()
         high_satisfaction = requirement_priority.satisfaction(
             [self.student_a, self.student_b], self.team_shell_1
         )
