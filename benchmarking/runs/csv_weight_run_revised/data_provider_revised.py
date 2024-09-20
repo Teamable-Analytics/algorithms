@@ -1,5 +1,6 @@
 import csv
 import os
+from enum import Enum
 from os import path
 from typing import Dict, List
 
@@ -25,7 +26,8 @@ class DataProvider(StudentProvider):
     def max_project_preferences_per_student(self) -> int:
         return self._max_project_preferences_per_student
 
-    def get(self, seed: int = None) -> List[Student]:
+    #def get(self, seed: int = None) -> List[Student]:
+    def get(self, seed: int = None):
         '''
         This function reads the CSV file and returns a list of students
         
@@ -51,9 +53,9 @@ class DataProvider(StudentProvider):
             for i, row in enumerate(csv_reader):
                 if i == 0:  # assuming the first row is the header, skip it
                     continue
-
                 sid = row[0]  # student ID or an identifier such as responseId should be in the first column
                 self._sid_map[i] = sid
+                sid = i
 
                 processed_data = Attributes.process_row(row)
                 # Ajdust the attributes based on the CSV file

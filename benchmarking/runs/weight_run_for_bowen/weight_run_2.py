@@ -1,23 +1,21 @@
+import csv
 from math import ceil
 from typing import List
 
 import typer
-import csv
 
-from api.ai.interfaces.algorithm_config import (
-    PriorityAlgorithmConfig,
-)
+from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.models.enums import AlgorithmType, DiversifyType, ScenarioAttribute
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
-from benchmarking.evaluations.interfaces import Scenario, Goal
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
+from benchmarking.evaluations.interfaces import Goal, Scenario
+from benchmarking.evaluations.metrics.cosine_similarity import \
+    AverageCosineDifference
 from benchmarking.runs.interfaces import Run
 from benchmarking.runs.weight_run_for_bowen.bowens_data_provider import (
-    Attributes,
-    BowensDataProvider2,
-)
+    Attributes, BowensDataProvider2)
 from benchmarking.simulation.insight import Insight
-from benchmarking.simulation.simulation_set import SimulationSetArtifact, SimulationSet
+from benchmarking.simulation.simulation_set import (SimulationSet,
+                                                    SimulationSetArtifact)
 from benchmarking.simulation.simulation_settings import SimulationSettings
 
 

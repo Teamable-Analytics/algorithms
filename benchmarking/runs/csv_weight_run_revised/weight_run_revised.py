@@ -61,6 +61,9 @@ class WeightRun(Run):
 
         team_set = list(artifact.values())[0][0][0]
 
+        insight_output_set = Insight.get_output_set(artifact, metrics)
+        print(insight_output_set)
+        
         # Enter the data fields from the provided CSV file
         data_fields = [["ResponseId", "Q8", "Q4", "Q5", "zPos", "TeamSizeViolation", "TeamId"]]
 
