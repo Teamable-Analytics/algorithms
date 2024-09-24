@@ -1,23 +1,22 @@
 import csv
-import os
 from enum import Enum
 from os import path
-from typing import Dict, List
+from typing import Dict
 
 import numpy as np
+from manual_run.csv_weight_run.attributes import Attributes
+from manual_run.csv_weight_run.variables import Variables
 
-from api.models.enums import ScenarioAttribute
 from api.models.student import Student
 from benchmarking.data.interfaces import StudentProvider
-from benchmarking.runs.csv_weight_run_revised.attributes import Attributes
 
 
 class DataProvider(StudentProvider):
     def __init__(self):
         self._sid_map: Dict[int, str] = {}
-        self._num_students = 26  # input the num of students in the CSV file
+        self._num_students = Variables.num_students
         self._max_project_preferences_per_student = (
-            0  # input the max num of project preferences per student
+            0
         )
 
     @property
@@ -29,23 +28,11 @@ class DataProvider(StudentProvider):
         return self._max_project_preferences_per_student
 
     def get(self, seed: int = None):
-        """
-        This function reads the CSV file and returns a list of students
-
-        Args:
-            seed: int, seed for the random number generator
-
-        Returns:
-            List[Student]: list of students
-        """
+        # Note: The goal of the seed is for when we generate fake students
+        
         students = []
         folder_path = path.join(path.dirname(__file__), "input_csv")
-        csv_files = [f for f in os.listdir(folder_path) if f.endswith(".csv")]
-        if not csv_files:
-            raise FileNotFoundError("No CSV files found in the directory")
-
-        selected_file = csv_files[0]  # adjust to choose which file to use
-        csv_file_path = path.join(folder_path, selected_file)
+        csv_file_path = path.join(folder_path, Variables.input_csv_file)
 
         # Open the selected CSV file for reading
         with open(csv_file_path, "r") as file:
@@ -54,9 +41,10 @@ class DataProvider(StudentProvider):
             for i, row in enumerate(csv_reader):
                 if i == 0:  # assuming the first row is the header, skip it
                     continue
+                # student ID or an identifier such as responseId should be in the first column
                 sid = row[
                     0
-                ]  # student ID or an identifier such as responseId should be in the first column
+                ]  
                 self._sid_map[i] = sid
                 sid = i
 
@@ -67,7 +55,7 @@ class DataProvider(StudentProvider):
                     Student(
                         _id=sid,
                         attributes={
-                            ScenarioAttribute.TIMESLOT_AVAILABILITY.value: [
+                            Attributes.TIMESLOT_AVAILABILITY.value: [
                                 processed_data["time_slot"]
                             ],
                             Attributes.SCORE.value: [processed_data["score"]],
