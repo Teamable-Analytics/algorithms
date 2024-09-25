@@ -4,23 +4,21 @@ from math import ceil
 from os import path
 
 import typer
-from manual_run.attributes import Attributes
-from manual_run.data_provider import DataProvider
-from manual_run.default_scenario import DefaultScenario
-from manual_run.variables import Variables
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.models.enums import AlgorithmType
-from benchmarking.evaluations.metrics.cosine_similarity import \
-    AverageCosineDifference
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.runs.interfaces import Run
-from benchmarking.simulation.simulation_set import (SimulationSet,
-                                                    SimulationSetArtifact)
+from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
+from manual_run.attributes import Attributes
+from manual_run.data_provider import DataProvider
+from manual_run.default_scenario import DefaultScenario
+from manual_run.map_columns import MapColumns
+from manual_run.variables import Variables
 
 
 class WeightRun(Run):
-    
     def start(self, num_trials: int = 1, generate_graphs: bool = True):
         scenario = DefaultScenario()
 
@@ -56,12 +54,11 @@ class WeightRun(Run):
         team_set = list(artifact.values())[0][0][0]
 
         self.create_csv(team_set, student_provider)
-        
-        
+
     def create_csv(self, team_set, student_provider):
         Variables.data_fields[0].append("TeamSizeViolation")
         Variables.data_fields[0].append("TeamId")
-        
+
         for team in team_set.teams:
             for student in team.students:
                 attributes = student.attributes
@@ -71,11 +68,11 @@ class WeightRun(Run):
                 tutor_preference = attributes[Attributes.TUTOR_PREFERENCE.value][0]
                 group_size = attributes[Attributes.GROUP_SIZE.value][0]
 
-                data_fields_input_1 = Attributes.revert_timeslot(time_slot)
-                data_fields_input_2 = Attributes.revert_tutor_preference(
+                data_fields_input_1 = MapColumns.revert_timeslot(time_slot)
+                data_fields_input_2 = MapColumns.revert_tutor_preference(
                     tutor_preference
                 )
-                data_fields_input_3 = Attributes.revert_group_size(group_size)
+                data_fields_input_3 = MapColumns.revert_group_size(group_size)
 
                 # Process score and team size violation
                 positive_z = "1" if attributes[Attributes.SCORE.value][0] == 1 else "0"
@@ -110,7 +107,7 @@ class WeightRun(Run):
             os.makedirs(output_dir)
 
         output_file = os.path.join(output_dir, Variables.output_file_name)
-        
+
         with open(output_file, "w+", newline="") as f:
             writer = csv.writer(f)
             for row in Variables.data_fields:

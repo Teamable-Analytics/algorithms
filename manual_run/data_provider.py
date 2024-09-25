@@ -16,9 +16,7 @@ class DataProvider(StudentProvider):
     def __init__(self):
         self._sid_map: Dict[int, str] = {}
         self._num_students = Variables.num_students
-        self._max_project_preferences_per_student = (
-            0
-        )
+        self._max_project_preferences_per_student = 0
 
     @property
     def num_students(self) -> int:
@@ -30,7 +28,7 @@ class DataProvider(StudentProvider):
 
     def get(self, seed: int = None):
         # Note: The goal of the seed is for when we generate fake students
-        
+
         students = []
         folder_path = path.join(path.dirname(__file__), "input_csv")
         csv_file_path = path.join(folder_path, Variables.input_csv_file)
@@ -44,11 +42,9 @@ class DataProvider(StudentProvider):
                     header_row = row
                     continue
                 # student ID or an identifier such as responseId should be in the first column
-                sid = row[
-                    0
-                ]  
+                sid = row[0]
                 self._sid_map[i] = sid
-                sid = i # possibly look into commenting this out
+                sid = i  # possibly look into commenting this out
 
                 processed_data = MapColumns.process_row(row, header_row)
 
@@ -61,9 +57,7 @@ class DataProvider(StudentProvider):
                                 processed_data["Q8"]
                             ],
                             Attributes.SCORE.value: [processed_data["z-score"]],
-                            Attributes.TUTOR_PREFERENCE.value: [
-                                processed_data["Q4"]
-                            ],
+                            Attributes.TUTOR_PREFERENCE.value: [processed_data["Q4"]],
                             Attributes.GROUP_SIZE.value: [processed_data["Q5"]],
                         },
                     )
