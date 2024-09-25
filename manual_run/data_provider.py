@@ -4,12 +4,12 @@ from os import path
 from typing import Dict
 
 import numpy as np
-from manual_run.attributes import Attributes
-from manual_run.map_columns import MapColumns
-from manual_run.variables import Variables
 
 from api.models.student import Student
 from benchmarking.data.interfaces import StudentProvider
+from manual_run.attributes import Attributes
+from manual_run.map_columns import MapColumns
+from manual_run.variables import Variables
 
 
 class DataProvider(StudentProvider):
@@ -58,13 +58,13 @@ class DataProvider(StudentProvider):
                         _id=sid,
                         attributes={
                             Attributes.TIMESLOT_AVAILABILITY.value: [
-                                processed_data["time_slot"]
+                                processed_data["Q8"]
                             ],
-                            Attributes.SCORE.value: [processed_data["score"]],
+                            Attributes.SCORE.value: [processed_data["z-score"]],
                             Attributes.TUTOR_PREFERENCE.value: [
-                                processed_data["tutor_preference"]
+                                processed_data["Q4"]
                             ],
-                            Attributes.GROUP_SIZE.value: [processed_data["group_size"]],
+                            Attributes.GROUP_SIZE.value: [processed_data["Q5"]],
                         },
                     )
                 )

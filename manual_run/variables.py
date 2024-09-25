@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Callable, Dict, List
 
 
 class Variables:
@@ -7,17 +7,20 @@ class Variables:
     team_size = 4
     
     # Each dictionary should define the name of the column and each possible options for each column containing a non-integer value
-    column_options = Dict[str : List[str]] = {
+    attribute_options : Dict[str, List[str]] = {
         "Q8": ["In-person before or after class", "In-person nights or weekends", "On zoom",],
         "Q4": ["I am looking for a classmate to tutor me in BIOC 202", "I am open to being a peer tutor or having a classmate tutor me in BIOC 202. I am uncertain if I should sign up as a tutor or tutee", "I am interested in being a peer tutor in BIOC 202"],
         "Q5": ["1", "2 to 3", "3+"]
     }
     
+    attribute_handlers : Dict[str, Callable] = {
+        "z-score": lambda x: 1 if float(x) >= 0 else 0
+    }
     
     
     # Enter the name of the columns from the provided CSV file
     data_fields = [
-            ["ResponseId", "Q8", "Q4", "Q5", "zPos"]
+            ["ResponseId", "Q8", "Q4", "Q5", "z-score"]
         ]
     
     # Enter the name of the inputted CSV file
