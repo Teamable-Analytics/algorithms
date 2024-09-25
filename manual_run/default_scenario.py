@@ -1,6 +1,6 @@
 from typing import List
 
-from manual_run.csv_weight_run.attributes import Attributes
+from manual_run.attributes import Attributes
 
 from api.models.enums import DiversifyType
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal

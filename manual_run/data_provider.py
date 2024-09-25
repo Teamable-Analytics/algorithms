@@ -4,8 +4,9 @@ from os import path
 from typing import Dict
 
 import numpy as np
-from manual_run.csv_weight_run.attributes import Attributes
-from manual_run.csv_weight_run.variables import Variables
+from manual_run.attributes import Attributes
+from manual_run.map_columns import MapColumns
+from manual_run.variables import Variables
 
 from api.models.student import Student
 from benchmarking.data.interfaces import StudentProvider
@@ -37,20 +38,21 @@ class DataProvider(StudentProvider):
         # Open the selected CSV file for reading
         with open(csv_file_path, "r") as file:
             csv_reader = csv.reader(file)
-
+            header_row = []
             for i, row in enumerate(csv_reader):
                 if i == 0:  # assuming the first row is the header, skip it
+                    header_row = row
                     continue
                 # student ID or an identifier such as responseId should be in the first column
                 sid = row[
                     0
                 ]  
                 self._sid_map[i] = sid
-                sid = i
+                sid = i # possibly look into commenting this out
 
-                processed_data = Attributes.process_row(row)
+                processed_data = MapColumns.process_row(row, header_row)
 
-                # Ajdust the attributes based on the CSV file
+                # Adjust the attributes based on the CSV file
                 students.append(
                     Student(
                         _id=sid,

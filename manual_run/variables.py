@@ -13,9 +13,11 @@ class Variables:
         "Q5": ["1", "2 to 3", "3+"]
     }
     
+    
+    
     # Enter the name of the columns from the provided CSV file
     data_fields = [
-            ["ResponseId", "Q8", "Q4", "Q5", "zPos", "TeamSizeViolation"]
+            ["ResponseId", "Q8", "Q4", "Q5", "zPos"]
         ]
     
     # Enter the name of the inputted CSV file

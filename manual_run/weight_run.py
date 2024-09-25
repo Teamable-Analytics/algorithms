@@ -4,10 +4,10 @@ from math import ceil
 from os import path
 
 import typer
-from manual_run.csv_weight_run.attributes import Attributes
-from manual_run.csv_weight_run.data_provider import DataProvider
-from manual_run.csv_weight_run.default_scenario import DefaultScenario
-from manual_run.csv_weight_run.variables import Variables
+from manual_run.attributes import Attributes
+from manual_run.data_provider import DataProvider
+from manual_run.default_scenario import DefaultScenario
+from manual_run.variables import Variables
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.models.enums import AlgorithmType
@@ -59,7 +59,7 @@ class WeightRun(Run):
         
         
     def create_csv(self, team_set, student_provider):
-         # Enter the data fields from the provided CSV file
+        Variables.data_fields[0].append("TeamSizeViolation")
         Variables.data_fields[0].append("TeamId")
         
         for team in team_set.teams:
