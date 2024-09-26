@@ -5,7 +5,7 @@ from typing import Dict
 
 import numpy as np
 
-#from api.models.student import Student
+# from api.models.student import Student
 from api.dataclasses.student import Student
 from benchmarking.data.interfaces import StudentProvider
 from manual_run.attributes import Attributes
@@ -48,7 +48,6 @@ class DataProvider(StudentProvider):
                 sid = i  # possibly look into commenting this out
 
                 processed_data = MapColumns.process_row(row, header_row)
-
                 # Adjust the attributes based on the CSV file
                 students.append(
                     Student(

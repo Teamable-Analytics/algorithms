@@ -20,5 +20,5 @@ logs/nginx/
 # Local database
 .data/
 
-# csv files
-*.csv
+# manual_run csv files
+/manual_run/*/*.csv

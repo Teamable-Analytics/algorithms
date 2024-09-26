@@ -7,12 +7,9 @@ import typer
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.dataclasses.enums import AlgorithmType
-from benchmarking.evaluations.metrics.cosine_similarity import \
-    AverageCosineDifference
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.runs.interfaces import Run
-from benchmarking.simulation.insight import Insight
-from benchmarking.simulation.simulation_set import (SimulationSet,
-                                                    SimulationSetArtifact)
+from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from manual_run.attributes import Attributes
 from manual_run.data_provider import DataProvider
@@ -42,7 +39,6 @@ class WeightRun(Run):
                 num_teams=ceil(student_provider.num_students / Variables.team_size),
                 scenario=scenario,
                 student_provider=student_provider,
-                cache_key=f"csv_weight_run/weight_run/",
             ),
             algorithm_set={
                 AlgorithmType.PRIORITY: [
@@ -56,8 +52,6 @@ class WeightRun(Run):
             },
         ).run(num_runs=1)
         team_set = list(artifact.values())[0][0][0]
-        
-        # insight_output_set = Insight.get_output_set(artifact, metrics)
 
         self.create_csv(team_set, student_provider)
 
@@ -70,10 +64,7 @@ class WeightRun(Run):
                 attributes = student.attributes
 
                 unique_id = student_provider.get_student(student.id)
-                print("unique key", unique_id)
-                print("timeslot key ", attributes[Attributes.TIMESLOT_AVAILABILITY.value][0])
                 time_slot = attributes[Attributes.TIMESLOT_AVAILABILITY.value][0]
-                print("time_slot", time_slot)
                 tutor_preference = attributes[Attributes.TUTOR_PREFERENCE.value][0]
                 group_size = attributes[Attributes.GROUP_SIZE.value][0]
 
@@ -85,16 +76,16 @@ class WeightRun(Run):
 
                 # Process score and team size violation
                 positive_z = "1" if attributes[Attributes.SCORE.value][0] == 1 else "0"
-                num_teams = len(team.students)
+                team_size = len(team.students)
 
                 # Can be customize to fit the team size preference
                 team_size_violation = (
                     "Yes"
-                    if tutor_preference == 3
+                    if tutor_preference == 2
                     and (
-                        (group_size == 1 and num_teams != 2)
-                        or (group_size == 2 and (num_teams > 4 or num_teams < 3))
-                        or (group_size == 3 and num_teams < 4)
+                        (group_size == 1 and team_size != 2)
+                        or (group_size == 2 and (team_size > 4 or team_size < 3))
+                        or (group_size == 3 and team_size < 4)
                     )
                     else ""
                 )
@@ -111,7 +102,7 @@ class WeightRun(Run):
                     ]
                 )
         # Directory where the new CSV file will be written
-        output_dir = path.join(path.dirname(__file__), "new_csv_output")
+        output_dir = path.join(path.dirname(__file__), "output")
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
