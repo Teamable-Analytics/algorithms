@@ -5,7 +5,8 @@ from typing import Dict
 
 import numpy as np
 
-from api.models.student import Student
+#from api.models.student import Student
+from api.dataclasses.student import Student
 from benchmarking.data.interfaces import StudentProvider
 from manual_run.attributes import Attributes
 from manual_run.map_columns import MapColumns

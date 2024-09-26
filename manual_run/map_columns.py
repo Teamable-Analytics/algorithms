@@ -6,16 +6,17 @@ from manual_run.variables import Variables
 class MapColumns:
     @staticmethod
     def process_row(row: List[str], header_row: List[str]) -> Dict:
-        attribute_options_int = Dict[str : List[int]] = {}
+        attribute_options_int : Dict[str, List[int]] = {}
         for i, head in enumerate(header_row):
+            int_value = -1
             if head in Variables.attribute_options:
-                int_value = -1
                 if row[i] in Variables.attribute_options[head]:
                     int_value = Variables.attribute_options[head].index(row[i])
+                attribute_options_int[head] = int_value
             elif head in Variables.attribute_handlers:
                 int_value = Variables.attribute_handlers[head](row[i])
-            attribute_options_int[head] = int_value
-
+                attribute_options_int[head] = int_value
+            
         return attribute_options_int
 
     @staticmethod

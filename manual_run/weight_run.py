@@ -6,10 +6,13 @@ from os import path
 import typer
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
-from api.models.enums import AlgorithmType
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
+from api.dataclasses.enums import AlgorithmType
+from benchmarking.evaluations.metrics.cosine_similarity import \
+    AverageCosineDifference
 from benchmarking.runs.interfaces import Run
-from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
+from benchmarking.simulation.insight import Insight
+from benchmarking.simulation.simulation_set import (SimulationSet,
+                                                    SimulationSetArtifact)
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from manual_run.attributes import Attributes
 from manual_run.data_provider import DataProvider
@@ -39,6 +42,7 @@ class WeightRun(Run):
                 num_teams=ceil(student_provider.num_students / Variables.team_size),
                 scenario=scenario,
                 student_provider=student_provider,
+                cache_key=f"csv_weight_run/weight_run/",
             ),
             algorithm_set={
                 AlgorithmType.PRIORITY: [
@@ -52,6 +56,8 @@ class WeightRun(Run):
             },
         ).run(num_runs=1)
         team_set = list(artifact.values())[0][0][0]
+        
+        # insight_output_set = Insight.get_output_set(artifact, metrics)
 
         self.create_csv(team_set, student_provider)
 
@@ -64,7 +70,10 @@ class WeightRun(Run):
                 attributes = student.attributes
 
                 unique_id = student_provider.get_student(student.id)
+                print("unique key", unique_id)
+                print("timeslot key ", attributes[Attributes.TIMESLOT_AVAILABILITY.value][0])
                 time_slot = attributes[Attributes.TIMESLOT_AVAILABILITY.value][0]
+                print("time_slot", time_slot)
                 tutor_preference = attributes[Attributes.TUTOR_PREFERENCE.value][0]
                 group_size = attributes[Attributes.GROUP_SIZE.value][0]
 

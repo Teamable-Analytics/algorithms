@@ -8,6 +8,9 @@
 
 ## How to run:
 - In the root directory run:
+```bash
+pip install faker
 ```
+```bash
 python3 -m benchmarking.runs.csv_weight_run_revised.weight_run_revised
 ```

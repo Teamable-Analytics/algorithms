@@ -1,10 +1,9 @@
 from typing import List
 
-from manual_run.attributes import Attributes
-
-from api.models.enums import DiversifyType
+from api.dataclasses.enums import DiversifyType
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Goal, Scenario
+from manual_run.attributes import Attributes
 
 
 class DefaultScenario(Scenario):
