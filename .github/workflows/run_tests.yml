@@ -4,10 +4,9 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest]
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
         python-version: [ "3.9" ]
 
     steps:
