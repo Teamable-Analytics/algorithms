@@ -6,9 +6,11 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# lint
 RUN python -m pip install --upgrade pip
 COPY . /usr/src/app/
+
+RUN apt-get update
+RUN apt-get -y install gcc libpq-dev python3-dev
 
 # install python dependencies
 COPY ./requirements.txt .
