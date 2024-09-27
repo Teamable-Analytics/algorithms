@@ -34,4 +34,3 @@ def revert_value(attribute_key: str, value: int) -> str:
         if value < len(options):
             return options[value]
     return ""
-

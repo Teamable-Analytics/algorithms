@@ -7,11 +7,9 @@ import typer
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.dataclasses.enums import AlgorithmType
-from benchmarking.evaluations.metrics.cosine_similarity import \
-    AverageCosineDifference
+from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.runs.interfaces import Run
-from benchmarking.simulation.simulation_set import (SimulationSet,
-                                                    SimulationSetArtifact)
+from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from manual_run.attributes import Attributes
 from manual_run.data_provider import DataProvider
@@ -64,7 +62,7 @@ class ManualPriorityRun(Run):
         for team in team_set.teams:
             for student in team.students:
                 attributes = student.attributes
-                
+
                 time_slot = attributes[Attributes.TIMESLOT_AVAILABILITY.value][0]
                 tutor_preference = attributes[Attributes.TUTOR_PREFERENCE.value][0]
                 group_size = attributes[Attributes.GROUP_SIZE.value][0]
@@ -72,7 +70,7 @@ class ManualPriorityRun(Run):
                 data_fields_input_1 = revert_value("Q8", time_slot)
                 data_fields_input_2 = revert_value("Q4", tutor_preference)
                 data_fields_input_3 = revert_value("Q5", group_size)
-                
+
                 team_size = len(team.students)
 
                 # Can be customize to fit the team size preference

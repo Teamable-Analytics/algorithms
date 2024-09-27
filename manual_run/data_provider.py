@@ -41,7 +41,7 @@ class DataProvider(StudentProvider):
                     continue
                 # student ID or an identifier such as responseId should be in the first column
                 sid = row[0]
-                
+
                 processed_data = process_row(row, header_row)
                 # Adjust the attributes based on the CSV file
                 students.append(
