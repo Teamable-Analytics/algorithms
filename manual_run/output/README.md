@@ -1,1 +1,0 @@
-# Outputted CSV files that have been gerenated from the weight algorithm code will be saved here.

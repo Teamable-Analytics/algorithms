@@ -1,1 +1,0 @@
-# Place CSV files to run on the weight algorithm in this folder.
