@@ -7,9 +7,11 @@ import typer
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.dataclasses.enums import AlgorithmType
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
+from benchmarking.evaluations.metrics.cosine_similarity import \
+    AverageCosineDifference
 from benchmarking.runs.interfaces import Run
-from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
+from benchmarking.simulation.simulation_set import (SimulationSet,
+                                                    SimulationSetArtifact)
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from manual_run.attributes import Attributes
 from manual_run.data_provider import DataProvider
@@ -73,17 +75,22 @@ class ManualPriorityRun(Run):
 
                 team_size = len(team.students)
 
-                # Can be customize to fit the team size preference
+                """ The team size violation is calculated based on the tutor preference and group size
+                    this is to ensure that the team size is within the acceptable range. This is not
+                    not needed and can be deleted in the future if the team size violation is not a concern.
+                    This will need to be changed if data fields are changed.
+                """
                 team_size_violation = (
                     "Yes"
                     if tutor_preference == 2
                     and (
-                        (group_size == 1 and team_size != 2)
-                        or (group_size == 2 and (team_size > 4 or team_size < 3))
-                        or (group_size == 3 and team_size < 4)
+                        (group_size == 0 and team_size != 2)
+                        or (group_size == 1 and (team_size > 4 or team_size < 3))
+                        or (group_size == 2 and team_size < 4)
                     )
                     else ""
                 )
+
 
                 Variables.data_fields.append(
                     [
