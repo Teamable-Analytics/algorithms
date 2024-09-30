@@ -26,9 +26,6 @@ class Variables:
         "z-score": lambda x: 1 if float(x) >= 0 else 0
     }
 
-    # Enter the name of the columns from the provided CSV file
-    data_fields = [["ResponseId", "Q8", "Q4", "Q5", "z-score"]]
-
     # Enter the name of the inputted CSV file
     input_csv_file = "input.csv"
 

@@ -58,8 +58,7 @@ class ManualPriorityRun(Run):
         self.create_csv(team_set)
 
     def create_csv(self, team_set):
-        Variables.data_fields[0].append("TeamSizeViolation")
-        Variables.data_fields[0].append("TeamId")
+        c
 
         for team in team_set.teams:
             for student in team.students:
