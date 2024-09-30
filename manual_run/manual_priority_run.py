@@ -7,9 +7,11 @@ import typer
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.dataclasses.enums import AlgorithmType
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
+from benchmarking.evaluations.metrics.cosine_similarity import \
+    AverageCosineDifference
 from benchmarking.runs.interfaces import Run
-from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
+from benchmarking.simulation.simulation_set import (SimulationSet,
+                                                    SimulationSetArtifact)
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from manual_run.attributes import Attributes
 from manual_run.data_provider import DataProvider
@@ -56,7 +58,13 @@ class ManualPriorityRun(Run):
         self.create_csv(team_set)
 
     def create_csv(self, team_set):
-        c
+        data_fields = [["ResponseId"]]
+        for key in Variables.attribute_options:
+            data_fields[0].append(key)
+        for key in Variables.attribute_handlers:
+            data_fields[0].append(key)
+        data_fields[0].append("TeamSizeViolation")
+        data_fields[0].append("TeamId")
 
         for team in team_set.teams:
             for student in team.students:
@@ -87,6 +95,7 @@ class ManualPriorityRun(Run):
                     )
                     else ""
                 )
+
 
                 Variables.data_fields.append(
                     [
