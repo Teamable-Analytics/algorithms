@@ -9,5 +9,5 @@
 ## How to run:
 - In the root directory run:
 ```bash
-python3 -m manual_run.weight_run
+python3 -m manual_run.manual_priority_run
 ```
