@@ -13,16 +13,13 @@ from manual_run.variables import Variables
 
 
 class DataProvider(StudentProvider):
-    def __init__(self):
-        self._max_project_preferences_per_student = 0
-
     @property
     def num_students(self) -> int:
         return Variables.num_students
 
     @property
     def max_project_preferences_per_student(self) -> int:
-        return self._max_project_preferences_per_student
+        return 0  # this should always return 0
 
     def get(self, seed: int = None):
         """Note: The goal of the seed within this function is for when we generate fake students"""
