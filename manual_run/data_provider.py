@@ -1,7 +1,5 @@
 import csv
-from enum import Enum
 from os import path
-from typing import Dict
 
 import numpy as np
 
