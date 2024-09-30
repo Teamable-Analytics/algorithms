@@ -7,9 +7,11 @@ import typer
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.dataclasses.enums import AlgorithmType
-from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
+from benchmarking.evaluations.metrics.cosine_similarity import \
+    AverageCosineDifference
 from benchmarking.runs.interfaces import Run
-from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact
+from benchmarking.simulation.simulation_set import (SimulationSet,
+                                                    SimulationSetArtifact)
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from manual_run.attributes import Attributes
 from manual_run.data_provider import DataProvider
@@ -56,11 +58,19 @@ class ManualPriorityRun(Run):
         self.create_csv(team_set)
 
     def create_csv(self, team_set):
+        """
+        The generated CSV file will include the 'responseId' and the data fields specified in
+        Variables.attribute_options and Variables.attribute_handlers. These fields will be written
+        in the same order as they appear in the variables.py script. Additionally, two extra columns,
+        'TeamSizeViolation' and 'TeamId', will be appended to the file.
+        """
         data_fields = [["ResponseId"]]
         for key in Variables.attribute_options:
             data_fields[0].append(key)
         for key in Variables.attribute_handlers:
             data_fields[0].append(key)
+
+        # if TeamSizeViolation is not needed then the following line can be deleted
         data_fields[0].append("TeamSizeViolation")
         data_fields[0].append("TeamId")
 
@@ -78,10 +88,11 @@ class ManualPriorityRun(Run):
 
                 team_size = len(team.students)
 
-                """ The team size violation is calculated based on the tutor preference and group size
-                    this is to ensure that the team size is within the acceptable range. This is not
-                    not needed and can be deleted in the future if the team size violation is not a concern.
-                    This will need to be changed if data fields are changed.
+                """ 
+                The team size violation is calculated based on the tutor's preference and the group size
+                to ensure that the team size falls within an acceptable range. If monitoring team size 
+                violations is no longer necessary, this calculation can be removed. Additionally, any 
+                changes to the data fields will require corresponding updates to this logic.
                 """
                 team_size_violation = (
                     "Yes"
@@ -101,7 +112,7 @@ class ManualPriorityRun(Run):
                         data_fields_input_2,
                         data_fields_input_3,
                         attributes[Attributes.SCORE.value][0],
-                        team_size_violation,
+                        team_size_violation,  # if TeamSizeViolation is not needed delete this line
                         team.id,
                     ]
                 )
