@@ -96,8 +96,7 @@ class ManualPriorityRun(Run):
                     else ""
                 )
 
-
-                Variables.data_fields.append(
+                data_fields.append(
                     [
                         student.id,
                         data_fields_input_1,
@@ -117,7 +116,7 @@ class ManualPriorityRun(Run):
 
         with open(output_file, "w+", newline="") as f:
             writer = csv.writer(f)
-            for row in Variables.data_fields:
+            for row in data_fields:
                 writer.writerow(row)
 
 
