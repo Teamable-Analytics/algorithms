@@ -1,4 +1,4 @@
-FROM python:3.9-slim-buster as builder
+FROM python:3.9.20
 
 WORKDIR /usr/src/app
 
@@ -8,9 +8,6 @@ ENV PYTHONUNBUFFERED 1
 
 RUN python -m pip install --upgrade pip
 COPY . /usr/src/app/
-
-RUN apt-get update
-RUN apt-get -y install gcc libpq-dev python3-dev
 
 # install python dependencies
 COPY ./requirements.txt .
