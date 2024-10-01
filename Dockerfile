@@ -1,4 +1,4 @@
-FROM python:3.9-slim-buster as builder
+FROM python:3.9.20
 
 WORKDIR /usr/src/app
 
@@ -6,7 +6,6 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# lint
 RUN python -m pip install --upgrade pip
 COPY . /usr/src/app/
 
