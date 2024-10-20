@@ -8,13 +8,15 @@ class APIKeyAuthenticationMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        response = self.get_response(request)
+        try:
+            response = self.get_response(request)
+            request_headers = dict(request.headers)
+            api_key = request_headers.get("X-Api-Key")
+            if not api_key:
+                return HttpResponse("No API key provided", status=400)
+            if not is_api_key_valid(api_key):
+                return HttpResponse("Invalid API key provided", status=401)
 
-        request_headers = dict(request.headers)
-        api_key = request_headers.get("X-Api-Key")
-        if not api_key:
-            return HttpResponse("No API key provided", status=400)
-        if not is_api_key_valid(api_key):
-            return HttpResponse("Invalid API key provided", status=401)
-
-        return response
+            return response
+        except Exception as e:
+            print(e)

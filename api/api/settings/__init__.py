@@ -26,6 +26,8 @@ SECRET_KEY = "django-insecure-b-q$3f0wrv39^f^mj(vo6$%*y!y47ygzp(q)xkkcvj^z(4#-w5
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = "*"
 
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
@@ -79,17 +81,17 @@ WSGI_APPLICATION = "api.api.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.environ.get("DB_DATABASE", os.environ.get("RDS_DB_NAME")),
+        "USER": os.environ.get("DB_USER", os.environ.get("RDS_USERNAME")),
+        "PASSWORD": os.environ.get("DB_PASSWORD", os.environ.get("RDS_PASSWORD")),
+        "HOST": os.environ.get("DB_HOST", os.environ.get("RDS_HOSTNAME")),
+        "PORT": os.environ.get("DB_PORT", os.environ.get("RDS_PORT")),
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

@@ -4,7 +4,7 @@ services:
     env_file:
       - ./env/.env.prod
     ports:
-      - 8000:8000
+      - 8001:8001
     volumes:
       - ./env/nginx.conf:/etc/nginx/nginx.conf
       - ./logs/nginx:/var/log/nginx/
@@ -16,9 +16,20 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: gunicorn api.api.wsgi:application --bind 0.0.0.0:8000
     env_file:
       - ./env/.env.prod
-    expose:
-      - 8000
+    restart: 'always'
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14-alpine
+    ports:
+      - 5433:5432
+    volumes:
+      - ./.data/postgres/:/var/lib/pgsql/algorithms_data
+    environment:
+      - POSTGRES_DB=tf_algorithms
+      - POSTGRES_USER=tf_algorithms_db_user
+      - POSTGRES_PASSWORD=tf_algorithms_db_password
     restart: 'always'
