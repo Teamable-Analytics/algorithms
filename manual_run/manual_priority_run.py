@@ -33,7 +33,7 @@ class ManualPriorityRun(Run):
                 attribute_filter=[Attributes.TIMESLOT_AVAILABILITY.value],
             ),
         ]
-        student_provider = DataProvider()
+        student_provider = DataProvider()  # This reads data from the CSV
         artifact: SimulationSetArtifact = SimulationSet(
             settings=SimulationSettings(
                 num_teams=ceil(student_provider.num_students / Variables.team_size),

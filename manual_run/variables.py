@@ -2,9 +2,6 @@ from typing import Callable, Dict, List
 
 
 class Variables:
-    # The number of student must match the number of students in the input CSV file
-    num_students = 146
-
     team_size = 4
 
     # Each dictionary should define the name of the column and each possible options for each column containing a non-integer value

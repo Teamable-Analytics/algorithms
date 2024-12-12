@@ -11,9 +11,18 @@ from manual_run.variables import Variables
 
 
 class DataProvider(StudentProvider):
+    num_students = 0
+
     @property
     def num_students(self) -> int:
-        return Variables.num_students
+        folder_path = path.dirname(__file__)
+        csv_file_path = path.join(folder_path, Variables.input_csv_file)
+        length = 0
+        with open(csv_file_path, "r") as file:
+            csv_reader = csv.reader(file)
+            for _ in csv_reader:
+                length += 1
+        return length
 
     @property
     def max_project_preferences_per_student(self) -> int:
