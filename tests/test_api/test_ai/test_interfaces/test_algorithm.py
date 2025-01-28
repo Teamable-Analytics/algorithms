@@ -7,7 +7,7 @@ from utils.validation import is_unique
 
 
 class TestAlgorithm(unittest.TestCase):
-    def test_create_initial_teams__creates_teams_with_unique_ideas(self):
+    def test_create_initial_teams__creates_teams_with_unique_ids(self):
         # without initial teams
         team_generation_options_1 = TeamGenerationOptions(
             max_team_size=5, min_team_size=4, total_teams=4, initial_teams=[]
