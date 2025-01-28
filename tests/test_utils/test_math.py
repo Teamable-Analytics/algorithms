@@ -1,6 +1,6 @@
 import unittest
 
-from utils.math import change_range
+from api.utils.math import change_range
 
 
 class TestMathHelpers(unittest.TestCase):

@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import List, TYPE_CHECKING, Optional
 
 from api.dataclasses.enums import RequirementOperator, RequirementsCriteria
-from utils.math import change_range
+from api.utils.math import change_range
 
 if TYPE_CHECKING:
     from api.dataclasses.student import Student
