@@ -20,7 +20,7 @@ from api.dataclasses.enums import (
 from api.dataclasses.student import Student
 from api.dataclasses.team import TeamShell
 from benchmarking.evaluations.enums import PreferenceDirection
-from utils.math import change_range
+from api.utils.math import change_range
 
 
 @dataclass
