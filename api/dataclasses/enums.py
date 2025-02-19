@@ -35,10 +35,6 @@ class AlgorithmType(Enum):
     WEIGHT = "weight"
     SOCIAL = "social"
     PRIORITY = "priority"
-    MRR = "multiple_round_robin_with_adjusted_winner"
-    GEG = "generalized_envy_graph"
-    DRR = "double_round_robin"
-    GROUP_MATCHER = "group_matcher"
 
 
 class TokenizationConstraintDirection(Enum):
