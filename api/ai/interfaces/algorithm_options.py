@@ -265,75 +265,9 @@ class SocialAlgorithmOptions(WeightAlgorithmOptions):
         )
 
 
-@dataclass
-class MultipleRoundRobinAlgorithmOptions(AlgorithmOptions):
-    def validate(self):
-        super().validate()
-
-    @staticmethod
-    def parse_json(_: Dict[str, Any]):
-        raise AttributeError(
-            "MultipleRoundRobinAlgorithmOptions does not support parsing from json."
-        )
-
-    @staticmethod
-    def get_schema() -> Schema:
-        return Schema(dict)
-
-
-@dataclass
-class GeneralizedEnvyGraphAlgorithmOptions(AlgorithmOptions):
-    def validate(self):
-        super().validate()
-
-    @staticmethod
-    def parse_json(_: Dict[str, Any]):
-        raise AttributeError(
-            "GeneralizedEnvyGraphAlgorithmOptions does not support parsing from json."
-        )
-
-    @staticmethod
-    def get_schema() -> Schema:
-        raise NotImplementedError
-
-
-@dataclass
-class DoubleRoundRobinAlgorithmOptions(AlgorithmOptions):
-    def validate(self):
-        super().validate()
-
-    @staticmethod
-    def parse_json(_: Dict[str, Any]):
-        raise AttributeError(
-            "DoubleRoundRobinAlgorithmOptions does not support parsing from json."
-        )
-
-    @staticmethod
-    def get_schema() -> Schema:
-        raise NotImplementedError
-
-
-@dataclass
-class GroupMatcherAlgorithmOptions(AlgorithmOptions):
-    def validate(self):
-        super().validate()
-
-    @staticmethod
-    def parse_json(_: Dict[str, Any]):
-        raise NotImplementedError
-
-    @staticmethod
-    def get_schema() -> Schema:
-        raise NotImplementedError
-
-
 AnyAlgorithmOptions = Union[
     RandomAlgorithmOptions,
     WeightAlgorithmOptions,
     SocialAlgorithmOptions,
     PriorityAlgorithmOptions,
-    MultipleRoundRobinAlgorithmOptions,
-    GeneralizedEnvyGraphAlgorithmOptions,
-    DoubleRoundRobinAlgorithmOptions,
-    GroupMatcherAlgorithmOptions,
 ]
