@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from benchmarking.data.interfaces import StudentProvider, InitialTeamsProvider
 from benchmarking.evaluations.interfaces import Scenario
-from utils.validation import assert_can_exist_together
+from api.utils.validation import assert_can_exist_together
 
 
 @dataclass

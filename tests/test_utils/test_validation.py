@@ -10,7 +10,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
-from utils.validation import (
+from api.utils.validation import (
     is_unique,
     is_non_negative_integer,
     assert_can_exist_together,

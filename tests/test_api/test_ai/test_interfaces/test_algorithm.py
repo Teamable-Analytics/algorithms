@@ -3,7 +3,7 @@ import unittest
 from api.ai.interfaces.algorithm import Algorithm
 from api.ai.interfaces.team_generation_options import TeamGenerationOptions
 from api.dataclasses.team import TeamShell
-from utils.validation import is_unique
+from api.utils.validation import is_unique
 
 
 class TestAlgorithm(unittest.TestCase):
