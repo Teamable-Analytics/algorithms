@@ -2,19 +2,20 @@ import math
 import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Literal, List, Dict, Optional
+from typing import Literal, List, Dict
 
 import numpy as np
 from numpy.random import Generator
 
-from api.dataclasses.enums import Relationship, AttributeValueEnum, ScenarioAttribute
+from api.dataclasses.enums import Relationship, AttributeValueEnum
 from api.dataclasses.student import Student
 from benchmarking.data.interfaces import (
     StudentProvider,
     AttributeRangeConfig,
     NumValuesConfig,
 )
-from utils.validation import is_non_negative_integer, is_unique
+from utils.validation import is_non_negative_integer
+from api.utils.validation import is_unique
 
 
 @dataclass

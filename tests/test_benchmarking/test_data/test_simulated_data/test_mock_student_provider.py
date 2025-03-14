@@ -15,7 +15,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     ProbabilisticAttributeValuesMaker,
     ExactAttributeRatiosMaker,
 )
-from utils.validation import is_unique
+from api.utils.validation import is_unique
 
 
 class TestMockStudentProvider(unittest.TestCase):
