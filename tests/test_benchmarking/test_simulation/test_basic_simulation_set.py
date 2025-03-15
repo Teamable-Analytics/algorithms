@@ -8,7 +8,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 from benchmarking.simulation.basic_simulation_set import BasicSimulationSet
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from tests.test_benchmarking.test_simulation._data import TestScenario
-from utils.validation import is_unique
+from api.utils.validation import is_unique
 
 
 class TestBasicSimulationSet(unittest.TestCase):
