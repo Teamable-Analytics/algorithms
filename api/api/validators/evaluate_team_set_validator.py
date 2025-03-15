@@ -4,7 +4,7 @@ from schema import Schema, Optional, Or, SchemaError
 
 from api.api.validators.interface import Validator
 from api.dataclasses.enums import RequirementOperator, Relationship
-from api.api.utils.relationship import get_relationship_str
+from api.utils.relationship import get_relationship_str
 from api.utils.validation import is_unique
 
 

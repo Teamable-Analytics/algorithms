@@ -4,7 +4,7 @@ from typing import Dict, Union, List, Any
 from api.dataclasses.enums import Relationship
 from api.dataclasses.interfaces import DataClassDecoder
 from api.dataclasses.student import Student
-from api.api.utils.relationship import get_relationship
+from api.utils.relationship import get_relationship
 
 
 class StudentSerializer(JSONEncoder, DataClassDecoder):

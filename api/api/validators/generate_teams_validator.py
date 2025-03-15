@@ -4,7 +4,7 @@ from schema import Schema, SchemaError, Or, Optional
 
 from api.ai.algorithm_runner import AlgorithmRunner
 from api.api.validators.interface import Validator
-from api.api.utils.relationship import get_relationship_str
+from api.utils.relationship import get_relationship_str
 from api.dataclasses.enums import AlgorithmType, Relationship, RequirementOperator
 
 
