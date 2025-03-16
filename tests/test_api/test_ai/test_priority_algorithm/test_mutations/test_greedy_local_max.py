@@ -2,8 +2,13 @@ import random
 import unittest
 from collections import Counter
 
-from algorithms.ai.priority_algorithm.custom_dataclasses import PriorityTeam, PriorityTeamSet
-from algorithms.ai.priority_algorithm.mutations.greedy_local_max import GreedyLocalMaxMutation
+from algorithms.ai.priority_algorithm.custom_dataclasses import (
+    PriorityTeam,
+    PriorityTeamSet,
+)
+from algorithms.ai.priority_algorithm.mutations.greedy_local_max import (
+    GreedyLocalMaxMutation,
+)
 from algorithms.dataclasses.team import TeamShell
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,

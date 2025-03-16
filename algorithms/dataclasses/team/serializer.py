@@ -1,7 +1,10 @@
 from json import JSONEncoder
 from typing import Dict, Any, List
 
-from algorithms.dataclasses.project import ProjectRequirementSerializer, ProjectRequirement
+from algorithms.dataclasses.project import (
+    ProjectRequirementSerializer,
+    ProjectRequirement,
+)
 from algorithms.dataclasses.interfaces import DataClassDecoder
 from algorithms.dataclasses.student import StudentSerializer, Student
 from algorithms.dataclasses.team import Team

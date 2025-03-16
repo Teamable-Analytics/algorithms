@@ -1,12 +1,17 @@
 import unittest
 from typing import List
 
-from algorithms.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
+from algorithms.ai.priority_algorithm.custom_dataclasses import (
+    PriorityTeamSet,
+    PriorityTeam,
+)
 from algorithms.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
 from algorithms.ai.priority_algorithm.mutations.local_max_double_random import (
     LocalMaxDoubleRandomMutation,
 )
-from algorithms.ai.priority_algorithm.mutations.local_max_random import LocalMaxRandomMutation
+from algorithms.ai.priority_algorithm.mutations.local_max_random import (
+    LocalMaxRandomMutation,
+)
 from algorithms.ai.priority_algorithm.priority.interfaces import Priority
 from benchmarking.simulation.mock_algorithm import MockAlgorithm
 from tests.test_api.test_ai.test_priority_algorithm.test_mutations._data import (

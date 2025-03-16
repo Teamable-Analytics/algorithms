@@ -1,7 +1,13 @@
 import json
 from typing import List, Dict
 
-from algorithms.models.enums import ScenarioAttribute, Gender, YearLevel, Gpa, Relationship
+from algorithms.models.enums import (
+    ScenarioAttribute,
+    Gender,
+    YearLevel,
+    Gpa,
+    Relationship,
+)
 from algorithms.models.student import Student
 from benchmarking.data.real_data.cosc499_s2023_provider.providers import (
     COSC499S2023StudentProvider,

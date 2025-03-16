@@ -3,9 +3,13 @@ from typing import Dict
 import typer
 
 from algorithms.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
-from algorithms.ai.priority_algorithm.mutations.greedy_local_max import GreedyLocalMaxMutation
+from algorithms.ai.priority_algorithm.mutations.greedy_local_max import (
+    GreedyLocalMaxMutation,
+)
 from algorithms.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
-from algorithms.ai.priority_algorithm.mutations.local_max_random import LocalMaxRandomMutation
+from algorithms.ai.priority_algorithm.mutations.local_max_random import (
+    LocalMaxRandomMutation,
+)
 from algorithms.ai.priority_algorithm.mutations.random_slice import RandomSliceMutation
 from algorithms.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
 from algorithms.ai.priority_algorithm.mutations.robinhood import RobinhoodMutation

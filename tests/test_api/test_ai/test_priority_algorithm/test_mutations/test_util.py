@@ -3,7 +3,10 @@ from typing import List
 
 from algorithms.ai.priority_algorithm.priority.interfaces import Priority
 from algorithms.ai.priority_algorithm.mutations.utils import score
-from algorithms.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
+from algorithms.ai.priority_algorithm.custom_dataclasses import (
+    PriorityTeamSet,
+    PriorityTeam,
+)
 from algorithms.dataclasses.student import Student
 from algorithms.dataclasses.team import Team
 from tests.test_api.test_ai.test_priority_algorithm.test_mutations.test_local_max import (

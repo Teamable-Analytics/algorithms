@@ -2,7 +2,10 @@ import itertools
 from typing import List, Dict
 
 from algorithms.ai.priority_algorithm.priority.interfaces import Priority
-from algorithms.ai.priority_algorithm.custom_dataclasses import PriorityTeam, PriorityTeamSet
+from algorithms.ai.priority_algorithm.custom_dataclasses import (
+    PriorityTeam,
+    PriorityTeamSet,
+)
 from algorithms.ai.priority_algorithm.scoring import (
     get_multipliers,
     get_priority_satisfaction_array,

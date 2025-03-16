@@ -6,7 +6,10 @@ from unittest.mock import MagicMock
 from algorithms.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from algorithms.ai.interfaces.algorithm_options import PriorityAlgorithmOptions
 from algorithms.ai.interfaces.team_generation_options import TeamGenerationOptions
-from algorithms.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
+from algorithms.ai.priority_algorithm.custom_dataclasses import (
+    PriorityTeamSet,
+    PriorityTeam,
+)
 from algorithms.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
 from algorithms.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
 from algorithms.ai.priority_algorithm.priority_algorithm import PriorityAlgorithm

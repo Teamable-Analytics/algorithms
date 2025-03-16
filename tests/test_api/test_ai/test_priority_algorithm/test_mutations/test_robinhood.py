@@ -3,7 +3,10 @@ from typing import List, Dict, Tuple
 
 from schema import Schema
 
-from algorithms.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
+from algorithms.ai.priority_algorithm.custom_dataclasses import (
+    PriorityTeamSet,
+    PriorityTeam,
+)
 from algorithms.ai.priority_algorithm.mutations import utils
 from algorithms.ai.priority_algorithm.mutations.robinhood import RobinhoodMutation
 from algorithms.ai.priority_algorithm.mutations.robinhood_holistic import (

@@ -5,7 +5,9 @@ from typing import List, Dict
 from algorithms.ai.interfaces.team_generation_options import TeamGenerationOptions
 from algorithms.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet
 from algorithms.ai.priority_algorithm.mutations.interfaces import Mutation
-from algorithms.ai.priority_algorithm.mutations.utils import get_available_priority_teams
+from algorithms.ai.priority_algorithm.mutations.utils import (
+    get_available_priority_teams,
+)
 from algorithms.ai.priority_algorithm.priority.interfaces import Priority
 from algorithms.dataclasses.student import Student
 

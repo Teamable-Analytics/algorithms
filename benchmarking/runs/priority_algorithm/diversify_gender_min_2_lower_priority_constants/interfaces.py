@@ -10,7 +10,9 @@ from algorithms.ai.priority_algorithm.mutations.local_max import LocalMaxMutatio
 from algorithms.ai.priority_algorithm.mutations.local_max_double_random import (
     LocalMaxDoubleRandomMutation,
 )
-from algorithms.ai.priority_algorithm.mutations.local_max_random import LocalMaxRandomMutation
+from algorithms.ai.priority_algorithm.mutations.local_max_random import (
+    LocalMaxRandomMutation,
+)
 from algorithms.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
 from algorithms.ai.priority_algorithm.mutations.robinhood import RobinhoodMutation
 from algorithms.ai.priority_algorithm.mutations.robinhood_holistic import (

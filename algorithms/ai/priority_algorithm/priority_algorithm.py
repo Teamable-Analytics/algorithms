@@ -11,7 +11,10 @@ from algorithms.ai.interfaces.algorithm_options import (
     WeightAlgorithmOptions,
     RandomAlgorithmOptions,
 )
-from algorithms.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
+from algorithms.ai.priority_algorithm.custom_dataclasses import (
+    PriorityTeamSet,
+    PriorityTeam,
+)
 from algorithms.ai.random_algorithm.random_algorithm import RandomAlgorithm
 from algorithms.ai.utils import save_students_to_team
 from algorithms.ai.weight_algorithm.weight_algorithm import WeightAlgorithm

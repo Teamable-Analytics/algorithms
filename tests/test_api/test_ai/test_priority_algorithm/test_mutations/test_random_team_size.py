@@ -1,6 +1,9 @@
 import unittest
 
-from algorithms.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
+from algorithms.ai.priority_algorithm.custom_dataclasses import (
+    PriorityTeamSet,
+    PriorityTeam,
+)
 from algorithms.ai.priority_algorithm.mutations.random_team_size import (
     RandomTeamSizeMutation,
 )

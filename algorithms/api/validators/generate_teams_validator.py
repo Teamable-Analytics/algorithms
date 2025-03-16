@@ -5,7 +5,11 @@ from schema import Schema, SchemaError, Or, Optional
 from algorithms.ai.algorithm_runner import AlgorithmRunner
 from algorithms.api.validators.interface import Validator
 from algorithms.utils.relationship import get_relationship_str
-from algorithms.dataclasses.enums import AlgorithmType, Relationship, RequirementOperator
+from algorithms.dataclasses.enums import (
+    AlgorithmType,
+    Relationship,
+    RequirementOperator,
+)
 
 
 class GenerateTeamsValidator(Validator):
