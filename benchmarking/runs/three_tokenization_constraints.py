@@ -11,7 +11,8 @@ from api.ai.interfaces.algorithm_config import (
 )
 from api.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
 from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
-from api.dataclasses.enums import ScenarioAttribute, Gpa, Age, Race, AlgorithmType
+from api.dataclasses.enums import AlgorithmType
+from benchmarking.evaluations.enums import ScenarioAttribute, Gpa, Age, Race
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,
     MockStudentProvider,

@@ -1,10 +1,11 @@
 from typing import List
 
 from api.dataclasses.enums import (
-    RequirementsCriteria,
     DiversifyType,
-    ScenarioAttribute,
     TokenizationConstraintDirection,
+)
+from benchmarking.evaluations.enums import (
+    ScenarioAttribute,
     Gender,
     Race,
 )

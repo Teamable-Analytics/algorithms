@@ -1,6 +1,6 @@
 import unittest
 
-from api.dataclasses.enums import ScenarioAttribute, Race, Gender
+from benchmarking.evaluations.enums import ScenarioAttribute, Race, Gender
 from api.dataclasses.student import Student
 from api.dataclasses.team import Team
 from api.dataclasses.team_set import TeamSet

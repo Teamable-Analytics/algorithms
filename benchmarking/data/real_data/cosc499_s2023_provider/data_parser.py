@@ -2,10 +2,12 @@ import json
 from typing import List, Dict
 
 from api.dataclasses.enums import (
-    ScenarioAttribute,
     Relationship,
-    Gpa,
     RequirementOperator,
+)
+from benchmarking.evaluations.enums import (
+    ScenarioAttribute,
+    Gpa,
 )
 from api.dataclasses.project import Project, ProjectRequirement
 from api.dataclasses.student import Student, StudentSerializer

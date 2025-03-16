@@ -8,7 +8,7 @@ from api.ai.priority_algorithm.priority.priority import (
     ProjectPreferencePriority,
     SocialPreferencePriority,
 )
-from benchmarking.evaluations.enums import PreferenceSubject
+from api.dataclasses.enums import PreferenceSubject
 from benchmarking.evaluations.goals import (
     DiversityGoal,
     ProjectRequirementGoal,

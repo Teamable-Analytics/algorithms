@@ -1,12 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from benchmarking.evaluations.enums import (
-    PreferenceDirection,
-    PreferenceSubject,
-)
 from benchmarking.evaluations.interfaces import Goal
-from api.dataclasses.enums import DiversifyType, RequirementsCriteria
+from api.dataclasses.enums import DiversifyType, PreferenceDirection, PreferenceSubject
 from api.dataclasses.tokenization_constraint import TokenizationConstraint
 
 

@@ -22,7 +22,7 @@ from benchmarking.data.real_data.cosc499_s2023_provider.providers import (
     COSC499S2023StudentProvider,
     COSC499S2023InitialTeamsProvider,
 )
-from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubject
+from api.dataclasses.enums import PreferenceDirection, PreferenceSubject
 from benchmarking.evaluations.goals import (
     DiversityGoal,
     WeightGoal,

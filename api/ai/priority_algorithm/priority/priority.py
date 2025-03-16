@@ -16,10 +16,10 @@ from api.dataclasses.enums import (
     RequirementsCriteria,
     PriorityType,
     Relationship,
+    PreferenceDirection,
 )
 from api.dataclasses.student import Student
 from api.dataclasses.team import TeamShell
-from benchmarking.evaluations.enums import PreferenceDirection
 from api.utils.math import change_range
 
 

@@ -15,7 +15,7 @@ from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProvider,
     MockInitialTeamsProviderSettings,
 )
-from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubject
+from api.dataclasses.enums import PreferenceDirection, PreferenceSubject
 from benchmarking.evaluations.goals import (
     PreferenceGoal,
     WeightGoal,
