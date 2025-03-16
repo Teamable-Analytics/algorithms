@@ -10,13 +10,16 @@ from api.ai.interfaces.algorithm_config import (
 from api.dataclasses.enums import (
     AlgorithmType,
     DiversifyType,
-    ScenarioAttribute,
     TokenizationConstraintDirection,
+    PreferenceDirection,
+    PreferenceSubject,
+)
+from benchmarking.evaluations.enums import (
+    ScenarioAttribute,
     Gender,
     Age,
 )
 from api.dataclasses.tokenization_constraint import TokenizationConstraint
-from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubject
 from benchmarking.evaluations.goals import PreferenceGoal, WeightGoal, DiversityGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.average_social_satisfied import (

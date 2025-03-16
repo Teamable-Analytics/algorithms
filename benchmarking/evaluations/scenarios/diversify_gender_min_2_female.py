@@ -2,8 +2,10 @@ from typing import List
 
 from api.dataclasses.enums import (
     DiversifyType,
-    ScenarioAttribute,
     TokenizationConstraintDirection,
+)
+from benchmarking.evaluations.enums import (
+    ScenarioAttribute,
 )
 from benchmarking.evaluations.interfaces import (
     Scenario,

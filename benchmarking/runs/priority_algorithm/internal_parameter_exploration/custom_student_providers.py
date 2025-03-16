@@ -3,11 +3,13 @@ from typing import List
 import numpy as np
 
 from api.dataclasses.enums import (
+    Relationship,
+)
+from benchmarking.evaluations.enums import (
     Gender,
     ScenarioAttribute,
     Gpa,
     Race,
-    Relationship,
     AttributeValueEnum,
 )
 from api.dataclasses.student import Student

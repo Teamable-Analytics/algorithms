@@ -11,15 +11,14 @@ from api.ai.priority_algorithm.priority.priority import (
 )
 from api.dataclasses.enums import (
     RequirementOperator,
-    RequirementsCriteria,
     DiversifyType,
     TokenizationConstraintDirection,
     Relationship,
+    PreferenceDirection,
 )
 from api.dataclasses.project import ProjectRequirement
 from api.dataclasses.student import Student
 from api.dataclasses.team import TeamShell
-from benchmarking.evaluations.enums import PreferenceDirection
 from tests.test_api.test_ai.test_priority_algorithm.test_priority._data import (
     create_social_students,
 )

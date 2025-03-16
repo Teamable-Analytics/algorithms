@@ -9,10 +9,13 @@ from api.ai.interfaces.algorithm_config import (
 )
 from api.dataclasses.enums import (
     AlgorithmType,
-    RequirementsCriteria,
     DiversifyType,
-    ScenarioAttribute,
     TokenizationConstraintDirection,
+    PreferenceDirection,
+    PreferenceSubject,
+)
+from benchmarking.evaluations.enums import (
+    ScenarioAttribute,
     Gender,
     Age,
 )
@@ -21,7 +24,6 @@ from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProvider,
     MockInitialTeamsProviderSettings,
 )
-from benchmarking.evaluations.enums import PreferenceDirection, PreferenceSubject
 from benchmarking.evaluations.goals import (
     PreferenceGoal,
     WeightGoal,

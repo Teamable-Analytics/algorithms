@@ -6,7 +6,8 @@ import typer
 from matplotlib import pyplot as plt, cm
 
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
-from api.dataclasses.enums import Gender, ScenarioAttribute, AlgorithmType
+from api.dataclasses.enums import AlgorithmType
+from benchmarking.evaluations.enums import Gender, ScenarioAttribute
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,

@@ -12,7 +12,8 @@ from api.ai.priority_algorithm.mutations.robinhood import RobinhoodMutation
 from api.ai.priority_algorithm.mutations.robinhood_holistic import (
     RobinhoodHolisticMutation,
 )
-from api.dataclasses.enums import ScenarioAttribute, Gender, Race, AlgorithmType
+from api.dataclasses.enums import AlgorithmType
+from benchmarking.evaluations.enums import ScenarioAttribute, Gender, Race
 from benchmarking.data.simulated_data.realistic_class.providers import (
     RealisticMockInitialTeamsProvider,
     RealisticMockStudentProvider,

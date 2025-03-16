@@ -4,7 +4,7 @@ from typing import List
 
 import numpy as np
 
-from api.dataclasses.enums import ScenarioAttribute
+from benchmarking.evaluations.enums import ScenarioAttribute
 from api.dataclasses.student import Student, StudentSerializer
 from api.dataclasses.team import TeamSerializer, TeamShell
 from api.dataclasses.team_set import TeamSet

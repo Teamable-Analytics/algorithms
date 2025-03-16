@@ -4,7 +4,8 @@ from typing import Literal, List
 
 import numpy as np
 
-from api.dataclasses.enums import Gpa, Relationship
+from api.dataclasses.enums import Relationship
+from benchmarking.evaluations.enums import Gpa
 from api.dataclasses.student import Student
 from benchmarking.data.simulated_data.mock_student_provider import (
     create_mock_students,

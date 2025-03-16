@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Union, Tuple
 
-from api.dataclasses.enums import AttributeValueEnum
+from benchmarking.evaluations.enums import AttributeValueEnum
 from api.dataclasses.student import Student
 from api.dataclasses.team import TeamShell
 from api.dataclasses.team_set import TeamSet

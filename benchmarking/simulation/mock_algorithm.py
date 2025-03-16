@@ -14,9 +14,9 @@ from api.dataclasses.enums import (
     AlgorithmType,
     DiversifyType,
     RelationshipBehaviour,
+    PreferenceSubject,
 )
 from api.dataclasses.team import TeamShell
-from benchmarking.evaluations.enums import PreferenceSubject
 from benchmarking.evaluations.goals import (
     WeightGoal,
     PreferenceGoal,

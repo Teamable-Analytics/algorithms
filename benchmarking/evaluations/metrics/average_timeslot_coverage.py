@@ -1,6 +1,6 @@
 from typing import List
 
-from api.dataclasses.enums import ScenarioAttribute
+from benchmarking.evaluations.enums import ScenarioAttribute
 from api.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 

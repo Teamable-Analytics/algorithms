@@ -5,11 +5,13 @@ import typer
 from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
 from api.dataclasses.enums import (
     DiversifyType,
-    ScenarioAttribute,
     TokenizationConstraintDirection,
+    AlgorithmType,
+)
+from benchmarking.evaluations.enums import (
+    ScenarioAttribute,
     Gender,
     Gpa,
-    AlgorithmType,
 )
 from api.dataclasses.tokenization_constraint import TokenizationConstraint
 from benchmarking.data.simulated_data.mock_student_provider import (
@@ -23,7 +25,6 @@ from benchmarking.evaluations.metrics.average_social_satisfied import (
 )
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from benchmarking.evaluations.metrics.utils.team_calculations import (
-    is_strictly_happy_team_friend,
     is_happy_team_1hp_friend,
 )
 from benchmarking.evaluations.scenarios.include_social_friends import (

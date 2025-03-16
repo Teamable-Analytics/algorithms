@@ -4,11 +4,13 @@ from typing import List
 import numpy as np
 
 from api.dataclasses.enums import (
+    RequirementOperator,
+)
+from benchmarking.evaluations.enums import (
     AttributeValueEnum,
     ScenarioAttribute,
     Gender,
     Race,
-    RequirementOperator,
 )
 from api.dataclasses.project import Project, ProjectRequirement
 from api.dataclasses.student import Student

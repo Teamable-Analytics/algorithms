@@ -1,7 +1,8 @@
 import json
 from typing import List
 
-from api.dataclasses.enums import Gender, ScenarioAttribute, Relationship, YearLevel
+from api.dataclasses.enums import Relationship
+from benchmarking.evaluations.enums import Gender, ScenarioAttribute, YearLevel
 from api.dataclasses.student import Student, StudentSerializer
 from api.dataclasses.team import Team, TeamSerializer
 

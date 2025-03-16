@@ -7,8 +7,10 @@ from api.ai.priority_algorithm.priority.priority import (
 )
 from api.dataclasses.enums import (
     DiversifyType,
-    ScenarioAttribute,
     TokenizationConstraintDirection,
+)
+from benchmarking.evaluations.enums import (
+    ScenarioAttribute,
 )
 from api.dataclasses.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal

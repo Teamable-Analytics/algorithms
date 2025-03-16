@@ -10,9 +10,10 @@ from api.ai.interfaces.algorithm_config import (
 from api.dataclasses.enums import (
     AlgorithmType,
     DiversifyType,
-    ScenarioAttribute,
     TokenizationConstraintDirection,
-    RequirementsCriteria,
+)
+from benchmarking.evaluations.enums import (
+    ScenarioAttribute,
     Gender,
     Age,
 )

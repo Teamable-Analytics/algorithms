@@ -10,7 +10,8 @@ from api.ai.interfaces.algorithm_config import (
     RandomAlgorithmConfig,
     GroupMatcherAlgorithmConfig,
 )
-from api.dataclasses.enums import ScenarioAttribute, Gender, AlgorithmType
+from api.dataclasses.enums import AlgorithmType
+from benchmarking.evaluations.enums import ScenarioAttribute, Gender
 from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
     COSC341W2021T2AnsweredSurveysStudentProvider,
 )

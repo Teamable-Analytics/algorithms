@@ -2,6 +2,8 @@ from typing import List
 
 from api.dataclasses.enums import (
     DiversifyType,
+)
+from benchmarking.evaluations.enums import (
     ScenarioAttribute,
 )
 from benchmarking.evaluations.goals import DiversityGoal
