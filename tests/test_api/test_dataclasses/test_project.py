@@ -1,9 +1,9 @@
 import unittest
 
-from api.dataclasses.enums import RequirementOperator, RequirementsCriteria
-from api.dataclasses.project import ProjectRequirement
-from api.dataclasses.project.dataclass import MIN_NON_ZERO_SATISFACTION
-from api.dataclasses.student import Student
+from algorithms.dataclasses.enums import RequirementOperator, RequirementsCriteria
+from algorithms.dataclasses.project import ProjectRequirement
+from algorithms.dataclasses.project.dataclass import MIN_NON_ZERO_SATISFACTION
+from algorithms.dataclasses.student import Student
 
 
 def count(start=0):

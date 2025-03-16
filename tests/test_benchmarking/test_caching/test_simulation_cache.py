@@ -5,8 +5,8 @@ from datetime import datetime
 from os import path
 from typing import List
 
-from api.dataclasses.team_set import TeamSet
-from api.dataclasses.team_set.serializer import TeamSetSerializer
+from algorithms.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.team_set.serializer import TeamSetSerializer
 from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.simulation.simulation import SimulationArtifact
 from tests.test_benchmarking.test_caching._data import (

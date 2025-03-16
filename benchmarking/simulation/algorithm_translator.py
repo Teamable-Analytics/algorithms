@@ -1,16 +1,16 @@
 from typing import List, Union
 
 from benchmarking.evaluations.goals import DiversityGoal
-from api.dataclasses.enums import (
+from algorithms.dataclasses.enums import (
     RequirementOperator,
     Relationship,
     DiversifyType,
     TokenizationConstraintDirection,
 )
-from api.dataclasses.project import ProjectRequirement
-from api.dataclasses.student import Student
-from api.dataclasses.team import Team
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.project import ProjectRequirement
+from algorithms.dataclasses.student import Student
+from algorithms.dataclasses.team import Team
+from algorithms.dataclasses.team_set import TeamSet
 from old.team_formation.app.team_generator.algorithm.consts import (
     FRIEND,
     ENEMY,

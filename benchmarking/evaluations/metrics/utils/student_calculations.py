@@ -1,6 +1,6 @@
-from api.dataclasses.enums import Relationship, RequirementOperator
-from api.dataclasses.project import ProjectRequirement
-from api.dataclasses.student import Student
+from algorithms.dataclasses.enums import Relationship, RequirementOperator
+from algorithms.dataclasses.project import ProjectRequirement
+from algorithms.dataclasses.student import Student
 
 
 def num_friends_satisfied(student: Student) -> int:

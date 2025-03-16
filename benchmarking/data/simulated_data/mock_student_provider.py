@@ -7,16 +7,16 @@ from typing import Literal, List, Dict
 import numpy as np
 from numpy.random import Generator
 
-from api.dataclasses.enums import Relationship
+from algorithms.dataclasses.enums import Relationship
 from benchmarking.evaluations.enums import AttributeValueEnum
-from api.dataclasses.student import Student
+from algorithms.dataclasses.student import Student
 from benchmarking.data.interfaces import (
     StudentProvider,
     AttributeRangeConfig,
     NumValuesConfig,
 )
 from utils.validation import is_non_negative_integer
-from api.utils.validation import is_unique
+from algorithms.utils.validation import is_unique
 
 
 @dataclass

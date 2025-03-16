@@ -3,7 +3,7 @@ from os import path
 
 import numpy as np
 
-from api.dataclasses.student import Student
+from algorithms.dataclasses.student import Student
 from benchmarking.data.interfaces import StudentProvider
 from manual_run.attributes import Attributes
 from manual_run.map_columns import process_row

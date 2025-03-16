@@ -1,12 +1,12 @@
 import json
 import unittest
 
-from api.dataclasses.enums import RequirementOperator
-from api.dataclasses.project import ProjectRequirement
-from api.dataclasses.student import Student
-from api.dataclasses.team import Team
-from api.dataclasses.team_set import TeamSet
-from api.dataclasses.team_set.serializer import TeamSetSerializer
+from algorithms.dataclasses.enums import RequirementOperator
+from algorithms.dataclasses.project import ProjectRequirement
+from algorithms.dataclasses.student import Student
+from algorithms.dataclasses.team import Team
+from algorithms.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.team_set.serializer import TeamSetSerializer
 
 
 class TestTeamSetSerializer(unittest.TestCase):

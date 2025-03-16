@@ -3,11 +3,11 @@ from typing import Dict, Tuple
 
 import typer
 
-from api.ai.interfaces.algorithm_config import (
+from algorithms.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     PriorityAlgorithmStartType,
 )
-from api.dataclasses.enums import (
+from algorithms.dataclasses.enums import (
     AlgorithmType,
 )
 from benchmarking.evaluations.metrics.average_social_satisfied import (

@@ -1,6 +1,6 @@
 from typing import List
 
-from api.dataclasses.enums import (
+from algorithms.dataclasses.enums import (
     DiversifyType,
     TokenizationConstraintDirection,
 )
@@ -12,7 +12,7 @@ from benchmarking.evaluations.interfaces import (
     Goal,
 )
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
-from api.dataclasses.tokenization_constraint import TokenizationConstraint
+from algorithms.dataclasses.tokenization_constraint import TokenizationConstraint
 
 
 class DiversifyGenderMin2Female(Scenario):

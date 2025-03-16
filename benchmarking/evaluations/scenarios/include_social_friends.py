@@ -1,6 +1,6 @@
 from typing import List
 
-from api.dataclasses.enums import PreferenceDirection, PreferenceSubject
+from algorithms.dataclasses.enums import PreferenceDirection, PreferenceSubject
 from benchmarking.evaluations.interfaces import (
     Scenario,
     Goal,

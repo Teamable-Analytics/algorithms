@@ -1,11 +1,11 @@
 import unittest
 
-from api.ai.priority_algorithm.priority.utils import (
+from algorithms.ai.priority_algorithm.priority.utils import (
     student_attribute_binary_vector,
     int_dot_product,
     infer_possible_values,
 )
-from api.dataclasses.student import Student
+from algorithms.dataclasses.student import Student
 
 
 class TestPriorityUtils(unittest.TestCase):

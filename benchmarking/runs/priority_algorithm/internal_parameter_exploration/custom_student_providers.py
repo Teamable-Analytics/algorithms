@@ -2,7 +2,7 @@ from typing import List
 
 import numpy as np
 
-from api.dataclasses.enums import (
+from algorithms.dataclasses.enums import (
     Relationship,
 )
 from benchmarking.evaluations.enums import (
@@ -12,7 +12,7 @@ from benchmarking.evaluations.enums import (
     Race,
     AttributeValueEnum,
 )
-from api.dataclasses.student import Student
+from algorithms.dataclasses.student import Student
 from benchmarking.data.interfaces import StudentProvider
 
 

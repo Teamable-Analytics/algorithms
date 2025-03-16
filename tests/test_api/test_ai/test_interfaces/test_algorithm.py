@@ -1,9 +1,9 @@
 import unittest
 
-from api.ai.interfaces.algorithm import Algorithm
-from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.dataclasses.team import TeamShell
-from api.utils.validation import is_unique
+from algorithms.ai.interfaces.algorithm import Algorithm
+from algorithms.ai.interfaces.team_generation_options import TeamGenerationOptions
+from algorithms.dataclasses.team import TeamShell
+from algorithms.utils.validation import is_unique
 
 
 class TestAlgorithm(unittest.TestCase):

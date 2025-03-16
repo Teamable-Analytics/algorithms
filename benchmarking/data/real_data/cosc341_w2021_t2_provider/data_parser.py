@@ -1,10 +1,10 @@
 import json
 from typing import List
 
-from api.dataclasses.enums import Relationship
+from algorithms.dataclasses.enums import Relationship
 from benchmarking.evaluations.enums import Gender, ScenarioAttribute, YearLevel
-from api.dataclasses.student import Student, StudentSerializer
-from api.dataclasses.team import Team, TeamSerializer
+from algorithms.dataclasses.student import Student, StudentSerializer
+from algorithms.dataclasses.team import Team, TeamSerializer
 
 if __name__ == "__main__":
     output = {

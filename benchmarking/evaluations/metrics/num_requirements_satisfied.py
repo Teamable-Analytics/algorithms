@@ -1,5 +1,5 @@
 from old.algorithm_sandbox.metrics.project_metric import satisfied_requirements
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
 

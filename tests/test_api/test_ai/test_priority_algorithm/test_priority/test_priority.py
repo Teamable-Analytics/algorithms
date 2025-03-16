@@ -2,23 +2,23 @@ import copy
 import unittest
 from typing import List
 
-from api.ai.priority_algorithm.priority.priority import (
+from algorithms.ai.priority_algorithm.priority.priority import (
     RequirementPriority,
     DiversityPriority,
     TokenizationPriority,
     ProjectPreferencePriority,
     SocialPreferencePriority,
 )
-from api.dataclasses.enums import (
+from algorithms.dataclasses.enums import (
     RequirementOperator,
     DiversifyType,
     TokenizationConstraintDirection,
     Relationship,
     PreferenceDirection,
 )
-from api.dataclasses.project import ProjectRequirement
-from api.dataclasses.student import Student
-from api.dataclasses.team import TeamShell
+from algorithms.dataclasses.project import ProjectRequirement
+from algorithms.dataclasses.student import Student
+from algorithms.dataclasses.team import TeamShell
 from tests.test_api.test_ai.test_priority_algorithm.test_priority._data import (
     create_social_students,
 )

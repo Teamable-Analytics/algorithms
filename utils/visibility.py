@@ -1,7 +1,7 @@
 from typing import Callable
 
-from api.dataclasses.student import Student
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.student import Student
+from algorithms.dataclasses.team_set import TeamSet
 
 
 def show_team_set(team_set: TeamSet, highlight_students_by: Callable):

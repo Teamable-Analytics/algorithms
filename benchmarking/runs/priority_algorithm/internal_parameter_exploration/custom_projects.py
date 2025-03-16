@@ -1,7 +1,7 @@
 from typing import List
 
-from api.dataclasses.enums import RequirementOperator
-from api.dataclasses.project import Project, ProjectRequirement
+from algorithms.dataclasses.enums import RequirementOperator
+from algorithms.dataclasses.project import Project, ProjectRequirement
 from benchmarking.runs.priority_algorithm.internal_parameter_exploration.custom_student_providers import (
     PROGRAMMING_LANGUAGE,
 )

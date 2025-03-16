@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from typing import List, Union, Tuple
 
 from benchmarking.evaluations.enums import AttributeValueEnum
-from api.dataclasses.student import Student
-from api.dataclasses.team import TeamShell
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.student import Student
+from algorithms.dataclasses.team import TeamShell
+from algorithms.dataclasses.team_set import TeamSet
 
 AttributeRangeConfig = Union[
     List[int],

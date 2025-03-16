@@ -3,14 +3,14 @@ from typing import Dict, List
 
 import typer
 
-from api.ai.interfaces.algorithm_config import (
+from algorithms.ai.interfaces.algorithm_config import (
     RandomAlgorithmConfig,
     SocialAlgorithmConfig,
     WeightAlgorithmConfig,
     PriorityAlgorithmConfig,
 )
-from api.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
-from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
+from algorithms.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
+from algorithms.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -23,7 +23,7 @@ from benchmarking.evaluations.metrics.average_gini_index import AverageGiniIndex
 from benchmarking.evaluations.metrics.maximum_gini_index import MaximumGiniIndex
 from benchmarking.evaluations.metrics.minimum_gini_index import MinimumGiniIndex
 from benchmarking.evaluations.scenarios.concentrate_gpa import ConcentrateGPA
-from api.dataclasses.enums import AlgorithmType
+from algorithms.dataclasses.enums import AlgorithmType
 from benchmarking.evaluations.enums import ScenarioAttribute, Gpa
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.insight import Insight

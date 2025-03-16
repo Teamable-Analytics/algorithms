@@ -1,22 +1,22 @@
 from functools import cached_property
 from typing import Dict, List
 
-from api.ai.interfaces.algorithm_config import (
+from algorithms.ai.interfaces.algorithm_config import (
     RandomAlgorithmConfig,
     WeightAlgorithmConfig,
     PriorityAlgorithmConfig,
 )
-from api.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
-from api.ai.priority_algorithm.mutations.local_max_double_random import (
+from algorithms.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
+from algorithms.ai.priority_algorithm.mutations.local_max_double_random import (
     LocalMaxDoubleRandomMutation,
 )
-from api.ai.priority_algorithm.mutations.local_max_random import LocalMaxRandomMutation
-from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
-from api.ai.priority_algorithm.mutations.robinhood import RobinhoodMutation
-from api.ai.priority_algorithm.mutations.robinhood_holistic import (
+from algorithms.ai.priority_algorithm.mutations.local_max_random import LocalMaxRandomMutation
+from algorithms.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
+from algorithms.ai.priority_algorithm.mutations.robinhood import RobinhoodMutation
+from algorithms.ai.priority_algorithm.mutations.robinhood_holistic import (
     RobinhoodHolisticMutation,
 )
-from api.dataclasses.enums import AlgorithmType
+from algorithms.dataclasses.enums import AlgorithmType
 from benchmarking.evaluations.enums import ScenarioAttribute, Gender
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProviderSettings,

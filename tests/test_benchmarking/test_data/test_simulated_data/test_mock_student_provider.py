@@ -4,9 +4,9 @@ from typing import Literal, List
 
 import numpy as np
 
-from api.dataclasses.enums import Relationship
+from algorithms.dataclasses.enums import Relationship
 from benchmarking.evaluations.enums import Gpa
-from api.dataclasses.student import Student
+from algorithms.dataclasses.student import Student
 from benchmarking.data.simulated_data.mock_student_provider import (
     create_mock_students,
     MockStudentProvider,
@@ -16,7 +16,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     ProbabilisticAttributeValuesMaker,
     ExactAttributeRatiosMaker,
 )
-from api.utils.validation import is_unique
+from algorithms.utils.validation import is_unique
 
 
 class TestMockStudentProvider(unittest.TestCase):

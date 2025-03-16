@@ -5,7 +5,7 @@ import sys
 from os import path
 from typing import List, Dict, Tuple
 
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.team_set import TeamSet
 from benchmarking.caching.simulation_cache import (
     SimulationCache,
     FRAGMENT_FILE_NAME_PATTERN,

@@ -3,26 +3,26 @@ from typing import Dict, List
 
 import typer
 
-from api.ai.interfaces.algorithm_config import (
+from algorithms.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     WeightAlgorithmConfig,
     GroupMatcherAlgorithmConfig,
     RandomAlgorithmConfig,
     DoubleRoundRobinAlgorithmConfig,
 )
-from api.models.enums import (
+from algorithms.models.enums import (
     AlgorithmType,
     DiversifyType,
     ScenarioAttribute,
     RequirementsCriteria,
 )
-from api.models.student import Student
-from api.models.team import TeamShell
+from algorithms.models.student import Student
+from algorithms.models.team import TeamShell
 from benchmarking.data.real_data.cosc499_s2023_provider.providers import (
     COSC499S2023StudentProvider,
     COSC499S2023InitialTeamsProvider,
 )
-from api.dataclasses.enums import PreferenceDirection, PreferenceSubject
+from algorithms.dataclasses.enums import PreferenceDirection, PreferenceSubject
 from benchmarking.evaluations.goals import (
     DiversityGoal,
     WeightGoal,

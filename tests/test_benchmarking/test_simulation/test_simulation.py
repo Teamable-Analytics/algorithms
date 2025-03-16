@@ -4,11 +4,11 @@ import unittest
 from datetime import datetime
 from os import path
 
-from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
-from api.dataclasses.enums import AlgorithmType
-from api.dataclasses.project import Project
-from api.dataclasses.team_set import TeamSet
-from api.dataclasses.team_set.serializer import TeamSetSerializer
+from algorithms.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
+from algorithms.dataclasses.enums import AlgorithmType
+from algorithms.dataclasses.project import Project
+from algorithms.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.team_set.serializer import TeamSetSerializer
 from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProvider,

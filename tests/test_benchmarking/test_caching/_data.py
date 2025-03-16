@@ -1,8 +1,8 @@
 from typing import List
 
-from api.dataclasses.student import Student
-from api.dataclasses.team import Team
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.student import Student
+from algorithms.dataclasses.team import Team
+from algorithms.dataclasses.team_set import TeamSet
 
 mock_simulation_result: List[TeamSet] = [
     TeamSet(

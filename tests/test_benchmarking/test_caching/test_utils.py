@@ -2,7 +2,7 @@ import unittest
 from os import path
 from typing import List
 
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.team_set import TeamSet
 from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.caching.utils import combine
 from tests.test_benchmarking.test_caching._data import (

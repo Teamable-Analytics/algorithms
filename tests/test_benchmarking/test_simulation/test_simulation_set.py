@@ -1,12 +1,12 @@
 import unittest
 
-from api.ai.interfaces.algorithm_config import (
+from algorithms.ai.interfaces.algorithm_config import (
     RandomAlgorithmConfig,
     SocialAlgorithmConfig,
     PriorityAlgorithmConfig,
     WeightAlgorithmConfig,
 )
-from api.dataclasses.enums import AlgorithmType
+from algorithms.dataclasses.enums import AlgorithmType
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
@@ -14,7 +14,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
 from benchmarking.simulation.simulation_set import SimulationSet, _get_seeds
 from benchmarking.simulation.simulation_settings import SimulationSettings
 from tests.test_benchmarking.test_simulation._data import TestScenario
-from api.utils.validation import is_unique
+from algorithms.utils.validation import is_unique
 
 
 class TestSimulationSet(unittest.TestCase):

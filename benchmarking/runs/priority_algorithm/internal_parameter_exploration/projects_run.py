@@ -5,16 +5,16 @@ from typing import List, Dict, Tuple
 
 import typer
 
-from api.ai.interfaces.algorithm_config import (
+from algorithms.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     PriorityAlgorithmStartType,
 )
-from api.dataclasses.enums import (
+from algorithms.dataclasses.enums import (
     RequirementOperator,
     AlgorithmType,
 )
 from benchmarking.evaluations.enums import ScenarioAttribute, Gpa
-from api.dataclasses.project import Project, ProjectRequirement
+from algorithms.dataclasses.project import Project, ProjectRequirement
 from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProvider,
     MockInitialTeamsProviderSettings,

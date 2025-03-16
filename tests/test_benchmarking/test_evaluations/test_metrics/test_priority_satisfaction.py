@@ -1,9 +1,9 @@
 import statistics
 import unittest
 
-from api.dataclasses.student import Student
-from api.dataclasses.team import Team
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.student import Student
+from algorithms.dataclasses.team import Team
+from algorithms.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.metrics.priority_satisfaction import PrioritySatisfaction
 from tests.test_api.test_ai.test_priority_algorithm.test_mutations.test_local_max import (
     EvenPriority,

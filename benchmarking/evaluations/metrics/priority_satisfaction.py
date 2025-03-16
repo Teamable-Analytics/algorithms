@@ -1,9 +1,9 @@
 import statistics
 from typing import List
 
-from api.ai.priority_algorithm.priority.interfaces import Priority
-from api.dataclasses.team import Team
-from api.dataclasses.team_set import TeamSet
+from algorithms.ai.priority_algorithm.priority.interfaces import Priority
+from algorithms.dataclasses.team import Team
+from algorithms.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 
 
