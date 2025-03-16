@@ -1,7 +1,7 @@
 import unittest
 
-from api.dataclasses.project import Project
-from api.dataclasses.student import Student
+from algorithms.dataclasses.project import Project
+from algorithms.dataclasses.student import Student
 from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProviderSettings,
     MockInitialTeamsProvider,
@@ -10,7 +10,7 @@ from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,
 )
-from api.utils.validation import is_unique
+from algorithms.utils.validation import is_unique
 from utils.validation import (
     is_non_negative_integer,
     assert_can_exist_together,

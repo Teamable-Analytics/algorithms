@@ -1,6 +1,6 @@
 from typing import List
 
-from api.dataclasses.enums import (
+from algorithms.dataclasses.enums import (
     DiversifyType,
 )
 from benchmarking.evaluations.enums import (

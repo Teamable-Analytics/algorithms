@@ -1,14 +1,14 @@
 from typing import List
 
-from api.ai.priority_algorithm.priority.interfaces import Priority
-from api.ai.priority_algorithm.priority.priority import (
+from algorithms.ai.priority_algorithm.priority.interfaces import Priority
+from algorithms.ai.priority_algorithm.priority.priority import (
     DiversityPriority,
     TokenizationPriority,
     RequirementPriority,
     ProjectPreferencePriority,
     SocialPreferencePriority,
 )
-from api.dataclasses.enums import PreferenceSubject
+from algorithms.dataclasses.enums import PreferenceSubject
 from benchmarking.evaluations.goals import (
     DiversityGoal,
     ProjectRequirementGoal,

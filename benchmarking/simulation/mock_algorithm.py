@@ -1,22 +1,22 @@
 import dataclasses
 from typing import List, Type
 
-from api.ai.interfaces.algorithm_options import (
+from algorithms.ai.interfaces.algorithm_options import (
     AnyAlgorithmOptions,
     RandomAlgorithmOptions,
     PriorityAlgorithmOptions,
     SocialAlgorithmOptions,
     WeightAlgorithmOptions,
 )
-from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.ai.priority_algorithm.priority.interfaces import Priority
-from api.dataclasses.enums import (
+from algorithms.ai.interfaces.team_generation_options import TeamGenerationOptions
+from algorithms.ai.priority_algorithm.priority.interfaces import Priority
+from algorithms.dataclasses.enums import (
     AlgorithmType,
     DiversifyType,
     RelationshipBehaviour,
     PreferenceSubject,
 )
-from api.dataclasses.team import TeamShell
+from algorithms.dataclasses.team import TeamShell
 from benchmarking.evaluations.goals import (
     WeightGoal,
     PreferenceGoal,

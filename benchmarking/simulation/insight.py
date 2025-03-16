@@ -1,10 +1,10 @@
 import statistics
 from typing import List, Dict
 
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.simulation.simulation_set import SimulationSetArtifact
-from api.utils.validation import is_unique
+from algorithms.utils.validation import is_unique
 
 InsightOutput = Dict[str, List[float]]
 

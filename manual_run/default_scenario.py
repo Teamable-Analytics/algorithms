@@ -1,6 +1,6 @@
 from typing import List
 
-from api.dataclasses.enums import DiversifyType
+from algorithms.dataclasses.enums import DiversifyType
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Goal, Scenario
 from manual_run.attributes import Attributes

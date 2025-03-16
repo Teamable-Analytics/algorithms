@@ -3,11 +3,11 @@ from typing import Dict, Tuple, List
 
 import typer
 
-from api.ai.interfaces.algorithm_config import (
+from algorithms.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     PriorityAlgorithmStartType,
 )
-from api.dataclasses.enums import (
+from algorithms.dataclasses.enums import (
     AlgorithmType,
     DiversifyType,
     TokenizationConstraintDirection,
@@ -19,7 +19,7 @@ from benchmarking.evaluations.enums import (
     Gender,
     Age,
 )
-from api.dataclasses.tokenization_constraint import TokenizationConstraint
+from algorithms.dataclasses.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import PreferenceGoal, WeightGoal, DiversityGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 from benchmarking.evaluations.metrics.average_social_satisfied import (

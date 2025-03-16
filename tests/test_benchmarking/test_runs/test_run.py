@@ -1,7 +1,7 @@
 import unittest
 
-from api.dataclasses.enums import AlgorithmType
-from api.dataclasses.project import Project
+from algorithms.dataclasses.enums import AlgorithmType
+from algorithms.dataclasses.project import Project
 from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProvider,
     MockInitialTeamsProviderSettings,

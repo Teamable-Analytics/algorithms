@@ -3,15 +3,15 @@ from typing import Dict, List
 
 import typer
 
-from api.ai.interfaces.algorithm_config import (
+from algorithms.ai.interfaces.algorithm_config import (
     RandomAlgorithmConfig,
     SocialAlgorithmConfig,
     WeightAlgorithmConfig,
     PriorityAlgorithmConfig,
 )
-from api.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
-from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
-from api.dataclasses.enums import AlgorithmType
+from algorithms.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
+from algorithms.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
+from algorithms.dataclasses.enums import AlgorithmType
 from benchmarking.evaluations.enums import ScenarioAttribute, Gender, Race
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,

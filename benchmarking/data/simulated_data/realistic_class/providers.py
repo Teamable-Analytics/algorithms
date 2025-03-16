@@ -3,7 +3,7 @@ from typing import List
 
 import numpy as np
 
-from api.dataclasses.enums import (
+from algorithms.dataclasses.enums import (
     RequirementOperator,
 )
 from benchmarking.evaluations.enums import (
@@ -12,9 +12,9 @@ from benchmarking.evaluations.enums import (
     Gender,
     Race,
 )
-from api.dataclasses.project import Project, ProjectRequirement
-from api.dataclasses.student import Student
-from api.dataclasses.team import TeamShell
+from algorithms.dataclasses.project import Project, ProjectRequirement
+from algorithms.dataclasses.student import Student
+from algorithms.dataclasses.team import TeamShell
 from benchmarking.data.interfaces import StudentProvider, InitialTeamsProvider
 from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProvider,

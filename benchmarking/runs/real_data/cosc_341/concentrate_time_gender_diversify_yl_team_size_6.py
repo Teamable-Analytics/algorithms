@@ -4,12 +4,12 @@ from typing import Dict
 
 import typer
 
-from api.ai.interfaces.algorithm_config import (
+from algorithms.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     WeightAlgorithmConfig,
     GroupMatcherAlgorithmConfig,
 )
-from api.dataclasses.enums import AlgorithmType
+from algorithms.dataclasses.enums import AlgorithmType
 from benchmarking.evaluations.enums import ScenarioAttribute, Gender
 from benchmarking.data.real_data.cosc341_w2021_t2_provider.providers import (
     COSC341W2021T2AnsweredSurveysStudentProvider,

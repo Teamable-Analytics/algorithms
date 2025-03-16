@@ -5,8 +5,8 @@ from os import path
 
 import typer
 
-from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
-from api.dataclasses.enums import AlgorithmType
+from algorithms.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
+from algorithms.dataclasses.enums import AlgorithmType
 from benchmarking.evaluations.metrics.cosine_similarity import AverageCosineDifference
 from benchmarking.runs.interfaces import Run
 from benchmarking.simulation.simulation_set import SimulationSet, SimulationSetArtifact

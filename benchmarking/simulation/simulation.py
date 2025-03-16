@@ -5,10 +5,10 @@ from multiprocessing import Pool
 from multiprocessing.pool import ApplyResult
 from typing import List, Tuple
 
-from api.ai.algorithm_runner import AlgorithmRunner
-from api.ai.interfaces.algorithm_config import AlgorithmConfig
-from api.dataclasses.enums import AlgorithmType
-from api.dataclasses.team_set import TeamSet
+from algorithms.ai.algorithm_runner import AlgorithmRunner
+from algorithms.ai.interfaces.algorithm_config import AlgorithmConfig
+from algorithms.dataclasses.enums import AlgorithmType
+from algorithms.dataclasses.team_set import TeamSet
 from benchmarking.caching.simulation_cache import SimulationCache
 from benchmarking.simulation.mock_algorithm import MockAlgorithm
 from benchmarking.simulation.simulation_settings import SimulationSettings

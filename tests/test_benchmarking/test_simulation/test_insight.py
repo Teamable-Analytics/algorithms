@@ -1,10 +1,10 @@
 import unittest
 from typing import List
 
-from api.dataclasses.enums import AlgorithmType
-from api.dataclasses.student import Student
-from api.dataclasses.team import Team
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.enums import AlgorithmType
+from algorithms.dataclasses.student import Student
+from algorithms.dataclasses.team import Team
+from algorithms.dataclasses.team_set import TeamSet
 from benchmarking.simulation.basic_simulation_set import BasicSimulationSetArtifact
 from benchmarking.simulation.insight import Insight
 from tests.test_benchmarking.test_simulation._data import TestMetric

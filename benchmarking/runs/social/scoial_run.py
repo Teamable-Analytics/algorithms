@@ -1,12 +1,12 @@
 from typing import Dict, List
 
-from api.ai.interfaces.algorithm_config import (
+from algorithms.ai.interfaces.algorithm_config import (
     AlgorithmConfig,
     RandomAlgorithmConfig,
     WeightAlgorithmConfig,
     SocialAlgorithmConfig,
 )
-from api.dataclasses.enums import AlgorithmType
+from algorithms.dataclasses.enums import AlgorithmType
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.average_social_satisfied import (
     AverageSocialSatisfaction,

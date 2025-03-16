@@ -3,9 +3,9 @@ from dataclasses import dataclass
 from typing import List
 
 from benchmarking.data.interfaces import InitialTeamsProvider
-from api.dataclasses.project import Project
-from api.dataclasses.team import TeamShell
-from api.utils.validation import is_unique
+from algorithms.dataclasses.project import Project
+from algorithms.dataclasses.team import TeamShell
+from algorithms.utils.validation import is_unique
 
 
 @dataclass

@@ -1,6 +1,6 @@
 from typing import List
 
-from api.dataclasses.enums import RequirementsCriteria
+from algorithms.dataclasses.enums import RequirementsCriteria
 from benchmarking.evaluations.goals import WeightGoal, ProjectRequirementGoal
 from benchmarking.evaluations.interfaces import Scenario, Goal
 

@@ -1,18 +1,18 @@
 import unittest
 from typing import List
 
-from api.ai.priority_algorithm.priority.priority import (
+from algorithms.ai.priority_algorithm.priority.priority import (
     TokenizationPriority,
     DiversityPriority,
 )
-from api.dataclasses.enums import (
+from algorithms.dataclasses.enums import (
     DiversifyType,
     TokenizationConstraintDirection,
 )
 from benchmarking.evaluations.enums import (
     ScenarioAttribute,
 )
-from api.dataclasses.tokenization_constraint import TokenizationConstraint
+from algorithms.dataclasses.tokenization_constraint import TokenizationConstraint
 from benchmarking.evaluations.goals import DiversityGoal, WeightGoal
 from benchmarking.evaluations.interfaces import Goal
 from benchmarking.simulation.goal_to_priority import (

@@ -2,8 +2,8 @@ from typing import List
 
 import typer
 
-from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
-from api.dataclasses.enums import (
+from algorithms.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
+from algorithms.dataclasses.enums import (
     DiversifyType,
     TokenizationConstraintDirection,
     AlgorithmType,
@@ -13,7 +13,7 @@ from benchmarking.evaluations.enums import (
     Gender,
     Gpa,
 )
-from api.dataclasses.tokenization_constraint import TokenizationConstraint
+from algorithms.dataclasses.tokenization_constraint import TokenizationConstraint
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,

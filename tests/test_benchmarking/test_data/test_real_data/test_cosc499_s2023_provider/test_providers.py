@@ -1,8 +1,8 @@
 import unittest
 from typing import List
 
-from api.dataclasses.student import Student
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.student import Student
+from algorithms.dataclasses.team_set import TeamSet
 from benchmarking.data.real_data.cosc499_s2023_provider.providers import (
     COSC499S2023StudentProvider,
     COSC499S2023InitialTeamConfigurationProvider,

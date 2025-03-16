@@ -1,9 +1,9 @@
 import json
 import unittest
 
-from api.dataclasses.enums import RequirementOperator
-from api.dataclasses.project import ProjectRequirement
-from api.dataclasses.project import ProjectRequirementSerializer
+from algorithms.dataclasses.enums import RequirementOperator
+from algorithms.dataclasses.project import ProjectRequirement
+from algorithms.dataclasses.project import ProjectRequirementSerializer
 
 
 class TestProjectRequirementSerializer(unittest.TestCase):

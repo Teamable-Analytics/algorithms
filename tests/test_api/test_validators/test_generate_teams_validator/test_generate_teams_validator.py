@@ -3,7 +3,7 @@ import copy
 
 from schema import SchemaError
 
-from api.api.validators.generate_teams_validator import GenerateTeamsValidator
+from algorithms.api.validators.generate_teams_validator import GenerateTeamsValidator
 
 
 class TestGenerateTeamsValidator(unittest.TestCase):

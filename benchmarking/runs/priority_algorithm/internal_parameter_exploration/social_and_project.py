@@ -3,11 +3,11 @@ from typing import Dict, Tuple, List
 
 import typer
 
-from api.ai.interfaces.algorithm_config import (
+from algorithms.ai.interfaces.algorithm_config import (
     PriorityAlgorithmConfig,
     PriorityAlgorithmStartType,
 )
-from api.dataclasses.enums import (
+from algorithms.dataclasses.enums import (
     AlgorithmType,
     RequirementsCriteria,
 )
@@ -15,7 +15,7 @@ from benchmarking.data.simulated_data.mock_initial_teams_provider import (
     MockInitialTeamsProvider,
     MockInitialTeamsProviderSettings,
 )
-from api.dataclasses.enums import PreferenceDirection, PreferenceSubject
+from algorithms.dataclasses.enums import PreferenceDirection, PreferenceSubject
 from benchmarking.evaluations.goals import (
     PreferenceGoal,
     WeightGoal,

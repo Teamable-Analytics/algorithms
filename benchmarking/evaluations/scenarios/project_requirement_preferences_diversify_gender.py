@@ -1,6 +1,10 @@
 from typing import List
 
-from api.dataclasses.enums import DiversifyType, PreferenceDirection, PreferenceSubject
+from algorithms.dataclasses.enums import (
+    DiversifyType,
+    PreferenceDirection,
+    PreferenceSubject,
+)
 from benchmarking.evaluations.enums import ScenarioAttribute
 from benchmarking.evaluations.goals import (
     DiversityGoal,

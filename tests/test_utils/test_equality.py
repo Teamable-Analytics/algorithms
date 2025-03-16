@@ -1,10 +1,10 @@
 import copy
 import unittest
 
-from api.dataclasses.enums import RequirementOperator
-from api.dataclasses.project import ProjectRequirement
-from api.dataclasses.student import Student
-from api.dataclasses.team import Team
+from algorithms.dataclasses.enums import RequirementOperator
+from algorithms.dataclasses.project import ProjectRequirement
+from algorithms.dataclasses.student import Student
+from algorithms.dataclasses.team import Team
 from utils.equality import (
     are_students_equal_ignoring_team,
     are_teams_equal_ignoring_students,

@@ -1,7 +1,7 @@
 import json
 from typing import List, Dict
 
-from api.dataclasses.enums import (
+from algorithms.dataclasses.enums import (
     Relationship,
     RequirementOperator,
 )
@@ -9,9 +9,9 @@ from benchmarking.evaluations.enums import (
     ScenarioAttribute,
     Gpa,
 )
-from api.dataclasses.project import Project, ProjectRequirement
-from api.dataclasses.student import Student, StudentSerializer
-from api.dataclasses.team import Team, TeamSerializer
+from algorithms.dataclasses.project import Project, ProjectRequirement
+from algorithms.dataclasses.student import Student, StudentSerializer
+from algorithms.dataclasses.team import Team, TeamSerializer
 
 if __name__ == "__main__":
     output = {

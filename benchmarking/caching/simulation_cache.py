@@ -10,8 +10,8 @@ from typing import List, Dict, Any, TYPE_CHECKING
 
 import git
 
-from api.dataclasses.team_set import TeamSet
-from api.dataclasses.team_set.serializer import TeamSetSerializer
+from algorithms.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.team_set.serializer import TeamSetSerializer
 
 if TYPE_CHECKING:
     from benchmarking.simulation.simulation import SimulationArtifact

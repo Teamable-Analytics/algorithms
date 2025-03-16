@@ -2,7 +2,7 @@ import json
 from os import path
 from typing import List, Dict, Tuple
 
-from api.ai.interfaces.algorithm_config import PriorityAlgorithmStartType
+from algorithms.ai.interfaces.algorithm_config import PriorityAlgorithmStartType
 from benchmarking.evaluations.graphing.graph_3d import Surface3D, graph_3d
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.average_project_requirements_coverage import (

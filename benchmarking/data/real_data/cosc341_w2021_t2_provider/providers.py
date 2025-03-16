@@ -5,9 +5,9 @@ from typing import List
 import numpy as np
 
 from benchmarking.evaluations.enums import ScenarioAttribute
-from api.dataclasses.student import Student, StudentSerializer
-from api.dataclasses.team import TeamSerializer, TeamShell
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.student import Student, StudentSerializer
+from algorithms.dataclasses.team import TeamSerializer, TeamShell
+from algorithms.dataclasses.team_set import TeamSet
 from benchmarking.data.interfaces import (
     StudentProvider,
     TeamConfigurationProvider,

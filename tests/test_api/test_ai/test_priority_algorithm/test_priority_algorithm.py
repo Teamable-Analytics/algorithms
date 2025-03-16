@@ -3,14 +3,17 @@ from unittest.mock import MagicMock
 from typing import List
 from unittest.mock import MagicMock
 
-from api.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
-from api.ai.interfaces.algorithm_options import PriorityAlgorithmOptions
-from api.ai.interfaces.team_generation_options import TeamGenerationOptions
-from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
-from api.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
-from api.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
-from api.ai.priority_algorithm.priority_algorithm import PriorityAlgorithm
-from api.dataclasses.team import TeamShell
+from algorithms.ai.interfaces.algorithm_config import PriorityAlgorithmConfig
+from algorithms.ai.interfaces.algorithm_options import PriorityAlgorithmOptions
+from algorithms.ai.interfaces.team_generation_options import TeamGenerationOptions
+from algorithms.ai.priority_algorithm.custom_dataclasses import (
+    PriorityTeamSet,
+    PriorityTeam,
+)
+from algorithms.ai.priority_algorithm.mutations.local_max import LocalMaxMutation
+from algorithms.ai.priority_algorithm.mutations.random_swap import RandomSwapMutation
+from algorithms.ai.priority_algorithm.priority_algorithm import PriorityAlgorithm
+from algorithms.dataclasses.team import TeamShell
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,

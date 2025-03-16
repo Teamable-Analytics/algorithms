@@ -1,11 +1,11 @@
 import unittest
 from typing import Callable, List
 
-from api.dataclasses.enums import RequirementOperator
-from api.dataclasses.project import ProjectRequirement
-from api.dataclasses.student import Student
-from api.dataclasses.team import Team, TeamShell
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.enums import RequirementOperator
+from algorithms.dataclasses.project import ProjectRequirement
+from algorithms.dataclasses.student import Student
+from algorithms.dataclasses.team import Team, TeamShell
+from algorithms.dataclasses.team_set import TeamSet
 from benchmarking.evaluations.metrics.envy_free_up_to_one_item import (
     EnvyFreenessUpToOneItem,
 )

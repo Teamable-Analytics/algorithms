@@ -1,11 +1,14 @@
 import unittest
 
-from api.ai.priority_algorithm.custom_dataclasses import PriorityTeamSet, PriorityTeam
-from api.ai.priority_algorithm.mutations.team_size_low_disruption import (
+from algorithms.ai.priority_algorithm.custom_dataclasses import (
+    PriorityTeamSet,
+    PriorityTeam,
+)
+from algorithms.ai.priority_algorithm.mutations.team_size_low_disruption import (
     get_sizes,
     TeamSizeLowDisruptionMutation,
 )
-from api.dataclasses.team import TeamShell
+from algorithms.dataclasses.team import TeamShell
 from benchmarking.data.simulated_data.mock_student_provider import (
     MockStudentProvider,
     MockStudentProviderSettings,

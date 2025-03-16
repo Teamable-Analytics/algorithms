@@ -1,6 +1,6 @@
 from benchmarking.evaluations.interfaces import TeamSetMetric
 from benchmarking.evaluations.metrics.utils.team_calculations import team_gini_index
-from api.dataclasses.team_set import TeamSet
+from algorithms.dataclasses.team_set import TeamSet
 
 
 class MaximumGiniIndex(TeamSetMetric):
