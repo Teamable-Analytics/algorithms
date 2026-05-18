@@ -22,3 +22,7 @@ logs/nginx/
 
 # manual_run csv files
 /manual_run/*.csv
+
+# runs/ local files
+/runs/*/input.csv
+/runs/*/output.json
