@@ -1,25 +1,31 @@
 import csv
 import hashlib
 import json
+import re
 from typing import Dict, List, Set
 
 from algorithms.dataclasses.enums import Relationship
 from algorithms.dataclasses.student import Student
 
 
+def _to_key(s: str) -> str:
+    """Strip to alphanumeric only for robust name matching across export formats."""
+    return re.sub(r"[^a-zA-Z0-9]", "", s).lower()
+
+
 def _make_id(first: str, last: str) -> int:
-    key = (first + last).replace(" ", "")
+    key = _to_key(first + last)
     return int(hashlib.sha256(key.encode()).hexdigest(), 16) % (10**9)
 
 
 def _parse_names(field: str) -> Set[str]:
-    """Parse 'part 1: FirstName LastName; part 2: ...' into a set of unique full names."""
+    """Parse 'part 1: FirstName LastName; part 2: ...' into a set of alphanumeric keys."""
     names = set()
     for part in field.split(";"):
         if ":" in part:
-            name_str = part.split(":", 1)[1].strip()
-            if name_str:
-                names.add(name_str)
+            key = _to_key(part.split(":", 1)[1])
+            if key:
+                names.add(key)
     return names
 
 
@@ -30,7 +36,9 @@ def get_students(csv_path: str) -> List[Student]:
             rows.append(row)
 
     name_to_id: Dict[str, int] = {
-        f"{row['First_name']} {row['Last_name']}": _make_id(row["First_name"], row["Last_name"])
+        _to_key(f"{row['First_name']}{row['Last_name']}"): _make_id(
+            row["First_name"], row["Last_name"]
+        )
         for row in rows
     }
 
@@ -38,17 +46,17 @@ def get_students(csv_path: str) -> List[Student]:
     for row in rows:
         first, last = row["First_name"], row["Last_name"]
         sid = _make_id(first, last)
-        full_name = f"{first} {last}"
+        full_name = f"{re.sub(r'[^a-zA-Z0-9]', '', first)} {re.sub(r'[^a-zA-Z0-9]', '', last)}"
 
         relationships: Dict[int, Relationship] = {}
 
-        for name in _parse_names(row.get("whitelist", "")):
-            if name in name_to_id and name_to_id[name] != sid:
-                relationships[name_to_id[name]] = Relationship.FRIEND
+        for key in _parse_names(row.get("whitelist", "")):
+            if key in name_to_id and name_to_id[key] != sid:
+                relationships[name_to_id[key]] = Relationship.FRIEND
 
-        for name in _parse_names(row.get("blacklist", "")):
-            if name in name_to_id and name_to_id[name] != sid:
-                relationships[name_to_id[name]] = Relationship.ENEMY
+        for key in _parse_names(row.get("blacklist", "")):
+            if key in name_to_id and name_to_id[key] != sid:
+                relationships[name_to_id[key]] = Relationship.ENEMY
 
         students.append(
             Student(
