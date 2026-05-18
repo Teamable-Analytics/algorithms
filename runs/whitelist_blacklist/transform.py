@@ -1,5 +1,6 @@
 import csv
 import hashlib
+import json
 from typing import Dict, List, Set
 
 from algorithms.dataclasses.enums import Relationship
@@ -58,5 +59,15 @@ def get_students(csv_path: str) -> List[Student]:
                 project_preferences=[],
             )
         )
+
+    id_to_name = {s.id: s.name for s in students}
+    friendship_map = {
+        s.name: {
+            id_to_name[other_id]: rel.name.lower()
+            for other_id, rel in s.relationships.items()
+        }
+        for s in students
+    }
+    print(json.dumps(friendship_map, indent=2))
 
     return students
