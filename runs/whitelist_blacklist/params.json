@@ -1,0 +1,19 @@
+{
+  "algorithm_type": "social",
+  "team_generation": {
+    "max_team_size": 4,
+    "min_team_size": 2,
+    "total_teams": "auto"
+  },
+  "algorithm_options": {
+    "max_project_preferences": 0,
+    "requirement_weight": 0,
+    "social_weight": 1,
+    "diversity_weight": 0,
+    "preference_weight": 0,
+    "friend_behaviour": "enforce",
+    "enemy_behaviour": "enforce",
+    "attributes_to_diversify": [],
+    "attributes_to_concentrate": []
+  }
+}
