@@ -30,10 +30,21 @@ def _parse_names(field: str) -> Set[str]:
 
 
 def get_students(csv_path: str) -> List[Student]:
-    rows = []
-    with open(csv_path, newline="") as f:
-        for row in csv.DictReader(f):
-            rows.append(row)
+    raw_rows = []
+    for encoding in ("utf-8-sig", "latin-1"):
+        try:
+            with open(csv_path, newline="", encoding=encoding) as f:
+                raw_rows = list(csv.DictReader(f))
+            break
+        except UnicodeDecodeError:
+            continue
+
+    # Later submissions override earlier ones
+    seen: Dict[str, dict] = {}
+    for row in raw_rows:
+        key = _to_key(f"{row['First_name']}{row['Last_name']}")
+        seen[key] = row
+    rows = list(seen.values())
 
     name_to_id: Dict[str, int] = {
         _to_key(f"{row['First_name']}{row['Last_name']}"): _make_id(
