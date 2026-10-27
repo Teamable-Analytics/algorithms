@@ -3,6 +3,7 @@ from typing import List, Dict
 from schema import Schema, SchemaError, Or, Optional
 
 from algorithms.ai.algorithm_runner import AlgorithmRunner
+from algorithms.ai.interfaces.team_generation_options import get_team_size_error
 from algorithms.api.validators.interface import Validator
 from algorithms.utils.relationship import get_relationship_str
 from algorithms.dataclasses.enums import (
@@ -29,6 +30,7 @@ class GenerateTeamsValidator(Validator):
         self.validate_team_options()
         self.validate_algorithm_options()
         self.validate_students()
+        self.validate_students_fit_teams()
 
     def _validate_schema(self):
         Schema(
@@ -268,6 +270,21 @@ class GenerateTeamsValidator(Validator):
         self._validate_student_attributes(students, teams)
 
         self._validate_student_relationships(students)
+
+    def validate_students_fit_teams(self):
+        team_options = self.data.get("team_generation_options")
+        # locked teams are skipped by the algorithms, so they cannot take any students
+        num_locked_teams = len(
+            [t for t in team_options.get("initial_teams") if t.get("is_locked")]
+        )
+        error = get_team_size_error(
+            num_students=len(self.data.get("students")),
+            num_teams=team_options.get("total_teams") - num_locked_teams,
+            min_team_size=team_options.get("min_team_size"),
+            max_team_size=team_options.get("max_team_size"),
+        )
+        if error:
+            raise SchemaError(error)
 
     def validate_team_options(self):
         team_options = self.data.get("team_generation_options")

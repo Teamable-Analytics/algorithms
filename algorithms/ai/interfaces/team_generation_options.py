@@ -1,10 +1,30 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from schema import Schema
 
 from algorithms.dataclasses.team import TeamShell
 from algorithms.utils.validation import is_unique
+
+
+def get_team_size_error(
+    num_students: int, num_teams: int, min_team_size: int, max_team_size: int
+) -> Optional[str]:
+    """
+    Returns why the students cannot be split into num_teams teams of the allowed sizes, or None if they can.
+
+    The algorithms always fill the smallest team next, so team sizes differ by at most one.
+    Staying within these bounds therefore keeps every team between min_team_size and max_team_size.
+    Without this check, students that do not fit are silently left out of the result.
+    """
+    if num_students > num_teams * max_team_size:
+        return (
+            f"{num_students} students do not fit into {num_teams} teams of at most {max_team_size} students "
+            f"({num_students - num_teams * max_team_size} students would not be assigned to any team)."
+        )
+    if num_students < num_teams * min_team_size:
+        return f"{num_students} students are not enough for {num_teams} teams of at least {min_team_size} students."
+    return None
 
 
 @dataclass

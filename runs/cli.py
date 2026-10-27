@@ -21,7 +21,10 @@ from algorithms.ai.interfaces.algorithm_options import (
     SocialAlgorithmOptions,
     WeightAlgorithmOptions,
 )
-from algorithms.ai.interfaces.team_generation_options import TeamGenerationOptions
+from algorithms.ai.interfaces.team_generation_options import (
+    TeamGenerationOptions,
+    get_team_size_error,
+)
 from algorithms.dataclasses.enums import AlgorithmType
 from algorithms.dataclasses.student import Student
 from algorithms.dataclasses.team_set.serializer import TeamSetSerializer
@@ -114,6 +117,16 @@ def run(
     total_teams = tg.get("total_teams", "auto")
     if total_teams == "auto":
         total_teams = math.ceil(len(students) / max_team_size)
+
+    team_size_error = get_team_size_error(
+        num_students=len(students),
+        num_teams=total_teams,
+        min_team_size=min_team_size,
+        max_team_size=max_team_size,
+    )
+    if team_size_error:
+        typer.echo(f"Error: {team_size_error}", err=True)
+        raise typer.Exit(1)
 
     team_generation_options = TeamGenerationOptions(
         max_team_size=max_team_size,
