@@ -23,6 +23,18 @@
 4. You're good to go!
    > Be sure to read any directory-specific README.md and CONVENTION.md files before starting to work.
 
+### Local Run (without Canvas)
+
+To generate teams locally from a JSON payload, without Canvas, Django or a database:
+
+```
+python -m pip install -r requirements-local.txt
+python -m local_run --input <payload.json> --output <result.json> --seed 1
+```
+
+Setup, the sample test run and the input/output format are documented in the
+[project documentation](https://teamprojekt-msi-bit-ss26.github.io/documentation/) under "Umsetzung".
+
 ### Metrics
 
 For detailed descriptions of each of the metrics we evaluate our algorithms with respect to, please

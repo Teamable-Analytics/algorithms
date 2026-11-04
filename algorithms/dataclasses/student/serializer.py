@@ -36,7 +36,8 @@ class StudentSerializer(JSONEncoder, DataClassDecoder):
                 int(key): Relationship(value)
                 if isinstance(value, float) or isinstance(value, int)
                 else get_relationship(value)
-                for key, value in json_dict["relationships"].items()
+                for key, value in (json_dict.get("relationships") or {}).items()
             },
-            project_preferences=json_dict.get("project_preferences"),
+            # relationships and project_preferences are optional in the API schema
+            project_preferences=json_dict.get("project_preferences") or [],
         )

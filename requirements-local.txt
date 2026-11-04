@@ -1,0 +1,5 @@
+# Minimal dependencies to run the algorithms locally (python -m local_run) and their tests.
+# The full requirements.txt is only needed for the Django API, benchmarking and notebooks.
+numpy==1.24.4
+python-dotenv==1.0.0
+schema==0.7.4

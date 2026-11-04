@@ -136,7 +136,8 @@ class GenerateTeamsValidator(Validator):
         student_ids = set([student.get("id") for student in students])
 
         for student in students:
-            relationships = student.get("relationships")
+            # relationships are optional in the student schema
+            relationships = student.get("relationships") or {}
 
             # Validate if relationship keys integer string
             try:
@@ -216,7 +217,8 @@ class GenerateTeamsValidator(Validator):
         student_ids = set([student.get("id") for student in students])
 
         for student in students:
-            relationships = student.get("relationships")
+            # relationships are optional in the student schema
+            relationships = student.get("relationships") or {}
 
             # Validate if relationship keys integer string
             try:
@@ -304,7 +306,10 @@ class GenerateTeamsValidator(Validator):
                                 ),
                                 "value": int,
                                 Optional("criteria"): Or(
-                                    *[criteria.value for criteria in RequirementsCriteria]
+                                    *[
+                                        criteria.value
+                                        for criteria in RequirementsCriteria
+                                    ]
                                 ),
                                 Optional("num_members_required"): int,
                             }

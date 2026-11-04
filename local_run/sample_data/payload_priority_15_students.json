@@ -1,0 +1,402 @@
+{
+  "algorithm_options": {
+    "algorithm_type": "priority",
+    "max_project_preferences": 3,
+    "priorities": [
+      {
+        "priority_type": "diversity",
+        "attribute_id": 1,
+        "strategy": "diversify"
+      },
+      {
+        "priority_type": "social_preference",
+        "max_num_friends": 2,
+        "max_num_enemies": 1
+      },
+      {
+        "priority_type": "project_preference",
+        "direction": "include",
+        "max_project_preferences": 3
+      },
+      {
+        "priority_type": "project_requirement"
+      }
+    ],
+    "friend_behaviour": "enforce",
+    "enemy_behaviour": "enforce"
+  },
+  "team_generation_options": {
+    "max_team_size": 4,
+    "min_team_size": 3,
+    "total_teams": 4,
+    "initial_teams": [
+      {
+        "id": 1,
+        "name": "Team Web-App",
+        "project_id": 1,
+        "requirements": [
+          {
+            "attribute": 3,
+            "operator": "more than",
+            "value": 3,
+            "criteria": "someone_meets_requirement"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Team Datenanalyse",
+        "project_id": 2,
+        "requirements": []
+      },
+      {
+        "id": 3,
+        "name": "Team Mobile",
+        "project_id": 3,
+        "requirements": []
+      },
+      {
+        "id": 4,
+        "name": "Team Spiele",
+        "project_id": 4,
+        "requirements": []
+      }
+    ]
+  },
+  "students": [
+    {
+      "id": 1,
+      "name": "Anna Becker",
+      "attributes": {
+        "1": [
+          1
+        ],
+        "2": [
+          1
+        ],
+        "3": [
+          2
+        ]
+      },
+      "relationships": {
+        "2": "friend"
+      },
+      "project_preferences": [
+        1,
+        4,
+        2
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Ben Schulz",
+      "attributes": {
+        "1": [
+          2
+        ],
+        "2": [
+          3
+        ],
+        "3": [
+          5
+        ]
+      },
+      "relationships": {
+        "1": "friend"
+      },
+      "project_preferences": [
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Clara Wagner",
+      "attributes": {
+        "1": [
+          1
+        ],
+        "2": [
+          1
+        ],
+        "3": [
+          1
+        ]
+      },
+      "relationships": {
+        "4": "enemy"
+      },
+      "project_preferences": [
+        1,
+        3,
+        2
+      ]
+    },
+    {
+      "id": 4,
+      "name": "David Hoffmann",
+      "attributes": {
+        "1": [
+          2
+        ],
+        "2": [
+          3
+        ],
+        "3": [
+          5
+        ]
+      },
+      "relationships": {},
+      "project_preferences": [
+        1,
+        4,
+        3
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Elif Yilmaz",
+      "attributes": {
+        "1": [
+          1
+        ],
+        "2": [
+          3
+        ],
+        "3": [
+          5
+        ]
+      },
+      "relationships": {
+        "6": "friend"
+      },
+      "project_preferences": [
+        1,
+        3,
+        4
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Felix Koch",
+      "attributes": {
+        "1": [
+          2
+        ],
+        "2": [
+          3
+        ],
+        "3": [
+          3
+        ]
+      },
+      "relationships": {
+        "5": "friend",
+        "7": "friend"
+      },
+      "project_preferences": [
+        4,
+        1,
+        2
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Greta Richter",
+      "attributes": {
+        "1": [
+          1
+        ],
+        "2": [
+          2
+        ],
+        "3": [
+          3
+        ]
+      },
+      "relationships": {
+        "6": "friend"
+      },
+      "project_preferences": [
+        1,
+        4,
+        2
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Hannes Wolf",
+      "attributes": {
+        "1": [
+          2
+        ],
+        "2": [
+          1
+        ],
+        "3": [
+          1
+        ]
+      },
+      "relationships": {},
+      "project_preferences": [
+        2,
+        1,
+        4
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Ida Neumann",
+      "attributes": {
+        "1": [
+          1
+        ],
+        "2": [
+          2
+        ],
+        "3": [
+          5
+        ]
+      },
+      "relationships": {
+        "10": "enemy"
+      },
+      "project_preferences": [
+        4,
+        1,
+        2
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Jonas Braun",
+      "attributes": {
+        "1": [
+          2
+        ],
+        "2": [
+          3
+        ],
+        "3": [
+          1
+        ]
+      },
+      "relationships": {},
+      "project_preferences": [
+        3,
+        1,
+        2
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Katharina Zimmer",
+      "attributes": {
+        "1": [
+          1
+        ],
+        "2": [
+          3
+        ],
+        "3": [
+          5
+        ]
+      },
+      "relationships": {
+        "12": "friend"
+      },
+      "project_preferences": [
+        4,
+        1,
+        2
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Leon Hartmann",
+      "attributes": {
+        "1": [
+          2
+        ],
+        "2": [
+          3
+        ],
+        "3": [
+          1
+        ]
+      },
+      "relationships": {
+        "11": "friend"
+      },
+      "project_preferences": [
+        3,
+        4,
+        1
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Mia Krause",
+      "attributes": {
+        "1": [
+          1
+        ],
+        "2": [
+          2
+        ],
+        "3": [
+          1
+        ]
+      },
+      "relationships": {},
+      "project_preferences": [
+        1,
+        3,
+        4
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Noah Lange",
+      "attributes": {
+        "1": [
+          2
+        ],
+        "2": [
+          2
+        ],
+        "3": [
+          4
+        ]
+      },
+      "relationships": {},
+      "project_preferences": [
+        2,
+        1,
+        4
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Olivia Schmitt",
+      "attributes": {
+        "1": [
+          1
+        ],
+        "2": [
+          2
+        ],
+        "3": [
+          2
+        ]
+      },
+      "relationships": {},
+      "project_preferences": [
+        3,
+        1,
+        2
+      ]
+    }
+  ]
+}

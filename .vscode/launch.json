@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Local run: Teams generieren",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "local_run",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/env/local_run.env",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Local run: Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "unittest",
+      "args": ["tests.test_local_run.test_run", "-v"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ]
+}
